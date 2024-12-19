@@ -108,6 +108,7 @@ def load_arxiv_paper(path: str | Path) -> Dict[str, str]:
     pattern = r"references\s*\n"
     matches = [match for match in re.finditer(pattern, text.lower())]
 
+    ref_list = []
     references = ""
     reference_start = len(text)
     if matches:
@@ -115,15 +116,28 @@ def load_arxiv_paper(path: str | Path) -> Dict[str, str]:
         reference_start = final_match.start()
         references = text[reference_start:]
 
+        # Regex to extract reference number and description
+        ref_pattern = r"\[(\d+)\]\s+(.*?)(?=\n\s*\[\d+\]|$)"
+        # Find all matches
+        matches = re.findall(ref_pattern, references, re.DOTALL)
+        
+        for ref_number, ref_description in matches:
+            ref_list.append({
+                "resource_id": int(ref_number),
+                "resource_description": ref_description.replace('\n', '').strip()
+            })
+            
+        ref_list = sorted(ref_list, key=lambda x: x["resource_id"])
+
     content = text[abstract_end:reference_start]
 
     print("EXTRACTION OVERVIEW:\nTitle:"+title[:50].replace("\n","\\n")+"...\nAbstract:"+abstract[:50].replace("\n","\\n")+"...\nContent:"+content[:50].replace("\n","\\n")+"...\nReferences:"+references[:50].replace("\n","\\n")+"...")
 
     article_dict = {
-        "Title": title,
-        "Abstract": abstract,
-        "Content": content,
-        "References": references,
+        "title": title,
+        "abstract": abstract,
+        "content": content,
+        "references": ref_list,
     }
     return article_dict
 
@@ -459,6 +473,9 @@ def _gen_embed_section_content_batch(
 
     for id, heading, content, emb_h1, emb_h2, emb_c1, emb_c2 in zip(
             ids, headings, contents, heading_embeddings_1, heading_embeddings_2, content_embeddings_1, content_embeddings_2):
+        
+        # Get resource indexes used in content
+        resources_ids = sorted(set([int(num) for num in re.findall(r"\[(\d+)\]", content)]))
         section_jsons.append({
             "section_id": id,
             "section": heading,
@@ -467,6 +484,7 @@ def _gen_embed_section_content_batch(
             "section_embedding_2": emb_h2,
             "content_embedding_1": emb_c1,
             "content_embedding_2": emb_c2,
+            "resources_used": resources_ids
         })
 
         logger.info(
@@ -558,8 +576,10 @@ def generate_embeddings_plan_and_section_content(
         total_sections = len(headings) - 2
         start_index = 2
     elif doc_type in ["arxiv"]:
-        headings = list(article_dict.keys())
-        content = list(article_dict.values())
+        # Filtered keys and values
+        key_to_exclude = "References"
+        headings = [key for key in article_dict.keys() if key != key_to_exclude]
+        content = [value for key, value in article_dict.items() if key != key_to_exclude]
         # The first key/value pairs in arxiv dicts are {'Title': title, 'Abstract': abstract}
         # so we take the first two elements of content
         title = content[0]
@@ -594,6 +614,18 @@ def generate_embeddings_plan_and_section_content(
                 zip(headings[start_index:], content[start_index:]), start=1
             )
         ]
+
+    # Get Resources
+    resources = []
+    try:
+        resources = article_dict.get("references", [])
+        if isinstance(resources, dict): # for Wikipedia
+            resources = list(resources.values())
+        for i in range(len(resources)):
+            resources[i]["resource_embedding"] = embed_OPENAI.embed_query(resources[i]["resource_description"])
+    except Exception as e:
+        logger.debug(f"Error occurred while processing resources {e}")
+
     plan_embed_1 = _gen_embed_plan(plan, 1)
     plan_embed_2 = _gen_embed_plan(plan, 2)
 
@@ -607,6 +639,7 @@ def generate_embeddings_plan_and_section_content(
             "abstract_embedding_1": embed_OPENAI.embed_query(abstract),
             "abstract_embedding_2": embed_HF.embed_query(HUGGINGFACE_EMBEDDING_PREFIX + abstract),
             "plan": plan,
+            "resources": resources,
             "plan_embedding_1": plan_embed_1,
             "plan_embedding_2": plan_embed_2,
             "embedding1_model": OPENAI_EMBEDDING_MODEL_NAME,
@@ -624,6 +657,7 @@ def generate_embeddings_plan_and_section_content(
             "abstract_embedding_1": None,
             "abstract_embedding_2": None,
             "plan": plan,
+            "resources": [],
             "plan_embedding_1": None,
             "plan_embedding_2": None,
             "embedding1_model": OPENAI_EMBEDDING_MODEL_NAME,
@@ -891,7 +925,7 @@ def plan_create_section_entry(section_id, section_title, content="", resources_c
         "section_id": section_id,
         "section": section_title,
         "content": content,
-        "resources_cited_id": [i for i, ref in enumerate(references) if ref in resources_cited],
+        "resources_used": sorted(set([i for i, ref in enumerate(references) if ref in resources_cited])),
         "resources_cited_key": resources_cited,
     }
 
@@ -951,7 +985,7 @@ def biblatex_extract_resources(bibtex_content):
         resources.append({
             "resource_id": i + 1,
             "resource_key": citation_key.strip(),
-            "description": f"{title if title else ''}\nAuthor:{author if author else ''}\nYear:{year if year else ''}",
+            "resource_description": f"{title if title else ''}\nAuthor:{author if author else ''}\nYear:{year if year else ''}",
             "url": url
         })
     return resources
@@ -965,7 +999,7 @@ async def extract_plan_and_content_latex(tex_file: Path, without_embeddings=Fals
     with open(tex_file, 'r') as file:
         latex_content = file.read()
 
-    with open(data_dir / bib_filename, 'r') as file:
+    with open(data_dir / bib_filename, 'r', encoding="utf-8", errors="replace") as file:
         bibtex_content = file.read()
 
     latex_content = latex_clean_content(latex_content)
@@ -1011,7 +1045,7 @@ async def extract_plan_and_content_latex(tex_file: Path, without_embeddings=Fals
         "title": title,
         "abstract": abstract,
         "plan": plan,
-        "resources": resources
+        "references": resources
     }
 
     json_output = json.dumps(paper_data, indent=2)
@@ -1163,6 +1197,10 @@ async def extract_plan_and_content_patent(patent_file: str | Path) -> Dict[str, 
 
 
 if __name__ == "__main__":
+    latex_paper = Path("D:/Works/Upworks/LLM/document_embedding_analysis/data/latex/A Survey of Software-Defined Smart Grid Networks, Security Threats and Defense Techniques.tex")
+    asyncio.run(extract_plan_and_content_latex(latex_paper, without_embeddings=False))
+    exit()
+
     # Ask input preference to generate for: all (Enter), 1 for each type (1), or just an example of a given type (Latex: L, Arxiv: A, Wikipedia: W, Patent: P)
     output_preference = input("Generate for all (Enter), 1 for each type (1), or just an example of a given type (Latex: L, Arxiv: A, Wikipedia: W, Patent: P): ").lower()
 
