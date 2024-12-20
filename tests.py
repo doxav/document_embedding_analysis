@@ -1,4 +1,4 @@
-from main import compare_documents_sections, compare_documents_content
+from main_ import compare_documents_sections, compare_documents_content
 
 
 def is_approximately_equal(x, y, epsilon=1e-10):
