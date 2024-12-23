@@ -5,6 +5,7 @@ from time import time
 from pathlib import Path
 from loguru import logger
 from typing import List, Dict, Any
+from scipy.optimize import linear_sum_assignment
 from sklearn.metrics.pairwise import cosine_similarity
 
 
@@ -95,6 +96,15 @@ def _compare_documents(
         cosine_2 = cosine_similarity(
             [p_dict[f"{compare_on}_embedding_2"]], [d_dict[f"{compare_on}_embedding_2"]]
         )[0][0]
+
+        # Calculate bibliography coverage for both sections
+        target_refs = set(d_dict.get("resources_used", []))
+        pred_refs = set(p_dict.get("resources_used", []))
+        # Calculate reference overlap
+        if target_refs:
+            ref_coverage = len(target_refs.intersection(pred_refs)) / len(target_refs)
+        else:
+            ref_coverage = 1.0 if not pred_refs else 0.0
         # Combine results
         result = {
             "section_id": idx,
@@ -102,6 +112,7 @@ def _compare_documents(
             "rouge_L_similarity": rouge_score,
             "embedding1_cosine_similarity": cosine_1,
             "embedding2_cosine_similarity": cosine_2,
+            "bibliography_coverage": ref_coverage,
         }
         section_results.append(result)
         logger.info(f"{idx}/{total_comparisons} sections compared.")
@@ -123,6 +134,21 @@ def _compare_documents(
         "embedding2_cosine_similarity": cosine_2_total,
     }
 
+    # Calculate global bibliography coverage using Hungarian algorithm
+    target_resources = document.get("resources", [])
+    pred_resources = document.get("resources", [])
+    if target_resources and pred_resources:
+        distance_matrix = np.zeros((len(target_resources), len(pred_resources)))
+        for i, target in enumerate(target_resources):
+            for j, pred in enumerate(pred_resources):
+                distance_matrix[i][j] = 1 - cosine_similarity(
+                    [target["resource_embedding"]],
+                    [pred["resource_embedding"]],
+                )[0][0]
+        row_ind, col_ind = linear_sum_assignment(distance_matrix)
+        global_bib_coverage = 1 - (sum(distance_matrix[row_ind[i], col_ind[i]] for i in range(len(row_ind))) / max(len(target_resources), len(pred_resources)))
+    else:
+        global_bib_coverage = 0.0
     if compare_on == "section":
         compare_on = "plan"
 
@@ -131,6 +157,7 @@ def _compare_documents(
         "prediction_id": prediction["id"],
         f"{compare_on}_total_similarity": total_results,
         f"{compare_on}_bysection_similarity": section_results,
+        "bibliography_coverage": global_bib_coverage
     }
 
     end = time()
