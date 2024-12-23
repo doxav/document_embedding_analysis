@@ -9,6 +9,39 @@ from scipy.optimize import linear_sum_assignment
 from sklearn.metrics.pairwise import cosine_similarity
 
 
+def calculate_bibliography_coverage(target_bib: List[Dict], current_bib: List[Dict]) -> float:
+    """Calculate bibliography coverage using Hungarian algorithm."""
+    if not target_bib or not current_bib:
+        return 0.0
+        
+    # Get embeddings
+    target_embeddings = [r["resource_embedding"] for r in target_bib]
+    current_embeddings = [r["resource_embedding"] for r in current_bib]
+    
+    # Calculate distance matrix
+    distance_matrix = 1 - cosine_similarity(target_embeddings, current_embeddings)
+    
+    # Use Hungarian algorithm
+    row_ind, col_ind = linear_sum_assignment(distance_matrix)
+    
+    # Calculate coverage score (1 - normalized distance)
+    total_distance = sum(distance_matrix[row_ind[i], col_ind[i]] for i in range(len(row_ind)))
+    coverage = 1 - (total_distance / len(target_bib))
+    
+    return coverage
+
+
+def calculate_section_bibliography_coverage(
+    target_section_refs: List[int],
+    pred_section_refs: List[int],
+    target_bib: List[Dict],
+    pred_bib: List[Dict]
+) -> Dict:
+    target_refs = [r for r in target_bib if r["resource_id"] in target_section_refs]
+    pred_refs = [r for r in pred_bib if r["resource_id"] in pred_section_refs]
+    score = calculate_bibliography_coverage(target_refs, pred_refs)
+    return score
+
 def _compare_documents(
     document: str | Path | Dict[str, Any],
     prediction: str | Path | Dict[str, Any],
@@ -98,13 +131,12 @@ def _compare_documents(
         )[0][0]
 
         # Calculate bibliography coverage for both sections
-        target_refs = set(d_dict.get("resources_used", []))
-        pred_refs = set(p_dict.get("resources_used", []))
-        # Calculate reference overlap
-        if target_refs:
-            ref_coverage = len(target_refs.intersection(pred_refs)) / len(target_refs)
-        else:
-            ref_coverage = 1.0 if not pred_refs else 0.0
+        ref_coverage = calculate_section_bibliography_coverage(
+            d_dict.get("resources_used", []),
+            p_dict.get("resources_used", []),
+            document.get("resources", []),
+            prediction.get("resources", [])
+        )
         # Combine results
         result = {
             "section_id": idx,
@@ -135,20 +167,10 @@ def _compare_documents(
     }
 
     # Calculate global bibliography coverage using Hungarian algorithm
-    target_resources = document.get("resources", [])
-    pred_resources = document.get("resources", [])
-    if target_resources and pred_resources:
-        distance_matrix = np.zeros((len(target_resources), len(pred_resources)))
-        for i, target in enumerate(target_resources):
-            for j, pred in enumerate(pred_resources):
-                distance_matrix[i][j] = 1 - cosine_similarity(
-                    [target["resource_embedding"]],
-                    [pred["resource_embedding"]],
-                )[0][0]
-        row_ind, col_ind = linear_sum_assignment(distance_matrix)
-        global_bib_coverage = 1 - (sum(distance_matrix[row_ind[i], col_ind[i]] for i in range(len(row_ind))) / max(len(target_resources), len(pred_resources)))
-    else:
-        global_bib_coverage = 0.0
+    global_bib_coverage = calculate_bibliography_coverage(
+        document.get("resources", []),
+        prediction.get("resources", [])
+    )
     if compare_on == "section":
         compare_on = "plan"
 
@@ -168,7 +190,6 @@ def _compare_documents(
         f"\n\t\tThat took: {mins:.2f} mins ({seconds:.0f} seconds)"
     )
     return output
-
 
 def compare_documents_sections(
     document1: str | Path | Dict[str, Any],
