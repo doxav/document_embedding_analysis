@@ -6,3 +6,4 @@ class DocType(Enum):
     ARXIV = "arxiv"
     WIKI = "wikipedia"
     PATENT = "patent"
+

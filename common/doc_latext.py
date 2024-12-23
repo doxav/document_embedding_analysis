@@ -33,7 +33,7 @@ class DocLatex(Document):
         tex_filename = self.getInput().name
         bib_filename = tex_filename.replace(".tex", ".bib")
 
-        with open(self.getInput(), 'r') as file:
+        with open(self.getInput(), 'r', encoding="utf8") as file:
             latex_content = self.__clean_context(file.read())
 
         with open(parent_dir / bib_filename, 'r', encoding="utf-8", errors="replace") as file:

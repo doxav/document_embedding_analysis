@@ -91,3 +91,6 @@ if __name__ == "__main__":
     logging.basicConfig(format=FORMAT, level=logging.INFO)
     
     main()
+    # file = Path('data/latex/A_Survey_on_Blood_Pressure_Measurement_Technologies_Addressing__Potential_Sources_of_Bias.tex')
+    # doc = DocLatex(file, logging)
+    # doc.extract_plan_and_content()
