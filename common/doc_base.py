@@ -317,7 +317,7 @@ class Document:
             }
         return plan_json
 
-    def __num_tokens_from_string(self, string: str, encoding_name: str = "gpt-3.5-turbo") -> int:
+    def __num_tokens_from_string(self, string: str, encoding_name: str = "gpt-4o-mini") -> int:
         """Returns the number of tokens in a text string."""
         try:
             encoding = tiktoken.get_encoding(encoding_name)
@@ -329,7 +329,7 @@ class Document:
     def __extract_title(self, string: str) -> str:
         """Extract a title from `string` that is max 7 words long."""
         doctran = Doctran(
-            openai_api_key=os.getenv("OPENAI_API_KEY"), openai_model="gpt-3.5-turbo"
+            openai_api_key=os.getenv("OPENAI_API_KEY"), openai_model="gpt-4o-mini"
         )
         document = doctran.parse(content=string)
         properties = ExtractProperty(
