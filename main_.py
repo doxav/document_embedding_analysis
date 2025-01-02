@@ -44,7 +44,7 @@ ALLOW_parallel_gen_embed_section_content = True
 embed_OPENAI = OpenAIEmbeddings(model=OPENAI_EMBEDDING_MODEL_NAME, )
 embed_HF = HuggingFaceEmbeddings(model_name=HUGGINGFACE_EMBEDDING_PATH, model_kwargs = {"device": "cuda" if torch.cuda.is_available() else "cpu", "trust_remote_code": True}, encode_kwargs={"normalize_embeddings": True})
 
-def _num_tokens_from_string(string: str, encoding_name: str = "gpt-3.5-turbo") -> int:
+def _num_tokens_from_string(string: str, encoding_name: str = "gpt-4o-mini") -> int:
     """Returns the number of tokens in a text string."""
     try:
         encoding = tiktoken.get_encoding(encoding_name)
@@ -301,7 +301,7 @@ def load_wikipedia_url(url: str) -> Dict[str, str]:
 async def _extract_title(string: str) -> str:
     """Extract a title from `string` that is max 7 words long."""
     doctran = Doctran(
-        openai_api_key=os.getenv("OPENAI_API_KEY"), openai_model="gpt-3.5-turbo"
+        openai_api_key=os.getenv("OPENAI_API_KEY"), openai_model="gpt-4o-mini"
     )
     document = doctran.parse(content=string)
     properties = ExtractProperty(
@@ -461,6 +461,8 @@ def _gen_embed_section_content_batch(
     """
     section_jsons = []
 
+    headings = [heading if isinstance(heading, str) else "" for heading in headings]
+    contents = [content if isinstance(content, str) else "" for content in contents]
     heading_embeddings_1 = embed_OPENAI.embed_documents(headings)
     content_embeddings_1 = embed_OPENAI.embed_documents(contents)
 
@@ -689,11 +691,9 @@ async def get_embeddings(
         The name of the model to be used for embedding.
     """
     if model == OPENAI_EMBEDDING_MODEL_NAME:
-        embedder = OpenAIEmbeddings(model=model)
+        embedder = embed_OPENAI # OpenAIEmbeddings(model=model)
     elif model == HUGGINGFACE_EMBEDDING_MODEL_NAME:
-        embedder = HuggingFaceEmbeddings(
-            model_name=HUGGINGFACE_EMBEDDING_PATH, model_kwargs = {"device": "cuda" if torch.cuda.is_available() else "cpu", "trust_remote_code": True}, encode_kwargs={"normalize_embeddings": True}
-        )
+        embedder = embed_HF # HuggingFaceEmbeddings(model_name=HUGGINGFACE_EMBEDDING_PATH, model_kwargs = {"device": "cuda" if torch.cuda.is_available() else "cpu", "trust_remote_code": True}, encode_kwargs={"normalize_embeddings": True})
     else:
         raise ValueError(
             f"Model name must be OPENAI_EMBEDDING_MODEL_NAME or HUGGINGFACE_EMBEDDING_MODEL_NAME. Received {model}"
@@ -769,7 +769,7 @@ def _compare_documents(
         f"\n\t\t{doc2_name}"
     )
 
-    mauve = load("mauve")
+    # mauve = load("mauve")
     rouge = load("rouge")
 
     section_results = []
@@ -784,10 +784,10 @@ def _compare_documents(
     # If plans have different lengths, just goes up to shortest
     for idx, (p_dict, d_dict) in enumerate(zip(predict_plan, doc_plan), start=1):
         # Compute MAUVE
-        mauve_results = mauve.compute(
-            predictions=[p_dict[compare_on]], references=[d_dict[compare_on]],verbose=True
-        )
-        mauve_score = mauve_results.mauve
+        # mauve_results = mauve.compute(
+        #     predictions=[p_dict[compare_on]], references=[d_dict[compare_on]],verbose=True
+        # )
+        # mauve_score = mauve_results.mauve
         # Compute ROUGE-L
         results = rouge.compute(
             predictions=[p_dict[compare_on]],
@@ -805,7 +805,7 @@ def _compare_documents(
         # Combine results
         result = {
             "section_id": idx,
-            "mauve_similarity": mauve_score,
+            #"mauve_similarity": mauve_score,
             "rouge_L_similarity": rouge_score,
             "embedding1_cosine_similarity": cosine_1,
             "embedding2_cosine_similarity": cosine_2,
@@ -814,7 +814,7 @@ def _compare_documents(
         logger.info(f"{idx}/{total_comparisons} sections compared.")
 
     # Calcualte total scores
-    mauve_total = np.mean([x["mauve_similarity"] for x in section_results])
+    # mauve_total = np.mean([x["mauve_similarity"] for x in section_results])
     rouge_total = np.mean([x["rouge_L_similarity"] for x in section_results])
     cosine_1_total = np.mean(
         [x["embedding1_cosine_similarity"] for x in section_results]
@@ -824,7 +824,7 @@ def _compare_documents(
     )
 
     total_results = {
-        "mauve_similarity": mauve_total,
+        # "mauve_similarity": mauve_total,
         "rouge_L_similarity": rouge_total,
         "embedding1_cosine_similarity": cosine_1_total,
         "embedding2_cosine_similarity": cosine_2_total,
