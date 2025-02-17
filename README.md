@@ -15,34 +15,13 @@ Rverything extracted (headings and content) is then analysed - e.g., calculating
 
 #### 1. Download code + create env
 ```
-$ git clone https://github.com/codeananda/document_extraction.git
+$ git clone https://github.com/doxav/document_extraction.git
 $ cd document_extraction
 $ pip install -r requirements.txt
 ```
 
-#### 2. Set your OpenAI key
+#### 2. Set your OpenAI key (it supports both Huggingface Models and OpenAI)
 
 1. Go to https://platform.openai.com/account/api-keys to create a new key (if you don't have one already).
 2. Rename `.env_template` to `.env`
 3. Add your key in next to `OPENAI_API_KEY`
-
-## 🤔 Questions
-
-### How to modify `max_section_length` to > 512, and/or set a new embedding
-
-You must change MAX_EMBEDDING_TOKEN_LENGTH (check if this max token is compatible with your huggingface embedding, MAUVE, and OpenAI).
-
-* Set a compatible huggingface embeddings code
-
-HUGGINGFACE_EMBEDDING_MODEL_NAME = "nomic-embed-text-v1" # "e5-base-v2"
-HUGGINGFACE_EMBEDDING_PATH = "nomic-ai/nomic-embed-text-v1" # "intfloat/e5-base-v2"
-HUGGINGFACE_EMBEDDING_PREFIX = "" # e.g. e5-base-v2 might require "query: " to better match QA pairs
-
-
-### How do I manually edit text extracted from pdfminer?
-
-* Run `load_arxiv_paper(path_to_paper)`
-* Write output to disk using `json.dump`
-* Modify the `Content` key.
-* Load content from disk using `json.load`
-* See `extract_plan_and_content` for functions to pass to next 
