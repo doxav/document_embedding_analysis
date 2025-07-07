@@ -15,34 +15,51 @@ import requests
 import tiktoken
 import torch
 from bs4 import BeautifulSoup, Comment
-from doctran import Doctran, ExtractProperty
 from dotenv import load_dotenv, find_dotenv
 from evaluate import load
-from langchain_community.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings # from langchain.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings
+from langchain_community.embeddings import (
+    OpenAIEmbeddings,
+    HuggingFaceEmbeddings,
+)  # from langchain.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings
 from langchain.text_splitter import (
     RecursiveCharacterTextSplitter,
 )
 from loguru import logger
-import openai #
+import openai  #
 from pdfminer.high_level import extract_text
 from sklearn.metrics.pairwise import cosine_similarity
+from openai import OpenAI
 
 _ = load_dotenv(find_dotenv())
-client = openai.ChatCompletion(api_key=os.getenv("OPENAI_API_KEY")) # client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = openai.ChatCompletion(
+    api_key=os.getenv("OPENAI_API_KEY")
+)  # client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 MAX_EMBEDDING_TOKEN_LENGTH = 512
 
 OPENAI_EMBEDDING_MODEL_NAME = "text-embedding-ada-002"
 
-HUGGINGFACE_EMBEDDING_MODEL_NAME = "nomic-embed-text-v1" # "e5-base-v2"
-HUGGINGFACE_EMBEDDING_PATH = "nomic-ai/nomic-embed-text-v1" # "intfloat/e5-base-v2"
-HUGGINGFACE_EMBEDDING_PREFIX = "" # e.g. e5-base-v2 might require "query: " to better match QA pairs
+HUGGINGFACE_EMBEDDING_MODEL_NAME = "nomic-embed-text-v1"  # "e5-base-v2"
+HUGGINGFACE_EMBEDDING_PATH = "nomic-ai/nomic-embed-text-v1"  # "intfloat/e5-base-v2"
+HUGGINGFACE_EMBEDDING_PREFIX = (
+    ""  # e.g. e5-base-v2 might require "query: " to better match QA pairs
+)
 
 ALLOW_parallel_gen_embed_section_content = True
 
 # Normalized by default
-embed_OPENAI = OpenAIEmbeddings(model=OPENAI_EMBEDDING_MODEL_NAME, )
-embed_HF = HuggingFaceEmbeddings(model_name=HUGGINGFACE_EMBEDDING_PATH, model_kwargs = {"device": "cuda" if torch.cuda.is_available() else "cpu", "trust_remote_code": True}, encode_kwargs={"normalize_embeddings": True})
+embed_OPENAI = OpenAIEmbeddings(
+    model=OPENAI_EMBEDDING_MODEL_NAME,
+)
+embed_HF = HuggingFaceEmbeddings(
+    model_name=HUGGINGFACE_EMBEDDING_PATH,
+    model_kwargs={
+        "device": "cuda" if torch.cuda.is_available() else "cpu",
+        "trust_remote_code": True,
+    },
+    encode_kwargs={"normalize_embeddings": True},
+)
+
 
 def _num_tokens_from_string(string: str, encoding_name: str = "gpt-4o-mini") -> int:
     """Returns the number of tokens in a text string."""
@@ -120,18 +137,30 @@ def load_arxiv_paper(path: str | Path) -> Dict[str, str]:
         ref_pattern = r"\[(\d+)\]\s+(.*?)(?=\n\s*\[\d+\]|$)"
         # Find all matches
         matches = re.findall(ref_pattern, references, re.DOTALL)
-        
+
         for ref_number, ref_description in matches:
-            ref_list.append({
-                "resource_id": int(ref_number),
-                "resource_description": ref_description.replace('\n', '').strip()
-            })
-            
+            ref_list.append(
+                {
+                    "resource_id": int(ref_number),
+                    "resource_description": ref_description.replace("\n", "").strip(),
+                }
+            )
+
         ref_list = sorted(ref_list, key=lambda x: x["resource_id"])
 
     content = text[abstract_end:reference_start]
 
-    print("EXTRACTION OVERVIEW:\nTitle:"+title[:50].replace("\n","\\n")+"...\nAbstract:"+abstract[:50].replace("\n","\\n")+"...\nContent:"+content[:50].replace("\n","\\n")+"...\nReferences:"+references[:50].replace("\n","\\n")+"...")
+    print(
+        "EXTRACTION OVERVIEW:\nTitle:"
+        + title[:50].replace("\n", "\\n")
+        + "...\nAbstract:"
+        + abstract[:50].replace("\n", "\\n")
+        + "...\nContent:"
+        + content[:50].replace("\n", "\\n")
+        + "...\nReferences:"
+        + references[:50].replace("\n", "\\n")
+        + "..."
+    )
 
     article_dict = {
         "title": title,
@@ -281,7 +310,7 @@ def load_wikipedia_url(url: str) -> Dict[str, str]:
             new_key = key.rsplit("[edit]", 1)[0]
             article_dict[new_key] = article_dict.pop(key)
 
-    del article_dict["h2 Contents"] # TODO: check what is this specific case
+    del article_dict["h2 Contents"]  # TODO: check what is this specific case
     num_sections = len(article_dict.keys())
 
     logger.info(
@@ -289,7 +318,7 @@ def load_wikipedia_url(url: str) -> Dict[str, str]:
         f"Extracted {num_sections} sections."
     )
 
-    #print("EXTRACTION OVERVIEW:\nTitle:"+title[:50].replace("\n","\\n")+"...\nAbstract:"+abstract[:50].replace("\n","\\n")+"...\nContent:"+content[:50].replace("\n","\\n")+"...\nReferences:"+references[:50].replace("\n","\\n")+"...")
+    # print("EXTRACTION OVERVIEW:\nTitle:"+title[:50].replace("\n","\\n")+"...\nAbstract:"+abstract[:50].replace("\n","\\n")+"...\nContent:"+content[:50].replace("\n","\\n")+"...\nReferences:"+references[:50].replace("\n","\\n")+"...")
     print("EXTRACTION OVERVIEW:")
     # print for each key in article_dict, display key and frst 50 characters of value
     for key in article_dict.keys():
@@ -298,25 +327,38 @@ def load_wikipedia_url(url: str) -> Dict[str, str]:
     return article_dict
 
 
-async def _extract_title(string: str) -> str:
+async def __extract_title(string: str) -> str:
     """Extract a title from `string` that is max 7 words long."""
-    doctran = Doctran(
-        openai_api_key=os.getenv("OPENAI_API_KEY"), openai_model="gpt-4o-mini"
-    )
-    document = doctran.parse(content=string)
-    properties = ExtractProperty(
-        name="title",
-        description="The title of the document (max 7 words).",
-        type="string",
-        required=True,
-    )
     try:
-        document = document.extract(properties=[properties]).execute()
-        return document.transformed_content
+
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "Extract a concise title from the given text. The title must be maximum 7 words and capture the main topic.",
+                },
+                {
+                    "role": "user",
+                    "content": f"Extract a title from this text:\n\n{string[:1000]}",  # Limit input length
+                },
+            ],
+            max_tokens=20,
+            temperature=0.1,
+        )
+
+        title = response.choices[0].message.content.strip()
+        # Ensure max 7 words
+        words = title.split()
+        if len(words) > 7:
+            title = " ".join(words[:7])
+        return title
+
     except Exception as e:
         logger.error(f"Error extracting title from string: {e}")
         return "None"
-
 
 
 async def divide_sections_if_too_large(
@@ -339,18 +381,26 @@ async def divide_sections_if_too_large(
 
     def is_reference_section(heading: str):
         """Returns True if heading is a reference section."""
-        result = re.search(r"reference|further reading|see also|bibliography|external links", heading, re.IGNORECASE)
+        result = re.search(
+            r"reference|further reading|see also|bibliography|external links",
+            heading,
+            re.IGNORECASE,
+        )
         return result
 
     for heading, content in start_dict.items():
         content_length = len(content)
         if content_length == 0:
             final_dict[heading] = " "
-        elif content_length <= max_section_token_length: # characters length is always less than token length
+        elif (
+            content_length <= max_section_token_length
+        ):  # characters length is always less than token length
             final_dict[heading] = content
         else:
             num_tokens = _num_tokens_from_string(content)
-            logger.info(f"Content character length: {len(content)} tokens: {num_tokens} for '{heading}'")
+            logger.info(
+                f"Content character length: {len(content)} tokens: {num_tokens} for '{heading}'"
+            )
             # Each section must contain something, otherwise the embedding models fail
             if num_tokens == 0:
                 final_dict[heading] = " "
@@ -428,10 +478,14 @@ def _gen_embed_section_content(
         "section": heading,
         "content": content,
         "section_embedding_1": embed_OPENAI.embed_query(heading),
-        "section_embedding_2": embed_HF.embed_query(HUGGINGFACE_EMBEDDING_PREFIX + heading),
+        "section_embedding_2": embed_HF.embed_query(
+            HUGGINGFACE_EMBEDDING_PREFIX + heading
+        ),
         "content_embedding_1": embed_OPENAI.embed_query(content),
-        "content_embedding_2": embed_HF.embed_query(HUGGINGFACE_EMBEDDING_PREFIX + content),
-        "resources_used": resources_ids
+        "content_embedding_2": embed_HF.embed_query(
+            HUGGINGFACE_EMBEDDING_PREFIX + content
+        ),
+        "resources_used": resources_ids,
     }
 
     logger.info(
@@ -440,7 +494,9 @@ def _gen_embed_section_content(
 
     return section_json
 
+
 from typing import List, Dict
+
 
 def _gen_embed_section_content_batch(
     headings: List[str], contents: List[str], ids: List[int], total_sections: int
@@ -466,39 +522,74 @@ def _gen_embed_section_content_batch(
     heading_embeddings_1 = embed_OPENAI.embed_documents(headings)
     content_embeddings_1 = embed_OPENAI.embed_documents(contents)
 
-    def HF_embed_split(contents, n): return sum([embed_HF.embed_documents([HUGGINGFACE_EMBEDDING_PREFIX + c for c in contents[i::n]]) for i in range(n)], [])
+    def HF_embed_split(contents, n):
+        return sum(
+            [
+                embed_HF.embed_documents(
+                    [HUGGINGFACE_EMBEDDING_PREFIX + c for c in contents[i::n]]
+                )
+                for i in range(n)
+            ],
+            [],
+        )
+
     n = 1
-    while True: 
-        try: heading_embeddings_2 = HF_embed_split(headings, n); break
-        except: n *= 2; print(f"Failed heading_embeddings_2 to HF embed content 1 batch of {len(contents)/(n/2)} trying with {n} splits")
+    while True:
+        try:
+            heading_embeddings_2 = HF_embed_split(headings, n)
+            break
+        except:
+            n *= 2
+            print(
+                f"Failed heading_embeddings_2 to HF embed content 1 batch of {len(contents)/(n/2)} trying with {n} splits"
+            )
     n = 1
-    while True: 
-        try: content_embeddings_2 = HF_embed_split(contents, n); break
-        except: n *= 2; print(f"Failed content_embeddings_2 to HF embed content 1 batch of {len(contents)/(n/2)} trying with {n} splits")
+    while True:
+        try:
+            content_embeddings_2 = HF_embed_split(contents, n)
+            break
+        except:
+            n *= 2
+            print(
+                f"Failed content_embeddings_2 to HF embed content 1 batch of {len(contents)/(n/2)} trying with {n} splits"
+            )
 
     for id, heading, content, emb_h1, emb_h2, emb_c1, emb_c2 in zip(
-            ids, headings, contents, heading_embeddings_1, heading_embeddings_2, content_embeddings_1, content_embeddings_2):
-        
+        ids,
+        headings,
+        contents,
+        heading_embeddings_1,
+        heading_embeddings_2,
+        content_embeddings_1,
+        content_embeddings_2,
+    ):
+
         # Get resource indexes used in content
-        resources_ids = sorted(set([int(num) for num in re.findall(r"\[(\d+)\]", content)]))
-        section_jsons.append({
-            "section_id": id,
-            "section": heading,
-            "content": content,
-            "section_embedding_1": emb_h1,
-            "section_embedding_2": emb_h2,
-            "content_embedding_1": emb_c1,
-            "content_embedding_2": emb_c2,
-            "resources_used": resources_ids
-        })
+        resources_ids = sorted(
+            set([int(num) for num in re.findall(r"\[(\d+)\]", content)])
+        )
+        section_jsons.append(
+            {
+                "section_id": id,
+                "section": heading,
+                "content": content,
+                "section_embedding_1": emb_h1,
+                "section_embedding_2": emb_h2,
+                "content_embedding_1": emb_c1,
+                "content_embedding_2": emb_c2,
+                "resources_used": resources_ids,
+            }
+        )
 
         logger.info(
             f"{id}/{total_sections} - created section + content embeddings for {heading} - SECTION: {heading[:50]}... CONTENT: {content[:50]}..."
         )
-    
+
     return section_jsons
 
+
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
 
 def _gen_embed_plan(plan: List[dict], i: int) -> List[float]:
     """Calculate plan embedding by averaging the section embeddings and content embeddings
@@ -525,26 +616,34 @@ def _gen_embed_plan(plan: List[dict], i: int) -> List[float]:
     logger.info(f"Created plan embedding {i}")
     return total_mean
 
-def _parallel_gen_embed_section_content(headings, content, start_index, total_sections, initial_plan=None):
+
+def _parallel_gen_embed_section_content(
+    headings, content, start_index, total_sections, initial_plan=None
+):
     # Collect data for batch processing
     headings_to_process = []
     contents_to_process = []
     indices = []
 
-    for i, (heading, content) in enumerate(zip(headings[start_index:], content[start_index:]), start=1):
+    for i, (heading, content) in enumerate(
+        zip(headings[start_index:], content[start_index:]), start=1
+    ):
         headings_to_process.append(heading)
         contents_to_process.append(content)
         indices.append(i)
 
     # Process embeddings in batch
-    plan = _gen_embed_section_content_batch(headings_to_process, contents_to_process, indices, total_sections)
+    plan = _gen_embed_section_content_batch(
+        headings_to_process, contents_to_process, indices, total_sections
+    )
     # Merge dict data for each element of plan if initial_plan is provided
     if initial_plan:
         for i, (p, ip) in enumerate(zip(plan, initial_plan), start=1):
             p.update(ip)
 
     return plan
-    
+
+
 def generate_embeddings_plan_and_section_content(
     article_dict: Dict, doc_type: str = "patent"
 ) -> Dict:
@@ -584,7 +683,9 @@ def generate_embeddings_plan_and_section_content(
         # Filtered keys and values
         key_to_exclude = "References"
         headings = [key for key in article_dict.keys() if key != key_to_exclude]
-        content = [value for key, value in article_dict.items() if key != key_to_exclude]
+        content = [
+            value for key, value in article_dict.items() if key != key_to_exclude
+        ]
         # The first key/value pairs in arxiv dicts are {'Title': title, 'Abstract': abstract}
         # so we take the first two elements of content
         title = content[0]
@@ -609,7 +710,13 @@ def generate_embeddings_plan_and_section_content(
     logger.info("Abstract: " + abstract)
 
     if ALLOW_parallel_gen_embed_section_content:
-        plan = _parallel_gen_embed_section_content(headings, content, start_index, total_sections, article_dict.get("plan", None))
+        plan = _parallel_gen_embed_section_content(
+            headings,
+            content,
+            start_index,
+            total_sections,
+            article_dict.get("plan", None),
+        )
     else:
         plan = [
             _gen_embed_section_content(
@@ -624,10 +731,12 @@ def generate_embeddings_plan_and_section_content(
     resources = []
     try:
         resources = article_dict.get("references", [])
-        if isinstance(resources, dict): # for Wikipedia
+        if isinstance(resources, dict):  # for Wikipedia
             resources = list(resources.values())
         for i in range(len(resources)):
-            resources[i]["resource_embedding"] = embed_OPENAI.embed_query(resources[i]["resource_description"])
+            resources[i]["resource_embedding"] = embed_OPENAI.embed_query(
+                resources[i]["resource_description"]
+            )
     except Exception as e:
         logger.debug(f"Error occurred while processing resources {e}")
 
@@ -640,9 +749,13 @@ def generate_embeddings_plan_and_section_content(
             "title": title,
             "abstract": abstract,
             "title_embedding_1": embed_OPENAI.embed_query(title),
-            "title_embedding_2": embed_HF.embed_query(HUGGINGFACE_EMBEDDING_PREFIX + title),
+            "title_embedding_2": embed_HF.embed_query(
+                HUGGINGFACE_EMBEDDING_PREFIX + title
+            ),
             "abstract_embedding_1": embed_OPENAI.embed_query(abstract),
-            "abstract_embedding_2": embed_HF.embed_query(HUGGINGFACE_EMBEDDING_PREFIX + abstract),
+            "abstract_embedding_2": embed_HF.embed_query(
+                HUGGINGFACE_EMBEDDING_PREFIX + abstract
+            ),
             "plan": plan,
             "resources": resources,
             "plan_embedding_1": plan_embed_1,
@@ -691,9 +804,9 @@ async def get_embeddings(
         The name of the model to be used for embedding.
     """
     if model == OPENAI_EMBEDDING_MODEL_NAME:
-        embedder = embed_OPENAI # OpenAIEmbeddings(model=model)
+        embedder = embed_OPENAI  # OpenAIEmbeddings(model=model)
     elif model == HUGGINGFACE_EMBEDDING_MODEL_NAME:
-        embedder = embed_HF # HuggingFaceEmbeddings(model_name=HUGGINGFACE_EMBEDDING_PATH, model_kwargs = {"device": "cuda" if torch.cuda.is_available() else "cpu", "trust_remote_code": True}, encode_kwargs={"normalize_embeddings": True})
+        embedder = embed_HF  # HuggingFaceEmbeddings(model_name=HUGGINGFACE_EMBEDDING_PATH, model_kwargs = {"device": "cuda" if torch.cuda.is_available() else "cpu", "trust_remote_code": True}, encode_kwargs={"normalize_embeddings": True})
     else:
         raise ValueError(
             f"Model name must be OPENAI_EMBEDDING_MODEL_NAME or HUGGINGFACE_EMBEDDING_MODEL_NAME. Received {model}"
@@ -805,7 +918,7 @@ def _compare_documents(
         # Combine results
         result = {
             "section_id": idx,
-            #"mauve_similarity": mauve_score,
+            # "mauve_similarity": mauve_score,
             "rouge_L_similarity": rouge_score,
             "embedding1_cosine_similarity": cosine_1,
             "embedding2_cosine_similarity": cosine_2,
@@ -870,6 +983,7 @@ def compare_documents_sections(
     """
     return _compare_documents(document1, document2, compare_on="section")
 
+
 def compare_documents_content(
     document1: str | Path | Dict[str, Any],
     document2: str | Path | Dict[str, Any],
@@ -890,6 +1004,7 @@ def compare_documents_content(
     # TODO - do we really need method? Or can we just do every metric every time?
     return _compare_documents(document1, document2, compare_on="content")
 
+
 def generate_title(input: str | Path, doc_type: str) -> str:
     """Extracts the title from the input based on the document type."""
     if doc_type == "wikipedia":
@@ -903,11 +1018,16 @@ def generate_title(input: str | Path, doc_type: str) -> str:
         with open(input, "r") as f:
             first_line = f.readline()
         title = first_line.split("\t")[-1].strip()
-        title = "".join(i for i in title if i not in "\/:*?<>|")  # Remove illegal characters
+        title = "".join(
+            i for i in title if i not in "\/:*?<>|"
+        )  # Remove illegal characters
     else:
-        raise ValueError(f"doc_type must be one of 'patent', 'wikipedia', or 'arxiv'. Received {doc_type}")
-    
+        raise ValueError(
+            f"doc_type must be one of 'patent', 'wikipedia', or 'arxiv'. Received {doc_type}"
+        )
+
     return title
+
 
 import re
 import json
@@ -916,36 +1036,46 @@ import os
 import asyncio
 from pathlib import Path
 
+
 # Helper functions for LaTeX processing
 def latex_extract_citations(text, references):
-    citations = re.findall(r'\\cite[t|p]*\{([^}]+)\}', text)
+    citations = re.findall(r"\\cite[t|p]*\{([^}]+)\}", text)
     return list({citation for citation in citations if citation in references})
 
-def plan_create_section_entry(section_id, section_title, content="", resources_cited=None, references=[]):
+
+def plan_create_section_entry(
+    section_id, section_title, content="", resources_cited=None, references=[]
+):
     if resources_cited is None:
         resources_cited = []
     return {
         "section_id": section_id,
         "section": section_title,
         "content": content,
-        "resources_used": sorted(set([i for i, ref in enumerate(references) if ref in resources_cited])),
+        "resources_used": sorted(
+            set([i for i, ref in enumerate(references) if ref in resources_cited])
+        ),
         "resources_cited_key": resources_cited,
     }
 
+
 def latex_clean_content(content):
     # Remove lines starting with %
-    content = '\n'.join(line for line in content.split('\n') if not line.strip().startswith('%'))
-    
+    content = "\n".join(
+        line for line in content.split("\n") if not line.strip().startswith("%")
+    )
+
     # Remove unnecessary LaTeX commands
-    content = re.sub(r'\\(usepackage|documentclass)\{.*?\}', '', content)
-    
+    content = re.sub(r"\\(usepackage|documentclass)\{.*?\}", "", content)
+
     # Remove LaTeX environments
-    #content = re.sub(r'\\begin\{.*?\}.*?\\end\{.*?\}', '', content, flags=re.DOTALL)
-    
+    # content = re.sub(r'\\begin\{.*?\}.*?\\end\{.*?\}', '', content, flags=re.DOTALL)
+
     # Remove extra whitespace
-    content = re.sub(r'\s+', ' ', content).strip()
-    
+    content = re.sub(r"\s+", " ", content).strip()
+
     return content
+
 
 def latex_sections_hierarchical_numbering(sections, method="counters"):
     section_counters = {"section": 0, "subsection": 0, "subsubsection": 0}
@@ -961,7 +1091,9 @@ def latex_sections_hierarchical_numbering(sections, method="counters"):
             elif section_type == "subsection":
                 section_counters["subsection"] += 1
                 section_counters["subsubsection"] = 0
-                section_number = f"{section_counters['section']}.{section_counters['subsection']}"
+                section_number = (
+                    f"{section_counters['section']}.{section_counters['subsection']}"
+                )
             elif section_type == "subsubsection":
                 section_counters["subsubsection"] += 1
                 section_number = f"{section_counters['section']}.{section_counters['subsection']}.{section_counters['subsubsection']}"
@@ -970,57 +1102,91 @@ def latex_sections_hierarchical_numbering(sections, method="counters"):
 
     return numbered_sections
 
+
 def biblatex_extract_resources(bibtex_content):
     resources = []
-    entries = re.findall(r'@(\w+)\{([^,]+),(.+?)\n\}', bibtex_content, re.DOTALL | re.IGNORECASE)
+    entries = re.findall(
+        r"@(\w+)\{([^,]+),(.+?)\n\}", bibtex_content, re.DOTALL | re.IGNORECASE
+    )
     for i, (entry_type, citation_key, content) in enumerate(entries):
-        title_match = re.search(r'title\s*=\s*\{(.+?)\}', content, re.DOTALL | re.IGNORECASE)
-        author_match = re.search(r'author\s*=\s*\{(.+?)\}', content, re.DOTALL | re.IGNORECASE)
-        year_match = re.search(r'year\s*=\s*\{(.+?)\}', content)
-        url_match = re.search(r'url\s*=\s*\{(.+?)\}', content)
-        doi_match = re.search(r'doi\s*=\s*\{(.+?)\}', content, re.DOTALL)
+        title_match = re.search(
+            r"title\s*=\s*\{(.+?)\}", content, re.DOTALL | re.IGNORECASE
+        )
+        author_match = re.search(
+            r"author\s*=\s*\{(.+?)\}", content, re.DOTALL | re.IGNORECASE
+        )
+        year_match = re.search(r"year\s*=\s*\{(.+?)\}", content)
+        url_match = re.search(r"url\s*=\s*\{(.+?)\}", content)
+        doi_match = re.search(r"doi\s*=\s*\{(.+?)\}", content, re.DOTALL)
 
         title = title_match.group(1).strip() if title_match else None
         author = author_match.group(1).strip() if author_match else None
         year = year_match.group(1).strip() if year_match else None
-        url = url_match.group(1).strip() if url_match else doi_match.group(1).strip() if doi_match else None
+        url = (
+            url_match.group(1).strip()
+            if url_match
+            else doi_match.group(1).strip() if doi_match else None
+        )
 
-        resources.append({
-            "resource_id": i + 1,
-            "resource_key": citation_key.strip(),
-            "resource_description": f"{title if title else ''}\nAuthor:{author if author else ''}\nYear:{year if year else ''}",
-            "url": url
-        })
+        resources.append(
+            {
+                "resource_id": i + 1,
+                "resource_key": citation_key.strip(),
+                "resource_description": f"{title if title else ''}\nAuthor:{author if author else ''}\nYear:{year if year else ''}",
+                "url": url,
+            }
+        )
     return resources
 
+
 # Main function to extract plan and content from LaTeX files
-async def extract_plan_and_content_latex(tex_file: Path, without_embeddings=False, output_dir = './output/latex') -> Dict[str, Any]:
+async def extract_plan_and_content_latex(
+    tex_file: Path, without_embeddings=False, output_dir="./output/latex"
+) -> Dict[str, Any]:
     data_dir = tex_file.parent
     tex_filename = tex_file.name
-    bib_filename = tex_filename.replace('.tex', '.bib')
+    bib_filename = tex_filename.replace(".tex", ".bib")
 
-    with open(tex_file, 'r') as file:
+    with open(tex_file, "r") as file:
         latex_content = file.read()
 
-    with open(data_dir / bib_filename, 'r', encoding="utf-8", errors="replace") as file:
+    with open(data_dir / bib_filename, "r", encoding="utf-8", errors="replace") as file:
         bibtex_content = file.read()
 
     latex_content = latex_clean_content(latex_content)
 
-    title_match = re.search(r'\\title\{(.+?)\}', latex_content, re.DOTALL | re.IGNORECASE)
-    title = title_match.group(1).strip() if title_match else 'No Title Found'
+    title_match = re.search(
+        r"\\title\{(.+?)\}", latex_content, re.DOTALL | re.IGNORECASE
+    )
+    title = title_match.group(1).strip() if title_match else "No Title Found"
 
-    abstract_match = re.search(r'\\begin\{abstract\}(.*?)\\end\{abstract\}', latex_content, re.DOTALL | re.IGNORECASE) or \
-                     re.search(r'\\abstract\{(.+?)\}', latex_content, re.DOTALL | re.IGNORECASE) or \
-                     re.search(r'\\abst[ \n](.*?)\\xabst', latex_content, re.DOTALL | re.IGNORECASE) or \
-                     re.search(r'\\section\*\{abstract\}(.+?)(?=\\section|\Z)', latex_content, re.DOTALL | re.IGNORECASE)
-    abstract = abstract_match.group(1).strip() if abstract_match else 'No Abstract Found'
+    abstract_match = (
+        re.search(
+            r"\\begin\{abstract\}(.*?)\\end\{abstract\}",
+            latex_content,
+            re.DOTALL | re.IGNORECASE,
+        )
+        or re.search(r"\\abstract\{(.+?)\}", latex_content, re.DOTALL | re.IGNORECASE)
+        or re.search(
+            r"\\abst[ \n](.*?)\\xabst", latex_content, re.DOTALL | re.IGNORECASE
+        )
+        or re.search(
+            r"\\section\*\{abstract\}(.+?)(?=\\section|\Z)",
+            latex_content,
+            re.DOTALL | re.IGNORECASE,
+        )
+    )
+    abstract = (
+        abstract_match.group(1).strip() if abstract_match else "No Abstract Found"
+    )
 
-    section_pattern = r'\\((?:sub)*section)\{(.+?)\}'
+    section_pattern = r"\\((?:sub)*section)\{(.+?)\}"
     sections = re.findall(section_pattern, latex_content)
-    numbered_sections = latex_sections_hierarchical_numbering(sections, method="counters")
+    numbered_sections = latex_sections_hierarchical_numbering(
+        sections, method="counters"
+    )
 
-    references = re.findall(r'@.*?\{(.*?),', bibtex_content, re.DOTALL | re.IGNORECASE)
+    references = re.findall(r"@.*?\{(.*?),", bibtex_content, re.DOTALL | re.IGNORECASE)
     plan = []
     section_id = 0
     cited_references = set()
@@ -1030,56 +1196,73 @@ async def extract_plan_and_content_latex(tex_file: Path, without_embeddings=Fals
         section_id += 1
 
         original_section_title = section_title.split(" ", 1)[1]
-        section_regex = rf'\\{section_type}\{{{re.escape(original_section_title)}\}}(.*?)(?=\\(?:sub)*section\{{|\\end\{{document\}})'
+        section_regex = rf"\\{section_type}\{{{re.escape(original_section_title)}\}}(.*?)(?=\\(?:sub)*section\{{|\\end\{{document\}})"
         section_content_match = re.search(section_regex, latex_content, re.DOTALL)
-        content = section_content_match.group(1).strip() if section_content_match else ''
+        content = (
+            section_content_match.group(1).strip() if section_content_match else ""
+        )
 
         resources_cited = latex_extract_citations(content, references)
         cited_references.update(resources_cited)
 
-        plan.append(plan_create_section_entry(section_id, section_title, content, resources_cited, references))
+        plan.append(
+            plan_create_section_entry(
+                section_id, section_title, content, resources_cited, references
+            )
+        )
         section_dict[section_title] = content
 
     resources = biblatex_extract_resources(bibtex_content)
-    resources = [res for res in resources if res['resource_key'] in cited_references]
+    resources = [res for res in resources if res["resource_key"] in cited_references]
 
     paper_data = {
         "id": str(uuid.uuid4()),
         "title": title,
         "abstract": abstract,
         "plan": plan,
-        "references": resources
+        "references": resources,
     }
 
     json_output = json.dumps(paper_data, indent=2)
-    json_output = re.sub(r'("resources_cited_(id|key)?"\s*:\s*\[\n\s*([^]]+?)\s*\])', lambda m: m.group(0).replace('\n', '').replace(' ', ''), json_output)
+    json_output = re.sub(
+        r'("resources_cited_(id|key)?"\s*:\s*\[\n\s*([^]]+?)\s*\])',
+        lambda m: m.group(0).replace("\n", "").replace(" ", ""),
+        json_output,
+    )
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     if without_embeddings:
-        json_filename = os.path.join(output_dir, tex_filename.replace('.tex', '.json'))
+        json_filename = os.path.join(output_dir, tex_filename.replace(".tex", ".json"))
 
-        with open(json_filename, 'w') as file:
+        with open(json_filename, "w") as file:
             file.write(json_output)
 
         print(f"Successfully processed: {tex_filename}")
         return paper_data
-    
+
     else:
         # Process embeddings
-        #section_dict["title"] = title  # Adding title for embedding generation
-        #section_dict["abstract"] = abstract  # Adding abstract for embedding generation
-        paper_data_with_embeddings = generate_embeddings_plan_and_section_content(paper_data, doc_type="latex")
-        json_filename = os.path.join(output_dir, tex_filename.replace('.tex', '_with_embeddings.json'))
+        # section_dict["title"] = title  # Adding title for embedding generation
+        # section_dict["abstract"] = abstract  # Adding abstract for embedding generation
+        paper_data_with_embeddings = generate_embeddings_plan_and_section_content(
+            paper_data, doc_type="latex"
+        )
+        json_filename = os.path.join(
+            output_dir, tex_filename.replace(".tex", "_with_embeddings.json")
+        )
 
-        with open(json_filename, 'w') as file:
+        with open(json_filename, "w") as file:
             json.dump(paper_data_with_embeddings, file, indent=4)
 
         print(f"Successfully processed: {tex_filename}")
         return paper_data_with_embeddings
 
-async def extract_plan_and_content(input: str | Path, doc_type: str, skip_if_exists: bool = False) -> Dict[str, Any]:
+
+async def extract_plan_and_content(
+    input: str | Path, doc_type: str, skip_if_exists: bool = False
+) -> Dict[str, Any]:
     """Extract plans and content for a range of doc_types. Write ouputs to individual files.
     Return a dictionary containing the plan and content for the input."""
     # test if file exists
@@ -1103,7 +1286,7 @@ async def extract_plan_and_content(input: str | Path, doc_type: str, skip_if_exi
             f"doc_type must be one of 'patent', 'wikipedia', or 'arxiv'. "
             f"Received {doc_type}"
         )
-    #return article_dict
+    # return article_dict
     # Divide and create embeddings
     article_dict = await divide_sections_if_too_large(article_dict, doc_type=doc_type)
     num_sections = len(article_dict.keys())
@@ -1200,28 +1383,38 @@ async def extract_plan_and_content_patent(patent_file: str | Path) -> Dict[str, 
 
 
 if __name__ == "__main__":
-    latex_paper = Path("D:/Works/Upworks/LLM/document_embedding_analysis/data/latex/A Survey of Software-Defined Smart Grid Networks, Security Threats and Defense Techniques.tex")
+    latex_paper = Path(
+        "D:/Works/Upworks/LLM/document_embedding_analysis/data/latex/A Survey of Software-Defined Smart Grid Networks, Security Threats and Defense Techniques.tex"
+    )
     asyncio.run(extract_plan_and_content_latex(latex_paper, without_embeddings=False))
     exit()
 
     # Ask input preference to generate for: all (Enter), 1 for each type (1), or just an example of a given type (Latex: L, Arxiv: A, Wikipedia: W, Patent: P)
-    output_preference = input("Generate for all (Enter), 1 for each type (1), or just an example of a given type (Latex: L, Arxiv: A, Wikipedia: W, Patent: P): ").lower()
+    output_preference = input(
+        "Generate for all (Enter), 1 for each type (1), or just an example of a given type (Latex: L, Arxiv: A, Wikipedia: W, Patent: P): "
+    ).lower()
 
     # Process LaTeX files
     if output_preference in ["", "1", "l"]:
-        #latex_papers = list(Path("data/latex").glob("Macroeconomic_*.tex"))
+        # latex_papers = list(Path("data/latex").glob("Macroeconomic_*.tex"))
         latex_papers = list(Path("data/latex").glob("*.tex"))
         for latex_paper in latex_papers:
-            asyncio.run(extract_plan_and_content_latex(latex_paper, without_embeddings=False))
-            if output_preference == "1": break
-            elif output_preference == "l": exit()
+            asyncio.run(
+                extract_plan_and_content_latex(latex_paper, without_embeddings=False)
+            )
+            if output_preference == "1":
+                break
+            elif output_preference == "l":
+                exit()
 
     if output_preference in ["", "1", "a"]:
         arxiv = list(Path("data/arxiv").glob("*"))
         for arx in arxiv:
             asyncio.run(extract_plan_and_content_arxiv(arx))
-            if output_preference == "1": break
-            elif output_preference == "a": exit()
+            if output_preference == "1":
+                break
+            elif output_preference == "a":
+                exit()
 
     if output_preference in ["", "1", "w"]:
         wikipedia_articles = [
@@ -1239,13 +1432,17 @@ if __name__ == "__main__":
         ]
         for wiki in wikipedia_articles:
             asyncio.run(extract_plan_and_content_wikipedia(wiki))
-            if output_preference == "1": break
-            elif output_preference == "w": exit()
+            if output_preference == "1":
+                break
+            elif output_preference == "w":
+                exit()
 
     if output_preference in ["", "1", "p"]:
         patents = list(Path("data/patents").glob("*"))
         # patents = ["data/patents/MICROWAVE TURNTABLE CONVECTION HEATER.txt", "data/patents/PHARMACEUTICAL COMPOSITIONS OF GALLIUM COMPLEXES OF 3-HYDROXY-4-PYRONES.txt"]
         for patent in patents:
             asyncio.run(extract_plan_and_content_patent(patent))
-            if output_preference == "1": break
-            elif output_preference == "p": exit()
+            if output_preference == "1":
+                break
+            elif output_preference == "p":
+                exit()

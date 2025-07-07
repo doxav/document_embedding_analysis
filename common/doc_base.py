@@ -14,53 +14,64 @@ from common.config import (
     MAX_EMBEDDING_TOKEN_LENGTH,
     embed_OPENAI,
     embed_HF,
-    ALLOW_parallel_gen_embed_section_content
+    ALLOW_parallel_gen_embed_section_content,
 )
 from langchain.text_splitter import (
     RecursiveCharacterTextSplitter,
 )
-from doctran import Doctran, ExtractProperty
+from openai import OpenAI
 
 
 class Document:
-    def __init__(self, source:str | Path, doc_type:DocType, logger:Logger):
+    def __init__(
+        self,
+        source: str | Path,
+        doc_type: DocType,
+        logger: Logger,
+        output_dir: str = None,
+    ):
         self.__source = source
         self.__type = doc_type
         self.__logger = logger
-        self.__output_dir = f"output/{doc_type.value}"
+        self.__output_dir = output_dir or f"output/{doc_type.value}"
         self.__title = None
         self.__references = []
         if not os.path.exists(self.__output_dir):
             os.makedirs(self.__output_dir)
         self.__output_file = None
 
-    def setReferences(self, references:List):
+    def setReferences(self, references: List):
         self.__references = references
 
     def getInput(self) -> str | Path:
         return self.__source
-    
+
     def getType(self) -> DocType:
         return self.__type
 
-    def getLogger(self)->Logger:
+    def getLogger(self) -> Logger:
         return self.__logger
-    
+
     def generateOutputFile(self, **kargs):
         if self.__type == DocType.LATEX:
-            without_embeddings = bool(kargs['without_embeddings']) if 'without_embeddings' in kargs else False
+            without_embeddings = (
+                bool(kargs["without_embeddings"])
+                if "without_embeddings" in kargs
+                else False
+            )
             if without_embeddings:
                 self.__output_file = os.path.join(
-                    self.__output_dir, 
-                    self.__source.replace('.tex', '.json')
+                    self.__output_dir, self.__source.replace(".tex", ".json")
                 )
             else:
                 self.__output_file = os.path.join(
                     self.__output_dir,
-                    self.__source.name.replace('.tex', '_with_embeddings.json')
+                    self.__source.name.replace(".tex", "_with_embeddings.json"),
                 )
         else:
-            self.__output_file = self.__output_dir / Path(f"{self.__generate_title()}.json")
+            self.__output_file = self.__output_dir / Path(
+                f"{self.__generate_title()}.json"
+            )
 
     def getOutputFile(self):
         return self.__output_file
@@ -109,7 +120,10 @@ class Document:
 
     def __gen_embed_section_content_batch(
         self,
-        headings: List[str], contents: List[str], ids: List[int], total_sections: int
+        headings: List[str],
+        contents: List[str],
+        ids: List[int],
+        total_sections: int,
     ) -> List[Dict[str, str | List[float]]]:
         """Given lists of headings and contents, returns a list of dictionaries
         with the headings, contents, and embeddings for each section.
@@ -133,43 +147,70 @@ class Document:
         def HF_embed_split(contents, n):
             return sum(
                 [
-                    embed_HF.embed_documents([HUGGINGFACE_EMBEDDING_PREFIX + c for c in contents[i::n]])
+                    embed_HF.embed_documents(
+                        [HUGGINGFACE_EMBEDDING_PREFIX + c for c in contents[i::n]]
+                    )
                     for i in range(n)
-                ], [])
+                ],
+                [],
+            )
+
         n = 1
-        while True: 
-            try: heading_embeddings_2 = HF_embed_split(headings, n); break
-            except: n *= 2; self.__logger.info(f"Failed heading_embeddings_2 to HF embed content 1 batch of {len(headings)/(n/2)} trying with {n} splits")
+        while True:
+            try:
+                heading_embeddings_2 = HF_embed_split(headings, n)
+                break
+            except:
+                n *= 2
+                self.__logger.info(
+                    f"Failed heading_embeddings_2 to HF embed content 1 batch of {len(headings)/(n/2)} trying with {n} splits"
+                )
         n = 1
-        while True: 
-            try: content_embeddings_2 = HF_embed_split(contents, n); break
-            except: n *= 2; self.__logger.info(f"Failed content_embeddings_2 to HF embed content 1 batch of {len(contents)/(n/2)} trying with {n} splits")
+        while True:
+            try:
+                content_embeddings_2 = HF_embed_split(contents, n)
+                break
+            except:
+                n *= 2
+                self.__logger.info(
+                    f"Failed content_embeddings_2 to HF embed content 1 batch of {len(contents)/(n/2)} trying with {n} splits"
+                )
 
         for id, heading, content, emb_h1, emb_h2, emb_c1, emb_c2 in zip(
-                ids, headings, contents, heading_embeddings_1, heading_embeddings_2, content_embeddings_1, content_embeddings_2):
+            ids,
+            headings,
+            contents,
+            heading_embeddings_1,
+            heading_embeddings_2,
+            content_embeddings_1,
+            content_embeddings_2,
+        ):
 
-            section_jsons.append({
-                "section_id": id,
-                "section": heading,
-                "content": content,
-                "section_embedding_1": emb_h1,
-                "section_embedding_2": emb_h2,
-                "content_embedding_1": emb_c1,
-                "content_embedding_2": emb_c2,
-                "resources_used": self.__get_reference_used(content)
-            })
+            section_jsons.append(
+                {
+                    "section_id": id,
+                    "section": heading,
+                    "content": content,
+                    "section_embedding_1": emb_h1,
+                    "section_embedding_2": emb_h2,
+                    "content_embedding_1": emb_c1,
+                    "content_embedding_2": emb_c2,
+                    "resources_used": self.__get_reference_used(content),
+                }
+            )
 
             self.__logger.info(
                 f"{id}/{total_sections} - created section + content embeddings for {heading} - SECTION: {heading[:50]}... CONTENT: {content[:50]}..."
             )
-        
+
         return section_jsons
 
-    def __parallel_gen_embed_section_content(self,
-        headings:List,
-        contents:List,
-        start_index:int,
-        total_sections:List,
+    def __parallel_gen_embed_section_content(
+        self,
+        headings: List,
+        contents: List,
+        start_index: int,
+        total_sections: List,
         initial_plan=None,
     ):
         # Collect data for batch processing
@@ -177,13 +218,17 @@ class Document:
         contents_to_process = []
         indices = []
 
-        for i, (heading, content) in enumerate(zip(headings[start_index:], contents[start_index:]), start=1):
+        for i, (heading, content) in enumerate(
+            zip(headings[start_index:], contents[start_index:]), start=1
+        ):
             headings_to_process.append(heading)
             contents_to_process.append(content)
             indices.append(i)
 
         # Process embeddings in batch
-        plan = self.__gen_embed_section_content_batch(headings_to_process, contents_to_process, indices, total_sections)
+        plan = self.__gen_embed_section_content_batch(
+            headings_to_process, contents_to_process, indices, total_sections
+        )
         # Merge dict data for each element of plan if initial_plan is provided
         if initial_plan:
             for i, (p, ip) in enumerate(zip(plan, initial_plan), start=1):
@@ -191,11 +236,13 @@ class Document:
 
         return plan
 
-    def __get_reference_used(self, content:str):
+    def __get_reference_used(self, content: str):
         # Get resource indexes used in content
         resources_ids = []
         if self.__type != DocType.PATENT:
-            resources_ids = sorted(set([int(num) for num in re.findall(r"\[(\d+)\]", content)]))
+            resources_ids = sorted(
+                set([int(num) for num in re.findall(r"\[(\d+)\]", content)])
+            )
         else:
             for reference in self.__references:
                 refer_name = reference["resource_description"]
@@ -203,9 +250,9 @@ class Document:
                     resources_ids.append(reference["resource_id"])
             resources_ids = sorted(list(set(resources_ids)))
         return resources_ids
-    
+
     def __gen_embed_section_content(
-            self, heading: str, content: str, id: int = 1, total_sections: int = 1
+        self, heading: str, content: str, id: int = 1, total_sections: int = 1
     ) -> Dict[str, str | list[float]]:
         """Given a heading and content, returns a dictionary with the heading, content,
         and embeddings of the heading and content.
@@ -226,10 +273,14 @@ class Document:
             "section": heading,
             "content": content,
             "section_embedding_1": embed_OPENAI.embed_query(heading),
-            "section_embedding_2": embed_HF.embed_query(HUGGINGFACE_EMBEDDING_PREFIX + heading),
+            "section_embedding_2": embed_HF.embed_query(
+                HUGGINGFACE_EMBEDDING_PREFIX + heading
+            ),
             "content_embedding_1": embed_OPENAI.embed_query(content),
-            "content_embedding_2": embed_HF.embed_query(HUGGINGFACE_EMBEDDING_PREFIX + content),
-            "resources_used": self.__get_reference_used(content)
+            "content_embedding_2": embed_HF.embed_query(
+                HUGGINGFACE_EMBEDDING_PREFIX + content
+            ),
+            "resources_used": self.__get_reference_used(content),
         }
 
         self.__logger.info(
@@ -238,34 +289,32 @@ class Document:
 
         return section_json
 
-    def generate_plan_embeddings(self,
-            paper_data: Dict,
-            headings:List,
-            content:List,
-            title:str,
-            abstract:str, 
-            start_index:int,
-            total_sections:List,
-            initial_plan=None,
-            allow_parallel:bool=True
-        ):
+    def generate_plan_embeddings(
+        self,
+        paper_data: Dict,
+        headings: List,
+        content: List,
+        title: str,
+        abstract: str,
+        start_index: int,
+        total_sections: List,
+        initial_plan=None,
+        allow_parallel: bool = True,
+    ):
 
         self.__logger.info("Title: " + title)
         self.__logger.info("Abstract: " + abstract)
 
         if allow_parallel:
             plan = self.__parallel_gen_embed_section_content(
-                headings,
-                content,
-                start_index,
-                total_sections,
-                initial_plan
+                headings, content, start_index, total_sections, initial_plan
             )
         else:
             plan = [
                 self.__gen_embed_section_content(
                     heading, content, id=i, total_sections=total_sections
-                ) for i, (heading, content) in enumerate(
+                )
+                for i, (heading, content) in enumerate(
                     zip(headings[start_index:], content[start_index:]), start=1
                 )
             ]
@@ -275,8 +324,12 @@ class Document:
         # resources = paper_data.get("references", [])
         resources = self.__references
         for i in range(len(resources)):
-            resources[i]["resource_embedding_1"] = embed_OPENAI.embed_query(resources[i]["resource_description"])
-            resources[i]["resource_embedding_2"] = embed_HF.embed_query(HUGGINGFACE_EMBEDDING_PREFIX + resources[i]["resource_description"])
+            resources[i]["resource_embedding_1"] = embed_OPENAI.embed_query(
+                resources[i]["resource_description"]
+            )
+            resources[i]["resource_embedding_2"] = embed_HF.embed_query(
+                HUGGINGFACE_EMBEDDING_PREFIX + resources[i]["resource_description"]
+            )
 
         plan_embed_1 = self.__gen_embed_plan(plan, 1)
         plan_embed_2 = self.__gen_embed_plan(plan, 2)
@@ -286,9 +339,13 @@ class Document:
                 "title": title,
                 "abstract": abstract,
                 "title_embedding_1": embed_OPENAI.embed_query(title),
-                "title_embedding_2": embed_HF.embed_query(HUGGINGFACE_EMBEDDING_PREFIX + title),
+                "title_embedding_2": embed_HF.embed_query(
+                    HUGGINGFACE_EMBEDDING_PREFIX + title
+                ),
                 "abstract_embedding_1": embed_OPENAI.embed_query(abstract),
-                "abstract_embedding_2": embed_HF.embed_query(HUGGINGFACE_EMBEDDING_PREFIX + abstract),
+                "abstract_embedding_2": embed_HF.embed_query(
+                    HUGGINGFACE_EMBEDDING_PREFIX + abstract
+                ),
                 "plan": plan,
                 "resources": resources,
                 "plan_embedding_1": plan_embed_1,
@@ -318,7 +375,9 @@ class Document:
             }
         return plan_json
 
-    def __num_tokens_from_string(self, string: str, encoding_name: str = "gpt-4o-mini") -> int:
+    def __num_tokens_from_string(
+        self, string: str, encoding_name: str = "gpt-4o-mini"
+    ) -> int:
         """Returns the number of tokens in a text string."""
         try:
             encoding = tiktoken.get_encoding(encoding_name)
@@ -329,42 +388,69 @@ class Document:
 
     def __extract_title(self, string: str) -> str:
         """Extract a title from `string` that is max 7 words long."""
-        doctran = Doctran(
-            openai_api_key=os.getenv("OPENAI_API_KEY"), openai_model="gpt-4o-mini"
-        )
-        document = doctran.parse(content=string)
-        properties = ExtractProperty(
-            name="title",
-            description="The title of the document (max 7 words).",
-            type="string",
-            required=True,
-        )
         try:
-            document = document.extract(properties=[properties]).execute()
-            return document.transformed_content
+            client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "Extract a concise title from the given text. The title must be maximum 7 words and capture the main topic.",
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Extract a title from this text:\n\n{string[:1000]}",  # Limit input length
+                    },
+                ],
+                max_tokens=20,
+                temperature=0.1,
+            )
+
+            title = response.choices[0].message.content.strip()
+            # Ensure max 7 words
+            words = title.split()
+            if len(words) > 7:
+                title = " ".join(words[:7])
+            return title
+
         except Exception as e:
             self.__logger.error(f"Error extracting title from string: {e}")
             return "None"
 
-    def divide_into_chunks(self, papert_data: Dict, max_section_token_length: int = MAX_EMBEDDING_TOKEN_LENGTH):
-        self.__logger.info("Dividing sections if too large in plan and section content.")
+    def divide_into_chunks(
+        self,
+        papert_data: Dict,
+        max_section_token_length: int = MAX_EMBEDDING_TOKEN_LENGTH,
+    ):
+        self.__logger.info(
+            "Dividing sections if too large in plan and section content."
+        )
         final_dict: Dict = {}
         start_dict = copy(papert_data)
 
         def is_reference_section(heading: str):
             """Returns True if heading is a reference section."""
-            result = re.search(r"reference|further reading|see also|bibliography|external links", heading, re.IGNORECASE)
+            result = re.search(
+                r"reference|further reading|see also|bibliography|external links",
+                heading,
+                re.IGNORECASE,
+            )
             return result
-        
+
         for heading, content in start_dict.items():
             content_length = len(content)
             if content_length == 0:
                 final_dict[heading] = " "
-            elif content_length <= max_section_token_length: # characters length is always less than token length
+            elif (
+                content_length <= max_section_token_length
+            ):  # characters length is always less than token length
                 final_dict[heading] = content
             else:
                 num_tokens = self.__num_tokens_from_string(content)
-                self.__logger.info(f"Content character length: {len(content)} tokens: {num_tokens} for '{heading}'")
+                self.__logger.info(
+                    f"Content character length: {len(content)} tokens: {num_tokens} for '{heading}'"
+                )
                 # Each section must contain something, otherwise the embedding models fail
                 if num_tokens == 0:
                     final_dict[heading] = " "
@@ -375,17 +461,20 @@ class Document:
                 else:
                     # Split
                     char_splitter = RecursiveCharacterTextSplitter(
-                        chunk_size = max_section_token_length,
-                        chunk_overlap = 0,
+                        chunk_size=max_section_token_length,
+                        chunk_overlap=0,
                         # ' ' separator means sometimes sentences will be cut in two to ensure
                         # the chunk size is not exceeded
-                        separators = ["\n\n", "\n", ". ", ".", ", ", ",", " "],
-                        length_function = self.__num_tokens_from_string,
+                        separators=["\n\n", "\n", ". ", ".", ", ", ",", " "],
+                        length_function=self.__num_tokens_from_string,
                     )
                     splits: List[str] = char_splitter.split_text(content)
                     # Keep heading the same but add numbers to sections e.g. 'h2 Reference' -> 'h2 Reference 1'
                     # TODO - add a continue statement here?
-                    if self.__type in [DocType.WIKI, DocType.ARXIV] and is_reference_section(heading):
+                    if self.__type in [
+                        DocType.WIKI,
+                        DocType.ARXIV,
+                    ] and is_reference_section(heading):
                         for i, split in enumerate(splits, start=1):
                             new_heading = f"{heading} {i}"
                             final_dict[new_heading] = split
@@ -423,16 +512,28 @@ class Document:
         abstract, plan and associated embeddings.
         """
         if self.__type == DocType.WIKI:
-            headings = [key for key in article_dict.keys() if isinstance(article_dict[key], str)]
-            content = [value for key, value in article_dict.items() if isinstance(article_dict[key], str)]
+            headings = [
+                key for key in article_dict.keys() if isinstance(article_dict[key], str)
+            ]
+            content = [
+                value
+                for key, value in article_dict.items()
+                if isinstance(article_dict[key], str)
+            ]
             # Wikipedia titles are of form 'h1 Example' so we remove the 'h1 '
             title = headings[0][3:]
             abstract = content[0]
             total_sections = len(headings) - 1
             start_index = 1
         elif self.__type == DocType.PATENT:
-            headings = [key for key in article_dict.keys() if isinstance(article_dict[key], str)]
-            content = [value for key, value in article_dict.items() if isinstance(article_dict[key], str)]
+            headings = [
+                key for key in article_dict.keys() if isinstance(article_dict[key], str)
+            ]
+            content = [
+                value
+                for key, value in article_dict.items()
+                if isinstance(article_dict[key], str)
+            ]
             # Titles are separated by tabs, the last element is the actual title
             title = content[0].split("\t")[-1].strip()
             # Remove illegal characters from title (it's used as a filename)
@@ -445,8 +546,14 @@ class Document:
             start_index = 2
         elif self.__type == DocType.ARXIV:
             # Filtered keys and values
-            headings = [key for key in article_dict.keys() if isinstance(article_dict[key], str)]
-            content = [value for key, value in article_dict.items() if isinstance(article_dict[key], str)]
+            headings = [
+                key for key in article_dict.keys() if isinstance(article_dict[key], str)
+            ]
+            content = [
+                value
+                for key, value in article_dict.items()
+                if isinstance(article_dict[key], str)
+            ]
             # The first key/value pairs in arxiv dicts are {'Title': title, 'Abstract': abstract}
             # so we take the first two elements of content
             title = content[0]
@@ -458,7 +565,7 @@ class Document:
             start_index = 2
         else:
             raise ValueError("Unknown document type!")
-        
+
         plan = self.generate_plan_embeddings(
             paper_data=article_dict,
             headings=headings,
@@ -468,16 +575,16 @@ class Document:
             start_index=start_index,
             total_sections=total_sections,
             initial_plan=article_dict.get("plan", None),
-            allow_parallel=ALLOW_parallel_gen_embed_section_content
+            allow_parallel=ALLOW_parallel_gen_embed_section_content,
         )
         return plan
 
     def writeOuputJson(self, data):
-        with open(self.__output_file, 'w') as file:
+        with open(self.__output_file, "w") as file:
             json.dump(data, file, indent=4)
         self.__logger.info(f"Successfully processed: {self.__source}")
 
     def writeOutputString(self, data):
-        with open(self.__output_file, 'w') as file:
+        with open(self.__output_file, "w") as file:
             file.write(data)
         self.__logger.info(f"Successfully processed: {self.__source}")

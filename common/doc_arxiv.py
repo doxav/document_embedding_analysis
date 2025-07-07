@@ -8,8 +8,8 @@ from common.doc_base import Document
 
 
 class DocArxiv(Document):
-    def __init__(self, source_str: str | Path, logger: Logger):
-        super().__init__(source_str, DocType.ARXIV, logger)
+    def __init__(self, source_str: str | Path, logger: Logger, output_dir: str = None):
+        super().__init__(source_str, DocType.ARXIV, logger, output_dir)
 
     def extract_plan_and_content(self, skip_if_exists: bool = False):
         super().generateOutputFile()
@@ -21,7 +21,7 @@ class DocArxiv(Document):
         if skip_if_exists and output_file.exists():
             self.getLogger().info(f"\n\tFile already exists: {output_file.absolute()}")
             return {"title": str(input), "content": "File already exists."}
-        
+
         paper_data = self.extract_paper_data()
         paper_data = self.divide_into_chunks(paper_data)
 
@@ -81,23 +81,31 @@ class DocArxiv(Document):
             ref_pattern = r"\[(\d+)\]\s+(.*?)(?=\n\s*\[\d+\]|$)"
             # Find all matches
             matches = re.findall(ref_pattern, references, re.DOTALL)
-            
+
             for ref_number, ref_description in matches:
-                ref_list.append({
-                    "resource_id": int(ref_number),
-                    "resource_description": ref_description.replace('\n', '').strip()
-                })
-                
+                ref_list.append(
+                    {
+                        "resource_id": int(ref_number),
+                        "resource_description": ref_description.replace(
+                            "\n", ""
+                        ).strip(),
+                    }
+                )
+
             ref_list = sorted(ref_list, key=lambda x: x["resource_id"])
 
         content = text[abstract_end:reference_start]
 
         self.getLogger().info(
-            "EXTRACTION OVERVIEW:\nTitle:" +
-            self.getTitle()[:50].replace("\n","\\n") + 
-            "...\nAbstract:"+abstract[:50].replace("\n","\\n") + 
-            "...\nContent:"+content[:50].replace("\n","\\n") + 
-            "...\nReferences:"+references[:50].replace("\n","\\n")+"..."
+            "EXTRACTION OVERVIEW:\nTitle:"
+            + self.getTitle()[:50].replace("\n", "\\n")
+            + "...\nAbstract:"
+            + abstract[:50].replace("\n", "\\n")
+            + "...\nContent:"
+            + content[:50].replace("\n", "\\n")
+            + "...\nReferences:"
+            + references[:50].replace("\n", "\\n")
+            + "..."
         )
 
         article_dict = {

@@ -9,8 +9,8 @@ from common.doc_base import Document
 
 
 class DocWiki(Document):
-    def __init__(self, source_str: str | Path, logger: Logger):
-        super().__init__(source_str, DocType.WIKI, logger)
+    def __init__(self, source_str: str | Path, logger: Logger, output_dir: str = None):
+        super().__init__(source_str, DocType.WIKI, logger, output_dir)
 
     def extract_plan_and_content(self, skip_if_exists: bool = False):
         super().generateOutputFile()
@@ -22,7 +22,7 @@ class DocWiki(Document):
         if skip_if_exists and output_file.exists():
             self.getLogger().info(f"\n\tFile already exists: {output_file.absolute()}")
             return {"title": str(input), "content": "File already exists."}
-        
+
         paper_data = self.extract_paper_data()
         paper_data = self.divide_into_chunks(paper_data)
 
@@ -85,6 +85,7 @@ class DocWiki(Document):
 
         # Extract tags and associated content into a dict
         article_dict = {}
+        reference_mapping = {}  # Map citation numbers to references
         refer_key = None
         for tag in found_tags:
             content = []
@@ -93,8 +94,20 @@ class DocWiki(Document):
             # Look for next tags until the next header tag
             while next_tag and next_tag.name not in tags:
                 # Reference section can contain both p and li tags
-                if "reference" in str(next_tag).lower() and next_tag.name in ["p", "li"]:
-                    content.append(next_tag.get_text(strip=False))
+                if "reference" in str(next_tag).lower() and next_tag.name in [
+                    "p",
+                    "li",
+                ]:
+                    ref_text = next_tag.get_text(strip=False)
+                    content.append(ref_text)
+
+                    # Extract citation number if present
+                    cite_match = re.match(r"^\s*\^?\s*(\d+)\s*\.?\s*(.+)", ref_text)
+                    if cite_match:
+                        cite_num = int(cite_match.group(1))
+                        cite_text = cite_match.group(2).strip()
+                        reference_mapping[cite_num] = cite_text
+
                 elif next_tag.name == "p":
                     content.append(next_tag.get_text(strip=False))
                 next_tag = next_tag.find_next()
@@ -102,28 +115,47 @@ class DocWiki(Document):
             key = f"{tag.name} {tag.get_text(strip=True)}"
             article_dict[key] = " ".join(content)
 
-        for key in list(article_dict.keys()):  # Using list() to avoid changing the dictionary size during iteration
+        # Clean up [edit] suffixes
+        for key in list(
+            article_dict.keys()
+        ):  # Using list() to avoid changing the dictionary size during iteration
             if key.endswith("[edit]"):
                 new_key = key.rsplit("[edit]", 1)[0]
                 article_dict[new_key] = article_dict.pop(key)
-
+        # Process references section
         ref_key = None
         article_dict["references"] = []
         for key in article_dict:
             if key[3:].lower() == "references":
                 ref_key = key
-                for reference in article_dict[key].split("\n ^ "):
-                    article_dict["references"].append({
-                        "resource_id": len(article_dict["references"]) + 1,
-                        "resource_description": reference
-                    })
+                ref_content = article_dict[key]
+
+                # Split by common reference delimiters
+                ref_splits = re.split(r"\n\s*\^?\s*\d+\s*\.?\s*", ref_content)
+
+                for i, reference in enumerate(ref_splits):
+                    if not reference.strip():
+                        continue
+
+                    # Try to extract reference number from mapping or use sequential
+                    ref_id = i + 1
+                    if i + 1 in reference_mapping:
+                        ref_text = reference_mapping[i + 1]
+                    else:
+                        ref_text = reference.strip()
+
+                    article_dict["references"].append(
+                        {"resource_id": ref_id, "resource_description": ref_text}
+                    )
                 break
+
+        # Set references for the document
         self.setReferences(article_dict["references"])
 
-        del article_dict["h2 Contents"] # TODO: check what is this specific case
+        del article_dict["h2 Contents"]  # TODO: check what is this specific case
         if ref_key in article_dict:
             del article_dict[ref_key]
-        
+
         num_sections = len(article_dict.keys())
 
         self.getLogger().info(
@@ -132,7 +164,7 @@ class DocWiki(Document):
         )
 
         self.getLogger().info("EXTRACTION OVERVIEW:\nTitle:")
-        
+
         # print for each key in article_dict, display key and frst 50 characters of value
         for key in article_dict.keys():
             self.getLogger().info(f"{key}: {article_dict[key][:80]}...")
