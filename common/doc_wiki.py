@@ -62,57 +62,69 @@ class DocWiki(Document):
             A dictionary of the content extracted from the Wikipedia page.
         """
         url = self.getInput()
-        if not "wikipedia" in url:
-            raise ValueError("URL is not a wikipedia URL. Received: " + url)
+        if "wikipedia" not in url:
+            raise ValueError("URL is not a Wikipedia URL. Received: " + url)
 
         r = requests.get(url)
         html_content = r.text
 
-        # Create a BeautifulSoup object
         soup = BeautifulSoup(html_content, "html.parser")
 
-        # Remove unwanted tags: script, style, [document], head, title
+        # Remove unwanted tags
         for element in soup(["script", "style", "head", "title", "[document]"]):
             element.decompose()
 
-        # Also remove HTML comments
-        for element in soup.find_all(string=lambda text: isinstance(text, Comment)):
-            element.extract()
+        # Remove comments
+        for comment in soup.find_all(string=lambda text: isinstance(text, Comment)):
+            comment.extract()
 
-        # Define the header tags to find
         tags = ["h1", "h2", "h3", "h4", "h5", "h6"]
         found_tags = soup.find_all(tags)
 
-        # Extract tags and associated content into a dict
         article_dict = {}
-        reference_mapping = {}  # Map citation numbers to references
-        refer_key = None
+        reference_mapping = {}
+
+        header_context = {}  # Track last seen headers: {1: h1_text, 2: h2_text, ...}
+
         for tag in found_tags:
+            level = int(tag.name[1])  # Extract header level from h1, h2, ...
+            header_context[level] = tag.get_text(strip=True)
+
+            # Remove deeper level headers (h4+ if current is h3, etc.)
+            for l in list(header_context.keys()):
+                if l > level:
+                    del header_context[l]
+
+            # Build full key using header hierarchy
+            key_parts = [header_context[lvl] for lvl in sorted(header_context) if 1 < lvl <= level]
+            key = " - ".join(key_parts)
+            if key == "":
+                key = header_context[1]
+            key = f"{tag.name} {key}"
             content = []
             next_tag = tag.find_next()
-
             # Look for next tags until the next header tag
             while next_tag and next_tag.name not in tags:
                 # Reference section can contain both p and li tags
-                if "reference" in str(next_tag).lower() and next_tag.name in [
+                if "reference" in key.lower() and next_tag.name in [
                     "p",
                     "li",
                 ]:
                     ref_text = next_tag.get_text(strip=False)
                     content.append(ref_text)
-
+                    # test = next_tag.next
+                    # url = test.get("href","")
+                    # while not url.startswith("http"):
+                    #     test = test.next
+                    #     url = test.get("href","")
                     # Extract citation number if present
-                    cite_match = re.match(r"^\s*\^?\s*(\d+)\s*\.?\s*(.+)", ref_text)
-                    if cite_match:
-                        cite_num = int(cite_match.group(1))
-                        cite_text = cite_match.group(2).strip()
-                        reference_mapping[cite_num] = cite_text
+                    cite_num = int(next_tag.attrs.get('id').split('-')[-1])
+                    reference_mapping[cite_num] = ref_text
 
                 elif next_tag.name == "p":
                     content.append(next_tag.get_text(strip=False))
                 next_tag = next_tag.find_next()
 
-            key = f"{tag.name} {tag.get_text(strip=True)}"
             article_dict[key] = " ".join(content)
 
         # Clean up [edit] suffixes
@@ -125,37 +137,29 @@ class DocWiki(Document):
         # Process references section
         ref_key = None
         article_dict["references"] = []
-        for key in article_dict:
-            if key[3:].lower() == "references":
-                ref_key = key
-                ref_content = article_dict[key]
-
-                # Split by common reference delimiters
-                ref_splits = re.split(r"\n\s*\^?\s*\d+\s*\.?\s*", ref_content)
-
-                for i, reference in enumerate(ref_splits):
-                    if not reference.strip():
-                        continue
-
-                    # Try to extract reference number from mapping or use sequential
-                    ref_id = i + 1
-                    if i + 1 in reference_mapping:
-                        ref_text = reference_mapping[i + 1]
-                    else:
-                        ref_text = reference.strip()
-
-                    article_dict["references"].append(
-                        {"resource_id": ref_id, "resource_description": ref_text}
-                    )
-                break
-
+        for citation_num, ref_text in reference_mapping.items():
+            if ref_text.strip():
+                article_dict["references"].append(
+                    {"resource_id": citation_num, "resource_description": ref_text}
+                )
+            else:
+                self.getLogger().warning(
+                    f"Empty reference text for citation number {citation_num}."
+                )
         # Set references for the document
         self.setReferences(article_dict["references"])
 
-        del article_dict["h2 Contents"]  # TODO: check what is this specific case
-        if ref_key in article_dict:
-            del article_dict[ref_key]
-
+        # Remove the references section from the main content
+        del article_dict["h2 Contents"]
+        del article_dict["h2 References"]
+        
+        # Remove entries with empty values
+        empty_keys = [key for key in article_dict.keys() if isinstance(article_dict[key], str) and article_dict[key].strip() == ""]
+        for key in empty_keys:
+            del article_dict[key]
+        
+            
+            
         num_sections = len(article_dict.keys())
 
         self.getLogger().info(
