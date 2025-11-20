@@ -1,0 +1,1216 @@
+\documentclass{article}
+
+
+% if you need to pass options to natbib, use, e.g.:
+    \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2025
+
+
+% ready for submission
+% \usepackage{neurips_2025}
+
+% new 
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{multirow}
+\usepackage{pifont} % Used for the symbol check mark cross
+\usepackage{makecell}  % 支持手动换行
+\usepackage{amsmath} %  用于数学公式支持 分段函数等等
+\usepackage[normalem]{ulem}    % 下划线快捷式子 \ul 
+\useunder{\uline}{\ul}{}
+% \usepackage{xcolor}         % colors
+\usepackage[table,svgnames,]{xcolor}  % 更改颜色设置，添加选项
+\usepackage{float}    % 用于图表浮动控制
+\usepackage{pifont}  % 用于绘制带圆圈的数字 \ding{172} % ①  \ding{173} % ②  \ding{174} % ③ 
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+    % \usepackage[preprint]{neurips_2025}
+
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+    \usepackage[final]{neurips_2025}
+
+
+% to avoid loading the natbib package, add option nonatbib:
+%    \usepackage[nonatbib]{neurips_2025}
+
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+% 压缩 rule 上下空白
+\setlength{\aboverulesep}{0.2ex}
+\setlength{\belowrulesep}{0.2ex}
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+
+
+
+\title{NeuroPath: Neurobiology-Inspired Path Tracking and Reflection for Semantically Coherent Retrieval}
+
+
+
+\author{%
+  Junchen Li$^{1}$,
+  Rongzheng Wang$^{1}$,
+  Yihong Huang$^{1}$,
+  Qizhi Chen$^{1}$, \\
+  \textbf{Jiasheng Zhang}$^{1}$,
+  \textbf{Shuang Liang}$^{1} \thanks{Corresponding Author}$\\
+  \\
+  % \small
+  $^{1}$Institute of Intelligent Computing, \\
+  % \small
+  University of Electronic Science and Technology of China, Chengdu, China \\
+  % \small
+  \texttt{junchenli@std.uestc.edu.cn, shuangliang@uestc.edu.cn} \\
+}
+
+
+
+\begin{document}
+
+\maketitle
+
+% 基金信息
+% 这里清空脚注编号
+\renewcommand{\thefootnote}{}
+\begin{NoHyper} % <-- 告诉 hyperref 暂时不生成链接和锚点
+\footnotetext{This work is supported by National Natural Science Foundation of China No.62406057, the Fundamental Research Funds for the Central Universities No.ZYGX2025XJ042, and the Sichuan Science and Technology Program under Grant No.2024ZDZX0011.}
+\end{NoHyper} % <-- 恢复 hyperref 功能
+\renewcommand{\thefootnote}{\arabic{footnote}} % 恢复正常编号
+
+
+% \footnotetext{This work is supported by National Natural Science Foundation of China No.62406057, the Fundamental Research Funds for the Central Universities No.ZYGX2025XJ042, and the Sichuan Science and Technology Program under Grant No.2024ZDZX0011.}
+
+% 插入无标记脚注
+% \thispagestyle{plain} % 确保脚注出现在第一页
+% \renewcommand{\thefootnote}{} % 清空脚注编号
+% \footnotetext{This work is supported by National Natural Science Foundation of China No.62406057, the Fundamental Research Funds for the Central Universities No.ZYGX2025XJ042, and the Sichuan Science and Technology Program under Grant No.2024ZDZX0011.}
+% \renewcommand{\thefootnote}{\arabic{footnote}} % 恢复默认编号（如果后面还有脚注）
+
+\begin{abstract}
+Retrieval-augmented generation (RAG) greatly enhances large language models (LLMs) performance in knowledge-intensive tasks. However, naive RAG methods struggle with multi-hop question answering due to their limited capacity to capture complex dependencies across documents. Recent studies employ graph-based RAG to capture document connections. However, these approaches often result in a loss of semantic coherence and introduce irrelevant noise during node matching and subgraph construction. To address these limitations, we propose NeuroPath, an LLM-driven semantic path tracking RAG framework inspired by the path navigational planning of place cells in neurobiology. It consists of two steps: \textit{Dynamic Path Tracking} and \textit{Post-retrieval Completion}. Dynamic Path Tracking performs goal-directed semantic path tracking and pruning over the constructed knowledge graph (KG), improving noise reduction and semantic coherence. Post-retrieval Completion further reinforces these benefits by conducting second-stage retrieval using intermediate reasoning and the original query to refine the query goal and complete missing information in the reasoning path. NeuroPath surpasses current state-of-the-art baselines on three multi-hop QA datasets, achieving average improvements of 16.3\% on recall@2 and 13.5\% on recall@5 over advanced graph-based RAG methods. Moreover, compared to existing iter-based RAG methods, NeuroPath achieves higher accuracy and reduces token consumption by 22.8\%. Finally, we demonstrate the robustness of NeuroPath across four smaller LLMs (Llama3.1, GLM4, Mistral0.3, and Gemma3), and further validate its scalability across tasks of varying complexity. Code is available at~\href{https://github.com/KennyCaty/NeuroPath}{https://github.com/KennyCaty/NeuroPath}.
+\end{abstract}
+% Code will be available after review.
+%Code is available at~\href{https://anonymous.4open.science/r/NeuroPath}{https://anonymous.4open.science/r/NeuroPath}.
+
+\section{Introduction}
+\label{sec:intro}
+Humans and other animals possess fundamental spatial navigation and episodic memory capabilities that enable accurate target searching. These abilities originate from cognitive maps formed through the coordinated activity of multiple neural systems within the hippocampus and entorhinal cortex. Place cells, as the cornerstone of spatial memory~\cite{OKEEFE1971}, work in concert with grid cells and boundary vector cells to support not only physical spatial navigation but also the construction of abstract memory spaces, organizing episodic memory~\cite{Cell_coordination_mechanism,eichenbaum1999memory_space}. These neurons exhibit a continuous and interconnected activation pattern, transitioning from single-location encoding to path integration and broader cognitive map formation, dynamically supporting goal-directed behaviors~\cite{What_is_a_cognitive_map}.
+
+In knowledge-intensive tasks, current large language models (LLMs) resemble a navigator without a cognitive map. Despite their strong textual embedding capabilities for local contextual understanding~\cite{LLM_as_few-shot_learners}, they struggle to form global associations within open-domain knowledge. Naive retrieval-augmented generation (RAG) adopts a strategy of individually embedding document chunks and retrieving relevant content based on similarity~\cite{RAG_naiveRAG}. It is essentially a linear search for discrete knowledge. This strategy cannot capture the associations between knowledge, causing information silos when faced with complex queries that require multi-hop reasoning. Although iter-based RAG expands the knowledge coverage through a generate-retrieve-regenerate iteration, it lacks explicit modeling of the associations between knowledge and is still difficult to handle complex queries. Recently, researchers have proposed a new paradigm for knowledge organization and retrieval called graph-based RAG, which captures explicit associations across documents. However, existing graph-based methods have limitations: (1) the loss of semantic coherence clues and (2) irrelevant noise in node matching or subgraph construction. HippoRAG~\cite{HippoRAG} leverages a knowledge graph (KG) and the Personalized PageRank (PPR) algorithm to propagate node importance. However, it does not explicitly use relationship semantics, leading to retrieval results that tend to structural relevance rather than path semantic coherence, as shown in Figure \ref{fig:compare_graph_based_methods}-(a). LightRAG~\cite{LightRAG} adopts dual-level retrieval to match nodes and construct subgraphs, enhancing integrated information retrieval capabilities. However, collecting direct neighbors in the subgraph construction brings considerable noise, as shown in Figure \ref{fig:compare_graph_based_methods}-(b). 
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{assets/Fig_Intro/compare_graph_based_models.pdf}
+  \caption{Comparison between graph-based and path-based RAG methods. To the query: \textit{Which company acquired the phone brand created by the Android founder?} (a) HippoRAG uses the PPR algorithm to propagate node importance but ignores edge semantics, increasing the risk of retrieving incorrect nodes such as \textit{2008}; (b) LightRAG's subgraph construction tends to introduce considerable noise; (c) Our method leverages coherent semantic paths for goal-directed tracking, progressively eliminating noise and tracking the correct answer \textit{Nothing}.}
+  \label{fig:compare_graph_based_methods}
+\end{figure}
+
+% \begin{figure}[H]
+%     \label{fig:intro_and_compare}
+%   \centering
+%   % \includegraphics[width=1\textwidth]{assets/mechanism.pdf}
+%   \includegraphics[width=1\textwidth]{assets/intro_and_compare.pdf}
+%   \caption{Motivation. \ding{172} Current graph-based methods have the following limitations: (1) the loss of semantic coherence clues and (ii) irrelevant noise in node matching or subgraph construction. HippoRAG estimates node importance via the PageRank algorithm, it neglects edge semantics and risks incorrect traversal to unrelated nodes. LightRAG's subgraph construction tends to introduce considerable noise; \ding{173} Sequential activation of place cells helps spatial localization and path planning, and may also contribute to memory consolidation during periods of rest or inactivity; \ding{174} Our method focuses on the coherence of semantic paths for goal-directed tracking.}
+% \end{figure}
+
+
+% \begin{wrapfigure}{r}{0.5\textwidth}
+%   % \centering
+%   \vspace{-10pt}
+%   \includegraphics[width=0.5\textwidth]{assets/Fig_Intro/short_mechanism.pdf}
+%   \caption{Place cells mechanism. 
+%   Place cells represent specific spatial locations, known as place fields. During navigation, they exhibit preplay of upcoming sequences, and during rest, they replay these sequences to support memory consolidation.
+%   }
+%   \label{fig:short_mechanism}
+%   \vspace{-10pt}
+% \end{wrapfigure}
+\vspace{-10pt}
+We argue that an important advantage of modeling with graph structure is its explicit semantic reasoning paths formed through entity association. However, current graph-based methods focus more on structural relevance rather than semantic coherence, which weakens the semantic alignment with the query and introduces irrelevant noise. Existing methods rely on static topological modeling of knowledge associations, fundamentally different from the goal-directed dynamic encoding mechanisms of the human brain in complex environments or episodic memory. As shown in Figure~\ref{fig:short_mechanism}, studies have shown that the brain's hippocampal place cells activate in specific regions as animals explore their environment~\cite{OKEEFE1971}, like a neural map. During navigation, the hippocampus preplays these cell sequences to support goal-directed path planning.  These sequences can be dynamically reorganized based on task goals and can even predict unknown paths~\cite{pfeiffer2013place-cell_predict_future_path}. In addition, hippocampus  replays them during rest to consolidate memory.
+
+
+Inspired by these neurobiological mechanisms, we propose NeuroPath, a RAG framework based on semantic path tracking. Unlike methods that simply aggregate discrete knowledge nodes, our approach dynamically constructs goal-directed semantic paths, as illustrated in Figure \ref{fig:compare_graph_based_methods}-(c). Based on the KG 
+\begin{wrapfigure}{r}{0.5\textwidth}
+  % \centering
+  % \vspace{-10pt}
+  \includegraphics[width=0.5\textwidth]{assets/Fig_Intro/short_mechanism.pdf}
+  \vspace{-15pt}
+  \caption{Place cells mechanism. 
+  Place cells represent specific spatial locations. During navigation, they preplay upcoming sequences, and during rest, they replay these to support memory consolidation.
+  }
+  \label{fig:short_mechanism}
+  \vspace{-12pt}
+\end{wrapfigure}
+extracted from source documents, NeuroPath models each entity as a place cell in semantic space and each knowledge triple as a place field in spatial navigation. Guided by the goal of the query, NeuroPath simulates the hippocampal preplay and replay mechanisms: during preplay, it dynamically constructs semantic paths from seed nodes and filters out noisy information; during replay, it revisits prior reasoning chain to support path information completion aligned with the query goal. Specifically, we propose \textbf{Dynamic Path Tracking}, a strategy that leverages LLM to automatically filter and expand semantic paths. This strategy continuously marks valid paths, selectively expands paths, and predicts potential path directions for pruning. To further improve retrieval quality, we also propose a \textbf{Post-retrieval Completion} strategy that performs a second-stage retrieval using intermediate reasoning generated by the LLM to complete missing information along the reasoning path.
+%%% 
+
+In summary, the contributions of this work are as follows: (1) Inspired by neurobiology mechanisms, we novelly map the hippocampal place cell navigation and memory consolidation mechanisms into RAG, enhancing path reasoning and cross-document knowledge integration. (2) We propose NeuroPath, a RAG framework that dynamically tracks semantic paths to align with the query goal by leveraging LLMs and integrates intermediate reasoning to fill in missing information, thereby enriching semantic coherence and reducing noise. (3) NeuroPath achieves a new state-of-the-art performance on multi-hop QA, demonstrates robustness across LLM scales and tasks of varying complexity, and outperforms closed-source models using only a fine-tuned 8B open-source model. 
+
+% \vspace{-5pt}
+\section{Related Work}
+% \vspace{-5pt}
+\textbf{From single-step to multi-step RAG}. The RAG framework greatly enhances LLMs' performance in knowledge-intensive tasks~\cite{Yunfan_Gao_RAG_survey, KDD_Wenqi_Fan_RAG_survey}. Naive RAG methods retrieve top-k documents based on vector similarity between queries and document embeddings~\cite{RAG_naiveRAG}, but they overlook associations between documents. Due to the flat structure of vector databases, these methods cannot support multi-hop reasoning. As queries grow more complex and relevant knowledge becomes finer-grained, their effectiveness declines. Some methods refine queries to better capture complex intent and improve similarity matching~\cite{mao-query-enhanced-RAG, chuang-query-expand-rerank-RAG}, yet they still rely on flat knowledge organization and struggle with multi-hop reasoning. Iterative retrieval RAG methods (iter-based RAG) interleave retrieval and generation to optimize queries for the next retrieval step~\cite{selfask, iter-retgen, IRCoT}, but they do not explicitly model relationships among knowledge entities, making it hard to connect information across documents.
+
+
+\textbf{From flat to structured retrieval}. Recent works have advanced the ability of LLMs to reason over graph structures~\cite{survey_llm_on_graph_kdd24, RoG, GraphTool, graphcogent}. To better capture document dependencies, researchers have proposed graph-based RAG methods~\cite{edge-graphrag, LightRAG, HippoRAG, sarthi-raptor}. Unlike flat structures, these methods represent text as nodes and edges, enabling dependency propagation and multi-hop reasoning. Some methods model global and abstract information. For example, GraphRAG~\cite{edge-graphrag} uses community detection to summarize each group, while LightRAG~\cite{LightRAG} extracts local and global keywords to retrieve relevant nodes and edges. However, these methods focus on sense-making tasks, requiring a global understanding of knowledge and providing abstract summaries or diverse answers, which can introduce significant noise during the retrieval process. Some other methods focus on factual multi-hop QA, such as HippoRAG~\cite{HippoRAG} and KG-Retriever~\cite{chen-kg-retriever}. However, these works pay more attention to structural relevance and collect documents by retrieving important nodes without explicitly utilizing edge semantics. Although HippoRAG 2~\cite{HippoRAG2} improves query matching by replacing node matching with triple matching, it still suffers from the random walk nature of the PPR algorithm during the retrieval phase, which can lead the search to focus on incorrect nodes. These methods ignore path semantic coherence, resulting in retrieval errors or noise.
+
+\textbf{From subgraph to path}. To avoid redundancy from subgraph construction, recent work extracts key paths directly through path-based methods. PathRAG~\cite{chen-pathrag} retrieves query-related nodes, constructs paths using a flow-based pruning algorithm for resource allocation and scoring, and selects reliable paths. However, it allocates resources equally across outgoing edges, ignoring edge importance and semantics, which can misalign scores with actual meaning. As PathRAG focuses on sense-making and uses a different approach, we consider our method based on dynamic semantic path construction fundamentally distinct and better suited for multi-hop QA.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+% \vspace{-0.5cm}
+\section{Methodology}
+
+\subsection{Overview}
+The workflow of our framework consists of three specific steps, as shown in Figure \ref{fig:overview}, namely \textbf{Static Indexing}, \textbf{Dynamic Path Tracking}, and \textbf{Post-retrieval Completion}. We use an LLM to extract entities and relations from each document at once to build a KG index. Each entity builds a coreference set, and each triple segment is used as the smallest unit of the path receptive field. When retrieving, we simulate the preplay and replay mechanisms of place cells to perform path navigation and memory consolidation. Specifically, the LLM starts from seed nodes and selects valid paths from candidates based on their relevance to the query, while deciding whether to expand additional paths to track deeper information. If expansion is needed, it generates expansion requirements to guide the direction and prune irrelevant paths. Once the final paths are determined, we collect the source documents along the paths as context for question answering. This process is similar to place cells generating a pre-activation sequence during navigation and tracking the target through this sequence. We extract the reasoning generated by the LLM during path tracking and perform a second-stage retrieval by combining this generation and the original query. This simulates the replay mechanism in place cells, where sequences are reactivated during rest to consolidate memory.
+
+\begin{figure}[ht]
+    
+  \centering
+  \includegraphics[width=1\textwidth]{assets/Fig_Method/overview.pdf}
+  \caption{The overview of NeuroPath's workflow: (1) \textbf{Static Indexing}. Use an LLM to extract entities and relationships to build KG, and build a coreference set for each entity. (2) \textbf{Dynamic Path Tracking}. Using an LLM for goal-directed path tracking. The expansion requirements will be used for pruning. (3) \textbf{Post-retrieval Completion}. Collect documents along the path and leverage intermediate reasoning for second-stage retrieval to complete missing information in the reasoning path.}
+  \label{fig:overview}
+\end{figure}
+
+
+\subsection{Static Indexing} % 
+Given a set $\mathcal{D} = \{d_1, d_2, \dots ,d_N \}$ containing $N$ documents, we use an LLM as a generator $G$ to extract the KG, aiming to capture information from the documents as detailed as possible. Specifically, we let $G$ extract the entity set $\mathcal{E}$ and the relation triple set $\mathcal{T}$ for each document $d_i$ at once. 
+
+In order to reduce the risk of missing references between semantically similar entities in the knowledge graph, we introduce a pseudo coreference resolution mechanism based on similarity. For each entity $e_i$ in KG, we construct its potential coreference set $R_i$ by including similar candidate entities whose vector cosine similarity exceeds the threshold of 0.8. We use an embedding model to uniformly encode entities and calculate similarity. The specific similarity calculation formula and coreference association set are as follows:
+\begin{equation}
+    \text{Sim}(i,j) = \text{CosSim}(\text{Enc}(i), \text{Enc}(j)) 
+\end{equation}
+\begin{equation}
+    {\mathcal{R}_{i}} = \text{argtopk}_{j} \text{Sim}(i, j),\quad i, j \in \mathcal{E},
+\end{equation}
+where $\text{Enc}(\cdot)$ is an embedding model, and the argtopk operation retrieves the top-k entities based on similarity. By default, we retrieve five most similar entities as a coreference set.
+
+\subsection{Dynamic Path Tracking}
+
+\textbf{Seed nodes filtering rules}. Given a query $q$, we use an LLM as a generator $G$ to extract a set of key entities $\mathcal{Q} = G_{ent}(q)$, and select a set of the most similar nodes by $\text{Sim}(\cdot, \cdot)$ function from the indexing graph as initial seed nodes $\mathcal{S}$. Then expand the entities of the corresponding coreference association set $\mathcal{R}$ to become a new set $\mathcal{S}^0 = \{ s + \mathcal{R}_s \mid s \in \mathcal{S} \}$, to better cover the path starting nodes.
+
+In the subsequent path expansion, we directly use the expandable nodes of the paths and follow the above steps to add coreference nodes as seeds. 
+\begin{equation}
+    \mathcal{S}^h = \{ s + \mathcal{R}_{s} \mid s \in \text{Link}(\mathcal{P}^{h}_{exp}) \} ,
+\end{equation}
+where $\text{Link}(\cdot)$ is a function to return the expandable nodes that connect to the path. $h$ is the current expanded hop and $\mathcal{P}_{exp}$ is the set of paths that need expansion.
+
+\textbf{Path expansion rules}. In the specific expansion step, we retrieve the triple segments $\mathcal{P}^h_{sub} \subseteq \mathcal{T} $ connected to the seed nodes $\mathcal{S}^h$ and concatenate the current path set under expansion $\mathcal{P}^h_{exp}$. We then combine the current valid paths $\mathcal{P}^h_{val}$ to form the candidate paths for the next pruning and tracking.
+\begin{equation}
+    \mathcal{P}^{h+1}_{cur} = \mathcal{P}^h_{val} + \text{Cat}( \mathcal{P}^h_{exp}, \mathcal{P}^h_{sub} ), \quad \mathcal{P}^0_{exp}=\mathcal{P}^0_{val}=\emptyset ,
+\end{equation}
+where $\text{Cat}(\cdot, \cdot)$ denotes the operation of concatenating the triple segment to the end of the path under expansion. We merge the previous valid path set and the expanded path set into a new candidate path set. LLM can choose to keep or delete these paths to improve fault tolerance.
+
+\textbf{Tracking by LLM}. We design a prompt to guide the LLM for path tracking, as shown in Appendix~\ref{app:llm_prompts}. At each step of the tracking, we send the current candidate paths to LLM for filtering. LLM forms an intermediate reasoning chain according to the current valid information and mark the valid paths, determine whether expansion is needed and generate specific expansion requirements.
+
+In order to make path expansion more directional and avoid exponential growth, we use expansion requirements generated by the LLM in the previous hop to prune paths before tracking.
+\begin{equation}
+    {\mathcal{P}^{h}_{cur}}^{'} = \text{argtopk} _{p}  \text{Sim}(g^{h-1}, p), \quad p \in \mathcal{P}^{h}_{cur}  
+\end{equation}
+\begin{equation}
+    c^h, \mathcal{P}^{h}_{val}, g^h, \mathcal{P}^{h}_{exp}, ct = G_{tracker}({\mathcal{P}^{h}_{cur}}^{'}), 
+\end{equation}
+where $c$ is the reasoning chain organized under the current valid paths, $g$ is the specific requirement or goal of the expansion, $\mathcal{P}^{h}_{val}$ is the set of valid paths marked by the current hop, and $\mathcal{P}^h_{exp}$ is the set of paths that need to be expanded at the current hop. $ct$ is the flag for whether to continue to expand. The default setting for pruning top-k is 30. If $ct$ is 0, it means that the answer is found or no additional information can be added, otherwise continue to expand.
+
+
+
+\subsection{Post-retrieval Completion}
+After determining the final paths, we collect source documents along the paths as candidate documents $\mathcal{D}_p$. In addition, we adopt an enhanced second-stage retrieval step. Specifically, we concatenate the intermediate generation from the last hop of tracking and the original query as a new query to perform a second-stage retrieval to complete the candidate documents, in order to refine the query goal and avoid the missing of path information. We define the new $q^{'}$ as $q + c_{last} + g_{last}$, where $c_{last}$ and $g_{last}$ represent the reasoning chain and expansion requirements generated by the LLM in the last expansion hop (If the paths doesn’t find an answer or reaches the maximum expansion hop count, expansion requirements will still be generated). They are concatenated with the original query $q$ for second-stage retrieval based on text similarity to improve the completeness of the information. The final set of source documents $\mathcal{D}_{ret} = \mathcal{D}_{p} \cup \mathcal{D}_{e}$, where $D_{ret}$ represents the final candidate document set, and $D_{e}$ represents the document set for second-stage retrieval.
+
+\section{Experiments}
+\label{sec:experiments}
+We conducted extensive experiments to evaluate NeuroPath and answer the following research questions (RQ): 
+% \begin{itemize}
+%   \item How effective is NeuroPath?
+%   \item What is the token and time cost of path tracking using LLM?
+%   \item Do all parts of our framework work?
+%   \item Can it be extended to other small open-source models or can the performance be improved by fine-tuning?
+% \end{itemize}
+\textbf{RQ1}: How effective is NeuroPath? \textbf{RQ2}: How does NeuroPath demonstrate its advantages in semantic coherence and noise reduction? \textbf{RQ3}: Do all parts of our framework work? \textbf{RQ4}: What is its scalability to other small open-source models and to tasks of varying complexity? 
+% Can it be extended to other small open-source models and can the performance be improved by fine-tuning?
+
+\subsection{Setup}
+% \subsubsection{Datasets}
+
+\textbf{Datasets}. We selected three challenging multi-hop question answering datasets to evaluate our method: MuSiQue~\cite{musique}, 2WikiMultiHopQA~\cite{2WikiMultiHopQA} and HotpotQA~\cite{hotpotqa}. All three datasets are used to evaluate open-domain multi-hop reasoning tasks, ranging from 2-hop to longer-hop reasoning scenarios. We followed the settings of HippoRAG~\cite{HippoRAG}, selected 1,000 questions from each dataset for evaluation, used all the documents from each selected dataset as the retrieval corpus. For each question, only a small number of supporting documents are involved to verify the retrieval performance. 
+Additionally, to evaluate the model's robustness on tasks of varying complexity for RQ4, we utilize two simple QA datasets (PopQA~\cite{popqa}, Natural Questions~\cite{nq}) and a more challenging long-document multi-hop QA dataset (MultiHop-RAG~\cite{multihoprag}).
+
+
+% \subsubsection{Baselines}
+\textbf{Baselines}. We construct comparisons from (1) naive RAG methods BM25~\cite{bm25}, BGE-m3~\cite{bge-m3}, and Contriever~\cite{contriever}; (2) iter-based methods IRCoT~\cite{IRCoT}, Iter-RetGen~\cite{iter-retgen}; (3) graph-based methods HippoRAG~\cite{HippoRAG}, HippoRAG 2~\cite{HippoRAG2}, LightRAG~\cite{LightRAG}; (4) path-based method PathRAG~\cite{chen-pathrag}.
+
+% \subsubsection{Metrics}
+\textbf{Metrics}. We report retrieval performance on recall@2 and recall@5 (R@2 and R@5 below), and question answering performance on exact match (EM) and F1 score.
+
+% \subsubsection{Implementation Details}
+\textbf{Implementation Details}. In our experiments, all graph indexing is performed using GPT-4o-mini~\cite{gpt-4o}. To evaluate the performance and robustness of using large language models for path tracking, we further replace the retrieval component with a variety of open-source models. In the main experiment, we use GPT-4o-mini and Qwen-2.5-14B~\cite{qwen-2.5}, and additional experiments with smaller-scale models are presented in Section~\ref{sec:Robustness_to_Model_Scale}. For NeuroPath, we set the maximum number of reasoning hops to 2 and use a Zero-Shot prompting setup. For IRCoT and Iter-RetGen, we set the maximum number of iterations to 3 and follow the original paper settings, with the number of documents retrieved per iteration set to {2, 4, 6} and {5}, respectively. We evaluate all baselines using Contriever and BGE-M3 as retrievers. Additionally, since LightRAG and PathRAG do not directly return source documents, we do not assess its retrieval metrics. More details can be found in Appendix~\ref{app:experimental_details}.
+
+\subsection{Main Results (RQ1)}     % 
+\textbf{Retrieval Results}. As shown in Table~\ref{tab:retrieval_performance}, NeuroPath outperforms all naive and graph-based baselines, including the state-of-the-art HippoRAG 2, with average improvements of 16.3\% in Recall@2 and 13.5\% in Recall@5. Compared to iter-based baselines, it also achieves average improvements of 8.6\% in Recall@2 and 10.2\% in Recall@5, demonstrating more stable and competitive performance. Additionally, our method reduces the average token consumption by 22.8\% compared to iter-based baselines, indicating a more efficient use of resources. Detailed cost and efficiency comparison can be found in Appendix~\ref{app:cost_efficiency}. Our relatively lower performance on HotpotQA is primarily due to its lower knowledge integration requirements. This limits the advantages of the multi-hop reasoning methods. We further discuss this in Appendix~\ref{app:discussion_of_hotpotqa}. In contrast, the MuSiQue dataset is more complex in its construction, designed for more difficult multi-hop reasoning, and our method achieves the best performance on it. Notably, our method maintains stable performance across different retrievers, while iter-based methods and HippoRAG 2 are highly sensitive to retriever choice, showing up to a 20\% gap on 2WikiMultiHopQA. The above results demonstrate NeuroPath's superior performance in handling complex multi-hop queries. To further validate NeuroPath's applicability across different scenarios, we further evaluate its effectiveness on simple queries, see the Section~\ref{sec:Robustness_to_Model_Scale}. The results show that NeuroPath maintains competitive performance even on simpler tasks.
+
+
+
+
+\begin{table}[ht]
+\centering
+\caption{Retrieval performance.}
+\label{tab:retrieval_performance}
+% \renewcommand{\arraystretch}{0.95}   % 行高
+% \setlength{\tabcolsep}{3pt}  % 设置表格默认列宽
+\small
+\begin{tabular}{llcccccccc}
+\toprule
+                              & \multicolumn{1}{c}{}       & \multicolumn{2}{c}{\textbf{MuSiQue}} & \multicolumn{2}{c}{\textbf{2Wiki}} & \multicolumn{2}{c}{\textbf{HotpotQA}} & \multicolumn{2}{c}{\textbf{Average}} \\
+\midrule
+Category                      & Method & R@2              & R@5           & R@2            & R@5           & R@2               & R@5           & R@2              & R@5           \\
+\midrule
+                              & BM25                       & 32.2             & 41.2          & 51.7           & 61.9          & 55.4              & 72.2          & 46.4             & 58.4          \\
+                              & Contriever                 & 34.8             & 46.6          & 46.6           & 57.5          & 57.1              & 75.5          & 46.2             & 59.9          \\
+\multirow{-3}{*}{Naive}       & BGE-M3                     & 40.4             & 54.2          & 64.9           & 71.8          & 71.8              & 84.7          & 59.0             & 70.2          \\
+\multicolumn{10}{c}{\cellcolor[HTML]{D0CECE}\textbf{GPT-4o-mini (Contriever)}}                                                                                                                      \\
+                              & Iter-RetGen                & {\ul 46.0}       & {\ul 59.8}    & 62.1           & 76.5          & \textbf{78.3}     & \textbf{90.6} & {\ul 62.1}       & {\ul 75.6}    \\
+\multirow{-2}{*}{Iter-based}  & IRCoT                      & 42.2             & 55.8          & 54.2           & 70.0          & 68.6              & 83.3          & 55.0             & 69.7          \\
+\midrule
+                              & HippoRAG                   & 41.6             & 54.2          & {\ul 71.6}     & {\ul 89.6}    & 61.0              & 78.5          & 58.1             & 74.1          \\
+\multirow{-2}{*}{Graph-based} & HippoRAG 2                  & 41.8             & 55.5          & 62.5           & 74.2          & 65.3              & 83.4          & 56.5             & 71.0          \\
+\midrule
+Path-based                    & \textbf{NP(Zero-Shot)}     & \textbf{48.0}    & \textbf{62.7} & \textbf{77.2}  & \textbf{92.5} & {\ul 75.6}        & {\ul 90.4}    & \textbf{66.9}    & \textbf{81.9} \\
+\multicolumn{10}{c}{\cellcolor[HTML]{D0CECE}\textbf{Qwen-2.5-14B (Contriever)}}                                                                                                                     \\
+                              & Iter-RetGen                & {\ul 45.8}       & {\ul 58.8}    & 62.2           & 75.6          & \textbf{78.2}     & {\ul 90.2}    & {\ul 62.1}       & {\ul 74.9}    \\
+\multirow{-2}{*}{Iter-based}  & IRCoT                      & 40.2             & 52.7          & 56.2           & 72.0          & 65.9              & 76.9          & 54.1             & 67.2          \\
+\midrule
+                              & HippoRAG                   & 41.3             & 53.8          & {\ul 67.1}     & {\ul 85.6}    & 59.3              & 76.7          & 55.9             & 72.0          \\
+\multirow{-2}{*}{Graph-based} & HippoRAG 2                  & 40.3             & 52.7          & 56.7           & 67.7          & 63.6              & 81.3          & 53.5             & 67.2          \\
+\midrule
+Path-based                    & \textbf{NP(Zero-Shot)}     & \textbf{51.4}    & \textbf{65.3} & \textbf{76.6}  & \textbf{92.1} & {\ul 76.0}        & \textbf{90.9} & \textbf{68.0}    & \textbf{82.8} \\
+\multicolumn{10}{c}{\cellcolor[HTML]{D0CECE}\textbf{GPT-4o-mini (BGE-M3)}}                                                                                                                          \\
+                              & Iter-RetGen                & 46.3             & 60.6          & 74.1           & 87.1          & {\ul 81.0}        & 90.4          & 67.1             & 79.3          \\
+\multirow{-2}{*}{Iter-based}  & IRCoT                      & \textbf{48.7}    & {\ul 62.7}    & \textbf{79.0}  & {\ul 92.0}    & \textbf{81.3}     & {\ul 90.8}    & \textbf{69.7}    & {\ul 81.8}    \\
+\midrule
+                              & HippoRAG                   & 41.5             & 52.3          & 70.6           & 87.7          & 62.0              & 77.7          & 58.0             & 72.6          \\
+\multirow{-2}{*}{Graph-based} & HippoRAG 2                  & 43.6             & 61.2          & 72.2           & 88.8          & 71.1              & 89.4          & 62.3             & 79.8          \\
+\midrule
+Path-based                    & \textbf{NP(Zero-Shot)}     & {\ul 47.7}       & \textbf{64.7} & {\ul 78.1}     & \textbf{95.1} & 78.0              & \textbf{92.7} & {\ul 67.9}       & \textbf{84.1} \\
+\multicolumn{10}{c}{\cellcolor[HTML]{D0CECE}\textbf{Qwen-2.5-14B (BGE-M3)}}                                                                                                                         \\
+                              & Iter-RetGen                & {\ul 49.9}       & {\ul 64.8}    & \textbf{78.3}  & {\ul 93.4}    & \textbf{85.4}     & \textbf{93.6} & \textbf{71.2}    & {\ul 83.9}    \\
+\multirow{-2}{*}{Iter-based}  & IRCoT                      & 45.0             & 56.4          & {\ul 76.6}     & 91.8          & {\ul 78.5}        & 84.7          & 66.7             & 77.6          \\
+\midrule
+                              & HippoRAG                   & 41.2             & 51.5          & 65.6           & 82.5          & 60.0              & 75.5          & 55.6             & 69.8          \\
+\multirow{-2}{*}{Graph-based} & HippoRAG 2                  & 44.7             & 59.9          & 70.5           & 85.1          & 72.8              & 89.1          & 62.6             & 78.0          \\
+\midrule
+Path-based                    & \textbf{NP(Zero-Shot)}     & \textbf{50.6}    & \textbf{67.4} & \textbf{78.3}  & \textbf{94.6} & 77.9              & {\ul 91.9}    & {\ul 68.9}       & \textbf{84.6}  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+% % =============== 尝试加入 multihop-rag 数据集
+% \begin{table}[ht]
+% \centering
+% \setlength{\tabcolsep}{3pt} 
+% \small
+% \begin{tabular}{llcccccccccc}
+%                               & \multicolumn{1}{c}{}   & \multicolumn{2}{c}{\textbf{MuSiQue}} & \multicolumn{2}{c}{\textbf{2Wiki}} & \multicolumn{2}{c}{\textbf{HotpotQA}} & \multicolumn{2}{c}{multi} & \multicolumn{2}{c}{\textbf{Average}} \\
+% Category                      & Method                 & R@2               & R@5              & R@2              & R@5             & R@2               & R@5               & R@2         & R@5         & R@2               & R@5              \\
+%                               & BM25                   & 32.2              & 41.2             & 51.7             & 61.9            & 55.4              & 72.2              &             &             & 46.4              & 58.4             \\
+%                               & Contriever             & 34.8              & 46.6             & 46.6             & 57.5            & 57.1              & 75.5              & 9.5         & 20.4        & 46.2              & 59.9             \\
+% \multirow{-3}{*}{Naïve}       & BGE-M3                 & 40.4              & 54.2             & 64.9             & 71.8            & 71.8              & 84.7              &             &             & 59.0              & 70.2             \\
+% \multicolumn{12}{c}{\cellcolor[HTML]{D0CECE}\textbf{GPT-4o-mini   (Contriever)}}                                                                                                                                                              \\
+%                               & Iter-RetGen            & {\ul 46.0}        & {\ul 59.8}       & 62.1             & 76.5            & \textbf{78.3}     & \textbf{90.6}     & 17.8        & 30.9        & {\ul 62.1}        & {\ul 75.6}       \\
+% \multirow{-2}{*}{Iter-based}  & IRCoT                  & 42.2              & 55.8             & 54.2             & 70.0            & 68.6              & 83.3              &             &             & 55.0              & 69.7             \\
+%                               & HippoRAG               & 41.6              & 54.2             & {\ul 71.6}       & {\ul 89.6}      & 61.0              & 78.5              &             &             & 58.1              & 74.1             \\
+% \multirow{-2}{*}{Graph-based} & HippoRAG2              & 41.8              & 55.5             & 62.5             & 74.2            & 65.3              & 83.4              & 15.7        & 29.5        & 56.5              & 71.0             \\
+% Path-based                    & \textbf{NP(zero-shot)} & \textbf{48.0}     & \textbf{62.7}    & \textbf{77.2}    & \textbf{92.5}   & {\ul 75.6}        & {\ul 90.4}        & 23.7        & 39.0        & \textbf{66.9}     & \textbf{81.9}    \\
+% \multicolumn{12}{c}{\cellcolor[HTML]{D0CECE}\textbf{Qwen-2.5-14B   (Contriever)}}                                                                                                                                                             \\
+%                               & Iter-RetGen            & {\ul 45.8}        & {\ul 58.8}       & 62.2             & 75.6            & \textbf{78.2}     & {\ul 90.2}        &             &             & {\ul 62.1}        & {\ul 74.9}       \\
+% \multirow{-2}{*}{Iter-based}  & IRCoT                  & 40.2              & 52.7             & 56.2             & 72.0            & 65.9              & 76.9              &             &             & 54.1              & 67.2             \\
+%                               & HippoRAG               & 41.3              & 53.8             & {\ul 67.1}       & {\ul 85.6}      & 59.3              & 76.7              &             &             & 55.9              & 72.0             \\
+% \multirow{-2}{*}{Graph-based} & HippoRAG2              & 40.3              & 52.7             & 56.7             & 67.7            & 63.6              & 81.3              &             &             & 53.5              & 67.2             \\
+% Path-based                    & \textbf{NP(zero-shot)} & \textbf{51.4}     & \textbf{65.3}    & \textbf{76.6}    & \textbf{92.1}   & {\ul 76.0}        & \textbf{90.9}     &             &             & \textbf{68.0}     & \textbf{82.8}    \\
+% \multicolumn{12}{c}{\cellcolor[HTML]{D0CECE}\textbf{GPT-4o-mini   (BGE-M3)}}                                                                                                                                                                  \\
+%                               & Iter-RetGen            & 46.3              & 60.6             & 74.1             & 87.1            & {\ul 81.0}        & 90.4              &             &             & 67.1              & 79.3             \\
+% \multirow{-2}{*}{Iter-based}  & IRCoT                  & \textbf{48.7}     & {\ul 62.7}       & \textbf{79.0}    & {\ul 92.0}      & \textbf{81.3}     & {\ul 90.8}        &             &             & \textbf{69.7}     & {\ul 81.8}       \\
+%                               & HippoRAG               & 41.5              & 52.3             & 70.6             & 87.7            & 62.0              & 77.7              &             &             & 58.0              & 72.6             \\
+% \multirow{-2}{*}{Graph-based} & HippoRAG2              & 43.6              & 61.2             & 72.2             & 88.8            & 71.1              & 89.4              &             &             & 62.3              & 79.8             \\
+% Path-based                    & \textbf{NP(zero-shot)} & {\ul 47.7}        & \textbf{64.7}    & {\ul 78.1}       & \textbf{95.1}   & 78.0              & \textbf{92.7}     &             &             & {\ul 67.9}        & \textbf{84.1}    \\
+% \multicolumn{12}{c}{\cellcolor[HTML]{D0CECE}\textbf{Qwen-2.5-14B   (BGE-M3)}}                                                                                                                                                                 \\
+%                               & Iter-RetGen            & {\ul 49.9}        & {\ul 64.8}       & \textbf{78.3}    & {\ul 93.4}      & \textbf{85.4}     & \textbf{93.6}     &             &             & \textbf{71.2}     & {\ul 83.9}       \\
+% \multirow{-2}{*}{Iter-based}  & IRCoT                  & 45.0              & 56.4             & {\ul 76.6}       & 91.8            & {\ul 78.5}        & 84.7              &             &             & 66.7              & 77.6             \\
+%                               & HippoRAG               & 41.2              & 51.5             & 65.6             & 82.5            & 60.0              & 75.5              &             &             & 55.6              & 69.8             \\
+% \multirow{-2}{*}{Graph-based} & HippoRAG2              & 44.7              & 59.9             & 70.5             & 85.1            & 72.8              & 89.1              &             &             & 62.6              & 78.0             \\
+% Path-based                    & \textbf{NP(zero-shot)} & \textbf{50.6}     & \textbf{67.4}    & \textbf{78.3}    & \textbf{94.6}   & 77.9              & {\ul 91.9}        &             &             & {\ul 68.9}        & \textbf{84.6}   
+% \end{tabular}
+% \end{table}
+
+\textbf{QA Results}. As shown in Table~\ref{tab:qa_performance_contriever}, We report the QA performance using GPT-4o-mini and Contriever, results with BGE are similar and can be found in Appendix~\ref{app:experimental_details}. Our method outperforms all baselines on the MuSiQue and 2WikiMultiHopQA datasets, and performs slightly below HippoRAG 2 on HotpotQA. This is because Hotpot allows shortcuts answers through guessing~\cite{musique}. We discuss the reasons for this observation in Appendix~\ref{app:discussion_of_hotpotqa}. In addition, we found that LightRAG and PathRAG performed poorly on QA tasks. Despite leveraging graph structures to capture knowledge connections, they failed on multi-hop factual QA, performing worse than even naive methods. Appendix~\ref{app:compre_to_pathrag} details their limitations and explains why our path-based method is more effective than PathRAG.
+
+%%%%% QA 结果 %%%%%%%%%%%%%
+\begin{table}[ht]
+\centering
+\caption{QA performance with Contriever as the Retriever.}
+\renewcommand{\arraystretch}{0.95}   % 行高
+\label{tab:qa_performance_contriever}
+\small
+\begin{tabular}{llcccccc|cc}
+\toprule
+                             & \multicolumn{1}{c}{} & \multicolumn{2}{c}{\textbf{MuSiQue}} & \multicolumn{2}{c}{\textbf{2Wiki}} & \multicolumn{2}{c}{\textbf{HotpotQA}} & \multicolumn{2}{c}{\textbf{Average}}            \\
+\midrule
+Category                     & Method               & EM                & F1               & EM               & F1              & EM                & F1                & \multicolumn{1}{c}{EM} & \multicolumn{1}{c}{F1} \\
+\midrule
+\multirow{3}{*}{Naive}       & BM25                 & 20.7              & 30.7             & 44.2             & 48.1            & 43.3              & 55.6              & 36.1                   & 44.8                   \\
+                             & Contriever           & 22.3              & 32.1             & 38.5             & 43.7            & 44.4              & 57.5              & 35.1                   & 44.4                   \\
+                    & BGE-M3               & 27.8              & 39.7             & 48.2             & 54.5            & 47.8              & 61.8              & 41.3                   & 52.0                   \\
+\midrule
+\multirow{2}{*}{Iter-based}  & Iter-RetGen          & 29.9              & {\ul 43.6}       & 51.5             & 62.2            & 48.7              & 62.2              & {\ul 43.4}        & {\ul 56.0}       \\
+            & IRCoT                & {\ul 30.0}        & 42.1             & 47.7             & 57.0            & 45.2              & 59.9              & 41.0              & 53.0             \\
+\midrule
+\multirow{3}{*}{Graph-based} & LightRAG            & 4.2               & 13.7             & 10.8             & 19.4            & 14.7              & 27.7              & 9.9               & 20.3             \\
+            & HippoRAG             & 27.8              & 40.5             & {\ul 58.6}       & {\ul 69.1}      & 43.3              & 57.8              & 43.2              & 55.8             \\
+            & HippoRAG 2            & 27.4              & 39.1             & 46.0             & 55.3            & \textbf{50.7}     & \textbf{65.5}     & 41.4              & 53.3             \\
+\midrule
+\multirow{2}{*}{Path-based} & PathRAG              & 8.4               & 20.8             & 21.0             & 31.6            & 23.8              & 41.2              & 17.7              & 31.2             \\
+                            & NeuroPath          & \textbf{31.4}     & \textbf{44.3}    & \textbf{63.4}    & \textbf{73.2}   & {\ul 50.5}        & {\ul 64.7}        & \textbf{48.4}     & \textbf{60.7}         \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+
+
+
+\subsection{Case Studies (RQ2)}
+To illustrate how NeuroPath addresses semantic incoherence and noise in graph-based methods, we compare it with several representative baselines, including HippoRAG 2 and LightRAG. As shown in Figure~\ref{fig:case_study}, we conduct case studies using a question from the MuSiQue dataset to evaluate the retrieval processes and answers of each method.
+
+NeuroPath answers the question correctly by selectively expanding paths that preserve semantic coherence at each hop, effectively aligning with the question and avoiding irrelevant content. The documents retrieved rank the supporting evidence at the top, highlighting the quality of its retrieval process. In contrast, HippoRAG 2 applies PPR over both document and entity nodes but overemphasizes irrelevant content due to ignoring edge semantics. LightRAG retrieves a large subgraph (60 entities, 169 relations) but still fails to answer correctly, as much of the information is irrelevant to the question.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{assets/case-study.pdf}
+  \caption{Case studies. Comparison between NeuroPath and the graph-based baselines.}
+  \label{fig:case_study}
+\end{figure}
+
+
+\subsection{Ablation Studies (RQ3)}
+In this section, we ablate various components of NeuroPath, analyzing the impact of pruning, Post-retrieval Completion, hop counts, and prompts on retrieval performance.
+
+
+\begin{table}[ht]
+\centering
+\caption{Dissecting NeuroPath. \textit{p} denotes the number of paths retained after pruning. \textit{expansion\_req} and \textit{current\_chain} correspond to the expansion requirements and current chain in the prompt.}
+\label{tab:Dissecting_NeuroPath}
+\setlength{\tabcolsep}{3pt}  % 设置表格列宽
+\renewcommand{\arraystretch}{0.95}   % 行高
+\begin{tabular}{lccccccccc}
+\toprule
+                                    & \multicolumn{3}{c}{\textbf{MuSiQue}}       & \multicolumn{3}{c}{\textbf{2Wiki}}         & \multicolumn{3}{c}{\textbf{HotpotQA}}      \\
+\midrule
+                                    & R@2           & R@5           & Token (k) & R@2           & R@5           & Token (k) & R@2           & R@5           & Token (k) \\
+\multicolumn{10}{c}{\cellcolor[HTML]{D9D9D9}w/ Post-retrieval   Completion}   \rule{0pt}{0.8em}                                                                                              \\
+w/o pruning    \rule{0pt}{0.8em}           & \textbf{48.7} & \textbf{63.8} & 2891    & {\ul 76.8}    & {\ul 92.0}    & 1883    & {\ul 75.7}    & \textbf{90.8} & 2504    \\
+default (p=30)                      & {\ul 48.0}    & {\ul 62.7}    & $\downarrow$ 45.7\%     & \textbf{77.2} & \textbf{92.5} & $\downarrow$ 8.4\%      & \textbf{75.9} & {\ul 90.1}    & $\downarrow$ 39.8\%     \\
+p=20                                & 47.3          & 62.2          & $\downarrow$ 52.6\%     & 76.5          & 90.8          & $\downarrow$ 17.3\%     & 74.9          & 89.4          & $\downarrow$ 47.0\%     \\
+\multicolumn{10}{c}{\cellcolor[HTML]{D9D9D9}w/o Post-retrieval   Completion}   \rule{0pt}{0.8em}                                                                                            \\
+Contriever(baseline)   \rule{0pt}{0.8em}      & 34.8          & 46.6          & -          & 46.6          & 57.5          & -          & 57.1          & 75.5          & -          \\
+max hop=1                           & 35.5          & 35.5          & -          & 61.0          & 62.3          & -          & 61.3          & 66.4          & -          \\
+max hop=2                           & 41.8          & 45.3          & -          & 73.6          & 84.1          & -          & 67.5          & 71.4          & -          \\
+max hop=3                           & 42.1          & 45.4          & -          & 73.9          & 84.5          & -          & 67.7          & 72.2          & -          \\
+w/o expansion\_req$*$ & 40.9          & 44.2          & -          & 69.9          & 75.9          & -          & 65.8          & 70.1          & -          \\
+w/o current\_chain$*$           & 39.9          & 44.2          & -          & 71.5          & 82.9          & -          & 65.7          & 71.0          & -          \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+As seen in Table \ref{tab:Dissecting_NeuroPath} lines 4-6, we conduct a comparison of performance and token consumption before and after pruning, demonstrating the effectiveness of the proposed pruning method. With 30 paths retained after pruning, the retrieval performance is nearly equivalent and even higher in some metrics, while token consumption decreases by 45.7\%, 8.4\%, and 39.8\%, respectively. With 20 paths retained after pruning, the performance reduction is not obvious, but token consumption is reduced by almost half on the MuSiQue and HotpotQA datasets. At the same time, this result also indirectly verifies that there is a lot of noise in the graph structure that is irrelevant to answering queries, and our method can greatly reduce this noise.
+
+As seen in Table \ref{tab:Dissecting_NeuroPath} lines 9-11, we report the performance of path tracking using only the LLM after removing the Post-retrieval Completion strategy. Removing this strategy leads to a significant drop in recall@5, indicating that this strategy helps compensate for missing path information and improves retrieval performance. The retrieval performance improves progressively as the maximum expansion hop parameter increases from 1 to 2 to 3, with a particularly notable gain observed when increasing from 1 to 2. Given that most of the questions in the three datasets are 2-hop questions, the improvement from 2 to 3 is relatively small. It is important to note that the hop parameter does not directly correspond to the number of reasoning steps in multi-hop QA. In our method, even with a hop value of 1, multi-hop reasoning across documents can be achieved through the linking of head and tail entities in triples. Notably, even with a maximum hop count of 1, our method outperforms the naive RAG baseline using the same retriever on the recall@2 metric. This demonstrates that the direction-aware path filtering enables higher-quality retrieval under fewer document conditions. 
+
+
+As seen in Table \ref{tab:Dissecting_NeuroPath} lines 12-13, we conduct experiments by removing the prompts that instruct the LLM to generate the current reasoning chain and the expansion requirements (i.e., using only the query for pruning instead of expansion requirements), respectively. The results show performance drops, indicating two key insights: (1) Explicitly prompting the LLM to generate reasoning chains enhances its ability to assess path filtering and expansion; (2) Pruning with expansion requirements better captures semantic information related to path expansion, enabling more accurate direction calibration and noise suppression compared to query-based pruning.
+
+
+%%%%%%%%%%%%%%%%%% Retrieval results in other LLMs
+\subsection{Robustness to Model Scales and Task Complexity (RQ4)}
+\label{sec:Robustness_to_Model_Scale}
+In this section, we verify NeuroPath's robustness to different scales of LLMs and task complexity.
+
+For LLMs, we evaluate its performance on various smaller LLMs, including Llama-3.1-8B-Instruct~\cite{llama-3.1}, GLM-4-9B-0414~\cite{glm-4}, Mistral-7B-Instruct-v0.3~\cite{mistral-7bv0.3}, and Gemma-3-4b-it~\cite{gemma-3}. We also fine-tune Llama-3.1-8B-Instruct~\cite{llama-3.1} to evaluate potential performance gains. All experiments use Contriever as the retriever and adopt a One-Shot setting for NeuroPath.
+
+
+\begin{table}[ht]
+\small
+\caption{Retrieval performance of alternative small open-source LLMs on MuSiQue.}
+\label{tab:replace_open_source_model}
+\renewcommand{\arraystretch}{0.95}   % 行高
+\setlength{\tabcolsep}{5pt}  % 设置表格默认列宽
+\centering
+\begin{tabular}{lcccccccc|cc}
+\toprule
+                     & \multicolumn{2}{c}{\textbf{Llama-3.1-8B}} & \multicolumn{2}{c}{\textbf{GLM-4-9B}} & \multicolumn{2}{c}{\textbf{Mistral-7B}} & \multicolumn{2}{c}{\textbf{Gemma-3-4B}} & \multicolumn{2}{c}{\textbf{Average}}                       \\
+\midrule
+                    % \cline{2-11}  \rule{0pt}{1em}
+ Method         & R@2                 & R@5                 & R@2             & R@5             & R@2              & R@5              & R@2            & R@5           & \multicolumn{1}{c}{R@2} & \multicolumn{1}{c}{R@5} \\
+\midrule
+Iter-RetGen          & {\ul 44.0}          & \textbf{58.4}       & {\ul 45.1}      & {\ul 58.9}      & \textbf{41.8}    & \textbf{54.1}    & {\ul 42.1}     & {\ul 55.3}    & {\ul 43.3}              & {\ul 56.7}              \\
+IRCoT                & 40.3                & 53.7                & 40.2            & 49.1            & 38.5             & 50.9             & 36.8           & 42.4          & 39.0                    & 49.0                    \\
+HippoRAG             & 39.7                & 52.0                & 41.6            & 53.8            & 38.4             & 50.8             & 36.0           & 46.6          & 38.9                    & 50.8                    \\
+HippoRAG 2            & 40.5                & {\ul 54.9}          & 41.9            & 55.2            & {\ul 40.3}       & 53.7             & 39.5           & 54.7          & 40.5                    & 54.6                    \\
+\textbf{NeuroPath} & \textbf{45.5}       & \textbf{58.4}       & \textbf{46.6}   & \textbf{59.3}   & 40.1             & {\ul 53.9}       & \textbf{43.4}  & \textbf{58.1} & \textbf{43.9}           & \textbf{57.4}      \\
+\bottomrule
+\end{tabular}
+\end{table}
+We compare all the methods on the most challenging MuSiQue dataset, as shown in Table \ref{tab:replace_open_source_model}. NeuroPath consistently outperforms all baselines across the LLMs, except for Mistral-7B. Table \ref{tab:sft_on_llama8b} shows the performance improvement after fine-tuning on Llama-3.1-8B-Instruct. The results demonstrate that our method achieves a significant improvement through fine-tuning, even outperforming GPT-4o-mini. See the Appendix~\ref{app:fine_tuning_details} for fine-tuning details.
+
+\begin{table}[ht]
+\small
+\caption{Retrieval performance after fine-tuning on LLama-3.1-8B-Instruct.}
+\renewcommand{\arraystretch}{0.95}   % 行高
+\label{tab:sft_on_llama8b}
+\centering
+\setlength{\tabcolsep}{3pt}  % 设置表格列宽
+\begin{tabular}{lccccccccc}
+\toprule
+                     & \multicolumn{3}{c}{\textbf{MuSiQue}}          & \multicolumn{3}{c}{\textbf{2Wiki}}            & \multicolumn{3}{c}{\textbf{HotpotQA}}         \\
+\midrule
+                     % \cline{2-10} \rule{0pt}{1em}
+Model           & R@2           & R@5           & R@10          & R@2           & R@5           & R@10          & R@2           & R@5           & R@10          \\
+\midrule
+GPT-4o-mini (default) & 48.0          & 62.7          & 70.8          & \textbf{77.2} & \textbf{92.5} & 94.1          & 75.6          & 90.4          & 94.3          \\
+Llama-3.1-8B (SFT)   & \textbf{50.5} & \textbf{64.9} & \textbf{72.1} & \textbf{77.2} & \textbf{92.5} & \textbf{94.2} & \textbf{76.4} & \textbf{90.8} & \textbf{94.5} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+% ==== 简单查询任务
+To verify the adaptability of our method to simple queries (standard tasks), we conduct additional experiments on two simple QA datasets: PopQA~\cite{popqa} and NaturalQuestions~\cite{nq}, which mainly consist of single-entity-centered questions. Following the setup of the main experiments, we randomly select 1000 queries from each dataset. 
+
+\begin{table}[ht]
+\centering
+\caption{Retrieval performance on standard tasks with Contriever and GPT-4o-mini.}
+\label{tab:performance_on_simple_qa}
+\begin{tabular}{lcccc|cc}
+\toprule
+\multicolumn{1}{c}{} & \multicolumn{2}{c}{\textbf{PopQA}} & \multicolumn{2}{c}{\textbf{NQ}} & \multicolumn{2}{c}{\textbf{Average}} \\
+\midrule
+% \cline{2-7}  \rule{0pt}{1em}
+Method              & R@2              & R@5             & R@2            & R@5            & R@2               & R@5              \\
+\midrule
+Contriever           & 27.0             & 43.2            & 29.1           & 54.6           & 28.1              & 48.9             \\
+Iter-RetGen          & 35.4             & 46.6            & \textbf{40.9}  & \textbf{68.6}  & {\ul 38.1}        & \textbf{57.6}    \\
+IRCoT                & 30.2             & 38.2            & 35.1           & 55.8           & 32.6              & 47.0             \\
+HippoRAG            & {\ul 36.5}       & \textbf{52.7}   & 22.5           & 45.7           & 29.5              & 49.2             \\
+HippoRAG 2            & 34.2             & 47.4            & 32.1           & 59.5           & 33.2              & 53.4             \\
+\textbf{NeuroPath} & \textbf{40.5}    & {\ul 49.3}      & {\ul 35.8}     & {\ul 65.2}     & \textbf{38.2}     & {\ul 57.2}     \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+As shown in Table~\ref{tab:performance_on_simple_qa}, our retrieval performance is still better than the graph-based method, and even better than the iter-based method on the PopQA dataset. The PopQA dataset is particularly entity-centric, with questions constructed around specific entities. Graph structure enhanced methods, which represent both entities and their relations, can quickly locate relevant entities for retrieval, giving them a natural advantage on this type of data.
+% end 简单查询
+
+% To further probe NeuroPath’s robustness, we evaluate it in a more realistic scenario involving long-document data. Our main experimental datasets consist of short, clean paragraphs, whereas real-world applications require retrieving information from lengthy, noisy documents. We use the MultiHop-RAG~\cite{multihoprag} dataset, whose documents are substantially longer, as shown in Table~\ref{tab:Comparison_of_avg_tokens_per_doc}. This increased length necessitates chunking documents into 512-token segments, which challenges the retriever by potentially fragmenting supporting facts across chunks and introducing distracting noise. This setup provides a stringent test of a model’s ability to navigate a noisy, fragmented information landscape. We select representative, high-performing methods from previous experiments for evaluation.
+
+Our main experiments rely on short, clean paragraphs, which may not reflect real-world scenarios involving long, noisy documents. To address this and further test NeuroPath's robustness, we evaluate it on the MultiHop-RAG~\cite{multihoprag} dataset. We sample 1000 questions for evaluation. Given that documents in this dataset are substantially longer (each document has become almost 20 times longer, see Appendix~\ref{app:experimental_details}), we chunk them into 512 token segments. This setup inherently challenges retrieval performance with fragmented evidence and noise, providing a more stringent evaluation. We compare NeuroPath against baselines from prior experiments.
+
+
+
+\begin{table}[ht]
+\centering
+\caption{Retrieval performance on MultiHop-RAG Dataset with GPT-4o-mini.}
+\label{tab:performance_on_multihop_rag}
+\begin{tabular}{lcc}
+\toprule
+\textbf{}          & \textbf{MultiHop-RAG (Contriever)} & \textbf{MultiHop-RAG (BGE)} \\
+\midrule
+Method             & R@2 / R@5                          & R@2 / R@5                   \\
+\midrule
+Contriever         & 9.5 / 20.4                         & - / -                          \\
+BGE-M3             & - / -                                 & 25.4 / 44.7                 \\
+Iter-RetGen        & \uline{17.8} / \uline{30.9}                        & \textbf{28.8} / \uline{45.8}                 \\
+IRCoT        & 8.8 / 17.1                        & 25.3 / 39.8                \\
+HippoRAG        & 16.5 / 26.6                       & 18.2 / 30.2            \\
+HippoRAG 2         & 15.7 / 29.5                        & 21.4 / 40.8                 \\
+\textbf{NeuroPath} & \textbf{23.7} / \textbf{39.0 }              & \uline{26.1} / \textbf{46.8}     \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+As shown in Table~\ref{tab:performance_on_multihop_rag}, our method outperforms typical baselines, especially when using the smaller Contriever. Notably, other methods still exhibit sensitivity to the choice of embedding model, whereas NeuroPath shows relatively stable performance differences between Contriever and BGE-M3.
+
+
+% % sense-making任务
+% In addition to multi-hop and standard tasks, we also evaluated the scalability for the sense-making task (requires reasoning in larger, more complex, or uncertain contexts). We followed the setup and baselines from the HippoRAG 2, using the NarrativeQA dataset. This dataset requires understanding and reasoning over large-scale narratives, such as long novels.
+
+% \begin{table}[ht]
+% \centering
+% \caption{QA performance on sense-making task.}
+% \begin{tabular}{lc}
+% \toprule
+% \textbf{Method}    & \multicolumn{1}{l}{\textbf{NarrativeQA (F1 Score)}} \\
+% \midrule
+% NV-Embed-v2 (7B)   & 24.2                                                \\
+% GraphRAG (NV)           & 20.9                                                \\
+% LightRAG (NV)          & 9.0                                                 \\
+% HippoRAG (NV)          & 16.1                                                \\
+% HippoRAG 2 (NV)        & 25.2                                                \\
+% \textbf{NeuroPath (NV)} & \textbf{32.7} \\
+% \textbf{NeuroPath (Contriever)} & \uline{28.8} \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+% The results show that NeuroPath can be extended to more complex or uncertain tasks. We attribute this capability to the dynamic path tracking process of the LLM, where the model can autonomously choose the most likely path under uncertain context.
+
+
+\section{Conclusions}
+% In this paper, we propose NeuroPath, a neurobiologically inspired RAG framework that leverages the reasoning capabilities of LLM. By simulating the hippocampal place cell mechanisms of preplay for navigation and replay for memory consolidation, we introduce a novel path-based RAG method that emphasizes semantic coherence to reduce noise in retrieval. NeuroPath significantly improves the retrieval quality for multi-hop QA, achieving new state-of-the-art performance. We demonstrate its robustness across various LLMs and show that semantic coherence outperforms structural relevance in multi-hop question answering retrieval. We believe that this work offers a novel perspective for advancing complex reasoning in RAG tasks.
+
+In this paper, we introduced NeuroPath, a novel RAG framework inspired by hippocampal place cell mechanisms to address the critical limitations of semantic incoherence and noise in existing graph-based methods. Our core contributions, Dynamic Path Tracking and Post-retrieval Completion, empower LLMs to dynamically construct and refine reasoning paths that are semantically aligned with the query. Extensive experiments demonstrate that NeuroPath achieves new state-of-the-art performance on challenging multi-hop QA datasets. Furthermore, our findings confirm its robustness across various LLMs and task complexities. We underscore a key insight: for multi-hop reasoning, semantic coherence is a more effective retrieval principle than simple structural relevance. This work not only provides a high-performance solution for multi-hop QA but also opens a promising direction for developing more faithful, explainable, and neurobiologically inspired reasoning systems within the RAG paradigm.
+
+
+% However, there are still some limitations that can be addressed in future work to optimize the RAG method from the perspective of path semantics. First, NeuroPath relies heavily on LLMs for valid path filter and expansion. Although LLMs have powerful semantic reasoning capabilities, the call of LLM is still a time bottleneck. Secondly, since the knowledge density of the triple segments expanded by NeuroPath each time is low, a single-hop task may be split into multiple hops, further increasing the time cost. Finally, since we have not made any fundamental changes to the graph index construction process and do not optimize the retrieval corpus itself (such as summary information), there may be limitations in sense-making tasks such as summary question answering.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Reference
+\newpage
+\bibliographystyle{abbrvnat}
+% \bibliographystyle{IEEEtran}
+\bibliography{reference}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Appendix
+\newpage
+\appendix
+
+\section{Neurobiology-inspired Mechanism}
+\label{app:bio_mechanism}
+
+In this section, we will briefly introduce the mechanism of hippocampal place cells and cognitive maps as a supplement to explain our motivation.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{assets/mechanism.pdf}
+  \caption{Representation forms of cognitive maps in physical and memory space, and their analogy to knowledge representation.}
+  \label{fig:mechanism}
+\end{figure}
+
+\textbf{Place cells in the hippocampus}. Place cells are found in the CA1 and CA3 regions of the hippocampus and show place-specific firing when animals explore their environment \cite{OKEEFE1971}. They play an important role in spatial positioning and navigation, as shown in Figure~\ref{fig:mechanism}-(a). When an animal reaches a specific location during movement, a corresponding place cell becomes active. The area represented by each place cell is called a place field. Groups of place cells work together with grid cells and boundary vector cells in the entorhinal cortex to form a cognitive map and support spatial processing~\cite{Cell_coordination_mechanism}. Studies have shown that place cell activity sequences can replay previously experienced paths during rest or sleep. This phenomenon is believed to be related to memory consolidation and episodic memory~\cite{eichenbaum1999memory_space}. Pfeiffer et al. confirmed that the preplay of place cell sequences plays an important role in predicting future paths~\cite{pfeiffer2013place-cell_predict_future_path}. During navigation, the hippocampus generates a sequence of place cell activity in chronological order, like a neural map. Even when the combination of start and target positions is completely new. Place cell sequences show flexibility and adaptability, allowing dynamic path planning based on the current environment and goals.
+
+\textbf{Place cells and cognitive map}. Eichenbaum et al. believe that the hippocampus should participate in the representation of a wide range of memory spaces through place cells and collaborative cells, and the representation of physical space is only a special case of memory space representation \cite{eichenbaum1999memory_space}. This theory believes that cognitive maps are essentially episodic memories composed of sequences of different events or location nodes, and then different episodic memories are linked together through repeated or common elements (also called nodes) to establish a memory space. As shown in Figure \ref{fig:mechanism}-(b).
+
+\textbf{Graph-structured knowledge organization}. Knowledge in the real world does not exist in isolation, but is interconnected through complex associative relationships. This organization of knowledge resembles the structure of cognitive maps, which can be represented as a network composed of nodes and edges, as illustrated in Figure \ref{fig:mechanism}-(c). Both path navigation in neurobiology and knowledge retrieval in multi-hop QA task, the core mechanism involves the integration of multi-source information and progressively locate the target. Therefore, inspired by the role of place cell sequences in navigational planning of future paths \cite{pfeiffer2013place-cell_predict_future_path}, we simulate the preplay and replay mechanisms of place cells, thereby enabling goal-directed knowledge retrieval and memory consolidation. 
+
+\newpage
+\section{NeuroPath Workflow}
+Algorithm~\ref{alg:workflow} outlines the NeuroPath workflow, which comprises three main stages: \textbf{Static Indexing}, \textbf{Dynamic Path Tracking}, and \textbf{Post-retrieval Completion}. Moreover, Figure~\ref{fig:pipeline1-dynamic-path-tracking} and Figure~\ref{fig:pipeline2_post-retrieval_completion} provide illustrative examples of the Dynamic Path Tracking and Post-retrieval Completion processes, respectively.
+
+\begin{algorithm}
+\caption{NeuroPath Framework Workflow}
+\label{alg:workflow}
+\begin{algorithmic}[1]  % [1] 表示显示行号
+\REQUIRE Source documents $\mathcal{D}$ and query $q$
+\ENSURE  Candidate documents $\mathcal{D}_{ret}$ (Final retrieved)
+\STATE \textbf{Static Indexing:}
+% \STATE \textbf{Static Indexing}:
+\STATE Extract entities and relation triples from documents $\mathcal{D}$ using LLM
+\hfill See Fig.~\ref{fig:openie} for prompt
+\STATE Construct knowledge graph (KG) from extracted facts
+\STATE Construct coreference sets based on embedding similarity of entities
+\STATE \textbf{Dynamic Path Tracking:}
+\STATE Use LLM to extract key entities from query $q$
+\hfill See Fig.~\ref{fig:query_extra} for prompt
+\STATE Retrieve initial seed nodes via entity similarity
+\STATE Expand seed nodes with coreference set
+\REPEAT
+    \IF{ hop $h = 0$ }
+        \STATE Gather initial seed nodes connected triple segments from KG
+        \STATE Concatenate these triple segments to form candidate paths
+        \STATE Prune candidate paths using similarity with query $q$
+    \ELSE
+        \STATE Identify expandable nodes linked to current path and expand them with coreference set as new seed nodes 
+        \STATE Gather seed nodes connected triple segments from KG
+        \STATE Concatenate these triple segments to form candidate paths
+        \STATE Prune candidate paths using similarity with previous expansion goal $g^{h-1}$
+    \ENDIF
+    \STATE Retain top-30 candidate paths
+
+    \STATE Use LLM to:  \hfill See Fig.~\ref{fig:path_tracking} for prompt
+        \STATE \quad Select valid paths 
+        \STATE \quad Mark paths that need to be expanded 
+        \STATE \quad Generate reasoning chain based on valid paths $c^h$
+        \STATE \quad Generate next-hop expansion requirements $g^h$
+        \STATE \quad Decide whether to continue, represented by the generated flag $ct$
+\UNTIL{$ct = 0$ or maximum hop reached}
+
+\STATE \textbf{Post-retrieval Completion:}
+\STATE Collect all source documents from selected valid paths as $\mathcal{D}_p$
+\STATE Concatenate the $c$ and $g$ from the final hop with the original query $q$ to form the new query $q'$
+\STATE Retrieve additional documents $\mathcal{D}_e$ using $q'$
+\RETURN final set $\mathcal{D}_{ret} = \mathcal{D}_p \cup \mathcal{D}_e$
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
+\section{Detailed Experimental Settings and Results}
+\label{app:experimental_details}
+All open-source LLMs in our experiments are deployed using vLLM \cite{vLLM} on NVIDIA GeForce RTX 4090. For GPT-4o-mini, we use the official OpenAI API.
+
+We show the detailed data of entity and relationship extraction when NeuroPath performs static indexing in Table \ref{tab:statistics_of_kg_data}. For MultiHop-RAG, we selected 1,000 questions from the original dataset and merged all supporting documents for each question into a single corpus. We then chunked all documents within this corpus into blocks of 512 tokens and retained the original title field. Table \ref{tab:Comparison_of_avg_tokens_per_doc} shows the comparison of the average number of tokens in documents across different datasets.
+
+\begin{table}[ht]
+\centering
+\caption{Comparison of the average number of tokens per document.}
+\label{tab:Comparison_of_avg_tokens_per_doc}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{}                   & \textbf{MuSiQue} & \textbf{2Wiki} & \textbf{HotpotQA} & \textbf{PopQA}  &\textbf{NQ} & \textbf{MultiHop-RAG} \\
+\midrule
+Avg tokens / doc & 110              & 105            & 128 & 129 & 136          & 2,289 (chunk to 512) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Experiments for HippoRAG \& HippoRAG 2, LightRAG, and PathRAG are conducted using the official code provided by the authors. LightRAG uses version 1.3.4 with the specified mode set to 'local', and all other baselines use default settings. Except for LightRAG and PathRAG, we standardize the QA prompts across all models. Additionally, as LightRAG and PathRAG do not support retrieval performance evaluation, we follow their original configuration by merging each dataset into a single document and chunking. Moreover, to ensure consistency in QA output style with other methods, we add standardized output prompts to LightRAG and PathRAG, enabling fairer comparisons in terms of EM and F1 metrics. The detailed prompt is provided in Appendix \ref{app:llm_prompts}.
+
+
+
+% \begin{wraptable}{r}{0.5\textwidth}
+\begin{table}[ht]
+\centering
+\caption{Statistics of KG data extracted by GPT-4o-mini.}
+\label{tab:statistics_of_kg_data}
+\begin{tabular}{lcccccc}
+\toprule
+          & \textbf{MuSiQue} & \textbf{2Wiki} & \textbf{HotpotQA} & \textbf{PopQA} &\textbf{NQ} & \textbf{MultiHop-RAG} \\
+\midrule
+Entities  & 104,442  & 49,362 & 89,947 & 87,233 & 92,852 & 39,281 \\
+Relations & 40,861   & 15,049 & 33,914 & 22,163 & 40,273 & 18,564 \\
+Triples   & 120,226  & 60,188 & 108,621 & 106,061 & 116,689 & 43,638 \\
+\bottomrule
+\end{tabular}
+\end{table}
+% \end{wraptable}
+
+
+In addition to the QA performance with Contriever, we supplement the QA performance comparison using BGE-M3 as the retriever in Table \ref{tab:qa_performance_bge}. Similar to the results with Contriever, our method consistently outperforms the baselines.
+
+\begin{table}[ht]
+\centering
+\caption{QA performance with GPT-4o-mini and BGE-M3.}
+\label{tab:qa_performance_bge}
+\begin{tabular}{llcccccc|cc}
+\toprule
+                             & \multicolumn{1}{c}{} & \multicolumn{2}{c}{\textbf{MuSiQue}} & \multicolumn{2}{c}{\textbf{2Wiki}} & \multicolumn{2}{c}{\textbf{HotpotQA}} & \multicolumn{2}{c}{\textbf{Average}} \\
+\midrule
+Category                     & Method               & EM                & F1               & EM               & F1              & EM                & F1                & EM                & F1               \\
+\midrule
+\multirow{3}{*}{Naive}       & BM25                 & 20.7              & 30.7             & 44.2             & 48.1            & 43.3              & 55.6              & 36.1              & 44.8             \\
+                             & Contriever           & 22.3              & 32.1             & 38.5             & 43.7            & 44.4              & 57.5              & 35.1              & 44.4             \\
+                             & BGE-M3               & 27.8              & 39.7             & 48.2             & 54.5            & 47.8              & 61.8              & 41.3              & 52.0             \\
+\midrule
+\multirow{2}{*}{Iter-based}  & Iter-RetGen          & {\ul 31.7}        & {\ul 46.3}       & 56.0             & 66.7            & 49.8              & 64.5              & 45.8              & 59.2             \\
+                             & IRCoT                & 30.8              & 44.6             & {\ul 61.5}       & {\ul 72.1}      & {\ul 50.3}        & 64.4              & 47.5              & 60.4             \\
+\midrule
+\multirow{3}{*}{Graph-based}                    & LightRAG            & 5.2               & 15.8             & 16.8             & 30.3            & 18.0              & 32.7              & 13.3              & 26.3             \\
+                                                & HippoRAG             & 25.8              & 36.7             & 57.4             & 66.7            & 43.7              & 57.2              & 42.3              & 53.5             \\
+                                                & HippoRAG 2            & 31.6              & 44.5             & 57.9             & 67.8            & \textbf{55.0}     & \textbf{70.1}     & {\ul 48.2}        & {\ul 60.8}       \\
+\midrule
+\multirow{2}{*}{Path-based} & PathRAG              & 7.1               & 19.8             & 18.5             & 28.9            & 21.7              & 38.5              & 15.8              & 29.1             \\
+\multicolumn{1}{c}{}                            & NeuroPath          & \textbf{33.0}     & \textbf{46.4}    & \textbf{63.7}    & \textbf{74.1}   & {\ul 50.3}        & {\ul 65.2}        & \textbf{49.0}     & \textbf{61.9}     \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+% \section{Performance on Simple Queries}
+% \label{app:performance_on_simple_queries}
+% To verify the adaptability of our method to simple queries, we conduct additional experiments on two simple QA datasets: PopQA~\cite{popqa} and NaturalQuestions~\cite{nq}, which mainly consist of single-entity-centered questions. Following the setup of the main experiments, we randomly select 1000 queries from each dataset.
+
+% \begin{table}[ht]
+% \centering
+% \caption{Retrieval performance on simple queries.}
+% \label{tab:performance_on_simple_qa}
+% \begin{tabular}{lcccc|cc}
+% \toprule
+% \multicolumn{1}{c}{} & \multicolumn{2}{c}{\textbf{PopQA}} & \multicolumn{2}{c}{\textbf{NQ}} & \multicolumn{2}{c}{\textbf{Average}} \\
+% \cline{2-7}  \rule{0pt}{1em}
+%                       & R@2              & R@5             & R@2            & R@5            & R@2               & R@5              \\
+% \midrule
+% Contriever           & 27.0             & 43.2            & 29.1           & 54.6           & 28.1              & 48.9             \\
+% Iter-RetGen          & 35.4             & 46.6            & \textbf{40.9}  & \textbf{68.6}  & {\ul 38.1}        & \textbf{57.6}    \\
+% IRCoT                & 30.2             & 38.2            & 35.1           & 55.8           & 32.6              & 47.0             \\
+% HippoRAG             & {\ul 36.5}       & \textbf{52.7}   & 22.5           & 45.7           & 29.5              & 49.2             \\
+% HippoRAG 2            & 34.2             & 47.4            & 32.1           & 59.5           & 33.2              & 53.4             \\
+% \textbf{NeuroPath} & \textbf{40.5}    & {\ul 49.3}      & {\ul 35.8}     & {\ul 65.2}     & \textbf{38.2}     & {\ul 57.2}     \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+% As shown in Table~\ref{tab:performance_on_simple_qa}, our retrieval performance is still better than the graph-based method, and even better than the iter-based method on the PopQA dataset. The PopQA dataset is particularly entity-centric, with questions constructed around specific entities. Graph structure enhanced methods, which represent both entities and their relations, can quickly locate relevant entities for retrieval, giving them a natural advantage on this type of data.
+
+
+
+
+
+\section{Compare to PathRAG}
+\label{app:compre_to_pathrag}
+In the main experiment, NeuroPath demonstrates markedly different performance compared to PathRAG, due to two key factors: differences in path construction methods and task objectives.
+
+\textbf{Difference in path construction methods}: 
+\begin{itemize}
+    \item NeuroPath leverages LLMs to dynamically filter and expand paths starting from selected seed nodes. Our approach emphasizes semantic coherence during path expansion and alignment with the query objective. Throughout the process, the expansion direction is continuously adjusted based on the query to minimize noise. In essence, the entire path expansion chain is dedicated to answering the query, retaining only semantically relevant and mutually reinforcing information that contributes to the answer.
+    \item In contrast, PathRAG first selects key nodes and then constructs paths among them. Aside from the key nodes being related to entities in the query, the path construction process does not ensure semantic relevance to the query. Moreover, its path pruning strategy distributes resources evenly based on node connectivity, which often fails to build effective reasoning paths.
+\end{itemize}
+
+\textbf{Difference in task objectives}: 
+\begin{itemize}
+    \item NeuroPath is designed for multi-hop reasoning tasks that require strictly factual answers. This typically demands a precise alignment between the reasoning path and the query requirements.
+    \item In contrast, PathRAG—like LightRAG—is tailored for sense-making tasks, which often involve answering global or abstract questions. These tasks generally benefit from collecting comprehensive and diverse information to support broad understanding. While PathRAG reduces the information redundancy introduced during subgraph construction in LightRAG, this optimization only targets redundant paths between nodes. It does not fundamentally address the issue of introducing query-irrelevant noise.
+\end{itemize}
+
+
+
+\section{Error Analysis}
+\label{app:error_analysis}
+\subsection{Retrieval Results Distribution}
+We present the distribution of retrieval results in Figure~\ref{fig:retrieval-results-distribution}, which focuses on the top-10 retrieved documents for each question, where the gray portion represents those that were not successfully retrieved.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{assets/Fig_Error_analysis/retrieval-results-distribution.pdf}
+  \caption{Retrieval results distribution.}
+  \label{fig:retrieval-results-distribution}
+\end{figure}
+
+
+\subsection{Nodes Mismatch}
+We analyze the questions in the MuSiQue dataset where the supporting documents were not perfectly retrieved. Among these, 31.5\%, 40.8\%, and 26.7\% are categorized as 2-hop, 3-hop, and 4-hop questions, respectively. We attempted to increase the maximum length of path expansion, but found that it did not significantly improve performance. Therefore, we proceed to analyze aspects such as entity extraction and nodes matching.
+
+\begin{table}[H]
+\centering
+\setlength{\tabcolsep}{3pt}  % 设置表格默认列宽
+\caption{The degree of mismatch between the initial seed nodes and the nodes along the path with respect to the supporting document. 2Wiki* indicates randomly deleting one key entity from the query-extracted entity list (if the list has more than one entity).}
+\label{tab:node_match_loss_rate}
+\begin{tabular}{lclclc}
+\toprule
+\textbf{MuSiQue}            & \textbf{Mismatch (\%)} & \textbf{2Wiki}              & \textbf{Mismatch (\%)} & \textbf{2Wiki*}             & \textbf{mismatch (\%)} \\
+\midrule
+Seed nodes & 49.6           & Seed nodes & 36.1           & Seed nodes & 57.7           \\
+Path nodes         & 39.1           & Path nodes         & 8.9            & Path nodes         & 36.7          \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+We analyzed node-to-supporting-document mismatch on the MuSiQue dataset (Table~\ref{tab:node_match_loss_rate}). A match is defined by the intersection between the node set and the set extracted from the supporting documents. Results show that 49.6\% of initial seed nodes fail to match any supporting documents. While path expansion reduces the mismatch rate to some extent, many documents remain uncovered. For comparison, the initial seed nodes mismatch rate is 36.1\% on the 2WikiMultiHopQA dataset, and path expansion reduces it further to 8.9\%. This difference is likely due to the higher complexity of MuSiQue questions. Figure~\ref{fig:example_query_entities_extract} shows an example of the extracted entities from MuSiQue. The model failed to identify the core event \textit{Tripartite discussions}, leading to a mismatch in path tracking. Similarly, when we randomly remove one key entity from each query in 2WikiMultiHopQA, the mismatch rate of initial seed and path nodes increases significantly, highlighting the importance of accurate initial key entities extraction.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{assets/Fig_Error_analysis/example_query_entities_extract.pdf}
+  \caption{Example of query key entities extraction in MuSiQue dataset.}
+  \label{fig:example_query_entities_extract}
+\end{figure}
+
+
+\subsection{Discussion of Underperformance on HotpotQA}
+\label{app:discussion_of_hotpotqa}
+In this section, we discuss the reasons why both the retrieval and generation processes did not achieve optimal performance on the HotpotQA dataset.
+
+Previous studies~\cite{HippoRAG,musique,compositional_questions_dont_need_multihop_reasoning} have shown that many HotpotQA questions can be answered correctly without complete multi-hop reasoning, often via a naive RAG approach. This is primarily because: (1) HotpotQA documents are short and information-dense; (2) most questions are simple synthetic two-hop queries requiring minimal reasoning; and (3) its distractors are generally weak, which simplifies the retrieval of target passages. While iter-based methods perform well on HotpotQA by leveraging these characteristics to match dense chunks and refine queries, they are less efficient, consuming 22.8\% more tokens (see Appendix~\ref{app:cost_efficiency}). Furthermore, their sensitivity to embedding models leads to inconsistent performance.
+
+We observed a notable discrepancy in our experiments: HippoRAG 2 underperformed NeuroPath on retrieval metrics yet surpassed it on QA metrics. We attribute this to HotpotQA's allowance for shortcuts answers derived through guessing~\cite{musique}. As shown in Figure~\ref{fig:shortcut_example}, HippoRAG 2 retrieved only one of the two required supporting documents but was still able to infer the answer by spotting the mention of "Gal Gadot". This is because HippoRAG 2 matches triples and passages using the entire query rather than intermediate nodes, a method that favors information-dense documents and thus facilitates such guessing. In contrast, Table~\ref{tab:correct_ans&correct_retrievals} demonstrates that NeuroPath is less reliant on this guessing. It achieves a 9.3\% higher proportion of correct retrievals among its correct answers compared to HippoRAG 2. This is a direct result of NeuroPath's design: it expands paths one hop at a time, with each expansion being influenced by the semantic coherence of the previous path. This process inherently prevents sudden jumps to random nodes, ensuring a more faithful reasoning process.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=1\textwidth]{assets/example_of_hotpot_shortcut.pdf}
+  \caption{Example where HippoRAG 2 answered successfully but retrieval failed.}
+  \label{fig:shortcut_example}
+\end{figure}
+
+
+\begin{table}[ht]
+\centering
+\caption{Proportion of correct retrievals among correct answers.}
+\label{tab:correct_ans&correct_retrievals}
+\begin{tabular}{lccc}
+\toprule
+            & \textbf{Correct retrievals} &  \textbf{Correct answers}         & \textbf{Proportion (\%)} \\
+\midrule
+HippoRAG 2   & 408             &   507                     & 80.4      \\
+NeuroPath &  453            &   505                      & 89.7     \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+
+\section{Cost and Efficiency Comparison}
+\label{app:cost_efficiency}
+\textbf{Token Cost}. We compared the token consumption of different methods, which is closely related to LLMs, at each stage (on GPT-4o-mini), as shown in Figure~\ref{fig:tokens_compare}. Our method consistently achieves the lowest token usage across all stages. It reduces token usage by 31.1\% on average during graph indexing stage (LLM-based graph indexing), and by 22.8\% on average during retrieval stage (LLM-based iterative methods). In the QA stage, our method (along with other methods) reduces token usage by 89.2\% compared to LightRAG, indicating that LightRAG introduces significant irrelevant noise through subgraph construction. Our method filters this noise during path tracking, improving both retrieval and QA performance.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=1\textwidth]{assets/Tokens_cp.pdf}
+  \caption{Comparison of Token Consumption across three stages. In QA, NeuroPath represents all methods other than LightRAG and PathRAG (all using the top 5 documents for answering).}
+  \label{fig:tokens_compare}
+\end{figure}
+
+\textbf{Time Cost}. Table~\ref{tab:graph_indexing_time} compares the graph indexing time of NeuroPath with other methods requiring graph indexing on 2WikiMultiHopQA. Since we perform NER and relation extraction for each document within a single LLM call, the time consumption is reduced by nearly half compared to other methods. The main bottleneck of the retrieval time cost of our method lies in the call waiting of LLM. The call time of our method on LLM is almost the same as that of other methods based on iterative retrieval using LLM. Table~\ref{tab:retrieval_time} presents a comparison of retrieval time consumption between NeuroPath and other iterative retrieval methods. Our slightly higher time cost mainly comes from an extra LLM call for extracting query's key entities. In addition, the pruning strategy requires the use of an embedding model to calculate the embedding of each path and the expansion requirement in parallel. It takes about 0.2s for each question on Contriever and BGE-M3, which is much shorter than the waiting time for LLM calls. Therefore, we believe that the time complexity of the pruning strategy is acceptable.
+
+\begin{table}[ht]
+\centering
+\caption{Comparison of graph indexing time with graph-based methods.}
+\label{tab:graph_indexing_time}
+\begin{tabular}{lccccc}
+\toprule
+               & \textbf{HippoRAG} & \textbf{HippoRAG 2} & \textbf{LightRAG} & \textbf{PathRAG} & \textbf{NeuroPath} \\
+\midrule
+Time (minutes) & 64       & 62         & 52       & 72      & 39        \\
+\bottomrule        
+\end{tabular}
+\end{table}
+
+
+\begin{table}[ht]
+\centering
+% \small
+\caption{Comparison of average retrieval time per question with iter-based methods.}
+\label{tab:retrieval_time}
+\begin{tabular}{lccc}
+\toprule
+               & \textbf{Iter-RetGen} & \textbf{IRCoT} & \textbf{NeuroPath} \\
+\midrule
+Time (seconds) & 5.6                  & 4.7            & 6.7                \\
+\bottomrule
+               
+\end{tabular}
+\end{table}
+
+\section{Limitations}
+\label{app:limitations}
+Although our dynamic construction of semantic paths significantly improves performance on multi-hop QA tasks, several limitations remain. First, NeuroPath heavily relies on LLM calls for path filtering and expansion, which introduces a time bottleneck. Second, due to the low granularity of the triple segments expanded in each step, some simple questions may be unnecessarily split into multi-hop problems. Finally, as we do not optimize the retrieval corpus itself (e.g., via summarization), the method may face limitations in sense-making tasks that require abstraction or summarization.
+
+
+\section{Fine-tuning Details}
+\label{app:fine_tuning_details}
+We additionally select 1,500 questions from the original 2WikiMultiHopQA dataset and follow the same procedure as in the main experiments using DeepSeek-V3~\cite{deepseek-v3}. The outputs are then used to fine-tune Llama-3.1-8B-Instruct~\cite{llama-3.1}.
+
+Specifically, we fine-tune Llama-3.1-8B-Instruct using QLoRA with 8-bit quantization and FlashAttention-2 for efficiency. LoRA is applied to all layers with a rank of 8, $\alpha$ = 16, and dropout = 0. We train for 3 epochs using the AdamW optimizer and a cosine learning rate schedule with a base learning rate of 5e-5.
+
+\section{LLM Prompts}
+\label{app:llm_prompts}
+
+Figure \ref{fig:openie} and Figure \ref{fig:query_extra} show the prompts when NeuroPath performs static indexing and extracts key entities from the query.
+
+Figure \ref{fig:path_tracking} shows the prompt when NeuroPath performs path tracking, and Figure \ref{fig:track_One-Shot} shows the example of One-Shot.
+
+Figure \ref{fig:qa-format} shows the restrictive prompt words used by NeuroPath and other models for QA question answering to unify the model output style.
+
+
+\newpage
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{assets/pipeline1-dynamic-path-tracking.pdf}
+  \caption{Example of Dynamic Path Tracking.}
+  \label{fig:pipeline1-dynamic-path-tracking}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{assets/pipeline2_post-retrieval_completion.pdf}
+  \caption{Example of Post-retrieval Completion.}
+  \label{fig:pipeline2_post-retrieval_completion}
+\end{figure}
+
+
+
+\begin{figure}[H]
+    % \label{fig:tokens_compare}
+  \centering
+  \includegraphics[width=1\textwidth]{assets/prompt-openie.pdf}
+  \caption{Prompt for entities and relationships extraction.}
+  \label{fig:openie}
+\end{figure}
+
+\begin{figure}[H]
+    % \label{fig:tokens_compare}
+  \centering
+  \includegraphics[width=1\textwidth]{assets/prompt-query-extra.pdf}
+  \caption{Prompt for extracting key entities from a query.}
+  \label{fig:query_extra}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{assets/prompt-path-track.pdf}
+  \caption{Prompt for path tracking.}
+  \label{fig:path_tracking}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{assets/prompt-path-track-One-Shot.pdf}
+  \caption{One-Shot example for path tracking.}
+  \label{fig:track_One-Shot}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{assets/prompt-qa-format.pdf}
+  \caption{Prompt for QA.}
+  \label{fig:qa-format}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Checklist %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% \newpage
+% \section*{NeurIPS Paper Checklist}
+
+% \begin{enumerate}
+
+% \item {\bf Claims}
+%     \item[] Question: Do the main claims made in the abstract and introduction accurately reflect the paper's contributions and scope?
+%     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: The contributions of this work are clearly articulated in the abstract and introduction. Specifically, the paper proposes a novel path-based RAG framework NeuroPath aimed at resolving the semantic incoherence and redundant noise problems found in existing graph-based approaches, leading to improved retrieval performance in multi-hop question answering tasks. Our experimental results in Section~\ref{sec:experiments} are consistent with the claimed contributions.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that the abstract and introduction do not include the claims made in the paper.
+%         \item The abstract and/or introduction should clearly state the claims made, including the contributions made in the paper and important assumptions and limitations. A No or NA answer to this question will not be perceived well by the reviewers. 
+%         \item The claims made should match theoretical and experimental results, and reflect how much the results can be expected to generalize to other settings. 
+%         \item It is fine to include aspirational goals as motivation as long as it is clear that these goals are not attained by the paper. 
+%     \end{itemize}
+
+% \item {\bf Limitations}
+%     \item[] Question: Does the paper discuss the limitations of the work performed by the authors?
+%     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: We point out the limitations of NeuroPath and discuss their underlying causes in Appendix~\ref{app:limitations}.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that the paper has no limitation while the answer No means that the paper has limitations, but those are not discussed in the paper. 
+%         \item The authors are encouraged to create a separate "Limitations" section in their paper.
+%         \item The paper should point out any strong assumptions and how robust the results are to violations of these assumptions (e.g., independence assumptions, noiseless settings, model well-specification, asymptotic approximations only holding locally). The authors should reflect on how these assumptions might be violated in practice and what the implications would be.
+%         \item The authors should reflect on the scope of the claims made, e.g., if the approach was only tested on a few datasets or with a few runs. In general, empirical results often depend on implicit assumptions, which should be articulated.
+%         \item The authors should reflect on the factors that influence the performance of the approach. For example, a facial recognition algorithm may perform poorly when image resolution is low or images are taken in low lighting. Or a speech-to-text system might not be used reliably to provide closed captions for online lectures because it fails to handle technical jargon.
+%         \item The authors should discuss the computational efficiency of the proposed algorithms and how they scale with dataset size.
+%         \item If applicable, the authors should discuss possible limitations of their approach to address problems of privacy and fairness.
+%         \item While the authors might fear that complete honesty about limitations might be used by reviewers as grounds for rejection, a worse outcome might be that reviewers discover limitations that aren't acknowledged in the paper. The authors should use their best judgment and recognize that individual actions in favor of transparency play an important role in developing norms that preserve the integrity of the community. Reviewers will be specifically instructed to not penalize honesty concerning limitations.
+%     \end{itemize}
+
+% \item {\bf Theory assumptions and proofs}
+%     \item[] Question: For each theoretical result, does the paper provide the full set of assumptions and a complete (and correct) proof?
+%     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: The hippocampal place-cell-based mechanisms for navigation and episodic memory serve as a biological inspiration for our RAG framework for large language models. These neural mechanisms have been validated in the field of neurobiology. We provide a clear and properly cited in Section~\ref{sec:intro}, and a more detailed explanation is included in Appendix~\ref{app:bio_mechanism}.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that the paper does not include theoretical results. 
+%         \item All the theorems, formulas, and proofs in the paper should be numbered and cross-referenced.
+%         \item All assumptions should be clearly stated or referenced in the statement of any theorems.
+%         \item The proofs can either appear in the main paper or the supplemental material, but if they appear in the supplemental material, the authors are encouraged to provide a short proof sketch to provide intuition. 
+%         \item Inversely, any informal proof provided in the core of the paper should be complemented by formal proofs provided in appendix or supplemental material.
+%         \item Theorems and Lemmas that the proof relies upon should be properly referenced. 
+%     \end{itemize}
+
+% \item {\bf Experimental result reproducibility}
+%     \item[] Question: Does the paper fully disclose all the information needed to reproduce the main experimental results of the paper to the extent that it affects the main claims and/or conclusions of the paper (regardless of whether the code and data are provided or not)?
+%     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: A complete description of the implementation steps of the proposed method, along with the parameters used in each component, is provided in Section~\ref{sec:experiments}. We provide a complete and reproducible github code.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that the paper does not include experiments.
+%         \item If the paper includes experiments, a No answer to this question will not be perceived well by the reviewers: Making the paper reproducible is important, regardless of whether the code and data are provided or not.
+%         \item If the contribution is a dataset and/or model, the authors should describe the steps taken to make their results reproducible or verifiable. 
+%         \item Depending on the contribution, reproducibility can be accomplished in various ways. For example, if the contribution is a novel architecture, describing the architecture fully might suffice, or if the contribution is a specific model and empirical evaluation, it may be necessary to either make it possible for others to replicate the model with the same dataset, or provide access to the model. In general. releasing code and data is often one good way to accomplish this, but reproducibility can also be provided via detailed instructions for how to replicate the results, access to a hosted model (e.g., in the case of a large language model), releasing of a model checkpoint, or other means that are appropriate to the research performed.
+%         \item While NeurIPS does not require releasing code, the conference does require all submissions to provide some reasonable avenue for reproducibility, which may depend on the nature of the contribution. For example
+%         \begin{enumerate}
+%             \item If the contribution is primarily a new algorithm, the paper should make it clear how to reproduce that algorithm.
+%             \item If the contribution is primarily a new model architecture, the paper should describe the architecture clearly and fully.
+%             \item If the contribution is a new model (e.g., a large language model), then there should either be a way to access this model for reproducing the results or a way to reproduce the model (e.g., with an open-source dataset or instructions for how to construct the dataset).
+%             \item We recognize that reproducibility may be tricky in some cases, in which case authors are welcome to describe the particular way they provide for reproducibility. In the case of closed-source models, it may be that access to the model is limited in some way (e.g., to registered users), but it should be possible for other researchers to have some path to reproducing or verifying the results.
+%         \end{enumerate}
+%     \end{itemize}
+
+
+% \item {\bf Open access to data and code}
+%     \item[] Question: Does the paper provide open access to the data and code, with sufficient instructions to faithfully reproduce the main experimental results, as described in supplemental material?
+%     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: We provide reproducible code and datasets in our GitHub repository, which is accessible via an anonymous URL link.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that paper does not include experiments requiring code.
+%         \item Please see the NeurIPS code and data submission guidelines (\url{https://nips.cc/public/guides/CodeSubmissionPolicy}) for more details.
+%         \item While we encourage the release of code and data, we understand that this might not be possible, so “No” is an acceptable answer. Papers cannot be rejected simply for not including code, unless this is central to the contribution (e.g., for a new open-source benchmark).
+%         \item The instructions should contain the exact command and environment needed to run to reproduce the results. See the NeurIPS code and data submission guidelines (\url{https://nips.cc/public/guides/CodeSubmissionPolicy}) for more details.
+%         \item The authors should provide instructions on data access and preparation, including how to access the raw data, preprocessed data, intermediate data, and generated data, etc.
+%         \item The authors should provide scripts to reproduce all experimental results for the new proposed method and baselines. If only a subset of experiments are reproducible, they should state which ones are omitted from the script and why.
+%         \item At submission time, to preserve anonymity, the authors should release anonymized versions (if applicable).
+%         \item Providing as much information as possible in supplemental material (appended to the paper) is recommended, but including URLs to data and code is permitted.
+%     \end{itemize}
+
+
+% \item {\bf Experimental setting/details}
+%     \item[] Question: Does the paper specify all the training and test details (e.g., data splits, hyperparameters, how they were chosen, type of optimizer, etc.) necessary to understand the results?
+%     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: We provide detailed experimental settings in both Section~\ref{sec:experiments} and the Appendix~\ref{app:experimental_details}.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that the paper does not include experiments.
+%         \item The experimental setting should be presented in the core of the paper to a level of detail that is necessary to appreciate the results and make sense of them.
+%         \item The full details can be provided either with the code, in appendix, or as supplemental material.
+%     \end{itemize}
+
+% \item {\bf Experiment statistical significance}
+%     \item[] Question: Does the paper report error bars suitably and correctly defined or other appropriate information about the statistical significance of the experiments?
+%     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: All main experiments reported in Section~\ref{sec:experiments} are conducted using an average of 1,000 test queries per dataset for retrieval and question answering. Error analysis is provided in Appendix~\ref{app:error_analysis}. We evaluate the average performance of different methods using two distinct LLMs and two different retrievers. To assess the adaptability of our method to different tasks, we additionally include experiments on simplified datasets and a more complex dataset in Section~\ref{sec:Robustness_to_Model_Scale}. Furthermore, to evaluate the robustness of our method, we introduce multiple smaller-scale LLMs in the experiments reported in Section~\ref{sec:Robustness_to_Model_Scale}.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that the paper does not include experiments.
+%         \item The authors should answer "Yes" if the results are accompanied by error bars, confidence intervals, or statistical significance tests, at least for the experiments that support the main claims of the paper.
+%         \item The factors of variability that the error bars are capturing should be clearly stated (for example, train/test split, initialization, random drawing of some parameter, or overall run with given experimental conditions).
+%         \item The method for calculating the error bars should be explained (closed form formula, call to a library function, bootstrap, etc.)
+%         \item The assumptions made should be given (e.g., Normally distributed errors).
+%         \item It should be clear whether the error bar is the standard deviation or the standard error of the mean.
+%         \item It is OK to report 1-sigma error bars, but one should state it. The authors should preferably report a 2-sigma error bar than state that they have a 96\% CI, if the hypothesis of Normality of errors is not verified.
+%         \item For asymmetric distributions, the authors should be careful not to show in tables or figures symmetric error bars that would yield results that are out of range (e.g. negative error rates).
+%         \item If error bars are reported in tables or plots, The authors should explain in the text how they were calculated and reference the corresponding figures or tables in the text.
+%     \end{itemize}
+
+% \item {\bf Experiments compute resources}
+%     \item[] Question: For each experiment, does the paper provide sufficient information on the computer resources (type of compute workers, memory, time of execution) needed to reproduce the experiments?
+%     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: We provide the GPU type in the Appendix~\ref{app:experimental_details}. Additionally, a comparison of token usage and time consumption is presented in Appendix~\ref{app:cost_efficiency}. 
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that the paper does not include experiments.
+%         \item The paper should indicate the type of compute workers CPU or GPU, internal cluster, or cloud provider, including relevant memory and storage.
+%         \item The paper should provide the amount of compute required for each of the individual experimental runs as well as estimate the total compute. 
+%         \item The paper should disclose whether the full research project required more compute than the experiments reported in the paper (e.g., preliminary or failed experiments that didn't make it into the paper). 
+%     \end{itemize}
+    
+% \item {\bf Code of ethics}
+%     \item[] Question: Does the research conducted in the paper conform, in every respect, with the NeurIPS Code of Ethics \url{https://neurips.cc/public/EthicsGuidelines}?
+%     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: Our work aims to improve the performance of LLMs on multi-hop question answering tasks and does not involve any ethical risks. All datasets used are publicly available and comply with their original licenses.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that the authors have not reviewed the NeurIPS Code of Ethics.
+%         \item If the authors answer No, they should explain the special circumstances that require a deviation from the Code of Ethics.
+%         \item The authors should make sure to preserve anonymity (e.g., if there is a special consideration due to laws or regulations in their jurisdiction).
+%     \end{itemize}
+
+
+% \item {\bf Broader impacts}
+%     \item[] Question: Does the paper discuss both potential positive societal impacts and negative societal impacts of the work performed?
+%     \item[] Answer: \answerNo{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: This study aims to enhance the multi-hop question answering performance of LLMs and proposes a methodological framework contribution. It does not involve direct societal applications, and therefore broader societal impacts are not applicable.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that there is no societal impact of the work performed.
+%         \item If the authors answer NA or No, they should explain why their work has no societal impact or why the paper does not address societal impact.
+%         \item Examples of negative societal impacts include potential malicious or unintended uses (e.g., disinformation, generating fake profiles, surveillance), fairness considerations (e.g., deployment of technologies that could make decisions that unfairly impact specific groups), privacy considerations, and security considerations.
+%         \item The conference expects that many papers will be foundational research and not tied to particular applications, let alone deployments. However, if there is a direct path to any negative applications, the authors should point it out. For example, it is legitimate to point out that an improvement in the quality of generative models could be used to generate deepfakes for disinformation. On the other hand, it is not needed to point out that a generic algorithm for optimizing neural networks could enable people to train models that generate Deepfakes faster.
+%         \item The authors should consider possible harms that could arise when the technology is being used as intended and functioning correctly, harms that could arise when the technology is being used as intended but gives incorrect results, and harms following from (intentional or unintentional) misuse of the technology.
+%         \item If there are negative societal impacts, the authors could also discuss possible mitigation strategies (e.g., gated release of models, providing defenses in addition to attacks, mechanisms for monitoring misuse, mechanisms to monitor how a system learns from feedback over time, improving the efficiency and accessibility of ML).
+%     \end{itemize}
+    
+% \item {\bf Safeguards}
+%     \item[] Question: Does the paper describe safeguards that have been put in place for responsible release of data or models that have a high risk for misuse (e.g., pretrained language models, image generators, or scraped datasets)?
+%     \item[] Answer: \answerNA{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: We did not release any data or models with potential misuse risks. All datasets used in this study are well-established, publicly available benchmarks that have been vetted by the research community and comply with academic standards.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that the paper poses no such risks.
+%         \item Released models that have a high risk for misuse or dual-use should be released with necessary safeguards to allow for controlled use of the model, for example by requiring that users adhere to usage guidelines or restrictions to access the model or implementing safety filters. 
+%         \item Datasets that have been scraped from the Internet could pose safety risks. The authors should describe how they avoided releasing unsafe images.
+%         \item We recognize that providing effective safeguards is challenging, and many papers do not require this, but we encourage authors to take this into account and make a best faith effort.
+%     \end{itemize}
+
+% \item {\bf Licenses for existing assets}
+%     \item[] Question: Are the creators or original owners of assets (e.g., code, data, models), used in the paper, properly credited and are the license and terms of use explicitly mentioned and properly respected?
+%     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: We use existing datasets and properly cite them in Section~\ref{sec:experiments}.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that the paper does not use existing assets.
+%         \item The authors should cite the original paper that produced the code package or dataset.
+%         \item The authors should state which version of the asset is used and, if possible, include a URL.
+%         \item The name of the license (e.g., CC-BY 4.0) should be included for each asset.
+%         \item For scraped data from a particular source (e.g., website), the copyright and terms of service of that source should be provided.
+%         \item If assets are released, the license, copyright information, and terms of use in the package should be provided. For popular datasets, \url{paperswithcode.com/datasets} has curated licenses for some datasets. Their licensing guide can help determine the license of a dataset.
+%         \item For existing datasets that are re-packaged, both the original license and the license of the derived asset (if it has changed) should be provided.
+%         \item If this information is not available online, the authors are encouraged to reach out to the asset's creators.
+%     \end{itemize}
+
+% \item {\bf New assets}
+%     \item[] Question: Are new assets introduced in the paper well documented and is the documentation provided alongside the assets?
+%     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: We have open-sourced the code for the proposed NeuroPath framework, along with scripts to support reproducibility.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that the paper does not release new assets.
+%         \item Researchers should communicate the details of the dataset/code/model as part of their submissions via structured templates. This includes details about training, license, limitations, etc. 
+%         \item The paper should discuss whether and how consent was obtained from people whose asset is used.
+%         \item At submission time, remember to anonymize your assets (if applicable). You can either create an anonymized URL or include an anonymized zip file.
+%     \end{itemize}
+
+% \item {\bf Crowdsourcing and research with human subjects}
+%     \item[] Question: For crowdsourcing experiments and research with human subjects, does the paper include the full text of instructions given to participants and screenshots, if applicable, as well as details about compensation (if any)? 
+%     \item[] Answer: \answerNA{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: This paper does not involve crowdsourcing nor research with human subjects.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that the paper does not involve crowdsourcing nor research with human subjects.
+%         \item Including this information in the supplemental material is fine, but if the main contribution of the paper involves human subjects, then as much detail as possible should be included in the main paper. 
+%         \item According to the NeurIPS Code of Ethics, workers involved in data collection, curation, or other labor should be paid at least the minimum wage in the country of the data collector. 
+%     \end{itemize}
+
+% \item {\bf Institutional review board (IRB) approvals or equivalent for research with human subjects}
+%     \item[] Question: Does the paper describe potential risks incurred by study participants, whether such risks were disclosed to the subjects, and whether Institutional Review Board (IRB) approvals (or an equivalent approval/review based on the requirements of your country or institution) were obtained?
+%     \item[] Answer: \answerNA{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: This paper does not involve crowdsourcing nor research with human subjects.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that the paper does not involve crowdsourcing nor research with human subjects.
+%         \item Depending on the country in which research is conducted, IRB approval (or equivalent) may be required for any human subjects research. If you obtained IRB approval, you should clearly state this in the paper. 
+%         \item We recognize that the procedures for this may vary significantly between institutions and locations, and we expect authors to adhere to the NeurIPS Code of Ethics and the guidelines for their institution. 
+%         \item For initial submissions, do not include any information that would break anonymity (if applicable), such as the institution conducting the review.
+%     \end{itemize}
+
+% \item {\bf Declaration of LLM usage}
+%     \item[] Question: Does the paper describe the usage of LLMs if it is an important, original, or non-standard component of the core methods in this research? Note that if the LLM is used only for writing, editing, or formatting purposes and does not impact the core methodology, scientific rigorousness, or originality of the research, declaration is not required.
+%     %this research? 
+%     \item[] Answer: \answerYes{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+%     \item[] Justification: We explicitly state in the paper that we propose a new RAG framework leveraging large language models (LLMs) and knowledge graphs. LLMs serve as the core component of our framework for knowledge retrieval, helping the RAG system enhance its retrieval performance in multi-hop question answering.
+%     \item[] Guidelines:
+%     \begin{itemize}
+%         \item The answer NA means that the core method development in this research does not involve LLMs as any important, original, or non-standard components.
+%         \item Please refer to our LLM policy (\url{https://neurips.cc/Conferences/2025/LLM}) for what should or should not be described.
+%     \end{itemize}
+
+% \end{enumerate}
+
+% ===================== END Checklist ===========================
+
+\end{document}

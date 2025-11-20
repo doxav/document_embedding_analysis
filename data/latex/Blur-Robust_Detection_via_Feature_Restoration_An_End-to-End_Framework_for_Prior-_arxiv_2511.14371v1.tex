@@ -1,0 +1,788 @@
+%File: formatting-instructions-latex-2026.tex
+%release 2026.0
+\documentclass[letterpaper]{article} % DO NOT CHANGE THIS
+\usepackage{aaai2026}  % DO NOT CHANGE THIS
+\usepackage{times}  % DO NOT CHANGE THIS
+\usepackage{helvet}  % DO NOT CHANGE THIS
+\usepackage{courier}  % DO NOT CHANGE THIS
+\usepackage[hyphens]{url}  % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\urlstyle{rm} % DO NOT CHANGE THIS
+\def\UrlFont{\rm}  % DO NOT CHANGE THIS
+\usepackage{natbib}  % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\usepackage{caption} % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\frenchspacing  % DO NOT CHANGE THIS
+\setlength{\pdfpagewidth}{8.5in}  % DO NOT CHANGE THIS
+\setlength{\pdfpageheight}{11in}  % DO NOT CHANGE THIS
+%
+% These are recommended to typeset algorithms but not required. See the subsubsection on algorithms. Remove them if you don't have algorithms in your paper.
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsmath}  %%%wxl 加
+\usepackage{amsfonts} %%%wxl 加
+\usepackage{booktabs} %%%wxl 加
+ \usepackage{multirow} %%%wxl 加
+ \usepackage{makecell} %%%wxl 加
+%
+% These are are recommended to typeset listings but not required. See the subsubsection on listing. Remove this block if you don't have listings in your paper.
+\usepackage{newfloat}
+\usepackage{listings}
+\DeclareCaptionStyle{ruled}{labelfont=normalfont,labelsep=colon,strut=off} % DO NOT CHANGE THIS
+\lstset{%
+	basicstyle={\footnotesize\ttfamily},% footnotesize acceptable for monospace
+	numbers=left,numberstyle=\footnotesize,xleftmargin=2em,% show line numbers, remove this entire line if you don't want the numbers.
+	aboveskip=0pt,belowskip=0pt,%
+	showstringspaces=false,tabsize=2,breaklines=true}
+\floatstyle{ruled}
+\newfloat{listing}{tb}{lst}{}
+\floatname{listing}{Listing}
+%
+% Keep the \pdfinfo as shown here. There's no need
+% for you to add the /Title and /Author tags.
+\pdfinfo{
+/TemplateVersion (2026.1)
+}
+
+% DISALLOWED PACKAGES
+% \usepackage{authblk} -- This package is specifically forbidden
+% \usepackage{balance} -- This package is specifically forbidden
+% \usepackage{color (if used in text)
+% \usepackage{CJK} -- This package is specifically forbidden
+% \usepackage{float} -- This package is specifically forbidden
+% \usepackage{flushend} -- This package is specifically forbidden
+% \usepackage{fontenc} -- This package is specifically forbidden
+% \usepackage{fullpage} -- This package is specifically forbidden
+% \usepackage{geometry} -- This package is specifically forbidden
+% \usepackage{grffile} -- This package is specifically forbidden
+% \usepackage{hyperref} -- This package is specifically forbidden
+% \usepackage{navigator} -- This package is specifically forbidden
+% (or any other package that embeds links such as navigator or hyperref)
+% \indentfirst} -- This package is specifically forbidden
+% \layout} -- This package is specifically forbidden
+% \multicol} -- This package is specifically forbidden
+% \nameref} -- This package is specifically forbidden
+% \usepackage{savetrees} -- This package is specifically forbidden
+% \usepackage{setspace} -- This package is specifically forbidden
+% \usepackage{stfloats} -- This package is specifically forbidden
+% \usepackage{tabu} -- This package is specifically forbidden
+% \usepackage{titlesec} -- This package is specifically forbidden
+% \usepackage{tocbibind} -- This package is specifically forbidden
+% \usepackage{ulem} -- This package is specifically forbidden
+% \usepackage{wrapfig} -- This package is specifically forbidden
+% DISALLOWED COMMANDS
+% \nocopyright -- Your paper will not be published if you use this command
+% \addtolength -- This command may not be used
+% \balance -- This command may not be used
+% \baselinestretch -- Your paper will not be published if you use this command
+% \clearpage -- No page breaks of any kind may be used for the final version of your paper
+% \columnsep -- This command may not be used
+% \newpage -- No page breaks of any kind may be used for the final version of your paper
+% \pagebreak -- No page breaks of any kind may be used for the final version of your paperr
+% \pagestyle -- This command may not be used
+% \tiny -- This is not an acceptable font size.
+% \vspace{- -- No negative value may be used in proximity of a caption, figure, table, section, subsection, subsubsection, or reference
+% \vskip{- -- No negative value may be used to alter spacing above or below a caption, figure, table, section, subsection, subsubsection, or reference
+
+\setcounter{secnumdepth}{2} %May be changed to 1 or 2 if section numbers are desired.
+
+% The file aaai2026.sty is the style file for AAAI Press
+% proceedings, working notes, and technical reports.
+%
+
+% Title
+
+% Your title must be in mixed case, not sentence case.
+% That means all verbs (including short verbs like be, is, using,and go),
+% nouns, adverbs, adjectives should be capitalized, including both words in hyphenated terms, while
+% articles, conjunctions, and prepositions are lower case unless they
+% directly follow a colon or long dash
+% \title{Blur-Robust Detection via Feature Restoration:
+% An End-to-End Framework for Structure-Guided Infrared UAV Target Detection} 
+
+%\title{JFD\textsuperscript{3}: Joint Feature-Domain Deblurring and Detection  for Infrared UAV Target under Motion Blur}
+\title{Blur-Robust Detection via Feature Restoration: An End-to-End Framework for Prior-Guided Infrared UAV Target Detection}
+
+ 
+\author{
+    %Authors
+    % All authors must be in the same font size and format.
+    Xiaolin Wang\textsuperscript{\rm 1},
+    Houzhang Fang\textsuperscript{\rm 1}\thanks{Corresponding author.},
+    Qingshan Li\textsuperscript{\rm 1},
+    Lu Wang\textsuperscript{\rm 1},
+    Yi Chang\textsuperscript{\rm 2},
+    Luxin Yan\textsuperscript{\rm 2}\\
+}
+\affiliations{
+    %Afiliations
+    \textsuperscript{\rm 1}School of Computer Science and Technology, Xidian University, China\\
+    % If you have multiple authors and multiple affiliations
+    % use superscripts in text and roman font to identify them.
+    % For example,
+    \textsuperscript{\rm 2}School of Artificial Intelligence and Automation, Huazhong University of Science and Technology, China\\
+{\small wxl@stu.xidian.edu.cn,houzhangfang@xidian.edu.cn,qshli@mail.xidian.edu.cn,wanglu@xidian.edu.cn,\{yichang,yanluxin\}@hust.edu.cn}
+%
+% See more examples next
+}
+
+%Example, Single Author, ->> remove \iffalse,\fi and place them surrounding AAAI title to use it
+\iffalse
+\title{My Publication Title --- Single Author}
+\author {
+    Author Name
+}
+\affiliations{
+    Affiliation\\
+    Affiliation Line 2\\
+    name@example.com
+}
+\fi
+
+\iffalse
+%Example, Multiple Authors, ->> remove \iffalse,\fi and place them surrounding AAAI title to use it
+\title{My Publication Title --- Multiple Authors}
+\author {
+    % Authors
+    First Author Name\textsuperscript{\rm 1},
+    Second Author Name\textsuperscript{\rm 2},
+    Third Author Name\textsuperscript{\rm 1}
+}
+\affiliations {
+    % Affiliations
+    \textsuperscript{\rm 1}Affiliation 1\\
+    \textsuperscript{\rm 2}Affiliation 2\\
+    firstAuthor@affiliation1.com, secondAuthor@affilation2.com, thirdAuthor@affiliation1.com
+}
+\fi
+
+
+% REMOVE THIS: bibentry
+% This is only needed to show inline citations in the guidelines document. You should not need it and can safely delete it.
+% \usepackage{bibentry}
+% END REMOVE bibentry
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%一些模板%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{xxx}
+% \subsection{xxx}
+
+%双栏表格
+% \begin{table*}[t]
+% \centering
+% \begin{tabular}{l|l|l|l}
+% \textbackslash abovecaption &
+% \textbackslash abovedisplay &
+% \textbackslash addevensidemargin &
+% \textbackslash addsidemargin \\
+% \textbackslash addtolength &
+% \textbackslash baselinestretch &
+% \textbackslash belowcaption &
+% \textbackslash belowdisplay \\
+% \textbackslash break &
+% \textbackslash clearpage &
+% \textbackslash clip &
+% \textbackslash columnsep \\
+% \textbackslash float &
+% \textbackslash input &
+% \textbackslash input &
+% \textbackslash linespread \\
+% \textbackslash newpage &
+% \textbackslash pagebreak &
+% \textbackslash renewcommand &
+% \textbackslash setlength \\
+% \textbackslash text height &
+% \textbackslash tiny &
+% \textbackslash top margin &
+% \textbackslash trim \\
+% \textbackslash vskip\{- &
+% \textbackslash vspace\{- \\
+% \end{tabular}
+% %}
+% \caption{Commands that must not be used}
+% \label{table1}
+% \end{table*}
+%%%单栏表格
+% \begin{table}[t]
+% \centering
+% %\resizebox{.95\columnwidth}{!}{
+% \begin{tabular}{l|l|l|l}
+%     authblk & babel & cjk & dvips \\
+%     epsf & epsfig & euler & float \\
+%     fullpage & geometry & graphics & hyperref \\
+%     layout & linespread & lmodern & maltepaper \\
+%     navigator & pdfcomment & pgfplots & psfig \\
+%     pstricks & t1enc & titlesec & tocbind \\
+%     ulem
+% \end{tabular}
+% \caption{LaTeX style packages that must not be used.}
+% \label{table2}
+% \end{table}
+
+%%%%单栏图像
+% \begin{figure}[t]
+% \centering
+% \includegraphics[width=0.9\columnwidth]{figure1} % Reduce the figure size so that it is slightly narrower than the column. Don't use precise values for figure width.This setup will avoid overfull boxes.
+% \caption{Using the trim and clip commands produces fragile layers that can result in disasters (like this one from an actual paper) when the color space is corrected or the PDF combined with others for the final proceedings. Crop your figures properly in a graphics program -- not in LaTeX.}
+% \label{fig1}
+% \end{figure}
+%%%%双栏图像
+% \begin{figure*}[t]
+% \centering
+% \includegraphics[width=0.8\textwidth]{figure2} % Reduce the figure size so that it is slightly narrower than the column.
+% \caption{Adjusting the bounding box instead of actually removing the unwanted data resulted multiple layers in this paper. It also needlessly increased the PDF size. In this case, the size of the unwanted layer doubled the paper's size, and produced the following surprising results in final production. Crop your figures properly in a graphics program. Don't just alter the bounding box.}
+% \label{fig2}
+% \end{figure*}
+
+%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%beigin%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%abstract%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+Infrared unmanned aerial vehicle (UAV) target images often suffer from motion blur degradation caused by rapid sensor movement, significantly reducing contrast between target and background. Generally, detection performance heavily depends on the discriminative feature representation between target and background. Existing methods typically treat deblurring as a preprocessing step focused on visual quality, while neglecting the enhancement of task-relevant features crucial for detection. Improving feature representation for detection under blur conditions remains challenging. In this paper, we propose a novel \textbf{J}oint \textbf{F}eature-\textbf{D}omain \textbf{D}eblurring and \textbf{D}etection  end-to-end framework, dubbed JFD\textsuperscript{3}. We design a dual-branch architecture with shared weights, where the clear branch guides the blurred branch to enhance discriminative feature representation. Specifically, we first introduce a lightweight feature restoration network, where features from the clear branch serve as feature-level supervision to guide the blurred branch, thereby enhancing its distinctive capability for detection. %act as feature-level supervision to constrain the blurred branch to improve the distinctive capability for detection. 
+We then propose a frequency structure guidance module that refines the structure prior from the restoration network and integrates it into shallow detection layers to enrich target structural information. Finally, a feature consistency self-supervised loss is imposed between the dual-branch detection backbones, driving the blurred branch to approximate the feature representations of the clear one. We also construct a benchmark, named IRBlurUAV, containing 30,000 simulated and 4,118 real infrared UAV target images with diverse motion blur. Extensive experiments on IRBlurUAV demonstrate that JFD\textsuperscript{3} achieves superior detection performance while maintaining real-time efficiency. 
+%Code and dataset are released at \textit{https://github.com/IVPLaboratory/JFD3}.
+\end{abstract}
+
+\begin{links}
+\link{Code}{https://github.com/IVPLaboratory/JFD3}
+\end{links}
+
+% Infrared unmanned aerial vehicle (UAV) target images often suffer from motion blur degradation caused by rapid sensor movement, significantly reducing contrast between target and background. Accurate target detection under motion blur is crucial for UAV surveillance applications. Generally, detection performance heavily depends on the discriminative feature representation between target and background. Existing methods typically treat deblurring as a preprocessing step focused on visual quality, while neglecting the enhancement of task-relevant features crucial for detection.
+% Improving feature representation for detection under blur conditions remains challenging.
+% In this paper, we propose a novel \textbf{J}oint \textbf{F}eature-\textbf{D}omain \textbf{D}eblurring and \textbf{D}etection  end-to-end framework, dubbed JFD\textsuperscript{3}. 
+% We design a dual-branch architecture with shared weights, where the clear branch guides the blurred branch to enhance discriminative feature representation. % compensate for representational degradation and boost detection performance. %enhance feature discrimination.
+% Specifically, we first introduce a lightweight feature restoration network guided by feature-domain supervision from the clear branch to improve the distinctive capability of the degraded features for detection. %a clear feature-domain deblurring to strengthen degraded feature representations. %without relying on visual appearance recovery
+% %We then design a frequency structure guided module that refines structure prior from the restoration network using adaptive high-pass filtering and detail-preserving attention, and incorporates them into the shallow detection backbone layer to enrich target structure information.
+% We then propose a frequency structure guidance module that refines structure priors and integrates them into shallow detection layers to enrich target structural information.
+% Finally, a feature consistency self-supervised loss is imposed between the dual-branch detection backbones, driving the blurred branch to approximate the feature representations of the clear one. This mechanism further boosts the network’s ability to extract the discriminative features of UAV targets.
+% We also construct a benchmark named IRBlurUAV, which contains 30,000 infrared images with diverse motion blur types, multi-scale UAV targets, and rich background scenes. 
+% Extensive experiments on IRBlurUAV demonstrate that JFD\textsuperscript{3} achieves superior detection performance while maintaining real-time efficiency. %, offering complementary restoration and detection capabilities. 
+% %Extensive experiments on IRBlurUAV demonstrate that JFD\textsuperscript{3} strikes a balance between detection performance and real-time efficiency.
+% Code and dataset are released at \textit{https://anonymous.4open.science/r/JFD3-76C1}.
+
+
+% Infrared unmanned aerial vehicle (UAV) target images often suffer from motion blur degradation caused by rapid sensor movement, significantly reducing contrast between target and background. Generally, detection performance heavily depends on the discriminative feature representation between target and background. Existing methods typically treat deblurring as a preprocessing step focused on visual quality, while neglecting the enhancement of task-relevant features crucial for detection. Improving feature representation for detection under blur conditions remains challenging. In this paper, we propose a novel \textbf{J}oint \textbf{F}eature-\textbf{D}omain \textbf{D}eblurring and \textbf{D}etection  end-to-end framework, dubbed JFD\textsuperscript{3}. We design a dual-branch architecture with shared weights, where the clear branch guides the blurred branch to enhance discriminative feature representation. Specifically, we first introduce a lightweight feature restoration network, where features from the clear branch serve as feature-level supervision to guide the blurred branch, thereby enhancing its distinctive capability for detection. We then propose a frequency structure guidance module that refines structure prior from the restoration network and integrates it into shallow detection layers to enrich target structural information. Finally, a feature consistency self-supervised loss is imposed between the dual-branch detection backbones, driving the blurred branch to approximate the feature representations of the clear one. We also construct a benchmark, named IRBlurUAV, containing 30,000 simulated and 4,118 real infrared UAV target images with diverse motion blur. Extensive experiments on IRBlurUAV demonstrate that JFD\textsuperscript{3} achieves superior detection performance while maintaining real-time efficiency. Code and dataset are released at \textit{https://anonymous.4open.science/r/JFD3-76C1}.
+
+
+
+
+
+% Uncomment the following to link to your code, datasets, an extended version or similar.
+% You must keep this block between (not within) the abstract and the main body of the paper.
+% \begin{links}
+%     \link{Code}{https://aaai.org/example/code}
+%     \link{Datasets}{https://aaai.org/example/datasets}
+%     % \link{Extended version}{https://aaai.org/example/extended-version}
+% \end{links}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Introduction%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\columnwidth]{fig1.pdf} 
+\caption{Three strategies for UAV target detection under motion blur. (a) Direct: The detector directly processes blurred images. (b) Separate: Image-domain deblurring serves as a preprocessing step before detection. (c) Joint:  Feature-domain deblurring and detection are simultaneously addressed in an end-to-end framework. Our JFD\textsuperscript{3} jointly handles both tasks and leverages structural priors from the deblurring network to enhance the feature representation of the detection network.}   
+\label{fig1}
+\end{figure}
+% An  end-to-end framework that jointly trains feature-domain deblurring and detection, where structure priors guide feature enhancement to improve detection under motion blur. Unlike previous methods that treat deblurring and detection independently, our JFD\textsuperscript{3} emphasizes collaborative optimization tailored for detection.         our JFD\textsuperscript{3} integrates feature-domain deblurring and detection via joint training, where structure priors enhance feature learning for robust detection under blur
+
+
+
+%背景引入
+Infrared unmanned aerial vehicle (UAV) target (IRUT) detection plays a vital role in many applications, %real-world scenarios, 
+such as UAV surveillance and reconnaissance missions, due to its all-day operability and robustness to varying lighting conditions \cite{fang2023differentiated}.
+%问题来源说明
+However, motion blur frequently occurs in infrared imagery due to abrupt platform movements initiated to swiftly track fast-moving UAVs or sudden mechanical vibrations (see the left of Figure \ref{fig1}). 
+%问题严重性
+Such motion blur is frequent and often unavoidable in long-term UAV surveillance, posing significant challenges to accurate target detection.
+%进一步细化问题
+Moreover, IRUT typically exhibit weak features and are embedded in complex clutter backgrounds. Motion blur further diminishes the contrast between targets and surroundings, making discriminative feature extraction more difficult.
+%已有方法与并引出我们的点
+In recent years, remarkable progress has been made in both image deblurring \cite{nah2017deep, tao2018scale, kupyn2018deblurgan, kupyn2019deblurgan, lin2020learning} and IRUT detection \cite{fang2022infrared, Fang2024SCINet}. However, most existing approaches treat deblurring and detection as two separate tasks, addressed independently with different objectives. To the best of our knowledge, there has been no prior work that specifically addresses IRUT detection under motion blur conditions.
+
+%介绍现有方法不足与缺点
+To address the above problem, a straightforward approach is to directly apply detectors \cite{zhao2024detrs} on blurred images. However, blur degradation significantly reduces the contrast between UAV targets and backgrounds, leading to frequent missed detections (see Figure \ref{fig1}(a)).
+Alternatively, deblurring \cite{mao2023DeepRFT} can be applied as a preprocessing step before detection \cite{zhao2024detrs}  (see Figure \ref{fig1}(b)). However, this pipeline suffers from several limitations. First, deep learning-based deblurring techniques are computationally complex, introducing substantial latency and limiting their applicability in time-critical UAV surveillance tasks. 
+Second, these methods are typically optimized for visual enhancement rather than task-specific feature restoration, which may introduce imperceptible noise that can negatively impact detection performance \cite{li2023detection, xu2024learning}.
+Recently, some studies \cite{li2023detection, xu2024learning,li2025DREB} have explored the joint optimization of low-level and high-level vision tasks. However, most of these efforts focus on adverse weather conditions such as fog and are primarily conducted in the visible spectrum towards general object categories. In contrast, the unique challenges of motion blur in IRUT detection remain largely underexplored.
+
+%%介绍我们的方法与模块,先整体描述
+To bridge the gap between infrared low-level deblurring and high-level IRUT detection, we propose the \textbf{J}oint \textbf{F}eature-\textbf{D}omain \textbf{D}eblurring and \textbf{D}etection Network (JFD\textsuperscript{3}). It adopts a dual-branch architecture during training, where a clear-image branch supervises a blurred-image branch to jointly optimize feature restoration and detection. At inference time, only the blurred branch is retained to enable efficient inference.
+%描述特征域去模糊
+Specifically, to address the limitations of conventional image-domain deblurring, which often introduces redundancy and lacks detection-oriented awareness, we design a lightweight feature restoration network guided by a clear feature-domain deblurring  branch and jointly trained with the detection network. This network efficiently enhances degraded representations critical for detection. 
+%结构先验
+Furthermore, to improve structural perception under motion blur, we design a frequency structure guidance module. It first extracts high-frequency detail features using an adaptive high-pass filtering module, and then refines structural information via a detail-preserving attention mechanism.  The refined structural prior is then injected between the stem and stage 1 of the detection backbone, compensating for missing structural cues in blurred images and improving the discriminability of IRUT.
+%最后特征一致性损失
+Finally, to enhance the backbone's ability to extract meaningful target features from degraded inputs, we introduce a feature consistency self-supervised loss between the blurred and clear branches. This constraint  encourages the blurred branch to approximate the clean branch in feature space, enabling more accurate target discrimination under blur.
+
+%实验部分
+To evaluate the effectiveness of JFD\textsuperscript{3},  we construct a new benchmark, named IRBlurUAV. It comprises 30,000 pairs of synthetically blurred and sharp IRUT images (IRBlurUAV-syn) and 4,118 real-world blurred images (IRBlurUAV-real), covering diverse motion directions, blur intensities, multi-scale UAV targets, and complex backgrounds.
+% Specifically, we develop IRBlurUAV, which contains 30,000 annotated infrared UAV images with varying motion directions, blur intensities, multi-scale UAV targets, and complex background scenes. 
+Extensive experiments demonstrate that our JFD\textsuperscript{3} significantly outperforms state-of-the-art methods in detecting IRUT under motion blur.
+
+Our main contributions are summarized as follows:
+\begin{itemize}
+    \item  We propose a joint framework, JFD\textsuperscript{3}, that unifies feature-domain restoration and IRUT detection in an end-to-end manner. The restoration component is optimized to recover features beneficial for detection, guided by detection objectives rather than generic visual quality. This task-driven design enhances detection performance under motion blur conditions. To the best of our knowledge, this is the first work to address IRUT detection  under motion blur conditions in a unified framework.
+    \item We first introduce a feature-domain restoration strategy  specifically designed for infrared blurred images with a focus on the needs of target detection tasks. It focuses on restoring features relevant to detection. This method enhances the representation of target features in degraded images and improves detection performance.
+    
+    \item We design a novel frequency structure guidance module that integrates target frequency structural prior from the deblurring network into the detection backbone. This integration enhances the structural representation of IRUT under blur conditions by supplementing high-frequency structural details. The module significantly improves local discriminability and target localization.
+    % \item We propose a joint framework, JFD\textsuperscript{3}, that integrates feature-domain restoration and IRUT detection in an end-to-end manner. It leverages both the feature-domain deblurring strategy and the feature consistency self-supervised constraint to jointly enhance the discrimination of degraded target features, thus improving detection performance. To the best of our knowledge, this is the first work to address both problems in a unified framework.
+    % \item We design a novel frequency structure guidance module, which integrates refined target frequency structural priors into the detection backbone, %through adaptive high-pass filtering and detail-preserving attention,    and injects them into the shallow layers of the detection backbone, 
+    % thereby enhancing structure representation of IRUTs under blur scenarios.
+    % \item We construct the first large-scale infrared UAV motion blur benchmark, termed IRBlurUAV, which simulates realistic degradation conditions with diverse blur directions and severities, This benchmark provides a comprehensive testbed for evaluating the performance of IRUT detection under blur degradation.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Related work%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{ Related work}
+\subsection{Image Deblurring Methods}
+
+Image deblurring has long been a core low-level vision task, essential for enhancing the quality of degraded visual inputs.
+Early convolutional neural network(CNN)-based methods \cite{mao2023DeepRFT} directly map blurry images to sharp ones, forming the basis of many encoder–decoder architectures.
+Transformer-based models \cite{chen2025MDT} enhance performance through long-range dependency modeling but introduce greater complexity.
+Diffusion-based methods \cite{ren2023multiscale} and recent Mamba-style \cite{kong2025EVSSM,li2025MAIR} architectures have demonstrated impressive perceptual quality and generality, but remain computationally intensive.
+However, most existing deblurring methods are rarely integrated with high-level tasks like detection. In contrast, our approach restores detection-relevant features in the feature domain to better support downstream task. %—especially for IRUT settings with real-time constraints.
+%This motivates a more efficient and task-aware design, particularly under blur-degraded infrared UAV scenarios where real-time constraints are critical.
+
+\subsection{Infrared UAV Target Detection Methods}
+
+In recent years, several IRUT detection methods \cite{rozantsev2016detecting,zhao2023infrared,fang2023danet} have been proposed, most of which focus on detection with clean images. And the majority of publicly available IRUT datasets \cite{huang2023anti,jiang2021anti,zhao2022vision} also consist of sharp, high-quality images.
+To the best of our knowledge, UniCD \cite{fang2025detection} is the only work that explicitly considers degradation caused by temperature-dependent low-frequency nonuniformity for IRUT detection.
+However, another common degradation in IRUT detection, motion blur, remains a largely unexplored gap in the field.
+In this work, we aim to alleviate this gap by proposing the first end-to-end framework that jointly performs feature-domain deblurring and IRUT detection.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.9\textwidth]{fig2.pdf} % Reduce the figure size so that it is slightly narrower than the column. Don't use precise values for figure width.This setup will avoid overfull boxes.
+\caption{Overview of the proposed JFD\textsuperscript{3}, which first enhances degraded features through feature-domain restoration and then refines structural information using the frequency structure guidance module. The clear image branch supervises the blurred image branch using feature restoration loss and feature consistency self-supervised loss.}%The dual branches and both components are jointly trained. }
+\label{fig2}
+\end{figure*}
+
+\subsection{Joint Deblurring and Detection Methods}
+
+Recent studies \cite{liu2022image,li2023detection} have begun to explore the integration of low-level restoration with high-level visual tasks, though most focus on haze and visible-light scenarios. 
+Sayed et al. \cite{sayed2021improved} enhance motion-blurred detection using five classes of remedies.
+Aakanksha et al. \cite{rajagopalan2023improving} introduce class-centric motion blur augmentation for segmentation.
+DREB-Net \cite{li2025DREB} proposes a dual-stream fusion architecture for visible car targets detection under motion blur.
+However, these methods overlook the unique challenges of infrared small-object detection under motion blur, such as texture scarcity and fine structural degradation.
+To address this, we propose a frequency-guided module that enhances structural cues of small targets and improves robustness under blur degradation.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Proposed Method %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\section{The Proposed Method}
+% \begin{figure*}[t]
+% \centering
+% \includegraphics[width=0.9\textwidth]{fig2.pdf} % Reduce the figure size so that it is slightly narrower than the column. Don't use precise values for figure width.This setup will avoid overfull boxes.
+% \caption{.}
+% \label{fig2}
+% \end{figure*}
+
+\subsection{Dual-Branch Joint Learning Framework}
+\label{section:subsec1}
+
+To address the challenge of degraded discriminative features under motion blur in IRUT images, we propose a dual-branch joint learning framework that enables feature-domain deblurring and detection to be collaboratively optimized in an end-to-end manner. The core design philosophy is to leverage clear-image supervision during training to guide the learning of robust representations, thereby enhancing the model's detection performance under blur degradation.
+
+As illustrated in Figure \ref{fig2}, the proposed framework consists of two parallel branches: a clear-image branch and a blurred-image branch, which share weights to ensure feature space alignment. During training, both branches are activated. The clear branch operates on clear input and provides high-quality feature guidance, while the blurred branch is exposed to motion-degraded input and learns to restore and align its representations through supervision. During inference, only the blurred-image branch is retained.
+
+Each branch begins with a lightweight feature restoration network, designed to compensate for low-level degradation. The restored feature maps are then passed through the detection network, consisting of a stem and multiple residual stages. We adopt DEIM \cite{huang2025deim} as our base detection architecture. Between the stem and the first stage of backbone, we integrate a frequency structure guidance module, which injects refined structural prior to enrich target localization cues. This design enables joint optimization of feature deblurring and detection tasks.
+
+To enhance the network's feature extraction capability, we introduce a feature consistency self-supervised loss between the detection backbones of the blurred and clear branches. This loss encourages the blurred branch to produce intermediate representations that align with those from the clear branch, thereby improving its robustness under motion blur.
+
+In contrast to other works that either directly detect from degraded input or treat deblurring as an isolated preprocessing step, our joint framework achieves task-aware feature enhancement through collaborative supervision and structure-guided information flow, ultimately yielding superior detection performance under blur conditions.
+
+\subsection{Feature-Domain Deblurring (FDD) Network}
+
+Conventional image-domain deblurring methods often incur significant computational cost and introduce redundant visual details irrelevant to detection. In contrast, we adopt a feature-domain deblurring strategy, which restores semantically meaningful representations directly in the latent space, thus enabling efficient and task-aligned enhancement.
+
+As shown in Figure \ref{fig2}, the feature restoration network operates on the blurred image and refines it via a compact encoder–decoder structure. We build this module upon MIMO-UNet \cite{Cho_2021_MIMO}, a general-purpose deblurring network, and adapt it to our scenario by reducing the base channel number to 2 and the number of residual blocks per stage to 2. This design focuses on regulating the feature distribution, promoting semantic consistency with the clear branch, and reducing domain shift in the representation space—all while maintaining a low computational footprint suitable for real-time applications.
+
+To guide the feature-domain restoration process, we design a two-part loss function that supervises both the encoder and decoder stages of the restoration network. Specifically, we enforce feature-level alignment between the blurred and clear branches using an $L_1$ loss in the encoder, and emphasize structural consistency in the decoder using a structural similarity-based loss.
+
+Let $E_b^i$ and $E_c^i$ denote the intermediate feature maps from the $i$-th encoder stage of the blurred and clear branches, respectively. Similarly, let $D_b^j$ and $D_c^j$ denote the outputs from the $j$-th decoder stage. To preserve structural prior during decoding, we compute the structural similarity index measure (SSIM) between corresponding decoder features, which encourages the decoder to retain structural patterns rather than pixel similarity, thus promoting more robust feature representations for downstream detection. The final total feature-domain deblurring loss $\mathcal{L}_{deb}$ can be expressed by the following formula:
+% {\scriptsize
+\begin{equation}
+\mathcal{L}_{deb} = 
+%\frac{1}{6}\left(
+\sum_{i=1}^{3} \| E_b^i - E_c^i \|_1 +
+\sum_{j=1}^{3} ( 1 - SSIM(D_b^j, D_c^j) ).
+%\right).   
+\end{equation}
+% }
+% $
+% L_{rest} = 
+% \frac{
+% \sum_{i=1}^{3} \| E_b^i - E_c^i \|_1 +
+% \sum_{j=1}^{3} \left( 1 - SSIM(D_b^j, D_c^j) \right)
+% }{6}.
+% $
+
+% This loss equally weighs the three encoder-level $L_1$ distances and the three decoder-level $SSIM$-based penalties. The use of $1 - SSIM$ encourages the decoder to retain structural patterns rather than pixel similarity, thus promoting more robust feature representations for downstream detection.
+
+
+\subsection{Frequency Structure Guidance Module }
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\columnwidth]{fig3.pdf} % Reduce the figure size so that it is slightly narrower than the column. Don't use precise values for figure width.This setup will avoid overfull boxes.
+\caption{Overview of FSGM. The FFRB processes prior through high-pass filtering and attention mechanisms to refine feature representations. The SPIB integrates refined structure prior into the feature map.  }
+\label{fig3}
+\end{figure}
+
+
+In blurred infrared UAV imagery, small target regions often suffer from degraded boundary structures and suppressed details. To address this, we incorporate a frequency structure guided module (FSGM) into our framework, which refines high-frequency structural prior and injects it into the detection backbone. Specifically,  we take the output feature map of the first decoder in the feature-domain deblurring network as the structural prior $P$. This feature map contains relatively rich structural and semantic information and is downsampled by a factor of 4 compared to the original image, which matches the resolution of the feature maps output by the stem and stage 1 of the detection backbone. The FSGM consists of two subcomponents, as shown in Figure \ref{fig3} : the frequency feature refine block (FFRB) and the structure prior integration block (SPIB).
+Together, they extract, enhance, and integrate frequency-domain structure cues into feature representations for improved target discrimination.
+
+% \paragraph{Frequency Feature Refine Block (FFRB).}
+% \subsubsection{Frequency Feature Refine Block (FFRB).}
+\noindent\textbf{Frequency Feature Refine Block (FFRB).}
+The FFRB aims to enhance discriminative details by extracting and refining high-frequency structural components $P_{\text{high}}$ from the structure prior $P$. We first transform $P$ into the frequency domain via the fast Fourier transform (FFT), then apply a learnable high-pass filter $\mathcal{H}_{\text{high}}(\cdot)$ to suppress low-frequency components. The filter is initialized with a frequency threshold of 0.5 and later adjusted adaptively during training. This filter retains the critical high-frequency details that are crucial for distinguishing small targets. Finally, the filtered result is transformed back to the spatial domain using the inverse fast Fourier transform (iFFT). The process is defined as:
+\begin{equation}
+P_{\text{high}} = \text{iFFT}\left(\mathcal{H}_{\text{high}}(\text{FFT}(P))\right),
+\end{equation}
+% where $P_{\text{high}}$ represents the high-frequency structural components and serves as the base for subsequent attention-based refinement.
+
+Next, we employ two types of attention mechanisms to refine the feature map: spatial-aware channel attention (SCA) and channel-aware spatial attention (CSA). These mechanisms are designed to enhance the feature map in a manner that prevents excessive compression in either the spatial or channel dimensions, especially for small target detection \cite{Dai_2021_ACL}.  Unlike traditional global attention that compresses spatial or channel dimensions into a single scalar, which may erase critical fine-grained cues, we adopt partial compression to retain target-relevant details, especially important for small objects. The refined prior $ P_{\text{refined}}$ is computed as:
+\begin{equation}
+ F_{\text{SCA}} = P_{\text{high}} \odot \sigma\left(  \mathrm{DeConv}(\mathrm{DWConv}(P_{\text{high}}))  \right),  
+ \end{equation}
+\begin{equation}
+F_{\text{CSA}} = P_{\text{high}} \odot \sigma\left( \mathrm{PWConv}(\mathrm{PWConv}(P_{\text{high}})) \right),
+\end{equation}
+\begin{equation}
+P_{\text{refined}}= F_{\text{SCA}} + F_{\text{CSA}},
+\end{equation}
+% \begin{equation*}{
+% F_{\text{CSA}} &= P_{\text{high}} \odot \sigma\left( \mathrm{PWConv}(P_{\text{high}}) \right), }
+% \end{equation*}
+where $\mathrm{DWConv}$, $\mathrm{DeConv}$, and $\mathrm{PWConv}$ refer to depth-wise convolution, deconvolution, and point-wise convolution operations, respectively; \( \sigma(\cdot) \) is the sigmoid activation function; and \( \odot \) indicates element-wise multiplication. 
+
+
+% The SPIB fuses the structure prior$ P_{\text{refined}}\in \mathbb{R}^{C \times H \times W} $  with the blurred feature map $ f \in \mathbb{R}^{C \times H \times W} $ via structure-guided dynamic convolution. This process begins by applying three parallel feature projections—denoted as FP $(1 \times 1$ convolution followed by reshape)—to obtain the query, key, and value representations as $ Q = \phi_q(f)$, $ K = \phi_k(P_{\text{refined}}) $, and $ V = \phi_v(f) $, where $ \phi $ represents the FP operator.
+
+% A group-wise affinity matrix is then computed by scaled matrix multiplication between the projected features, i.e., $ A = Q^\top K $, where $ A \in \mathbb{R}^{B \times G \times HW \times S^2} $. The matrix $ A $ is subsequently split along the last dimension into two branches $ A_1 $ and $ A_2 $, corresponding to different spatial kernel sizes. In parallel, $ V $ is also split to match these branches. The two attention-weighted values are then aggregated via Hadamard product with their respective attention maps and dynamically composed into a multi-scale representation:
+% $
+% F_{\text{SPIB}} = \mathrm{Conv} \left( \mathrm{Concat}(A_1 \odot V_1, A_2 \odot V_2) \right) + \mathrm{Conv}(f)
+% $
+% This structure-aware fusion allows SPIB to encode both local and global contextual cues by leveraging multi-scale attention maps, leading to robust enhancement for ambiguous or low-texture regions in blurred images.
+
+\noindent\textbf{Structure Prior Integration Block (SPIB).}The SPIB takes as input the structure prior $ P_{\text{refined}}$ and the intermediate feature map $ f $. %\in \mathbb{R}^{C \times H \times W}$. 
+Both streams are first passed through feature projection (denoted as FP), consisting of a $1 \times 1$ convolution followed by reshaping. This yields the attention components: $ Q = \phi_q(f)$, $ K = \phi_k(P_{\text{refined}})$, and $ V = \phi_v(f)$, where $\phi$ denotes the projection operator.
+
+The cross-attention matrix is then computed as $A = Q^\top K$. %where $A \in \mathbb{R}^{B \times G \times HW \times S^2}$. 
+It produces pairwise correspondence between query and structure-guided keys. To inject multi-scale spatial cues, the attention map $A$ is split into two branches, denoted as $A_1$  and $A_2$  which function as structure-guided multi-scale attention maps corresponding to $5\times5$ and $ 7\times7$ dynamic kernels, respectively. In parallel, the projected value feature $ V$ is split into two matching branches $ V_1$  and $V_2$, ensuring alignment with the attention maps. Each attention map then modulates its corresponding value feature through element-wise Hadamard product, and the fused result is aggregated by channel-wise concatenation. Finally, a residual connection with $3\times3$ convolution from the original feature map $f$ is added to enhance gradient flow and representation fidelity:
+\begin{equation}
+F_{\text{PG}} =  \mathrm{Concat}(A_1 \odot V_1, A_2 \odot V_2) + \mathrm{Conv}(f).
+\end{equation}
+The resulting feature $F_{\text{PG}}$ is then forwarded to the subsequent detection network.
+This design enables hierarchical integration of structure-aware guidance into the blurred feature representation.
+
+
+
+\subsection{Joint Deblurring and Detection Loss} %Feature-Domain 
+
+To enhance detection performance under motion blur, we adopt a multi-loss optimization strategy. Specifically, our framework is trained with the combination of three loss components: detection loss $\mathcal{L}_{\text{det}}$, feature deblurring loss $\mathcal{L}_{\text{deb}}$, and feature consistency self-supervised (FCSS) loss $\mathcal{L}_{\text{FCSS}}$. These components collaboratively supervise the dual-branch network, ensuring effective knowledge transfer from clear images to degraded ones, and facilitating the joint optimization of feature deblurring and detection.
+
+% The \textbf{feature restoration loss} $\mathcal{L}_{\text{res}}$, as described in Section~2, supervises the lightweight feature restoration network in the blurred branch. It combines L1 and SSIM-based supervision between blurred and clear feature representations, ensuring the low-level degradation can be effectively mitigated at the feature level.
+
+The detection loss $\mathcal{L}_{\text{det}}$ is calculated based on the predictions from the blurred branch, following the original DEIM~\cite{huang2025deim} formulation. It serves as the task-specific objective to guide the end-to-end optimization.
+
+To further bridge the representation gap across branches, we introduce the FCSS loss, which constrains the intermediate features of the blurred branch to align with their clear-image counterparts. For each stage $i$ in the shared detection backbone, we extract intermediate feature maps $F_C^{(i)}$ and $F_B^{(i)}$ from the clear and blurred branches, respectively. The consistency loss across all stages is then averaged as:
+\begin{equation}
+\mathcal{L}_{\text{FCSS}} = \frac{1}{4} \sum_{i=1}^{4} \left(1 - \frac{\mathbf{F}_C^{(i)} \cdot \mathbf{F}_B^{(i)}}{\|\mathbf{F}_C^{(i)}\| \|\mathbf{F}_B^{(i)}\|} \right).
+\end{equation}
+
+This self-supervised constraint promotes structural alignment and semantic consistency across branches. As supported by our network design, this encourages the blurred branch to better approximate clear-domain representations and facilitates more accurate detection under blur.
+
+The overall training objective is defined as: $\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{det}} + \lambda_1 \mathcal{L}_{\text{deb}} + \lambda_2 \mathcal{L}_{\mathrm{FCSS}}.$ Based on experience, we set the initial weights to $\lambda_1 = 0.4$, $\lambda_2 = 0.2$, and $\lambda_2 $ is annealed to 0.01 after 20 epochs, allowing the network to focus on detection accuracy in the following convergence phase.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   Experiments %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Experiments}
+
+\subsection{Datasets and Evaluation Metrics}
+\noindent\textbf{Datasets.} We construct a new benchmark dataset, IRBlurUAV, to facilitate the evaluation of IRUT detection under motion blur conditions. It comprises 30,000 pairs of synthetically blurred and sharp IRUT images (IRBlurUAV-syn) and 4,118 real-world blurred IRUT images (IRBlurUAV-real). All images have a size of 640×512. The synthetic images are generated using a process similar to that of \citet{sayed2021improved}, but with improved motion trajectory modeling that adopts linear paths with randomized directions and lengths to better approximate realistic UAV motion patterns. The dataset covers diverse backgrounds, multiple UAV scales, and various UAV types. All images are annotated with bounding boxes for detection tasks. The IRBlurUAV-syn set is split into training, validation, and test subsets using an 8:1:1 ratio, while IRBlurUAV-real serves exclusively as a test set  to evaluate generalization performance in real-world scenarios.  More details are provided in the supplementary material.
+
+
+\noindent\textbf{Metrics.} We evaluate the model's detection performance using the standard COCO metrics: $AP$, $AR$, $AP_{50}$, and $AR_{50}$. $AP$ and $AP_{50}$ represent the detection precision over the IoU range of 0.50:0.95 and at IoU=0.50, respectively. $AR_{50}$ measures the average recall at IoU=0.50 with maxDets=100, and $AR$ represents the average recall over the IoU range of 0.50 to 0.95 with maxDets=1.  To assess model complexity, we consider the number of Parameters (Params), floating-point operations (FLOPs), and frames per second (FPS) for real-time performance. Additionally, we employ the Signal-to-Clutter Ratio (SCR) to evaluate the enhancement of the target signal in the feature domain.
+
+
+
+
+\subsection{Experimental Details} The experiments are conducted on an NVIDIA RTX 3090 GPU with CUDA 12.1 and PyTorch 2.7. The model was trained for 150 epochs using the AdamW optimizer, with all other settings consistent with DEIM. Due to the lack of widely adopted infrared-specific deblurring methods, we utilize several general-purpose methods: DeepRFT (CNN-based) \cite{mao2023DeepRFT}, MDT (Transformer-based) \cite{chen2025MDT}, MaIR \cite{li2025MAIR} and EVSSM (Mamba-based) \cite{kong2025EVSSM}. For object detection, we apply CNN-based methods, including YOLO11-N, YOLO11-L \cite{yolo11_ultralytics}, MSHNet \cite{liu2024MSHNet}, and PConv (YOLOv8-N version) \cite{yang2025pinwheel}, as well as Transformer-based methods such as RT-DETR (ResNet18 version) \cite{zhao2024detrs}, D-FINE (N version) \cite{peng2024dfine}, and DEIM (D-FINE-N version)\cite{huang2025deim}. MSHNet and PConv are specifically designed for infrared small target detection. Finally, DREB-Net \cite{li2025DREB} is also used for comparison as a joint deblurring and detection method. For fairness, we retrained all methods on the IRBlurUAV-syn, and conducted evaluations on both IRBlurUAV-syn and IRBlurUAV-real to assess performance and generalizability.
+
+
+
+
+\subsection{Quantitative Results}
+
+\begin{table*}[!t]
+    % \renewcommand{\arraystretch}{1.1}
+    \centering
+    \fontsize{9}{10}\selectfont % font size and line height
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{c|ccc|ccccccc}
+        \toprule
+       \multirow{2}{*}{Strategy} & \multicolumn{3}{c|}{Module }  & \multicolumn{7}{c}{Metrics} \\ 
+        \cline{2-4}  \cline{5-11}
+        & Deblurring & Detection & Pub'Year  & $AP_{50}\uparrow$ & $AR_{50}\uparrow$ & $AP\uparrow$ &$AR\uparrow $& Params (M)$\downarrow$ &FLOPs (G)$\downarrow$ &FPS$\uparrow$\\ 
+        
+        \midrule
+        % \hline
+        \multirow{7}{*}{Direct} &\multirow{7}{*}{/}
+        
+         & YOLO11-N &2024 &0.510 & 0.530 & 0.213 & 0.258 & \underline{10.2} & \textbf{2.7} &\underline{69.2}   \\
+         && YOLO11-L &2024 & 0.551 & 0.565 & 0.232 & 0.282 & 86.6 & 25.3 & 39.3 \\
+        & & RT-DETR&CVPR'24 & 0.716 & \underline{0.811} & \underline{0.369} & \underline{0.400} &  19.0& 30.2 & 50.2  \\
+        % && RT-DETRv2-Resnet18  &arXiv'24 & 0.755 & 0.836 & 0.407 & 0.436&19.0  & 30.2 & 50.2 \\
+             
+        && D-FINE & ICLR’25 & \underline{0.722} & 0.795 & 0.347 & 0.382 & \textbf{3.5 }& 3.5 &  45.8\\
+        && DEIM & CVPR’25 & 0.654 & 0.734 & 0.290 & 0.330 &\textbf{3.5 } & 3.5 & 45.8  \\
+        && MSHNet & CVPR‘24 & 0.358 & 0.428 & 0.099 & 0.148 &15.5  & 38.2 & 53.1 \\
+        && PConv & AAAI’25 & 0.581 & 0.592 & 0.227 & 0.278 &12.4  &\underline{2.9}& \textbf{83.7} \\
+        \midrule
+        \multirow{8}{*}{Separate} &
+          \multirow{2}{*}{DeepRFT} &RT-DETR & \multirow{2}{*}{AAAI’23}&0.673 & 0.749&	0.284	&0.329&36.1&110.1  &9.6 \\
+                                 &  &D-FINE & &0.660&0.743 &0.255 & 0.303& 20.6&  83.4& 9.7 \\
+          \cline{2-4}  \cline{5-11}
+          &\multirow{2}{*}{MDT} &RT-DETR & \multirow{2}{*}{CVPR’25}& 0.195& 0.297&0.062&0.082&31.6 &591.8   &1.5 \\
+                                 &  &D-FINE & &0.181 &	0.268&	0.052&	0.069  &16.1 &565.1 & 1.5\\  
+         \cline{2-4}  \cline{5-11}
+         &\multirow{2}{*}{EVSSM} &RT-DETR & \multirow{2}{*}{CVPR’25}& 0.636	&0.713	&0.244&	0.285&  35.3  & 822.6&0.6 \\
+                                 &  &D-FINE & &0.589	 &0.662	 &0.194	 & 0.234&  19.8  & 795.9&0.6\\  
+        \cline{2-4}  \cline{5-11}
+         &\multirow{2}{*}{MaIR} &RT-DETR & \multirow{2}{*}{CVPR’25}& 0.342	&0.471	 &0.118	 &0.150 & 39.7&582.4&0.1 \\
+                                 & &D-FINE & &0.292	 &0.403	&0.084	  & 0.114 & 24.2&555.7 &0.1\\  
+               
+        \midrule
+        \multirow{2}{*}{Joint} 
+        &  \multicolumn{2}{c}{DREB-Net} & TGRS'25 & 0.710 & 0.754 & 0.300 & 0.357 & 34.6 & 684.2 &10.9 \\
+        & \multicolumn{2}{c}{\textbf{Our JFD\textsuperscript{3}}}& - & \textbf{0.767} & \textbf{0.850} & \textbf{0.428} & \textbf{0.458} &\textbf{ 3.5} & 4.7 & 25.7 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Performance comparison of various methods on IRBlurUAV-syn dataset. \textbf{Bold} and \underline{underline} indicate the best and the second best results, respectively.}
+    \label{tab:exp_uav}
+\end{table*}
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{fig4.png} % Reduce the figure size so that it is slightly narrower than the column. Don't use precise values for figure width.This setup will avoid overfull boxes.
+\caption{Comparison of detection results on IRBlurUAV-syn and IRBlurUAV-real, including direct, separate, and joint detection methods. Green and red boxes represent ground-truth and detected targets, respectively. Close-up views are shown in the bottom-right corner.}
+\label{fig4}
+\end{figure*}
+
+
+\begin{table}[!t]
+    \centering
+    % \renewcommand{\arraystretch}{1.3}
+    \fontsize{9}{9}\selectfont
+    \setlength{\tabcolsep}{3pt}
+    \begin{tabular}{c|cccc}
+        \toprule
+         Method & $AP_{50}\uparrow$ & $AR_{50}\uparrow$ & $AP\uparrow$ &$AR\uparrow $\\
+        \midrule
+        RT-DETR & 0.480 & 0.633 & 0.135 & 0.170  \\
+        D-FINE & 0.514 & \underline{0.693} & \underline{0.151} & 0.190   \\
+        DeepRFT + RT-DETR& 0.419 & 0.600 & 0.124 & 0.170  \\
+        DeepRFT + D-FINE &0.437&0.638&0.129&0.181\\
+        DREB-Net& \underline{0.520}&0.619&0.143 &\underline{0.196}\\
+        \textbf{Our JFD\textsuperscript{3}} &\textbf{0.623} & \textbf{0.730}&\textbf{ 0.251} &\textbf{0.291}\\
+        \bottomrule
+    \end{tabular}
+    \caption{Performance comparison of various methods on IRBlurUAV-real dataset.} %\textbf{Bold} and \underline{underline} indicate the best and the second best results, respectively. }
+    \label{tab:realblur}
+\end{table}
+
+
+As shown in Table \ref{tab:exp_uav}, when detecting blurred images directly, especially for infrared target detection methods like MSHNet and PConv, the loss of discriminative features between the target and the background due to motion blur is not considered, resulting in low accuracy and recall rates. When using separate detection methods, although the deblurring module restores the visual quality of the image, the deblurring process does not adequately focus on detection-friendly features. This leads to poor recovery performance in some methods, such as MDT, and even a significant decline in detection performance. Moreover, the deblurring modules in separate methods typically involve high computational complexity, limiting the overall real-time performance of the pipeline, thus reducing their efficiency.
+
+% In joint methods, DREB-Net improves detection performance, but it still fails to meet real-time requirements. In contrast, our approach introduces a lightweight feature-domain deblurring module, which directly restores key features relevant to detection at the feature domain, achieving optimal detection performance while maintaining real-time efficiency with 25.7 FPS.
+
+In contrast to joint methods like DREB-Net which are not real-time, our approach achieves optimal detection performance at 25.7 FPS with high deployment efficiency, requiring only 120W power and 606 MB GPU memory on an RTX 3090. This is enabled by our lightweight modules (FDD and FSGM), which introduce only 0.02M parameters.
+
+In Table \ref{tab:realblur}, we further validate the methods that performed well in Table 1 on the IRBlurUAV-real to test their performance under real-world blur conditions. The results show that our method still achieves the best detection performance when facing real blurred images, further demonstrating the robustness and practical value of our framework.
+
+
+\subsection{Qualitative Results}
+
+As shown in Figure \ref{fig4}, we present several effective methods, including direct detection methods (RT-DETR, D-FINE), methods that perform deblurring before detection (DeepRFT+RT-DETR, DeepRFT+D-FINE), as well as the joint method (DREB-Net) and our method. The first and second rows of the figure show the results of these methods on IRBlurUAV-syn and IRBlurUAV-real, respectively. Specifically, the third and fourth columns display deblurred images using DeepRFT, while the others show the blurred images.
+
+From the results, it is evident that the target features are significantly degraded due to motion blur, making detection more difficult. Direct detection methods often lead to false alarms or missed detections because they struggle to distinguish discriminative features in blurred images. When deblurring is applied before detection, existing deblurring algorithms still struggle to recover degraded features under severe blur, further impacting detection performance. In contrast, our method can accurately detect UAV targets under motion blur conditions.
+
+
+
+
+\subsection{Ablation Study}
+
+This section presents ablation studies to validate the innovations of JFD\textsuperscript{3}. All experiments are conducted on the IRBlurUAV-syn. More experiments are provided in the supplementary material.
+
+\begin{table}[t]
+    \centering
+    % \renewcommand{\arraystretch}{1.3}
+    \fontsize{9}{9}\selectfont
+    \setlength{\tabcolsep}{3pt}
+    \begin{tabular}{cc|ccccc}
+        \toprule
+        FDD & FSGM& $AP_{50}\uparrow$ & $AR_{50}\uparrow$ & $AP\uparrow$ &$AR\uparrow $& SCR$\uparrow$   \\
+        \midrule
+        $\times$ & $\times$ & 0.654 & \underline{0.734} & 0.290 & 0.330 & 0.463 \\
+        $\checkmark$ & $\times$ & \underline{0.763} & \textbf{0.852} & \underline{0.390} & \underline{0.426} & \underline{0.473}   \\
+       $\checkmark$ & $\checkmark$ & \textbf{0.765} & \textbf{0.852} & \textbf{0.420} & \textbf{0.451} & \textbf{0.477}  \\
+        \bottomrule
+    \end{tabular}
+    \caption{Ablation study of FDD and FSGM. }
+    \label{tab:ablation_scr}
+\end{table}
+
+\noindent\textbf{Impact of FDD and FSGM.} As presented in Table 3, introducing the FDD module significantly improves all evaluation metrics, indicating its strong effectiveness in mitigating motion blur. This suggests that feature-domain deblurring plays a crucial role in enhancing detection under blurred conditions. When the FSGM is further added, the performance improves even more. This demonstrates that FSGM enhances the discriminability of target structures, complementing FDD and further boosting detection accuracy. Additionally, the SCR values across different stages of the backbone  reflect the improvement in target feature SCR, indicating enhanced feature extraction for detection. It can be seen that both of our proposed modules effectively enhance target features in the feature domain.
+
+
+
+
+
+\begin{table}[!t]
+\centering
+% \renewcommand{\arraystretch}{1.3}
+\fontsize{9}{9}\selectfont
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{cc|cccc}
+\toprule
+%\makecell{Image\\Domain}  Feature\\Domain
+IDD & FDD &   $AP_{50}\uparrow$ & $AR_{50}\uparrow$ & $AP\uparrow$ &$AR\uparrow $ \\
+\midrule
+$\times$ & $\times$ & 0.007 & 0.091 & 0.001 & 0.011  \\
+\checkmark & $\times$ & 0.660& 0.743 & 0.255 & 0.303  \\
+$\times$ & \checkmark & \textbf{0.763} & \textbf{0.852} & \textbf{0.390} & \textbf{0.426}  \\
+\checkmark & \checkmark &\underline{0.703} & \underline{0.809} & \underline{0.307} & \underline{0.356}  \\
+\bottomrule
+\end{tabular}
+\caption{Ablation study of IDD and FDD.}
+\label{tab:ablation_deblurring}
+\end{table}
+
+\noindent\textbf{Impact of Image-Domain Deblurring (IDD) and Feature-Domain Deblurring (FDD).} Table  \ref{tab:ablation_deblurring} explores the relationship between image-domain deblurring and feature-domain deblurring, tested on IRBlur-syn. The first row represents our baseline architecture, trained on clear images without FDD and FSGM, and tested directly on blurred images to simulate real-world scenarios. The performance is almost zero, highlighting the significant impact of motion blur on detection that only considers clear images. The second row shows the results of applying DeepRFT to the blurred images before detection, which leads to some improvements in performance with the separate deblurring approach. The third row presents our final JFD\textsuperscript{3}, where feature-domain deblurring reaches optimal performance. The last row demonstrates the use of deblurred images as input for the JFD\textsuperscript{3}, showing a comprehensive improvement over the second row, indicating that feature-domain and image-domain deblurring complement each other. This combination enhances target features that image-domain deblurring alone could not recover effectively.
+
+
+
+
+\begin{table}[!t]
+\centering
+% \renewcommand{\arraystretch}{1.3}
+\fontsize{9}{9}\selectfont
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{c|c|ll}
+\toprule
+\makecell{Blur Level\\ $\in$(PSNR range)}  & Method & \multicolumn{1}{c}{$AP_{50}\uparrow$ } & \multicolumn{1}{c}{$AR_{50}\uparrow$ } \\ %& \makecell{Image\\ Count}
+\midrule
+
+  \multirow{2}{*}{\makecell{Severe \\   $\in[10, 20)$}} 
+  & DeepRFT  + RT-DETR & 0.542 & 0.638 \\ %& \multirow{2}{*}{716}
+  & JFD\textsuperscript{3} & \textbf{0.562 }& \textbf{0.723} \\
+\midrule
+\multirow{2}{*}{\makecell{Moderate\\ $\in[20, 22.5)$}} 
+  & DeepRFT + RT-DETR & 0.664 & 0.745 \\  %& \multirow{2}{*}{1110}
+  & JFD\textsuperscript{3} & \textbf{0.672} & \textbf{0.788} \\
+\midrule
+\multirow{2}{*}{\makecell{Mild \\ $ \in[22.5, 32)$}}
+  & DeepRFT + RT-DETR &\textbf{ 0.772} & 0.831 \\   %& \multirow{2}{*}{1054}
+  & JFD\textsuperscript{3} & 0.767 & \textbf{0.853} \\
+  
+%   \multirow{2}{*}{\makecell{Severe \\   $\in[10, 20)$}} 
+%   & DeepRFT  + RT-DETR & 0.542 & 0.638 \\ %& \multirow{2}{*}{716}
+%   & JFD\textsuperscript{3} & 0.562$_{+0.020}$ & 0.723$_{+0.085}$ \\
+% \midrule
+% \multirow{2}{*}{\makecell{Moderate\\ $\in[20, 22.5)$}} 
+%   & DeepRFT + RT-DETR & 0.664 & 0.745 \\  %& \multirow{2}{*}{1110}
+%   & JFD\textsuperscript{3} & 0.672$_{+0.008}$ & 0.788$_{+0.043}$ \\
+% \midrule
+% \multirow{2}{*}{\makecell{Mild \\ $ \in[22.5, 32)$}}
+%   & DeepRFT + RT-DETR & 0.772 & 0.831 \\   %& \multirow{2}{*}{1054}
+%   & JFD\textsuperscript{3} & 0.767 & 0.853$_{+0.022}$ \\
+\bottomrule
+\end{tabular}
+\caption{Performance comparisons with different blur levels.}
+\label{tab:blur_level_compare}
+\end{table}
+
+
+
+\noindent\textbf{Impact of Different Blur Levels.} In Table \ref{tab:blur_level_compare}, we categorize test sets into three levels of blur severity. For each blur level, we investigate the performance of both separate methods and our JFD\textsuperscript{3}. As the blur severity increases, the detection performance of all methods decreases, highlighting the growing interference caused by more severe blur. However, when examining each blur level individually, JFD\textsuperscript{3} demonstrates a greater performance improvement with increasing blur severity. Specifically, for more severe blur, JFD\textsuperscript{3} outperforms the separate methods, indicating that our approach is more effective in handling severe blur conditions.
+
+ \begin{table}[!t]
+    \centering
+    % \renewcommand{\arraystretch}{1.3}
+    \fontsize{9}{9}\selectfont
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{c|cc|cc}
+        \toprule
+         % \multirow{2}{*}{\makecell{Feature\\ Restoration }}
+         \multirow{2}{*}{Module} & \multicolumn{2}{c|}{w/o FDD} &\multicolumn{2}{c}{w/ FDD}\\
+           & PSNR & SSIM  & PSNR  & SSIM \\
+        \midrule
+        % \multirow{3}{*}{w/o} 
+         Stem         & 14.66 & 0.5977 & \textbf{15.64}$\uparrow$ & \textbf{0.6201}$\uparrow$\\
+         Stage1    & 15.29 & 0.5189  & \textbf{18.18}$\uparrow$ & \textbf{0.6464}$\uparrow$\\
+         % Stage1    & 18.05 & 0.6470 & 16.42 & 0.6233 \\
+        % \midrule
+        % \multirow{3}{*}{w} 
+        % & Stem         & 15.64 & 0.6201 \\
+        % & Stage0    & 18.18 & 0.6464 \\
+        % & Stage1    & 16.42 & 0.6233 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Impact of FDD  at different backbone layers.}
+    \label{tab:feature_injection_ablation}
+\end{table}
+
+\noindent\textbf{Impact of FDD at Backbone Shallow Layers.} As shown in Table \ref{tab:feature_injection_ablation}, we evaluate the effect of FDD by calculating the Peak Signal-to-Noise Ratio (PSNR) and Structural Similarity Index Measure (SSIM) between the shallow-layer feature maps extracted from clear and blurred inputs, with and without FDD. The results show that FDD significantly improves both metrics, indicating enhanced discriminative quality of early-stage features and better overall representation.
+
+More visualization results on IRBlurUAV and experimental results on other datasets can be found in the supplementary material.
+
+
+\section{Conclusion}
+In this paper, we propose the JFD\textsuperscript{3}, an end-to-end dual-branch framework for IRUT detection under motion blur. First, we introduce a lightweight feature restoration network that focuses on feature-domain deblurring. Next, we propose a frequency structure guidance module that enhances target structural information beneficial for detection. %Finally, we incorporate a feature consistency self-supervised loss into the detection network, which improves the network's ability to extract features from blurred images, thereby boosting detection accuracy. 
+Additionally, we construct a dataset named IRBlurUAV with diverse motion blur infrared UAV images. Experiments show that JFD\textsuperscript{3} outperforms existing approaches in both simulated and real-world scenarios, while maintaining real-time performance.
+
+\section{Acknowledgments}
+This work was supported by the Open Research Fund of the National Key Laboratory of Multispectral Information Intelligent Processing Technology under Grant 61421132301, the Natural Science Foundation of Jiangsu Province BK20232028, and in part by the projects of the National Natural Science Foundation of China under Grants No. 62472341, 62372351, U21B2015, 62371203 and 62301228.
+
+% \begin{table}[!t]
+% \centering
+% % \renewcommand{\arraystretch}{1.3}
+% \fontsize{9}{9}\selectfont
+% \setlength{\tabcolsep}{1mm}
+% \begin{tabular}{c|ccccccc}
+% \toprule
+% Method & $AP_{50}\uparrow$ & $AR_{50}\uparrow$ & $AP\uparrow$ &$AR\uparrow $&\makecell{ Param\\ (K)} & \makecell{FLOPs\\ (M) }\\
+% \midrule
+% \makecell{ContMix- \\w/o Strucute Prior} & 0.759 & 0.835 & 0.416 & 0.449 & 14.16 & 621.78 \\
+% \midrule
+% \makecell{ContMix} & \underline{0.763} & \underline{0.846 }& \underline{0.419} & \underline{0.451} & 14.16 & 621.78 \\
+% \midrule
+% \makecell{FSGM w/o FFRB} & 0.737 & 0.823 & 0.349 & 0.384 &\textbf{ 2.40} & \textbf{150.13} \\
+% \midrule
+% FSGM & \textbf{0.767} & \textbf{0.850} & \textbf{0.428} & \textbf{0.458} & \underline{10.63} & \underline{440.66} \\
+% \bottomrule
+% \end{tabular}
+% \caption{Comparison of structure-guided attention methods. The proposed frequency-enhanced prior leads in all metrics.}
+% \label{tab:structure_guidance}
+% \end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%附录与致谢%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \appendix
+% \section{Reference Examples}
+% \label{sec:reference_examples}
+
+% \section{Acknowledgments}
+
+\bibliography{aaai2026}
+
+
+% \input{ReproducibilityChecklist}
+\end{document}

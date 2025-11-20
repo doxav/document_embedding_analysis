@@ -1,0 +1,510 @@
+@INPROCEEDINGS{deepfool,
+  author={Moosavi-Dezfooli, Seyed-Mohsen and Fawzi, Alhussein and Frossard, Pascal},
+  booktitle={2016 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}, 
+  title={DeepFool: A Simple and Accurate Method to Fool Deep Neural Networks}, 
+  year={2016},
+  volume={},
+  number={},
+  pages={2574-2582},
+  keywords={Robustness;Algorithm design and analysis;Optimization;Neural networks;Level set;Computer vision;Pattern recognition},
+  doi={10.1109/CVPR.2016.282}}
+@inproceedings{fgsm,
+  author       = {Ian J. Goodfellow and
+                  Jonathon Shlens and
+                  Christian Szegedy},
+  editor       = {Yoshua Bengio and
+                  Yann LeCun},
+  title        = {Explaining and Harnessing Adversarial Examples},
+  booktitle    = {3rd International Conference on Learning Representations, {ICLR} 2015,
+                  San Diego, CA, USA, May 7-9, 2015, Conference Track Proceedings},
+  year         = {2015},
+  url          = {http://arxiv.org/abs/1412.6572},
+  timestamp    = {Thu, 25 Jul 2019 14:25:38 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/GoodfellowSS14.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+@misc{tramèr2017spacetransferableadversarialexamples,
+      title={The Space of Transferable Adversarial Examples}, 
+      author={Florian Tramèr and Nicolas Papernot and Ian Goodfellow and Dan Boneh and Patrick McDaniel},
+      year={2017},
+      eprint={1704.03453},
+      archivePrefix={arXiv},
+      primaryClass={stat.ML},
+      url={https://arxiv.org/abs/1704.03453}, 
+}
+@misc{dabouei2019smoothfoolefficientframeworkcomputing,
+      title={SmoothFool: An Efficient Framework for Computing Smooth Adversarial Perturbations}, 
+      author={Ali Dabouei and Sobhan Soleymani and Fariborz Taherkhani and Jeremy Dawson and Nasser M. Nasrabadi},
+      year={2019},
+      eprint={1910.03624},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/1910.03624}, 
+}
+@InProceedings{van_Spengler_2023_ICCV,
+    author    = {van Spengler, Max and Berkhout, Erwin and Mettes, Pascal},
+    title     = {Poincare ResNet},
+    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+    month     = {October},
+    year      = {2023},
+    pages     = {5419-5428}
+}
+@InProceedings{Khrulkov_2020_CVPR,
+  author = {Khrulkov, Valentin and Mirvakhabova, Leyla and Ustinova, Evgeniya and Oseledets, Ivan and Lempitsky, Victor},
+  title = {Hyperbolic Image Embeddings},
+  booktitle = {The IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  month = {June},
+  year = {2020}
+}
+@inproceedings{PalSDFGM2024,
+  author       = {Avik Pal and
+                  Max van Spengler and
+                  Guido Maria D'Amely di Melendugno and
+                  Alessandro Flaborea and
+                  Fabio Galasso and
+                  Pascal Mettes},
+  title        = {Compositional Entailment Learning for Hyperbolic Vision-Language Models},
+  booktitle    = {The Thirteenth International Conference on Learning Representations,
+                  {ICLR} 2025, Singapore, April 24-28, 2025},
+  year         = {2025},
+  url          = {https://openreview.net/forum?id=3i13Gev2hV},
+}
+@inproceedings{desai2023meru,
+    title     = {{Hyperbolic Image-Text Representations}},
+    author    = {Desai, Karan and Nickel, Maximilian and Rajpurohit, Tanmay and Johnson, Justin and Vedantam, Ramakrishna},
+    booktitle = {Proceedings of the International Conference on Machine Learning},
+    year      = {2023}
+}
+@inproceedings{ramasinghe2024accept,
+  title={Accept the modality gap: An exploration in the hyperbolic space},
+  author={Ramasinghe, Sameera and Shevchenko, Violetta and Avraham, Gil and Thalaiyasingam, Ajanthan},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={27263--27272},
+  year={2024}
+}
+@INPROCEEDINGS {carlini,
+author = { Carlini, Nicholas and Wagner, David },
+booktitle = { 2017 IEEE Symposium on Security and Privacy (SP) },
+title = {{ Towards Evaluating the Robustness of Neural Networks }},
+year = {2017},
+volume = {},
+ISSN = {2375-1207},
+pages = {39-57},
+abstract = { Neural networks provide state-of-the-art results for most machine learning tasks. Unfortunately, neural networks are vulnerable to adversarial examples: given an input x and any target classification t, it is possible to find a new input x' that is similar to x but classified as t. This makes it difficult to apply neural networks in security-critical areas. Defensive distillation is a recently proposed approach that can take an arbitrary neural network, and increase its robustness, reducing the success rate of current attacks' ability to find adversarial examples from 95% to 0.5%. In this paper, we demonstrate that defensive distillation does not significantly increase the robustness of neural networks by introducing three new attack algorithms that are successful on both distilled and undistilled neural networks with 100% probability. Our attacks are tailored to three distance metrics used previously in the literature, and when compared to previous adversarial example generation algorithms, our attacks are often much more effective (and never worse). Furthermore, we propose using high-confidence adversarial examples in a simple transferability test we show can also be used to break defensive distillation. We hope our attacks will be used as a benchmark in future defense attempts to create neural networks that resist adversarial examples. },
+keywords = {Neural networks;Robustness;Measurement;Speech recognition;Security;Malware;Resists},
+doi = {10.1109/SP.2017.49},
+url = {https://doi.ieeecomputersociety.org/10.1109/SP.2017.49},
+publisher = {IEEE Computer Society},
+address = {Los Alamitos, CA, USA},
+month =May}
+@article{pgd,
+  title={Towards Deep Learning Models Resistant to Adversarial Attacks},
+  author={Aleksander Madry and Aleksandar Makelov and Ludwig Schmidt and Dimitris Tsipras and Adrian Vladu},
+  journal={ArXiv},
+  year={2017},
+  volume={abs/1706.06083},
+  url={https://api.semanticscholar.org/CorpusID:3488815}
+}
+@inproceedings{hypadv,
+author = {van Spengler, Max and Zah\'{a}lka, Jan and Mettes, Pascal},
+title = {Adversarial Attacks on\&nbsp;Hyperbolic Networks},
+year = {2025},
+isbn = {978-3-031-91584-0},
+publisher = {Springer-Verlag},
+address = {Berlin, Heidelberg},
+url = {https://doi.org/10.1007/978-3-031-91585-7_22},
+doi = {10.1007/978-3-031-91585-7_22},
+abstract = {As hyperbolic deep learning grows in popularity, so does the need for adversarial robustness in the context of such a non-Euclidean geometry. To this end, this paper proposes hyperbolic alternatives to the commonly used FGM and PGD adversarial attacks. Through interpretable synthetic benchmarks and experiments on existing datasets, we show how the existing and newly proposed attacks differ. Moreover, we investigate the differences in adversarial robustness between Euclidean and fully hyperbolic networks. We find that these networks suffer from different types of vulnerabilities and that the newly proposed hyperbolic attacks cannot address these differences. Therefore, we conclude that the shifts in adversarial robustness are due to the models learning distinct patterns resulting from their different geometries.},
+booktitle = {Computer Vision – ECCV 2024 Workshops: Milan, Italy, September 29–October 4, 2024, Proceedings, Part XVII},
+pages = {363–381},
+numpages = {19},
+keywords = {Hyperbolic learning, Adversarial attacks},
+location = {Milan, Italy}
+}
+@ARTICLE{survey1,
+  author={Peng, Wei and Varanka, Tuomas and Mostafa, Abdelrahman and Shi, Henglin and Zhao, Guoying},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence}, 
+  title={Hyperbolic Deep Neural Networks: A Survey}, 
+  year={2022},
+  volume={44},
+  number={12},
+  pages={10023-10044},
+  keywords={Mathematical models;Manifolds;Numerical models;Deep learning;Task analysis;Geometry;Computational modeling;Neural networks on Riemannian manifold;hyperbolic neural networks;Poincaré model;Lorentz model},
+  doi={10.1109/TPAMI.2021.3136921}}
+@article{survey2,
+author = {Mettes, Pascal and Ghadimi Atigh, Mina and Keller-Ressel, Martin and Gu, Jeffrey and Yeung, Serena},
+title = {Hyperbolic Deep Learning in Computer Vision: A Survey},
+year = {2024},
+issue_date = {Sep 2024},
+publisher = {Kluwer Academic Publishers},
+address = {USA},
+volume = {132},
+number = {9},
+issn = {0920-5691},
+url = {https://doi.org/10.1007/s11263-024-02043-5},
+doi = {10.1007/s11263-024-02043-5},
+abstract = {Deep representation learning is a ubiquitous part of modern computer vision. While Euclidean space has been the de facto standard manifold for learning visual representations, hyperbolic space has recently gained rapid traction for learning in computer vision. Specifically, hyperbolic learning has shown a strong potential to embed hierarchical structures, learn from limited samples, quantify uncertainty, add robustness, limit error severity, and more. In this paper, we provide a categorization and in-depth overview of current literature on hyperbolic learning for computer vision. We research both supervised and unsupervised literature and identify three main research themes in each direction. We outline how hyperbolic learning is performed in all themes and discuss the main research problems that benefit from current advances in hyperbolic learning for computer vision. Moreover, we provide a high-level intuition behind hyperbolic geometry and outline open research questions to further advance research in this direction.},
+journal = {Int. J. Comput. Vision},
+month = mar,
+pages = {3484–3508},
+numpages = {25},
+keywords = {Hyperbolic deep learning, Computer vision, Representation learning}
+}
+@inproceedings{survey3,
+  title={Hyperbolic Deep Learning for Foundation Models: A Survey},
+  author={He, Neil and Madhu, Hiren and Bui, Ngoc and Yang, Menglin and Ying, Rex},
+  booktitle={Proceedings of the 31st ACM SIGKDD Conference on Knowledge Discovery and Data Mining},
+  year={2025},
+  organization={ACM}
+}
+@misc{hvit,
+      title={Hyperbolic Vision Transformers: Combining Improvements in Metric Learning}, 
+      author={Aleksandr Ermolov and Leyla Mirvakhabova and Valentin Khrulkov and Nicu Sebe and Ivan Oseledets},
+      year={2022},
+      eprint={2203.10833},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2203.10833}, 
+}
+@inproceedings{nickel,
+ author = {Nickel, Maximillian and Kiela, Douwe},
+ booktitle = {Advances in Neural Information Processing Systems},
+ editor = {I. Guyon and U. Von Luxburg and S. Bengio and H. Wallach and R. Fergus and S. Vishwanathan and R. Garnett},
+ pages = {},
+ publisher = {Curran Associates, Inc.},
+ title = {Poincar\'{e} Embeddings for Learning Hierarchical Representations},
+ url = {https://proceedings.neurips.cc/paper_files/paper/2017/file/59dfa2df42d9e3d41f5b02bfc32229dd-Paper.pdf},
+ volume = {30},
+ year = {2017}
+}
+@inproceedings{hnn,
+ author = {Ganea, Octavian and Becigneul, Gary and Hofmann, Thomas},
+ booktitle = {Advances in Neural Information Processing Systems},
+ editor = {S. Bengio and H. Wallach and H. Larochelle and K. Grauman and N. Cesa-Bianchi and R. Garnett},
+ pages = {},
+ publisher = {Curran Associates, Inc.},
+ title = {Hyperbolic Neural Networks},
+ url = {https://proceedings.neurips.cc/paper_files/paper/2018/file/dbab2adc8f9d078009ee3fa810bea142-Paper.pdf},
+ volume = {31},
+ year = {2018}
+}
+@inproceedings{lang1,
+author = {Mandica, Paolo and Franco, Luca and Kallidromitis, Konstantinos and Petryk, Suzanne and Galasso, Fabio},
+title = {Hyperbolic Learning with Multimodal Large Language Models},
+year = {2025},
+isbn = {978-3-031-91584-0},
+publisher = {Springer-Verlag},
+address = {Berlin, Heidelberg},
+url = {https://doi.org/10.1007/978-3-031-91585-7_23},
+doi = {10.1007/978-3-031-91585-7_23},
+abstract = {Hyperbolic embeddings have demonstrated their effectiveness in capturing measures of uncertainty and hierarchical relationships across various deep-learning tasks, including image segmentation and active learning. However, their application in modern vision-language models (VLMs) has been limited. A notable exception is MERU, which leverages the hierarchical properties of hyperbolic space in the CLIP ViT-large model, consisting of hundreds of millions of parameters. In our work, we address the challenges of scaling multi-modal hyperbolic models by orders of magnitude in terms of parameters (billions) and training complexity using the BLIP-2 architecture. Although hyperbolic embeddings offer potential insights into uncertainty not present in Euclidean embeddings, our analysis reveals that scaling these models is particularly difficult. We propose a novel training strategy for a hyperbolic version of BLIP-2, which allows to achieve comparable performance to its Euclidean counterpart, while maintaining stability throughout the training process and showing a meaningful indication of uncertainty with each embedding.},
+booktitle = {Computer Vision – ECCV 2024 Workshops: Milan, Italy, September 29–October 4, 2024, Proceedings, Part XVII},
+pages = {382–398},
+numpages = {17},
+location = {Milan, Italy}
+}
+@inproceedings{lang2,
+author = {Sinha, Aditya and Zeng, Siqi and Yamada, Makoto and Zhao, Han},
+title = {Learning structured representations with hyperbolic embeddings},
+year = {2025},
+isbn = {9798331314385},
+publisher = {Curran Associates Inc.},
+address = {Red Hook, NY, USA},
+abstract = {Most real-world datasets consist of a natural hierarchy between classes or an inherent label structure that is either already available or can be constructed cheaply. However, most existing representation learning methods ignore this hierarchy, treating labels as permutation invariant. Recent work [104] proposes using this structured information explicitly, but the use of Euclidean distance may distort the underlying semantic context [8]. In this work, motivated by the advantage of hyperbolic spaces in modeling hierarchical relationships, we propose a novel approach HypStructure: a Hyperbolic Structured regularization approach to accurately embed the label hierarchy into the learned representations. HypStructure is a simple-yet-effective regularizer that consists of a hyperbolic tree-based representation loss along with a centering loss. It can be combined with any standard task loss to learn hierarchy-informed features. Extensive experiments on several large-scale vision benchmarks demonstrate the efficacy of HypStructure in reducing distortion and boosting generalization performance, especially under low-dimensional scenarios. For a better understanding of structured representation, we perform an eigenvalue analysis that links the representation geometry to improved Out-of-Distribution (OOD) detection performance seen empirically. The code is available at https://github.com/uiuctml/HypStructure.},
+booktitle = {Proceedings of the 38th International Conference on Neural Information Processing Systems},
+articleno = {2895},
+numpages = {40},
+location = {Vancouver, BC, Canada},
+series = {NIPS '24}
+}
+@inproceedings{vision1,
+ author = {Mathieu, Emile and Le Lan, Charline and Maddison, Chris J. and Tomioka, Ryota and Teh, Yee Whye},
+ booktitle = {Advances in Neural Information Processing Systems},
+ editor = {H. Wallach and H. Larochelle and A. Beygelzimer and F. d\textquotesingle Alch\'{e}-Buc and E. Fox and R. Garnett},
+ pages = {},
+ publisher = {Curran Associates, Inc.},
+ title = {Continuous Hierarchical Representations with Poincar\'{e} Variational Auto-Encoders},
+ url = {https://proceedings.neurips.cc/paper_files/paper/2019/file/0ec04cb3912c4f08874dd03716f80df1-Paper.pdf},
+ volume = {32},
+ year = {2019}
+}
+@misc{vision2,
+      title={Hyp-UML: Hyperbolic Image Retrieval with Uncertainty-aware Metric Learning}, 
+      author={Shiyang Yan and Zongxuan Liu and Lin Xu},
+      year={2023},
+      eprint={2310.08390},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2310.08390}, 
+}
+
+@InProceedings{entailcone,
+  title = 	 {Hyperbolic Entailment Cones for Learning Hierarchical Embeddings},
+  author =       {Ganea, Octavian and Becigneul, Gary and Hofmann, Thomas},
+  booktitle = 	 {Proceedings of the 35th International Conference on Machine Learning},
+  pages = 	 {1646--1655},
+  year = 	 {2018},
+  editor = 	 {Dy, Jennifer and Krause, Andreas},
+  volume = 	 {80},
+  series = 	 {Proceedings of Machine Learning Research},
+  month = 	 {10--15 Jul},
+  publisher =    {PMLR},
+  pdf = 	 {http://proceedings.mlr.press/v80/ganea18a/ganea18a.pdf},
+  url = 	 {https://proceedings.mlr.press/v80/ganea18a.html},
+  abstract = 	 {Learning graph representations via low-dimensional embeddings that preserve relevant network properties is an important class of problems in machine learning. We here present a novel method to embed directed acyclic graphs. Following prior work, we first advocate for using hyperbolic spaces which provably model tree-like structures better than Euclidean geometry. Second, we view hierarchical relations as partial orders defined using a family of nested geodesically convex cones. We prove that these entailment cones admit an optimal shape with a closed form expression both in the Euclidean and hyperbolic spaces, and they canonically define the embedding learning process. Experiments show significant improvements of our method over strong recent baselines both in terms of representational capacity and generalization.}
+}
+@misc{visualhi,
+      title={Learning Visual Hierarchies in Hyperbolic Space for Image Retrieval}, 
+      author={Ziwei Wang and Sameera Ramasinghe and Chenchen Xu and Julien Monteil and Loris Bazzani and Thalaiyasingam Ajanthan},
+      year={2025},
+      eprint={2411.17490},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2411.17490}, 
+}
+@article{visrcog,
+title = "Improving Visual Recognition with Hyperbolical Visual Hierarchy Mapping",
+abstract = "Visual scenes are naturally organized in a hierarchy, where a coarse semantic is recursively comprised of several fine details. Exploring such a visual hierarchy is crucial to recognize the complex relations of visual elements, leading to a comprehensive scene understanding. In this paper, we propose a Visual Hierarchy Mapper (Hi-Mapper), a novel approach for enhancing the structured understanding of the pre-trained Deep Neural Networks (DNNs). Hi-Mapper investigates the hierarchical organization of the visual scene by 1) pre-defining a hierarchy tree through the encapsulation of probability densities; and 2) learning the hierarchical relations in hyperbolic space with a novel hierarchical contrastive loss. The pre-defined hierarchy tree recursively interacts with the visual features of the pre-trained DNNs through hierarchy decomposition and encoding procedures, thereby effectively identifying the visual hierarchy and enhancing the recognition of an entire scene. Extensive experiments demonstrate that Hi-Mapper significantly enhances the representation capability of DNNs, leading to an improved performance on various tasks, including image classification and dense prediction tasks. The code is available at https://github.com/kwonjunn01/Hi-Mapper.",
+keywords = "DNNs, Hyperbolic Deep Learning, Probabilistic Modeling",
+author = "Hyeongjun Kwon and Jinhyun Jang and Jin Kim and Kwonyoung Kim and Kwanghoon Sohn",
+note = "Publisher Copyright: {\textcopyright} 2024 IEEE.; 2024 IEEE/CVF Conference on Computer Vision and Pattern Recognition, CVPR 2024 ; Conference date: 16-06-2024 Through 22-06-2024",
+year = "2024",
+doi = "10.1109/CVPR52733.2024.01644",
+language = "English",
+pages = "17364--17374",
+journal = "Proceedings of the IEEE Computer Society Conference on Computer Vision and Pattern Recognition",
+issn = "1063-6919",
+publisher = "IEEE Computer Society",
+}
+@inproceedings{glip1,
+      title={Grounded Language-Image Pre-training},
+      author={Liunian Harold Li* and Pengchuan Zhang* and Haotian Zhang* and Jianwei Yang and Chunyuan Li and Yiwu Zhong and Lijuan Wang and Lu Yuan and Lei Zhang and Jenq-Neng Hwang and Kai-Wei Chang and Jianfeng Gao},
+      year={2022},
+      booktitle={CVPR},
+}
+@article{glip2,
+  title={GLIPv2: Unifying Localization and Vision-Language Understanding},
+  author={Zhang, Haotian* and Zhang, Pengchuan* and Hu, Xiaowei and Chen, Yen-Chun and Li, Liunian Harold and Dai, Xiyang and Wang, Lijuan and Yuan, Lu and Hwang, Jenq-Neng and Gao, Jianfeng},
+  journal={arXiv preprint arXiv:2206.05836},
+  year={2022}
+}
+@inproceedings{jacob,
+  author       = {Nicolas Papernot and
+                  Patrick D. McDaniel and
+                  Somesh Jha and
+                  Matt Fredrikson and
+                  Z. Berkay Celik and
+                  Ananthram Swami},
+  title        = {The Limitations of Deep Learning in Adversarial Settings},
+  booktitle    = {{IEEE} European Symposium on Security and Privacy, EuroS{\&}P
+                  2016, Saarbr{\"{u}}cken, Germany, March 21-24, 2016},
+  pages        = {372--387},
+  publisher    = {{IEEE}},
+  year         = {2016},
+  url          = {https://doi.org/10.1109/EuroSP.2016.36},
+  doi          = {10.1109/EUROSP.2016.36},
+  timestamp    = {Sun, 06 Oct 2024 21:01:24 +0200},
+  biburl       = {https://dblp.org/rec/conf/eurosp/PapernotMJFCS16.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+@inproceedings{bim,
+  author       = {Alexey Kurakin and
+                  Ian J. Goodfellow and
+                  Samy Bengio},
+  title        = {Adversarial examples in the physical world},
+  booktitle    = {5th International Conference on Learning Representations, {ICLR} 2017,
+                  Toulon, France, April 24-26, 2017, Workshop Track Proceedings},
+  publisher    = {OpenReview.net},
+  year         = {2017},
+  url          = {https://openreview.net/forum?id=HJGU3Rodl},
+  timestamp    = {Thu, 04 Apr 2019 13:20:08 +0200},
+  biburl       = {https://dblp.org/rec/conf/iclr/KurakinGB17a.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+@article{subs,
+  title={The Space of Transferable Adversarial Examples},
+  author={Florian Tram{\`e}r and Nicolas Papernot and Ian J. Goodfellow and Dan Boneh and Patrick Mcdaniel},
+  journal={ArXiv},
+  year={2017},
+  volume={abs/1704.03453},
+  url={https://api.semanticscholar.org/CorpusID:15309391}
+}
+@INPROCEEDINGS {mfg,
+author = { Dong, Yinpeng and Liao, Fangzhou and Pang, Tianyu and Su, Hang and Zhu, Jun and Hu, Xiaolin and Li, Jianguo },
+booktitle = { 2018 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) },
+title = {{ Boosting Adversarial Attacks with Momentum }},
+year = {2018},
+volume = {},
+ISSN = {},
+pages = {9185-9193},
+abstract = { Deep neural networks are vulnerable to adversarial examples, which poses security concerns on these algorithms due to the potentially severe consequences. Adversarial attacks serve as an important surrogate to evaluate the robustness of deep learning models before they are deployed. However, most of existing adversarial attacks can only fool a black-box model with a low success rate. To address this issue, we propose a broad class of momentum-based iterative algorithms to boost adversarial attacks. By integrating the momentum term into the iterative process for attacks, our methods can stabilize update directions and escape from poor local maxima during the iterations, resulting in more transferable adversarial examples. To further improve the success rates for black-box attacks, we apply momentum iterative algorithms to an ensemble of models, and show that the adversarially trained models with a strong defense ability are also vulnerable to our black-box attacks. We hope that the proposed methods will serve as a benchmark for evaluating the robustness of various deep models and defense methods. With this method, we won the first places in NIPS 2017 Non-targeted Adversarial Attack and Targeted Adversarial Attack competitions. },
+keywords = {Iterative methods;Robustness;Training;Data models;Adaptation models;Security},
+doi = {10.1109/CVPR.2018.00957},
+url = {https://doi.ieeecomputersociety.org/10.1109/CVPR.2018.00957},
+publisher = {IEEE Computer Society},
+address = {Los Alamitos, CA, USA},
+month =Jun}
+@article{metagr,
+    title={Meta Gradient Adversarial Attack},
+    author={Yuan, Zheng and Zhang, Jie and Jia, Yunpei and Tan, Chuanqi and Xue, Tao and Shan, Shiguang},
+    journal={arXiv preprint arXiv:2108.04204},
+    year={2021}
+}
+@inproceedings{auto1,
+    title = {Reliable evaluation of adversarial robustness with an ensemble of diverse parameter-free attacks},
+    author = {Francesco Croce and Matthias Hein},
+    booktitle = {ICML},
+    year = {2020}
+}
+@inproceedings{auto2,
+    title={Mind the box: $l_1$-APGD for sparse adversarial attacks on image classifiers}, 
+    author={Francesco Croce and Matthias Hein},
+    booktitle={ICML},
+    year={2021}
+}
+@misc{hnnpp,
+      title={Hyperbolic Neural Networks++}, 
+      author={Ryohei Shimizu and Yusuke Mukuta and Tatsuya Harada},
+      year={2021},
+      eprint={2006.08210},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2006.08210}, 
+}
+@inproceedings{hybo,
+    title = "Fully Hyperbolic Neural Networks",
+    author = "Chen, Weize  and
+      Han, Xu  and
+      Lin, Yankai  and
+      Zhao, Hexu  and
+      Liu, Zhiyuan  and
+      Li, Peng  and
+      Sun, Maosong  and
+      Zhou, Jie",
+    editor = "Muresan, Smaranda  and
+      Nakov, Preslav  and
+      Villavicencio, Aline",
+    booktitle = "Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = may,
+    year = "2022",
+    address = "Dublin, Ireland",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.acl-long.389/",
+    doi = "10.18653/v1/2022.acl-long.389",
+    pages = "5672--5686",
+    abstract = "Hyperbolic neural networks have shown great potential for modeling complex data. However, existing hyperbolic networks are not completely hyperbolic, as they encode features in the hyperbolic space yet formalize most of their operations in the tangent space (a Euclidean subspace) at the origin of the hyperbolic model. This hybrid method greatly limits the modeling ability of networks. In this paper, we propose a fully hyperbolic framework to build hyperbolic networks based on the Lorentz model by adapting the Lorentz transformations (including boost and rotation) to formalize essential operations of neural networks. Moreover, we also prove that linear transformation in tangent spaces used by existing hyperbolic networks is a relaxation of the Lorentz rotation and does not include the boost, implicitly limiting the capabilities of existing hyperbolic networks. The experimental results on four NLP tasks show that our method has better performance for building both shallow and deep networks. Our code will be released to facilitate follow-up research."
+}
+@misc{hypco,
+      title={HyperCore: The Core Framework for Building Hyperbolic Foundation Models with Comprehensive Modules}, 
+      author={Neil He and Menglin Yang and Rex Ying},
+      year={2025},
+      eprint={2504.08912},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2504.08912}, 
+}
+@book{textbook,
+    author = "Ratcliffe, John G.",
+    title = "{Foundations of hyperbolic manifolds}",
+    isbn = "978-0-387-47322-2",
+    publisher = "Springer",
+    address = "New York",
+    year = "2006"
+}
+@Techreport{cifar,
+ author = {Krizhevsky, Alex and Hinton, Geoffrey},
+ address = {Toronto, Ontario},
+ institution = {University of Toronto},
+ number = {0},
+ publisher = {Technical report, University of Toronto},
+ title = {Learning multiple layers of features from tiny images},
+ year = {2009},
+ title_with_no_special_chars = {Learning multiple layers of features from tiny images},
+ url = {https://www.cs.toronto.edu/~kriz/learning-features-2009-TR.pdf}
+}
+@inproceedings{tiny,
+  title={Tiny ImageNet Visual Recognition Challenge},
+  author={Ya Le and Xuan S. Yang},
+  year={2015},
+  url={https://api.semanticscholar.org/CorpusID:16664790}
+}
+@article{coco,
+  added-at = {2023-12-13T05:31:59.000+0100},
+  author = {Lin, Tsung-Yi and Maire, Michael and Belongie, Serge J. and Bourdev, Lubomir D. and Girshick, Ross B. and Hays, James and Perona, Pietro and Ramanan, Deva and Dollár, Piotr and Zitnick, C. Lawrence},
+  biburl = {https://www.bibsonomy.org/bibtex/2bfebcf1f3dbeea120efc48564248c49c/admin},
+  ee = {http://arxiv.org/abs/1405.0312},
+  interhash = {a3a26c6fe173264a6b812e3b7b4119bd},
+  intrahash = {bfebcf1f3dbeea120efc48564248c49c},
+  journal = {CoRR},
+  keywords = {},
+  timestamp = {2023-12-13T05:31:59.000+0100},
+  title = {Microsoft COCO: Common Objects in Context.},
+  url = {http://dblp.uni-trier.de/db/journals/corr/corr1405.html#LinMBHPRDZ14},
+  volume = {abs/1405.0312},
+  year = 2014
+}
+@inproceedings{flickr,
+  abstract = {The Flickr30k dataset has become a standard benchmark for sentence-based image description. This paper presents Flickr30k Entities, which augments the 158k captions from Flickr30k with 244k coreference chains linking mentions of the same entities in images, as well as 276k manually annotated bounding boxes corresponding to each entity. Such annotation is essential for continued progress in automatic image description and grounded language understanding. We present experiments demonstrating the usefulness of our annotations for text-to-image reference resolution, or the task of localizing textual entity mentions in an image, and for bidirectional image-sentence retrieval. These experiments confirm that we can further improve the accuracy of state-of-the-art retrieval methods by training with explicit region-to-phrase correspondence, but at the same time, they show that accurately inferring this correspondence given an image and a caption remains really challenging.},
+  added-at = {2020-01-20T10:04:10.000+0100},
+  author = {{Plummer}, B. A. and {Wang}, L. and {Cervantes}, C. M. and {Caicedo}, J. C. and {Hockenmaier}, J. and {Lazebnik}, S.},
+  biburl = {https://www.bibsonomy.org/bibtex/2d7874dca41004be97d7fc817fa9477c7/nosebrain},
+  booktitle = {2015 IEEE International Conference on Computer Vision (ICCV)},
+  description = {Flickr30k Entities: Collecting Region-to-Phrase Correspondences for Richer Image-to-Sentence Models - IEEE Conference Publication},
+  doi = {10.1109/ICCV.2015.303},
+  interhash = {0d506ec7cb5b56cf2437fc495a0df9f3},
+  intrahash = {d7874dca41004be97d7fc817fa9477c7},
+  issn = {2380-7504},
+  keywords = {flickr localisation nlp object paper-dzhi text},
+  month = dec,
+  pages = {2641-2649},
+  timestamp = {2020-01-20T10:04:10.000+0100},
+  title = {Flickr30k Entities: Collecting Region-to-Phrase Correspondences for Richer Image-to-Sentence Models},
+  url = {https://ieeexplore.ieee.org/document/7410660},
+  year = 2015
+}
+@article{iclsaaai,
+author = {Ma, Rongkai and Fang, Pengfei and Drummond, Tom and Harandi, Mehrtash},
+year = {2022},
+month = {06},
+pages = {1926-1934},
+title = {Adaptive Poincaré Point to Set Distance for Few-Shot Classification},
+volume = {36},
+journal = {Proceedings of the AAAI Conference on Artificial Intelligence},
+doi = {10.1609/aaai.v36i2.20087}
+}
+@inproceedings{Szegedy,
+  author       = {Christian Szegedy and
+                  Wojciech Zaremba and
+                  Ilya Sutskever and
+                  Joan Bruna and
+                  Dumitru Erhan and
+                  Ian J. Goodfellow and
+                  Rob Fergus},
+  editor       = {Yoshua Bengio and
+                  Yann LeCun},
+  title        = {Intriguing properties of neural networks},
+  booktitle    = {2nd International Conference on Learning Representations, {ICLR} 2014,
+                  Banff, AB, Canada, April 14-16, 2014, Conference Track Proceedings},
+  year         = {2014},
+  url          = {http://arxiv.org/abs/1312.6199},
+  timestamp    = {Thu, 25 Jul 2019 14:35:25 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/SzegedyZSBEGF13.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+@article{hiercls,
+author = {Chen, Boli and Huang, Xin and Cai, Zixin and Jing, Liping},
+year = {2020},
+month = {04},
+pages = {7496-7503},
+title = {Hyperbolic Interaction Model for Hierarchical Multi-Label Classification},
+volume = {34},
+journal = {Proceedings of the AAAI Conference on Artificial Intelligence},
+doi = {10.1609/aaai.v34i05.6247}
+}
+@inproceedings{kngrrea,
+  title={Low-Dimensional Hyperbolic Knowledge Graph Embeddings},
+  author={Chami, Ines and Wolf, Adva and Juan, Da-Cheng and Sala, Frederic and Ravi, Sujith and R{\'e}, Christopher},
+  booktitle={Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics},
+  pages={6901--6914},
+  year={2020}
+}

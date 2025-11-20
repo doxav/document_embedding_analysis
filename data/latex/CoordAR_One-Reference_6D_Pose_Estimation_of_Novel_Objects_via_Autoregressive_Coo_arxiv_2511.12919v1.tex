@@ -1,0 +1,567 @@
+%File: formatting-instructions-latex-2026.tex
+%release 2026.0
+
+\newcommand{\ourmodel}{CoordAR}
+
+\documentclass[letterpaper]{article} % DO NOT CHANGE THIS
+\usepackage{aaai2026}  % DO NOT CHANGE THIS
+\usepackage{times}  % DO NOT CHANGE THIS
+\usepackage{helvet}  % DO NOT CHANGE THIS
+\usepackage{courier}  % DO NOT CHANGE THIS
+\usepackage[hyphens]{url}  % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\urlstyle{rm} % DO NOT CHANGE THIS
+\def\UrlFont{\rm}  % DO NOT CHANGE THIS
+\usepackage{natbib}  % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\usepackage{caption} % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\frenchspacing  % DO NOT CHANGE THIS
+\setlength{\pdfpagewidth}{8.5in}  % DO NOT CHANGE THIS
+\setlength{\pdfpageheight}{11in}  % DO NOT CHANGE THIS
+%
+% These are recommended to typeset algorithms but not required. See the subsubsection on algorithms. Remove them if you don't have algorithms in your paper.
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsfonts}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{makecell} 
+\usepackage{xcolor}
+\usepackage{placeins}
+
+%
+% These are are recommended to typeset listings but not required. See the subsubsection on listing. Remove this block if you don't have listings in your paper.
+\usepackage{newfloat}
+\usepackage{listings}
+\DeclareCaptionStyle{ruled}{labelfont=normalfont,labelsep=colon,strut=off} % DO NOT CHANGE THIS
+\lstset{%
+	basicstyle={\footnotesize\ttfamily},% footnotesize acceptable for monospace
+	numbers=left,numberstyle=\footnotesize,xleftmargin=2em,% show line numbers, remove this entire line if you don't want the numbers.
+	aboveskip=0pt,belowskip=0pt,%
+	showstringspaces=false,tabsize=2,breaklines=true}
+\floatstyle{ruled}
+\newfloat{listing}{tb}{lst}{}
+\floatname{listing}{Listing}
+%
+% Keep the \pdfinfo as shown here. There's no need
+% for you to add the /Title and /Author tags.
+\pdfinfo{
+/TemplateVersion (2026.1)
+}
+
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{color}
+\usepackage{amssymb}
+\usepackage{bibunits}
+\usepackage[capitalize]{cleveref}
+\newcommand{\zou}[1]{\textcolor{red}{zou:#1}}
+
+% \usepackage[hyperfootnotes=false, breaklinks=false]{hyperref}
+% \hypersetup{
+%     colorlinks=true, % 使用彩色超链接
+%     linkcolor=red,  % 内部链接颜色
+%     citecolor=blue,  % 引用链接颜色
+%     urlcolor=blue,   % URL 链接颜色
+%     % allcolors=blue,
+% }
+
+% DISALLOWED PACKAGES
+% \usepackage{authblk} -- This package is specifically forbidden
+% \usepackage{balance} -- This package is specifically forbidden
+% \usepackage{color (if used in text)
+% \usepackage{CJK} -- This package is specifically forbidden
+% \usepackage{float} -- This package is specifically forbidden
+% \usepackage{flushend} -- This package is specifically forbidden
+% \usepackage{fontenc} -- This package is specifically forbidden
+% \usepackage{fullpage} -- This package is specifically forbidden
+% \usepackage{geometry} -- This package is specifically forbidden
+% \usepackage{grffile} -- This package is specifically forbidden
+% \usepackage{hyperref} -- This package is specifically forbidden
+% \usepackage{navigator} -- This package is specifically forbidden
+% (or any other package that embeds links such as navigator or hyperref)
+% \indentfirst} -- This package is specifically forbidden
+% \layout} -- This package is specifically forbidden
+% \multicol} -- This package is specifically forbidden
+% \nameref} -- This package is specifically forbidden
+% \usepackage{savetrees} -- This package is specifically forbidden
+% \usepackage{setspace} -- This package is specifically forbidden
+% \usepackage{stfloats} -- This package is specifically forbidden
+% \usepackage{tabu} -- This package is specifically forbidden
+% \usepackage{titlesec} -- This package is specifically forbidden
+% \usepackage{tocbibind} -- This package is specifically forbidden
+% \usepackage{ulem} -- This package is specifically forbidden
+% \usepackage{wrapfig} -- This package is specifically forbidden
+% DISALLOWED COMMANDS
+% \nocopyright -- Your paper will not be published if you use this command
+% \addtolength -- This command may not be used
+% \balance -- This command may not be used
+% \baselinestretch -- Your paper will not be published if you use this command
+% \clearpage -- No page breaks of any kind may be used for the final version of your paper
+% \columnsep -- This command may not be used
+% \newpage -- No page breaks of any kind may be used for the final version of your paper
+% \pagebreak -- No page breaks of any kind may be used for the final version of your paperr
+% \pagestyle -- This command may not be used
+% \tiny -- This is not an acceptable font size.
+% \vspace{- -- No negative value may be used in proximity of a caption, figure, table, section, subsection, subsubsection, or reference
+% \vskip{- -- No negative value may be used to alter spacing above or below a caption, figure, table, section, subsection, subsubsection, or reference
+
+\setcounter{secnumdepth}{0} %May be changed to 1 or 2 if section numbers are desired.
+
+% The file aaai2026.sty is the style file for AAAI Press
+% proceedings, working notes, and technical reports.
+%
+
+% Title
+
+% Your title must be in mixed case, not sentence case.
+% That means all verbs (including short verbs like be, is, using,and go),
+% nouns, adverbs, adjectives should be capitalized, including both words in hyphenated terms, while
+% articles, conjunctions, and prepositions are lower case unless they
+% directly follow a colon or long dash
+\title{\LARGE \bf
+\ourmodel: 
+One-Reference 6D Pose Estimation of Novel Objects via \\ Autoregressive Coordinate Map Generation}
+\author{
+    %Authors
+    % All authors must be in the same font size and format.
+    Dexin Zuo\textsuperscript{\rm 1}, Ang Li\textsuperscript{\rm 1}, Wei Wang\textsuperscript{\rm 2}\thanks{indicates corresponding authors.}, Wenxian Yu\textsuperscript{\rm 1}, Danping Zou\textsuperscript{\rm 1}\footnotemark[1]
+    % Written by AAAI Press Staff\textsuperscript{\rm 1}\thanks{With help from the AAAI Publications Committee.}\\
+    % AAAI Style Contributions by Pater Patel Schneider,
+    % Sunil Issar,\\
+    % J. Scott Penberthy,
+    % George Ferguson,
+    % Hans Guesgen,
+    % Francisco Cruz\equalcontrib,
+    % Marc Pujol-Gonzalez\equalcontrib
+    % \textsuperscript{\dagger}\textit{Corresponding authors.}
+}
+\affiliations{
+    %Afiliations
+    \textsuperscript{\rm 1}Shanghai Jiao Tong University\\
+    \textsuperscript{\rm 2}Corporate Research Center, State Key Laboratory of High-end Heavy-load Robots, Midea Group.\\
+    
+    % If you have multiple authors and multiple affiliations
+    % use superscripts in text and roman font to identify them.
+    % For example,
+
+    % Sunil Issar\textsuperscript{\rm 2}, 
+    % J. Scott Penberthy\textsuperscript{\rm 3}, 
+    % George Ferguson\textsuperscript{\rm 4},
+    % Hans Guesgen\textsuperscript{\rm 5}
+    % Note that the comma should be placed after the superscript
+    % email address must be in roman text type, not monospace or sans serif
+    \{dexin95, liang\_sjtu, wxyu, dpzou\}@sjtu.edu.cn, wangwei232@midea.com
+%
+% See more examples next
+}
+
+%Example, Single Author, ->> remove \iffalse,\fi and place them surrounding AAAI title to use it
+\iffalse
+\title{My Publication Title --- Single Author}
+\author {
+    Author Name
+}
+\affiliations{
+    Affiliation\\
+    Affiliation Line 2\\
+    name@example.com
+}
+\fi
+
+\iffalse
+%Example, Multiple Authors, ->> remove \iffalse,\fi and place them surrounding AAAI title to use it
+\title{My Publication Title --- Multiple Authors}
+\author {
+    % Authors
+    First Author Name\textsuperscript{\rm 1,\rm 2},
+    Second Author Name\textsuperscript{\rm 2},
+    Third Author Name\textsuperscript{\rm 1}
+}
+\affiliations {
+    % Affiliations
+    \textsuperscript{\rm 1}Affiliation 1\\
+    \textsuperscript{\rm 2}Affiliation 2\\
+    firstAuthor@affiliation1.com, secondAuthor@affilation2.com, thirdAuthor@affiliation1.com
+}
+\fi
+
+
+% REMOVE THIS: bibentry
+% This is only needed to show inline citations in the guidelines document. You should not need it and can safely delete it.
+% \usepackage{bibentry}
+% END REMOVE bibentry
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Object 6D pose estimation, a crucial task for robotics and augmented reality applications, becomes particularly challenging when dealing with novel objects whose 3D models are not readily available. To reduce dependency on 3D models, recent studies have explored one-reference-based pose estimation, which requires only a single reference view instead of a complete 3D model. However, existing methods that rely on real-valued coordinate regression suffer from limited global consistency due to the local nature of convolutional architectures and face challenges in symmetric or occluded scenarios owing to a lack of uncertainty modeling. We present CoordAR, a novel autoregressive framework for one-reference 6D pose estimation of unseen objects. CoordAR formulates 3D-3D correspondences between the reference and query views as a map of discrete tokens, which is obtained in an autoregressive and probabilistic manner. To enable accurate correspondence regression, CoordAR introduces 1) a novel coordinate map tokenization that enables probabilistic prediction over discretized 3D space; 2) a modality-decoupled encoding strategy that separately encodes RGB appearance and coordinate cues; and 3) an autoregressive transformer decoder conditioned on both position-aligned query features and the partially generated token sequence. With these novel mechanisms, CoordAR significantly outperforms existing methods on multiple benchmarks and demonstrates strong robustness to symmetry, occlusion, and other challenges in real-world tests.
+\end{abstract}
+
+% Uncomment the following to link to your code, datasets, an extended version or similar.
+% You must keep this block between (not within) the abstract and the main body of the paper.
+\begin{links}
+    % \link{Code}{https://github.com/SJTU-ViSYS-team/CoordAR}
+    \link{Project Page}{https://sjtu-visys-team.github.io/CoordAR}
+    % \link{Extended version}{https://arxiv.org/abs/2501.02737}
+\end{links}
+
+\section{Introduction}
+\label{sec:introduction}
+Object 6-DoF (Degrees of Freedom) pose estimation, which recovers the rotation and translation of a rigid object from observations, is a fundamental task in computer vision and robotics, with extensive applications in augmented reality, robotic manipulation, and industrial automation.  Despite its importance, real-world deployment remains challenging due to factors such as texture-less object surfaces, occlusion, and lighting variations.
+ 
+ Learning-based approaches have made significant progress but often rely on known 3D models during training or inference and struggle to generalize to novel objects.  For instance, instance-level methods \cite{su2022zebrapose,liu2025gdrnpp} train a dedicated network per object using only synthetic data, achieving strong performance in the real world; however, they are costly and unflexible when it comes to novel objects. Category-level methods \cite{wang2019normalized,cai2024ov9d} improve generalization across intra-class variation but still struggle with out-of-distribution objects. 
+
+ An alternative is to learn correspondences between image observations and a given 3D model \cite{nguyen2024gigapose,caraffa2024freeze}, enabling zero-shot pose estimation for novel objects. However, these methods typically assume access to textured CAD models at inference, which is usually an unrealistic assumption in many real-world scenarios involving unknown objects. 
+
+\begin{figure}[!tpp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/cover.png}
+    \caption{Given a reference view with known pose and depth-derived coordinate map, CoordAR  predicts the corresponding coordinates in the query view and subsequently obtain the relative pose from the correspondences provided by the coordinate maps. Instead of inferring continuous coordinate values in parallel, our model autoregressively operate on patch-level token space with a pretrained  tokenizer. }
+    \label{fig:cover}
+\end{figure}
+To overcome this limitation, recent studies have turned to \emph{one-reference} methods, a promising paradigm that estimates the pose of a novel object using only a single reference view. Early methods \cite{corsetti2024open, fan2024pope,zhang2022relpose} relied on sparse correspondences between reference and target views; however, they struggled with texture-less surfaces, occlusions, and large viewpoint changes. More recently, One2Any~\cite{liu2025one2any} improves robustness by regressing coordinate maps as dense correspondences. However, it uses a convolutional decoder for real-valued coordinate regression, which introduces two key limitations.
+
+Firstly, the limited receptive fields of the convolutional decoder restrict their ability to capture long-range dependencies, leading to inconsistent global reasoning in complex scenes. Secondly, training a regression model directly using continuous, real-valued coordinates fails to handle the inherent ambiguity arising from object symmetries and occlusions. Specifically, for symmetrical objects (e.g., cylinders, cubes), direct coordinate regression forces the network to reconcile multiple valid ground truths, leading to a wrong averaged result \cite{hodan2020epos}; for occluded objects, the model lacks an explicit mechanism to represent uncertainty in unobserved regions. These issues collectively reduce robustness in real-world applications.
+
+
+In this paper, we propose \ourmodel, a novel framework for one-reference 6D pose estimation. Our model generates 3D-3D dense correspondences, represented by tokenized coordinate maps, conditioned on both the reference and query views. Based on the generated correspondences, the object pose can be calculated efficiently using the Umeyama algorithm~\cite{umeyama1991least}. Our model consists of three main stages: an encoding stage, where the reference RGB image and its coordinate map are encoded separately; a subsequent feature fusion stage; and a decoding stage, where the tokens are autoregressively decoded, conditioned on embeddings from both the reference and query views.
+
+Our approach introduces three key innovations: (1) replacing traditional continuous coordinate regression with a probability prediction on a discretized space of the coordinate map, (2) introducing a modality-decoupled encoding strategy, where the RGB images and the reference coordinate map are encoded separately to obtain better performance and flexibility, and (3) designing a network that autoregressively generates the coordinate map, with the training objective formulated as predicting the conditional probability distribution of the next-set-of tokens given the query view, reference view, and the previously generated token sequence. Our method can accurately estimate 6D poses for novel objects in complex real-world scenarios using only a single reference view. Our contributions are : 
+\begin{itemize}
+    \item  We are the first to introduce autoregressive coordinate map generation for 6D pose estimation of novel objects. We further demonstrate the superiority of autoregressive generation compared to parallel real-valued regression. 
+    \item We propose modality-decoupled encoders and transformer-style fusion blocks, integrating them into the framework, which effectively fuses information from both the query and reference views.
+    \item We achieve state-of-the-art performance across multiple benchmark datasets, significantly outperforming existing one-reference methods.
+\end{itemize}
+
+
+
+
+\section{Related Works}
+\paragraph{Model-based Methods}
+Model-based object pose estimation methods leverage 3D models of target objects as prior knowledge. Existing model-based approaches can be broadly categorized into instance-level methods, category-level methods, and category-agnostic methods. Instance-level methods~\cite{xiang2017posecnn, Wang_2021_GDRN, li2019cdpn} operate on a closed set of known 3D models during training, which inherently restricts their application to previously seen objects.  While category-level methods~\cite{Wang_2019_CVPR, cai2024ov9d, chen2020learning, chen2021sgpa} demonstrate improved generalization to novel objects within trained categories, they remain constrained by their predefined taxonomic boundaries. Recently, some category-agnostic methods~\cite{labbe2022megapose,caraffa2024freeze,nguyen2024gigapose} estimate the relative pose based on the rendered anchor views of the 3D model. Despite their strong performance, reliance on CAD models limits their application to unseen real-world scenarios, where a novel object usually lacks a corresponding CAD model.
+\paragraph{Model-free Methods}
+To address scenarios where  3D models are unavailable, some methods~\cite{sun2022onepose, he2022onepose++, wen2024foundationpose, liu2022gen6d} first reconstruct the 3D model from multiple views with known poses and then estimate poses by comparing them with the images rendered from the reconstructed model. However, these methods rely on a sufficient number of views to build a high-quality 3D model, and performance drops significantly when views are sparse. Other methods directly compare the query view with sparse reference views. For example, FS6D~\cite{he2022fs6d} establishes 3D-3D correspondence through prototype matching between the query view and the reference views. 
+%\subsection{Single-view Model-free Methods}
+Recently, the one-reference pose estimation problem has gained attention, where only a single reference view of the object is available. This setting poses significant challenges, primarily due to the wide diversity of object appearances, severe occlusions in both the reference and query views, and substantial viewpoint variations. One2Any~\cite{liu2025one2any} regresses a coordinate map that encodes the relative pose between the query view and a single reference view. However, it trains a convolutional decoder with a regression objective for continuous-valued target coordinate maps, which consequently struggles in challenging scenarios involving symmetries or heavy occlusion, often producing inaccurate coordinate predictions.
+
+In this work, we explore autoregressive models~\cite{jiang2024survey,xiong2024autoregressive} to improve coordinate map regression, leveraging tokenization strategies that have demonstrated strong performance in tasks such as image generation~\cite{esser2021taming}, video generation~\cite{yu2023magvit} and embodied AI~\cite{micheli2022transformers}. Specifically, we introduce 1) a novel coordinate map tokenization scheme enabling probabilistic prediction over discretized 3D space, 2) a modality-decoupled encoding strategy that separately models RGB appearance and coordinate cues, and 3) an autoregressive transformer decoder conditioned on pixel-aligned query features and the partially generated coordinate sequence. Together, these novel mechanisms lead to significant improvements over state-of-the-art methods.
+
+
+\begin{figure*}[!htbp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/main.png}
+    \caption{Overview of CoordAR framework. 
+      Images from both query view and reference view are cleaned by masks to remove the interference from background and occlusion. The inputs are encoded by modality-decoupled encoders, where encoders are shared among same modality. The reference features are then integrated with the query features to form the condition feature. Subsequently, the decoder, which consists of several self-attention (SA) blocks, autoregressively decode new tokens with learned mask tokens as input. Finally, all tokens are detokenized and combined with the query depth to compute the pose.}
+    \label{fig:main}
+\end{figure*}
+
+\section{Problem Statement}
+Estimating the 6D pose of an object is a challenging yet practically valuable task, especially in scenarios where full 3D models are unavailable or object instances appear in dynamic or unstructured environments. Unlike traditional pose estimation settings that rely on known 3D CAD models or extensive multi-view observations, we focus on a one-reference setting, where the model must infer the pose of a novel object using only one annotated view as prior knowledge. To achieve this, we aim to estimate the relative transformation $\mathbf{T}_{RQ} \in SE(3)$ that transforms points from the query view to the reference view using the following inputs:
+
+\begin{itemize}
+    \item A reference RGB-D image $\mathcal{I}_R = (\mathcal{C}_R, \mathcal{D}_R)$ 
+    where $\mathcal{C}_R$ denotes the color image and $\mathcal{D}_R$ is the depth map.
+    \item A query RGB-D image $\mathcal{I}_Q = (\mathcal{C}_Q, \mathcal{D}_Q)$ from an unknown viewpoint.
+    
+    \item The object's binary mask $\mathcal{M}_R$ in the reference image and $\mathcal{M}_Q$ in the query image.
+    
+\end{itemize}
+For evaluation, the absolute pose of the reference view $\mathbf{T}_{RO}$ is assumed to be known, allowing us to derive the absolute pose of the query view $\mathbf{T}_{QO}$.
+
+
+
+\paragraph{Reference Object Coordinates (ROC) Map}
+In our method, the relative object pose between the reference and query views is represented by Reference Object Coordinates (ROC) maps, an effective representation introduced by~\cite{liu2025one2any}. The ROC map of the reference view $\mathbf{X}^{R} \in \mathbb{R}^{H\times W\times 3}$ is obtained by backprojecting the depth within the reference mask and applying normalization:
+\begin{equation}
+    \mathbf{X}^R = \mathbf{S}\mathbf{\Pi}^{-1}(\mathcal{D}_{R})[\mathcal{M}_R=1],
+    \label{eq:XR}
+\end{equation}
+where $\mathbf{\Pi}^{-1}(\cdot)$ denotes the backprojection operator, and $\mathbf{S} \in \mathbb{R}^{4 \times 4}$ is a normalization matrix that centers and scales the object point cloud. The normalization is derived from the inputs; further details are provided in the appendix. Likewise, the ROC map of the query view $\mathbf{X}^{Q} \in \mathbb{R}^{H\times W\times 3}$ is calculated as:
+\begin{equation}
+    \mathbf{X}^Q = \mathbf{S}\mathbf{T}_{RQ}\mathbf{\Pi}^{-1}(\mathcal{D}_{Q})[\mathcal{M}_Q=1],
+    \label{eq:xQ}
+\end{equation}
+where $\mathbf{T}_{RQ}$ is the relative transformation from the query to the reference view. Both $\mathbf{X}^R$ and $\mathbf{X}^Q$ represent 3D points in the reference object frame, thereby providing pixel-wise 3D–3D correspondences between the query and reference images. Since $\mathbf{X}^R$ is known in advance, the task of 6D object pose estimation reduces to estimating the ROC map $\mathbf{X}^Q$ of the query image.
+
+
+
+\section{The Proposed Method}
+We introduce \ourmodel, a neural network for one-reference 6D object pose estimation. The overview of our method is shown in Fig.~\ref{fig:main}. Our network consists of three major stages: a modality-decoupled encoding stage, a subsequent fusion stage, and finally an autoregressive decoding stage, which we detail in the following sections.  The output of our network is a pixel-aligned ROC map $\mathbf{\hat{X}}^{Q} \in \mathbb{R}^{H \times W \times 3}$ that directly corresponds to the object's coordinates in the reference image, as described in Eq. (\ref{eq:xQ}).
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/decouple.pdf}
+    \caption{Different encoding schemes and cross-attention mechanisms in the fusion blocks. The modality-decoupled encoding improves architectural clarity and avoid affinity computation across modalities. To distinguish depth-absent regions from the background and invisible areas, we additionally concatenate the object mask to the input ROC map.}
+    \label{fig:decouple}
+\end{figure}
+
+\paragraph{Modality-decoupled Encoding}
+An encoding stage for both the query and the reference is a prerequisite for visual understanding. Existing work~\cite{liu2025one2any} leverages an encoder for the query and another for the reference, which we refer to as \textit{role-specific encoding}. To encode the reference information, they concatenate the RGB image and ROC map channel-wise as input, 
+% and produce key-value pairs from the encoded features for cross attention layers
+ignoring the distinctness in structural patterns between the two modalities.  In contrast to them, we assign separate encoders for different input modalities (RGB vs. ROC), allowing each encoder to specialize in its respective domain. As shown in Fig.~\ref{fig:decouple}, the modality-decoupled encoding we employ includes: 1) A \emph{shared} RGB encoder that processes both the reference image $\mathcal{C}_R$ and the query image $\mathcal{C}_Q$, and 2) Another encoder that handles the reference's ROC map $\mathbf{X}^{R}$. Details about each encoder are presented in the appendix.
+
+
+
+\paragraph{Fusion Blocks} To condition token generation on reference-view cues, we introduce several stacked fusion blocks that integrate reference-view information with the query-view features.  Each fusion block has a similar structure to the decoder block in the transformer \cite{vaswani2017attention}, which primarily consists of a self-attention layer,  a following cross-attention layer, and a feedforward network (FFN). 
+% Residual connections are employed around each of the layers, followed by layer normalization~\cite{ba2016layer}. We use the scaled dot-product multi-head attention mechanism in each attention layer. 
+To accommodate modality-decoupled encoding, our cross-attention layer in the fusion blocks computes the affinity between encoded features within the same modality to mitigate the RGB-ROC domain gap, as demonstrated on the right side of Fig. \ref{fig:decouple}. This decoupling improves both architectural clarity and performance, as validated by our ablation studies. More details about the fusion blocks can be found in the appendix. Finally, the output features of the fusion blocks are considered the condition features for token generation. Specifically, when decoding a token at a certain position, the position-aligned condition feature is selected and added to the intermediate output of the decoder.
+
+\paragraph{Autoregressive ROC Map Generation}
+Instead of directly regressing the ROC map, our network first generates patch-level tokens and then detokenizes them to obtain the pixel-level ROC map. To this end, we adopt a VQ-VAE~\cite{van2017neural} as our ROC map tokenizer. The VQ-VAE first encodes the ROC map into latent vectors, then quantizes them by replacing each vector with its nearest neighbor in a pre-trained codebook $\mathcal{V}$, yielding a discrete token sequence $\{ s_1,\dots,s_{h \cdot w} \}$ where $s_* \in \mathcal{V}$. With the introduction of the VQ-VAE, the ROC map can be obtained indirectly by predicting discrete tokens, where a categorical distribution over $\mathcal{V}$ can be established at each patch. Unlike One2Any \cite{liu2025one2any}, where coordinates are generated in parallel, our decoder explicitly learns the dependencies between coordinates, which we find to be critical in our experiments. Mathematically, the distribution of tokens is represented as a masked autoregressive model \cite{li2024autoregressive} with the query and reference images as conditions:
+\begin{equation}
+    p(s)=\prod\limits_{k=1}^{K}p(S_{k}|S_{<k}, C_\mathbf{F}),
+\end{equation}
+where $S_{k}=\big\{s_i, s_{i+1}, \dots ,s_j\big\}$ are the tokens generated at the $k$-th step, and $s = \bigcup_{k=1}^{K} S_{k}$. Here $C_\mathbf{F}$ is the position-aligned condition feature, which is adapted from the feature after the fusion blocks.  The training objective of the autoregressive decoder is to minimize the negative log-likelihood loss:
+\begin{equation}
+    \mathcal{L_\text{AR}}=-\sum\limits_{k}^{K}\big[\log(p(S_k|S_{<k}, C_\mathbf{F}))\big].
+\end{equation}
+During inference, the previously generated tokens and position-aligned condition features both serve as conditioning information for predicting subsequent tokens. After all tokens have been generated, we leverage the decoder of the tokenizer to detokenize the tokens, producing an estimated ROC map $\mathbf{\hat{X}}^Q$. More details about the autoregressive decoder can be found in the appendix.
+
+
+
+
+\paragraph{Recovering Object Pose from ROC Map}
+As described in Eq.~(\ref{eq:xQ}), given the estimated ROC map $\hat{\mathbf{X}}^{Q}$, we recover the predicted 3D object points in the reference camera frame by applying the inverse of the normalization matrix:
+\begin{equation}
+    \mathbf{\hat{P}}_R^{Q} = \mathbf{S}^{-1} \mathbf{\hat{X}}^{Q},
+\end{equation}
+where $\mathbf{S}$ is the normalization matrix computed from the reference object points, as defined in Eq.~(\ref{eq:XR}).
+To obtain the observed 3D points in the query camera frame, we backproject the depth map $\mathcal{D}_Q$ within the query mask:
+
+\begin{equation}
+    \mathbf{P}_Q^{Q} = \mathbf{\Pi}^{-1}(\mathcal{D}_Q)[\mathcal{M}_{Q}=1].
+\end{equation}
+where $\mathbf{\Pi}^{-1}(\cdot)$ is the camera backprojection operator.
+Since $\mathbf{\hat{P}}_{R}^{Q}$ and $\mathbf{P}_{Q}^{Q}$ are pixel-aligned, we estimate the relative pose $\mathbf{T}_{RQ}$ using the Umeyama algorithm \cite{umeyama1991least},  which computes the optimal rigid transformation in a least-squares sense:
+\begin{equation}
+    \mathbf{\hat{T}}_{RQ} = \operatorname{Umeyama}(\mathbf{\hat{P}}_{R}^{Q}, \mathbf{P}_{Q}^{Q})
+\end{equation}
+Finally, given the object pose in the reference view $\mathbf{T}_{RO}$, the object pose in the query frame is obtained as $\mathbf{T}_{QO} = \hat{\mathbf{T}}^{-1}_{RQ}\mathbf{T}_{RO}$. 
+
+
+\section{Experiments}
+
+
+\paragraph{Benchmark Datasets} To evaluate our method under various real-world scenarios, we consider four datasets: Real275~\cite{wang2019normalized}, Toyota-Light~\cite{hodan2018bop}, LINEMOD~\cite{hinterstoisser2011multimodal} and YCB-V~\cite{xiang2017posecnn}. These datasets encompass common challenges in 6D pose estimation, including illumination changes, occlusion, and significant variations in objects (geometric properties, materials, and textures), enabling a comprehensive evaluation of the algorithm.
+\paragraph{Training Datasets} Consistent with the previous work \cite{liu2025one2any}, we train our models on the FoundationPose dataset~\cite{wen2024foundationpose} and a subset of the OO3D-9D~\cite{cai2024ov9d} dataset. See the appendix for more details.
+% The FoundationPose dataset is a synthetic dataset, covering over 40K objects from the GSO~\cite{downs2022google} and Objaverse~\cite{deitke2023objaverse} datasets. 
+% The OO3D-9D dataset~\cite{cai2024ov9d} is derived from the OmniObject3D~\cite{wu2023omniobject3d} dataset, which comprises 6k scanned objects in 190 daily categories. 
+% Similar to them,  we incorporate the object-centric subset of the OO3D-9D into our training data, where each object is rendered individually from multiple viewpoints.
+\paragraph{Evaluation Metrics} To follow the baseline protocols for each setup, we evaluate pose estimation performance using the following metrics:
+\begin{itemize}
+    \item Recall of the ADD(-S) error, which is within 0.1 of the object diameter, as used in \cite{he2022fs6d,corsetti2024open}, shot for ADD(-S).
+    \item Area under the curve (AUC) of ADD and ADD-S~\cite{xiang2017posecnn}.
+    \item Average Recall of MSSD, MSPD, and VSD metrics defined in the BOP challenge~\cite{hodan2018bop}, shot for AR. 
+\end{itemize}
+
+
+\begin{table}[!htbp]
+\centering
+\fontsize{9pt}{10.8pt}\selectfont
+\setlength{\tabcolsep}{1.2mm}
+\begin{tabular}{c|c|cc|cc}
+\toprule
+\multicolumn{1}{c|}{\multirow{2}{*}{\textbf{Methods}}} & \multicolumn{1}{c|}{\multirow{2}{*}{\textbf{Modality}}} &  \multicolumn{2}{c|}{\textbf{Real275}} &\multicolumn{2}{c}{\textbf{Toyota-Light}} \\
+& & AR & ADD(-S) & AR & ADD(-S) \\
+\hline
+LatentFusion  & RGB & 22.6 & 9.6 & 28.2 & 10.2 \\
+ObjectMatch     & RGBD & 26.0 & 13.4 & 9.8 & 5.4 \\
+Oryon        & RGBD & 46.5 & 34.9 & 34.1 & 22.9 \\
+Any6D & RGBD & 51.0 & -- &43.3& --\\
+One2Any    & RGBD & 54.9 & 41.0 & 42.0 & 34.6 \\
+\hline
+\textbf{\ourmodel} & RGBD & \textbf{71.0} & \textbf{82.2} & \textbf{62.5} & \textbf{82.6} \\
+\bottomrule
+\end{tabular} 
+\caption{Comparison of 6D pose estimation methods on Real275~\cite{wang2019normalized} and Toyota-Light~\cite{hodan2018bop} datasets using AR and ADD(-S) metrics. Methods were evaluated on 2K reference-query image pairs. }
+\label{tab:comparison}
+\end{table}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/qualitative.png}
+    \caption{Visual comparison on LINEMOD and YCB-V datasets. We present results from several state-of-the-art methods alongside our method (\textbf{CoordAR}). Ground-truth poses are visualized in the last column, represented by bounding boxes with three distinctly colored edges.}
+    \label{fig:qualitative}
+\end{figure}
+
+\begin{table*}[!htbp]
+    \centering
+    % \footnotesize
+    \fontsize{9pt}{10.8pt}\selectfont
+   \setlength{\tabcolsep}{1mm}
+    \begin{tabular}{c| c c | c c | c c || c c | c c | c c| c c}
+    \hline
+        \textbf{Methods}  &\multicolumn{2}{c|}{\textbf{Predator}} &\multicolumn{2}{c|}{\textbf{FS6D}} & \multicolumn{2}{c||}{\textbf{FoundationPose}} &  \multicolumn{2}{c|}{\textbf{FoundationPose}} &  \multicolumn{2}{c|}{\textbf{NOPE} } & \multicolumn{2}{c|}{\textbf{One2Any}} &\multicolumn{2}{c}{\textbf{\ourmodel}} \\
+  % \midrule
+        \textbf{Ref. Images} & \multicolumn{2}{c|}{16} &  \multicolumn{2}{c|}{16} & \multicolumn{2}{c||}{16 - CAD}  & \multicolumn{2}{c|}{1 - CAD} & \multicolumn{2}{c|}{1 + GT trans} & \multicolumn{2}{c|}{1} & \multicolumn{2}{c}{1} \\
+        \hline
+         metrics of AUC & ADD & ADD-S &ADD & ADD-S & ADD & ADD-S & ADD & ADD-S & ADD & ADD-S & ADD & ADD-S & ADD & ADD-S\\
+        \hline
+can &  29.23 & 73.6  & 50.0 & 91.9 & \textbf{85.2} & \textbf{97.2} & \textbf{81.5} & 90.8 & 32.9 & \textbf{95.6} & 75.5 & 86.8 & 60.9 & 93.0 \\
+box  & 21.33 & 62.58 & 45.0 & 93.1 & \textbf{94.4} & \textbf{98.0} & 81.2 & 91.1  & 20.3 & 85.3 & 90.2 & 78.7& \textbf{92.5} & \textbf{98.5} \\ 
+% bottle\/ pitcher\_base v cleanser \/ bow \/ mug 
+bottle & 23.62 & 73.1& 39.1 & 87.7 & \textbf{90.5} & \textbf{97.0} & 73.3 & 90.0  & 26.7 & 89.3 & \textbf{90.7} & 93.0 & 87.5 & \textbf{99.7} \\ 
+% block \/ brick
+block & 22.75 & 74.85 &  36.8 & 95.2 & \textbf{94.1} & \textbf{97.8} & 36.8 & 96.7  &  35.7 & 95.0 & 84.9 & 91.1 & 84.6 & \textbf{97.3} \\
+% banana \/ pwoer\_drill\/ scissors \/marker\/ clamp 
+others & 24.1 & 71.72 & 40.2 & 83.2 & \textbf{94.9} & \textbf{97.5} & 40.2 & 93.4 & 32.2 & 86.4 & \textbf{81.3} & \textbf{95.2} & 75.4 & 93.1\\
+\hline
+mean & 24.3 & 71.0  & 42.1 & 88.4 & \textbf{91.5} & \textbf{97.4} & 76.1 &90.4 & 25.1 & 86.0 & \textbf{80.6} & 90.3 & 78.5 & \textbf{95.5}\\
+         \hline
+    \end{tabular}
+    \caption{Performance on occluded YCB-V \cite{xiang2017posecnn} dataset.
+    The Predator~\cite{huang2021predator}, originally proposed for point cloud registration, is additionally provided for reference. The methods are evaluated by AUC of ADD and AUC of ADD-S metrics. The baseline results are adopted from One2Any~\cite{liu2025one2any} and reproduced by their released model, where objects are categorized into five groups. Results on each object can be found in the appendix.}
+    \label{tab:ycbv_data}
+\end{table*}
+
+\begin{table*}
+\centering
+    \fontsize{9pt}{10.8pt}\selectfont
+    \setlength{\tabcolsep}{0.5mm}
+\begin{tabular}{l|c c| c c c c c c c c c c c c c|c}
+\hline
+\textbf{Methods} & \textbf{Modality}  & \textbf{Ref. Images} & \textbf{ape} & \textbf{benchvise} & \textbf{cam} & \textbf{can} & \textbf{cat} &  \textbf{driller} & \textbf{duck} & \textbf{eggbox} & \textbf{glue} & \textbf{holepuncher} & \textbf{iron} & \textbf{lamp} & \textbf{phone} & \textbf{avg.} \\
+\hline
+OnePose & RGB & 200 & 11.8 & 92.6 & 88.1 & 77.2 & 47.9 & 74.5 & 34.2 & 71.3 & 37.5 & 54.9 & 89.2 & 87.6 & 60.6 & 63.6 \\
+OnePose++  & RGB  & 200 & 31.2 & \textbf{97.3} & 88.0 & \textbf{89.8} & 70.4 & \textbf{92.5} & 42.3 & \textbf{99.7} & 48.0 & 69.7 & 97.4 & 97.8 & 76.0 & 76.9 \\
+LatentFusion  & RGBD & 16 & \textbf{88.0} & 92.4 & 74.4 & 88.8 & 94.5 & 91.7 & 68.1 & 96.3 & 49.4 & 82.1 & 74.6 & \textbf{94.7} & 91.5 & 83.6 \\
+FS6D + ICP & RGBD & 16 & 78.0 & 88.5 & \textbf{91.0} & 89.5 & \textbf{97.5} & 92.0 & \textbf{75.5} & 99.5 & \textbf{99.5} & \textbf{96.0} & 87.5 & \textbf{97.0} & \textbf{97.5} & \textbf{91.5} \\
+\hline 
+\hline
+FoundationPose & RGBD & 1-CAD & 36.5 & 55.5 & \textbf{84.2} & 71.7 &  65.3 &16.3  & 49.8 & 42.6 & 64.8 & 52.7 & 20.7 & 15.8 & 51.7 & 48.3\\
+NOPE & RGB & 1 + GT trans & 2.0 & 4.5 &  2.5 & 2.2 & 0.7 & 4.7& 0.5 &  \textbf{100.0} & 79.4 & 2.9  & 4.5 & 4.2 & 3.9 &16.3\\
+Oryon &  RGBD & 1 & 1.2 & 1.3 & 3.9 & 0.8 & 12.7  & 8.5 & 0.8 & 63.2 & 18.4 & 1.6 & 0.6 &2.9 & 11.7 & 9.8 \\
+One2Any & RGBD  & 1 & 33.1& 15.7 & 72.7 & 37.0 & 66.2  & 68.2 & 35.8 & \textbf{100.0} & \textbf{99.9} &  42.0 & 28.2 & 31.9 & 53.2 & 52.6 \\
+\hline
+\textbf{\ourmodel} & RGBD  & 1  & \textbf{45.6} & \textbf{76.9} & 70.7 & \textbf{77.3} & \textbf{88.1} & \textbf{96.5} & \textbf{50.2} & 97.0 & 99.8 & \textbf{67.5} & \textbf{52.7} & \textbf{91.4} & \textbf{61.2} & \textbf{75.0}\\
+\hline
+\end{tabular}
+\caption{Performance on LINEMOD \cite{hinterstoisser2011multimodal} dataset with large view variations. We report the recall of ADD(-S) metric. Baseline results of taken from One2Any~\cite{liu2025one2any}.}.
+    \label{tab:lm_data}
+\end{table*}
+
+
+
+\subsection{Results on Pose Estimation}
+We primarily compare our method with model-free pose estimation approaches. For systematic comparison, our analysis includes model-free methods based on both single-view references and multi-view references. The single-view-based methods include Oryon~\cite{corsetti2024open}, ObjMatch~\cite{gumeli2023objectmatch}, NOPE~\cite{nguyen2024nope}, Any6D~\cite{lee2025any6d} and One2Any~\cite{liu2025one2any}; the multi-view-based methods include FoundationPose~\cite{wen2024foundationpose}, LatentFusion~\cite{park2020latentfusion} FS6D~\cite{he2022fs6d} OnePose~\cite{sun2022onepose} and OnePose++~\cite{he2022onepose++}. Baseline results are adopted from One2Any~\cite{liu2025one2any} with the assumption that ground-truth masks are available. Meanwhile, we follow the same evaluation protocols that they used. More specifically, on the LINEMOD~\cite{hinterstoisser2011multimodal} and YCB-V~\cite{xiang2017posecnn} datasets, the first view is chosen as the reference view for the entire test set. On the Real275~\cite{wang2019normalized} and Toyota-Light~\cite{hodan2018bop} datasets, 2K  reference-query image pairs are randomly sampled for evaluation.
+
+
+\paragraph{Generalization to Real-world Novel Objects} We first evaluate our method on Real275~\cite{wang2019normalized} and Toyota-Light~\cite{hodan2018bop} for performance on real-world novel objects. Real275 contains 18 different real-world scenes comprising 42 unique objects across 6 categories, while Toyota-Light includes 21 rigid household objects under 5 different lighting conditions. As shown in Tab. \ref{tab:comparison}, our method surpasses the existing methods in both AR and ADD(-S) metrics, demonstrating excellent generalization to real-world novel objects. Qualitative results of the two datasets can be found in the appendix.
+
+
+
+\paragraph{Occluded Scenes} The YCB-V~\cite{xiang2017posecnn} dataset contains numerous occluded scenes, including cases where even the first reference view is occluded. As displayed in rows 4 to 7 of Fig. \ref{fig:qualitative}, our method exhibits robustness when the query and reference are occluded. We also observe that our method performs well when the object frame is ill-defined (see row 6), suggesting that our method is independent of the definition of the canonical object frame. As demonstrated in Tab. \ref{tab:ycbv_data}, we observe a slightly lower ADD AUC compared to One2Any~\cite{liu2025one2any}. Note that YCB-V contains texture-rich food containers that are geometrically symmetric but have different texture-influenced symmetry definitions during evaluation, such as the \textit{tomato\_soup\_can}. In such cases, ADD AUC may penalize predictions that are geometrically correct but differ in texture alignment (see the appendix for more details). Nevertheless, our method achieves a significantly higher ADD-S AUC than existing single-view methods, which is important for applications that emphasize geometric perception.
+
+\paragraph{Large View Variations} To evaluate robustness to large viewpoint variations, a comparison is conducted on the LINEMOD~\cite{hinterstoisser2011multimodal} dataset. This dataset features multiple texture-less objects, such as a toy ape and a hole-puncher. The images are captured by circling around each object, resulting in significant viewpoint variations. As displayed in Tab. \ref{tab:lm_data}, our approach achieves the highest performance across the majority of objects compared with single-view-based methods. Qualitative results are shown in rows 1 to 4 of Fig. \ref{fig:qualitative}. Notably, our method succeeds in estimating the pose of the top view (see row 2), the side view (see row 3), and even the back view (see row 1). While our method does not surpass the state-of-the-art multi-view approaches, it demonstrates overall superiority over OnePose~\cite{sun2022onepose} and achieves better performance on several objects  compared to OnePose++~\cite{he2022onepose++}.
+
+\subsection{Ablation Studies}
+\label{sec:ablation}
+To justify the key design choices, we conduct ablation experiments on the LINEMOD dataset. Due
+to computational limitations, models are trained with reduced iterations (see the appendix for more details). 
+
+
+\paragraph{Effect of Autoregressive Decoder}
+We first study the overall effectiveness of the autoregressive decoder for ROC maps by comparing it against a convolutional regression decoder that has a similar architecture to the decoder in One2Any~\cite{liu2025one2any}. For a fair comparison, we reduce the number of parameters in our decoder to match those of the convolutional decoder. As shown in Tab. \ref{tab:ablation_study}, both metrics decrease after replacing the autoregressive decoder with the convolutional decoder. For further understanding, we keep the tokenization and disable the autoregression: 1) during both training and testing by training a model that predicts tokens in parallel, or 2) only during testing by generating all tokens in a single step. According to  Tab. \ref{tab:ablation_study}, disabling autoregression notably degrades performance. Fig. \ref{fig:ablation} provides a reasonable explanation for this result in columns 2 and 3, where non-autoregressive predictions exhibit  disrupted spatial coherence. For example, on the top-right of the \textit{can} (row 2, column 3), dark-purple values are incorrectly predicted  where light-green should appear. As demonstrated in Tab. \ref{tab:ablation_study}, disabling test-time autoregression reduces both ADD(-S) and AR by 5.6\%, decreasing ADD(-S) by 0.7\% when training is prolonged (see Tab. \ref{tab:inference_time}), suggesting that previously generated tokens can serve as an effective conditional context.
+
+\begin{table}[!htbp]
+    \centering
+        \fontsize{9pt}{10.8pt}\selectfont
+        \setlength{\tabcolsep}{0.4mm}
+    \begin{tabular}{c  c | c | c | c }
+    % \hline
+    % \multicolumn{5}{c}{\textbf{Network Design}}\\
+    \hline
+        \textbf{Component}  & \textbf{Variations} & \textbf{\#Params (B)}  & \textbf{ADD(-S)} & \textbf{AR}  \\
+       \hline
+        \multirow{2}{*}{\makecell[c]{ROC decoding}} & 
+ convolutional & 0.28  & 70.9 & 59.7 \\
+        & autoregressive & 0.28 & \textbf{73.1} & \textbf{61.6} \\
+        \hline 
+        \multirow{2}{*}{\makecell[c]{Autoregression}} & w/o& 0.37 & 60.7 & 52.1 \\
+        & w/ & 0.37 & \textbf{73.6} & \textbf{61.9} \\
+         \hline
+              \multirow{2}{*}{\makecell[c]{Test-time AR}} 
+        & w/o  & 0.37 & 68.0 & 56.3 \\
+        & w/ & 0.37 &\textbf{73.6} & \textbf{61.9} \\
+        \hline
+        \multirow{2}{*}{\makecell[c]{Tokenization}} & w/o & 0.37 & 56.4 & 48.7 \\
+        & w/ & 0.37 & \textbf{60.7} & \textbf{52.1} \\
+        \hline
+        \multirow{2}{*}{\makecell[c]{Encoding}} & role-specific  & 0.37 & 61.6 & 49.8 \\
+         & modality-decoupled & 0.37 & \textbf{73.6} & \textbf{61.9} \\
+        \hline
+    \end{tabular}
+    \caption{Ablation study on critical design choices. All evaluations are conducted on the full LINEMOD dataset using the AR and ADD(-S) metrics. Parameter counts (in billions, excluding the tokenizer) are provided for reference. }
+    \label{tab:ablation_study}
+\end{table}
+
+\paragraph{Effect of Tokenization}
+Afterward, we further remove the reliance on tokenization by regressing real-valued ROC maps from the features of the pre-final layer in the transformer decoder. As quantified in Tab. \ref{tab:ablation_study}, replacing  token prediction with real-value regression further decreases recall. This may be attributed to their handling of ambiguous cases. As depicted in Fig. \ref{fig:ablation}, this model produces ambiguous ROC maps when dealing with symmetry ambiguity on the \textit{bowl} (row 1, column 2) and occlusion ambiguity on the \textit{cup} (row 3, column 2). A similar failure also occurs in the convolutional-head variant (see results on the \textit{bowl} in row 1 and the \textit{box} in row 5). Notably, discrete-token-based models (columns 3–4) demonstrate improved performance with clearer coordinate maps, suggesting that probabilistic modeling plays a key role in resolving such ambiguities.
+
+\paragraph{Effect of Modality-decoupled Encoding} To validate the effectiveness of the modality-decoupled encoding, we replace it with the role-specific encoding used in One2Any~\cite{liu2025one2any}. More specifically, we employ two DINOv2-structured encoders: one processing the query RGB image and another handling the channel-wise concatenation of the reference RGB image and its corresponding ROC map and mask. As shown in Tab. \ref{tab:ablation_study}, the performance degrades significantly after switching to role-specific encoding, indicating that allocating encoders by modality is critical for visual understanding.
+
+
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/ablation.png}
+    \caption{Qualitative Results of Ablation Study. We visualize the outputs of four decoder variants: (1) convolutional decoder, (2) full decoder without autoregressive tokenization, (3) full decoder without tokenization, and (4) full decoder. }
+    \label{fig:ablation}
+\end{figure}
+
+
+\subsection{Runtime Analysis}
+Our model supports trade-offs between accuracy and computational efficiency by adjusting the number of generation steps. Inference speed comparisons, along with their ADD(-S) on the LINEMOD dataset, are provided in Tab. \ref{tab:inference_time}. Impressively, our model can achieve near real-time speed (0.10 seconds per frame) with even a single step while maintaining comparable accuracy. 
+
+
+\begin{table}[!htbp]
+    \centering
+        \fontsize{9pt}{10.8pt}\selectfont
+        \setlength{\tabcolsep}{0.4mm}
+    \begin{tabular}{c| c| c | c | c }
+         \toprule
+        \textbf{Methods} & \textbf{Modality} & \textbf{GPU} &\textbf{Time (s)} & \textbf{ADD(-S)}  \\
+       \hline
+        % MegaPose  & CAD &  V100 GPU & 2.53 \\
+        % GigaPose & CAD &  V100 GPU & 11.53 \\
+        % FoundPose \cite{F}& - & - & 7.4s \\
+        FoundationPose & 1-CAD & RTX 4090 & 2.70 & 48.3 \\
+        % NOPE & RGB & RTX 4090 & 20.15 \\
+        % Oryon& RGBD & RTX 4090 & 0.90\\
+        One2Any & RGBD & RTX4090 & \textbf{0.09} & 56.2 \\
+        \hline
+        Ours-64 steps & RGBD & RTX 4090 & 0.63 & \textbf{75.0} \\
+        Ours-16 steps & RGBD & RTX 4090 & 0.25 & \textbf{75.0} \\
+        Ours-4 steps & RGBD & RTX 4090 & 0.13 & 74.7 \\
+        Ours-1 step & RGBD & RTX 4090 & 0.10 & 74.3 \\
+         \hline
+    \end{tabular}
+    \caption{Inference time comparison. The runtimes of 
+    % GigaPose~\cite{nguyen2024gigapose}, 
+    FoundationPose~\cite{wen2024foundationpose} and One2Any~\cite{liu2025one2any} are taken from One2Any~\cite{liu2025one2any}.}
+    \label{tab:inference_time}
+\end{table}
+
+
+
+\section{Conclusions}
+In this paper, we propose the first autoregressive framework for one-reference 6D pose estimation of novel objects. By formulating correspondence prediction as an autoregressive probabilistic token decoding task and introducing modality-decoupled encoding for visual understanding, CoordAR achieves superior performance on standard benchmarks. Extensive experiments demonstrate significant improvements in handling symmetry, occlusion, and novel objects. This work establishes autoregressive coordinate modeling as a promising direction for robust 6D pose estimation.
+
+
+\section{Acknowledgments}
+This work was supported in part by National Key R\&D
+Program of China under Grant 2022YFB3903801, in part by the National of
+Science Foundation of China under Grant 62073214, and in part by the Corporate Research Center, State Key Laboratory of High-end Heavy-load Robots, Midea Group (3D
+Robot Vision Project).
+We thank Kun Wang, Li Shen, Yuhui Ni, and Yikun Zeng for providing the reproduced results of baseline methods for qualitative comparison.
+
+\FloatBarrier
+\bibliography{aaai2026}
+
+% \clearpage
+% \newcommand{\isSuppMainFile}{}
+% \input{supp}
+
+
+\end{document}

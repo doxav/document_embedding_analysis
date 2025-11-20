@@ -1,0 +1,381 @@
+% Use this file for citations not found in the ACL Anthology (contained in "anthology.bib").
+
+@inproceedings{deoghare-etal-2024-together,
+    title = "Together We Can: Multilingual Automatic Post-Editing for Low-Resource Languages",
+    author = "Deoghare, Sourabh  and
+      Kanojia, Diptesh  and
+      Bhattacharyya, Pushpak",
+    editor = "Al-Onaizan, Yaser  and
+      Bansal, Mohit  and
+      Chen, Yun-Nung",
+    booktitle = "Findings of the Association for Computational Linguistics: EMNLP 2024",
+    month = nov,
+    year = "2024",
+    address = "Miami, Florida, USA",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2024.findings-emnlp.634/",
+    doi = "10.18653/v1/2024.findings-emnlp.634",
+    pages = "10800--10812",
+    abstract = "This exploratory study investigates the potential of multilingual Automatic Post-Editing (APE) systems to enhance the quality of machine translations for low-resource Indo-Aryan languages. Focusing on two closely related language pairs, English-Marathi and English-Hindi, we exploit the linguistic similarities to develop a robust multilingual APE model. To facilitate cross-linguistic transfer, we generate synthetic Hindi-Marathi and Marathi-Hindi APE triplets. Additionally, we incorporate a Quality Estimation (QE)-APE multi-task learning framework. While the experimental results underline the complementary nature of APE and QE, we also observe that QE-APE multitask learning facilitates effective domain adaptation. Our experiments demonstrate that the multilingual APE models outperform their corresponding English-Hindi and English-Marathi single-pair models by 2.5 and 2.39 TER points, respectively, with further notable improvements over the multilingual APE model observed through multi-task learning ($+1.29$ and $+1.44$ TER points), data augmentation ($+0.53$ and $+0.45$ TER points) and domain adaptation ($+0.35$ and $+0.45$ TER points). We release the synthetic data, code, and models accrued during this study publicly for further research."
+}
+
+@inproceedings{deoghare-etal-2023-quality,
+    title = "Quality Estimation-Assisted Automatic Post-Editing",
+    author = "Deoghare, Sourabh  and
+      Kanojia, Diptesh  and
+      Blain, Fred  and
+      Ranasinghe, Tharindu  and
+      Bhattacharyya, Pushpak",
+    editor = "Bouamor, Houda  and
+      Pino, Juan  and
+      Bali, Kalika",
+    booktitle = "Findings of the Association for Computational Linguistics: EMNLP 2023",
+    month = dec,
+    year = "2023",
+    address = "Singapore",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.findings-emnlp.115/",
+    doi = "10.18653/v1/2023.findings-emnlp.115",
+    pages = "1686--1698",
+    abstract = "Automatic Post-Editing (APE) systems are prone to over-correction of the Machine Translation (MT) outputs. While Word-level Quality Estimation (QE) system can provide a way to curtail the over-correction, a significant performance gain has not been observed thus far by utilizing existing APE and QE combination strategies. In this paper, we propose joint training of a model on APE and QE tasks to improve the APE. Our proposed approach utilizes a multi-task learning (MTL) methodology, which shows significant improvement while treating both tasks as a `bargaining game' during training. Moreover, we investigate various existing combination strategies and show that our approach achieves state-of-the-art performance for a `distant' language pair, viz., English-Marathi. We observe an improvement of 1.09 TER and 1.37 BLEU points over a baseline QE-Unassisted APE system for English-Marathi, while also observing 0.46 TER and 0.62 BLEU points for English-German. Further, we discuss the results qualitatively and show how our approach helps reduce over-correction, thereby improving the APE performance. We also observe that the degree of integration between QE and APE directly correlates with the APE performance gain. We release our code and models publicly."
+}
+
+@misc{fernandes2025llmsunderstandtranslationsevaluating,
+      title={Do LLMs Understand Your Translations? Evaluating Paragraph-level MT with Question Answering}, 
+      author={Patrick Fernandes and Sweta Agrawal and Emmanouil Zaranis and André F. T. Martins and Graham Neubig},
+      year={2025},
+      eprint={2504.07583},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2504.07583}, 
+}
+
+@inproceedings{chatterjee-etal-2018-combining,
+    title = "Combining Quality Estimation and Automatic Post-editing to Enhance Machine Translation output",
+    author = "Chatterjee, Rajen  and
+      Negri, Matteo  and
+      Turchi, Marco  and
+      Blain, Fr{\'e}d{\'e}ric  and
+      Specia, Lucia",
+    editor = "Cherry, Colin  and
+      Neubig, Graham",
+    booktitle = "Proceedings of the 13th Conference of the Association for Machine Translation in the {A}mericas (Volume 1: Research Track)",
+    month = mar,
+    year = "2018",
+    address = "Boston, MA",
+    publisher = "Association for Machine Translation in the Americas",
+    url = "https://aclanthology.org/W18-1804/",
+    pages = "26--38"
+}
+
+@article{doCarmo2021review,
+  author       = {do Carmo, F. and Shterionov, Dimitar and Moorkens, Joss and Way, Andy and Gaspari, Federico and Wagner, Joachim},
+  title        = {A review of the state-of-the-art in automatic post-editing},
+  journal      = {Machine Translation},
+  year         = {2021},
+  volume       = {35},
+  pages        = {101--143},
+  doi          = {10.1007/s10590-020-09252-y},
+  url          = {https://doi.org/10.1007/s10590-020-09252-y}
+}
+
+
+@inproceedings{rei-etal-2022-cometkiwi,
+    title = "{C}omet{K}iwi: {IST}-Unbabel 2022 Submission for the Quality Estimation Shared Task",
+    author = "Rei, Ricardo  and
+      Treviso, Marcos  and
+      Guerreiro, Nuno M.  and
+      Zerva, Chrysoula  and
+      Farinha, Ana C  and
+      Maroti, Christine  and
+      C. de Souza, Jos{\'e} G.  and
+      Glushkova, Taisiya  and
+      Alves, Duarte  and
+      Coheur, Luisa  and
+      Lavie, Alon  and
+      Martins, Andr{\'e} F. T.",
+    editor = {Koehn, Philipp  and
+      Barrault, Lo{\"i}c  and
+      Bojar, Ond{\v{r}}ej  and
+      Bougares, Fethi  and
+      Chatterjee, Rajen  and
+      Costa-juss{\`a}, Marta R.  and
+      Federmann, Christian  and
+      Fishel, Mark  and
+      Fraser, Alexander  and
+      Freitag, Markus  and
+      Graham, Yvette  and
+      Grundkiewicz, Roman  and
+      Guzman, Paco  and
+      Haddow, Barry  and
+      Huck, Matthias  and
+      Jimeno Yepes, Antonio  and
+      Kocmi, Tom  and
+      Martins, Andr{\'e}  and
+      Morishita, Makoto  and
+      Monz, Christof  and
+      Nagata, Masaaki  and
+      Nakazawa, Toshiaki  and
+      Negri, Matteo  and
+      N{\'e}v{\'e}ol, Aur{\'e}lie  and
+      Neves, Mariana  and
+      Popel, Martin  and
+      Turchi, Marco  and
+      Zampieri, Marcos},
+    booktitle = "Proceedings of the Seventh Conference on Machine Translation (WMT)",
+    month = dec,
+    year = "2022",
+    address = "Abu Dhabi, United Arab Emirates (Hybrid)",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.wmt-1.60/",
+    pages = "634--645",
+    abstract = "We present the joint contribution of IST and Unbabel to the WMT 2022 Shared Task on Quality Estimation (QE). Our team participated in all three subtasks: (i) Sentence and Word-level Quality Prediction; (ii) Explainable QE; and (iii) Critical Error Detection. For all tasks we build on top of the COMET framework, connecting it with the predictor-estimator architecture of OpenKiwi, and equipping it with a word-level sequence tagger and an explanation extractor. Our results suggest that incorporating references during pretraining improves performance across several language pairs on downstream tasks, and that jointly training with sentence and word-level objectives yields a further boost. Furthermore, combining attention and gradient information proved to be the top strategy for extracting good explanations of sentence-level QE models. Overall, our submissions achieved the best results for all three tasks for almost all language pairs by a considerable margin."
+}
+
+@inproceedings{rei-etal-2020-comet,
+    title = "{COMET}: A Neural Framework for {MT} Evaluation",
+    author = "Rei, Ricardo  and
+      Stewart, Craig  and
+      Farinha, Ana C  and
+      Lavie, Alon",
+    editor = "Webber, Bonnie  and
+      Cohn, Trevor  and
+      He, Yulan  and
+      Liu, Yang",
+    booktitle = "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)",
+    month = nov,
+    year = "2020",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2020.emnlp-main.213/",
+    doi = "10.18653/v1/2020.emnlp-main.213",
+    pages = "2685--2702",
+    abstract = "We present COMET, a neural framework for training multilingual machine translation evaluation models which obtains new state-of-the-art levels of correlation with human judgements. Our framework leverages recent breakthroughs in cross-lingual pretrained language modeling resulting in highly multilingual and adaptable MT evaluation models that exploit information from both the source input and a target-language reference translation in order to more accurately predict MT quality. To showcase our framework, we train three models with different types of human judgements: Direct Assessments, Human-mediated Translation Edit Rate and Multidimensional Quality Metric. Our models achieve new state-of-the-art performance on the WMT 2019 Metrics shared task and demonstrate robustness to high-performing systems."
+}
+
+@misc{doiGivingFresh,
+	author = {Sourabh Deoghare and Diptesh Kanojia and Pushpak Bhattacharyya},
+	title = {Giving the Old a Fresh Spin: Quality Estimation-Assisted Constrained Decoding for Automatic Post-Editing},
+    archivePrefix={arXiv},
+    url={https://arxiv.org/pdf/2501.17265},
+	year = {2025},
+}
+
+@article{10.1162/coli_r_00352,
+    author = {Yvon, François},
+    title = {Quality Estimation for Machine Translation},
+    journal = {Computational Linguistics},
+    volume = {45},
+    number = {2},
+    pages = {391-394},
+    year = {2019},
+    month = {06},
+    abstract = {Many natural language processing tasks aim to generate a human readable text (or human audible speech) in response to some input: Machine translation (MT) generates a target translation of a source input; document summarization generates a shortened version of its input document(s); text generation converts a formal representation into an utterance or a document, and so on. For such tasks, the automatic evaluation of the system’s performance is often performed by comparison to a reference output, deemed representative of human-level performance.Evaluation of MT is a typical illustration of this approach and relies on metrics such as BLEU (Papineni et al. 2002), Translation Edit Rate (TER) (Snover et al. 2006), or METEOR (Banerjee and Lavie 2005) implementing various string comparison routines between the system output and the corresponding reference(s). This strategy has the merit of making evaluation fully automatic and reproducible. Preparing human translation references is, however, a costly process, which requires highly trained experts; it is also prone to much variability and subjectivity. This implies that the failure to match the reference does not necessarily entail an error of the system. Reference-based evaluations are also considered too crude for many language pairs and tend to only evaluate the system’s ability to reproduce one specific human annotation. Organizers of shared tasks in MT have therefore abandoned reference-based metrics to compare systems and resort to human judgments (Callison-Burch et al. 2008).},
+    issn = {0891-2017},
+    doi = {10.1162/coli_r_00352},
+    url = {https://doi.org/10.1162/coli\_r\_00352},
+    eprint = {https://direct.mit.edu/coli/article-pdf/45/2/391/1809729/coli\_r\_00352.pdf},
+}
+
+
+@inproceedings{freitag-etal-2024-llms,
+    title = "Are {LLM}s Breaking {MT} Metrics? Results of the {WMT}24 Metrics Shared Task",
+    author = "Freitag, Markus  and
+      Mathur, Nitika  and
+      Deutsch, Daniel  and
+      Lo, Chi-Kiu  and
+      Avramidis, Eleftherios  and
+      Rei, Ricardo  and
+      Thompson, Brian  and
+      Blain, Frederic  and
+      Kocmi, Tom  and
+      Wang, Jiayi  and
+      Adelani, David Ifeoluwa  and
+      Buchicchio, Marianna  and
+      Zerva, Chrysoula  and
+      Lavie, Alon",
+    editor = "Haddow, Barry  and
+      Kocmi, Tom  and
+      Koehn, Philipp  and
+      Monz, Christof",
+    booktitle = "Proceedings of the Ninth Conference on Machine Translation",
+    month = nov,
+    year = "2024",
+    address = "Miami, Florida, USA",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2024.wmt-1.2/",
+    doi = "10.18653/v1/2024.wmt-1.2",
+    pages = "47--81",
+    abstract = "The WMT24 Metrics Shared Task evaluated the performance of automatic metrics for machine translation (MT), with a major focus on LLM-based translations that were generated as part of the WMT24 General MT Shared Task. As LLMs become increasingly popular in MT, it is crucial to determine whether existing evaluation metrics can accurately assess the output of these systems.To provide a robust benchmark for this evaluation, human assessments were collected using Multidimensional Quality Metrics (MQM), continuing the practice from recent years. Furthermore, building on the success of the previous year, a challenge set subtask was included, requiring participants to design contrastive test suites that specifically target a metric{'}s ability to identify and penalize different types of translation errors.Finally, the meta-evaluation procedure was refined to better reflect real-world usage of MT metrics, focusing on pairwise accuracy at both the system- and segment-levels.We present an extensive analysis on how well metrics perform on three language pairs: English to Spanish (Latin America), Japanese to Chinese, and English to German. The results strongly confirm the results reported last year, that fine-tuned neural metrics continue to perform well, even when used to evaluate LLM-based translation systems."
+}
+
+@misc{rei2025towerplus,
+      title={Tower+: Bridging Generality and Translation Specialization in Multilingual LLMs}, 
+      author={Ricardo Rei and Nuno M. Guerreiro and José Pombal and João Alves and Pedro Teixeirinha and Amin Farajian and André F. T. Martins},
+      year={2025},
+      eprint={2506.17080},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2506.17080}, 
+}
+
+@inproceedings{yu-etal-2024-hw,
+    title = "{HW}-{TSC}{'}s Participation in the {WMT} 2024 {QEAPE} Task",
+    author = "Yu, Jiawei  and
+      Zhao, Xiaofeng  and
+      Zhang, Min  and
+      Yanqing, Zhao  and
+      Li, Yuang  and
+      Chang, Su  and
+      Qiao, Xiaosong  and
+      Miaomiao, Ma  and
+      Yang, Hao",
+    editor = "Haddow, Barry  and
+      Kocmi, Tom  and
+      Koehn, Philipp  and
+      Monz, Christof",
+    booktitle = "Proceedings of the Ninth Conference on Machine Translation",
+    month = nov,
+    year = "2024",
+    address = "Miami, Florida, USA",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2024.wmt-1.40/",
+    doi = "10.18653/v1/2024.wmt-1.40",
+    pages = "541--546",
+    abstract = "The paper presents the submission by HW-TSC in the WMT 2024 Quality-informed Automatic Post Editing (QEAPE) shared task for the English-Hindi (En-Hi) and English-Tamil (En-Ta) language pair. We use LLM for En-Hi and Transformer for EN-ta respectively. For LLM, we first continue pertrain the Llama3, and then use the real APE data to SFT the pre-trained LLM. As for the transformer in En-Ta, we first pre-train a Machine Translation (MT) model by utilizing MT data collected from the web. Then, we fine-tune the model by employing real APE data.We also use the data augmentation method to enhance our model. Specifically, we incorporate candidate translations obtained from an external Machine Translation (MT) system.Given that APE systems tend to exhibit a tendency of `over-correction', we employ a sentence-level Quality Estimation (QE) system to select the final output, deciding between the original translation and the corresponding output generated by the APE model. Our experiments demonstrate that pre-trained MT models are effective when being fine-tuned with the APE corpus of a limited size, and the performance can be further improved with external MT augmentation. our approach improves the HTER by -15.99 points and -0.47 points on En-Hi and En-Ta, respectively."
+}
+
+@inproceedings{zerva-etal-2024-findings,
+    title = "Findings of the Quality Estimation Shared Task at {WMT} 2024: Are {LLM}s Closing the Gap in {QE}?",
+    author = "Zerva, Chrysoula  and
+      Blain, Frederic  and
+      C. De Souza, Jos{\'e} G.  and
+      Kanojia, Diptesh  and
+      Deoghare, Sourabh  and
+      Guerreiro, Nuno M.  and
+      Attanasio, Giuseppe  and
+      Rei, Ricardo  and
+      Orasan, Constantin  and
+      Negri, Matteo  and
+      Turchi, Marco  and
+      Chatterjee, Rajen  and
+      Bhattacharyya, Pushpak  and
+      Freitag, Markus  and
+      Martins, Andr{\'e}",
+    editor = "Haddow, Barry  and
+      Kocmi, Tom  and
+      Koehn, Philipp  and
+      Monz, Christof",
+    booktitle = "Proceedings of the Ninth Conference on Machine Translation",
+    month = nov,
+    year = "2024",
+    address = "Miami, Florida, USA",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2024.wmt-1.3/",
+    doi = "10.18653/v1/2024.wmt-1.3",
+    pages = "82--109",
+    abstract = "We report the results of the WMT 2024 shared task on Quality Estimation, in which the challenge is to predict the quality of the output of neural machine translation systems at the word and sentence levels, without access to reference translations. In this edition, we expanded our scope to assess the potential for quality estimates to help in the correction of translated outputs, hence including an automated post-editing (APE) direction. We publish new test sets with human annotations that target two directions: providing new Multidimensional Quality Metrics (MQM) annotations for three multi-domain language pairs (English to German, Spanish and Hindi) and extending the annotations on Indic languages providing direct assessments and post edits for translation from English into Hindi, Gujarati, Tamil and Telugu. We also perform a detailed analysis of the behaviour of different models with respect to different phenomena including gender bias, idiomatic language, and numerical and entity perturbations. We received submissions based both on traditional, encoder-based approaches as well as large language model (LLM) based ones."
+}
+
+@book{Aho:72,
+    author  = {Alfred V. Aho and Jeffrey D. Ullman},
+    title   = {The Theory of Parsing, Translation and Compiling},
+    year    = "1972",
+    volume  = "1",
+    publisher = {Prentice-Hall},
+    address = {Englewood Cliffs, NJ}
+}
+
+@book{APA:83,
+    author  = {{American Psychological Association}},
+    title   = {Publications Manual},
+    year    = "1983",
+    publisher = {American Psychological Association},
+    address = {Washington, DC}
+}
+
+@article{Chandra:81,
+	author = {Ashok K. Chandra and Dexter C. Kozen and Larry J. Stockmeyer},
+	year = "1981",
+	title = {Alternation},
+	journal = {Journal of the Association for Computing Machinery},
+	volume = "28",
+	number = "1",
+	pages = "114--133",
+	doi = "10.1145/322234.322243",
+}
+
+@inproceedings{andrew2007scalable,
+  title={Scalable training of {L1}-regularized log-linear models},
+  author={Andrew, Galen and Gao, Jianfeng},
+  booktitle={Proceedings of the 24th International Conference on Machine Learning},
+  pages={33--40},
+  year={2007},
+}
+
+@book{Gusfield:97,
+    author  = {Dan Gusfield},
+    title   = {Algorithms on Strings, Trees and Sequences},
+    year    = "1997",
+    publisher = {Cambridge University Press},
+    address = {Cambridge, UK}
+}
+
+@article{rasooli-tetrault-2015,
+    author    = {Mohammad Sadegh Rasooli and Joel R. Tetreault},
+    title     = {Yara Parser: {A} Fast and Accurate Dependency Parser},
+    journal   = {Computing Research Repository},
+    volume    = {arXiv:1503.06733},
+    year      = {2015},
+    url       = {http://arxiv.org/abs/1503.06733},
+    note    = {version 2}
+}
+
+@article{Ando2005,
+	Acmid = {1194905},
+	Author = {Ando, Rie Kubota and Zhang, Tong},
+	Issn = {1532-4435},
+	Issue_Date = {12/1/2005},
+	Journal = {Journal of Machine Learning Research},
+	Month = dec,
+	Numpages = {37},
+	Pages = {1817--1853},
+	Publisher = {JMLR.org},
+	Title = {A Framework for Learning Predictive Structures from Multiple Tasks and Unlabeled Data},
+	Volume = {6},
+	Year = {2005}
+}
+
+
+@InProceedings{10.1007/978-3-319-77116-8_32,
+author="Laki, L{\'a}szl{\'o} J{\'a}nos
+and Yang, Zijian Gy{\H{o}}z{\H{o}}",
+editor="Gelbukh, Alexander",
+title="Combining Machine Translation Systems with Quality Estimation",
+booktitle="Computational Linguistics and Intelligent Text Processing",
+year="2018",
+publisher="Springer International Publishing",
+address="Cham",
+pages="435--444",
+abstract="Improving the quality of Machine Translation (MT) systems is an important task not only for researchers but it is a substantial need for translating companies to create translations in a quicker and cheaper way. Combining the outputs of more than one machine translation systems is a common technique to get better translation quality because the strengths of the different systems could be utilized. The main question is to find the best method for the combination. In this paper, we used the Quality Estimation (QE) technique to combine a phrase-based and a hierarchical-based machine translation systems. The composite system was tested on several language combinations. The QE module was used to compare the outputs of the different MT systems and gave the best one as the result translation of the composite system. The composite system gained better translation quality than the separated systems.",
+isbn="978-3-319-77116-8"
+}
+
+
+@InProceedings{10.1007/978-3-030-32233-5_28,
+author="Lu, Jinliang
+and Zhang, Jiajun",
+editor="Tang, Jie
+and Kan, Min-Yen
+and Zhao, Dongyan
+and Li, Sujian
+and Zan, Hongying",
+title="Select the Best Translation from Different Systems Without Reference",
+booktitle="Natural Language Processing and Chinese Computing",
+year="2019",
+publisher="Springer International Publishing",
+address="Cham",
+pages="355--366",
+abstract="In recent years, neural machine translation (NMT) has made great progress. Different models, such as neural networks using recurrence, convolution and self-attention, have been proposed and various online translation systems can be available. It becomes a big challenge on how to choose the best translation among different systems. In this paper, we attempt to tackle this task and it can be intuitively considered as the Quality Estimation (QE) problem that requires enough human-annotated data in which each translation hypothesis is scored by human. However, we do not have rich data with high-quality human annotations in practice. To solve this problem, we resort to bilingual training data and propose a new method of mixed MT metrics to automatically score the translation hypotheses from different systems with their references so as to construct the pseudo human-annotated data. Based on the pseudo training data, we further design a novel QE model based on Multi-BERT and Bi-RNN with a joint-encoding strategy. Extensive experiments demonstrate that our proposed method can achieve promising results for the task to select the best translation from various systems.",
+isbn="978-3-030-32233-5"
+}

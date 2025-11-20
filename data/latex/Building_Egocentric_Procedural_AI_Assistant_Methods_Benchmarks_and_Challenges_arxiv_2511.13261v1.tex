@@ -1,0 +1,895 @@
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
+
+\usepackage{graphicx} % Required for inserting images
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{makecell}
+\usepackage{bbding}
+\usepackage{romannum}
+\usepackage{pifont}
+\usepackage{color,colortbl}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{layouts}
+%\usepackage{titling}
+%\renewcommand{\maketitlehookb}{\vspace{1.5em}} %
+
+
+%\let\cleardoublepage\clearpage
+\usepackage[table,xcdraw]{xcolor}
+
+\usepackage{pdflscape}   % 横向页面
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{amssymb}     % \checkmark \times
+\usepackage{amsmath}
+\usepackage{geometry}
+\geometry{a4paper, margin=1.5cm}
+%\usepackage{manyfoot}%
+\begin{document}
+
+
+
+\title[Article Title]{Building Egocentric Procedural AI Assistant: Methods, Benchmarks, and Challenges \vspace{1em}}
+
+%\text{\\}
+
+\author[1]{\sur{Junlong Li}}
+
+\author[1]{\sur{Huaiyuan Xu}}
+
+\author[2]{\sur{Sijie Cheng}}
+
+\author[3]{\sur{Kejun Wu}}
+
+\author[4]{\sur{Kim-Hui Yap}}
+
+\author[1]{\sur{Lap-Pui Chau}}
+
+\author*[1]{\sur{Yi Wang}}\email{yi-eie.wang@polyu.edu.hk}
+
+%%\affil[1]{\orgdiv{Department of Electrical and Electronic Engineering}, \orgname{The Hong Kong Polytechnic University}, \orgaddress{\city{Hong Kong SAR}}}
+\affil[1]{\orgdiv{Department of EEE}, \orgname{The Hong Kong Polytechnic University}, \orgaddress{\city{Hong Kong SAR}}}
+
+\affil[2]{\orgname{RayNeo}, \orgaddress{\city{Shenzhen}}; \orgname{Tsinghua University}, \orgaddress{\city{Beijing}, \country{China}}}
+
+%%\affil[3]{\orgdiv{School of Electronic Information and Communications}, \orgname{Huazhong University of Science and Technology}, \orgaddress{\city{Wuhan}, \country{China}}}
+\affil[3]{\orgdiv{School of EIC}, \orgname{Huazhong University of Science and Technology}, \orgaddress{\city{Wuhan}, \country{China}}}
+
+%%\affil[4]{\orgdiv{School of Electrical and Electronic Engineering}, \orgname{Nanyang Technological University}, \orgaddress{ \country{Singapore}}}
+\affil[4]{\orgdiv{School of EEE}, \orgname{Nanyang Technological University}, \orgaddress{ \country{Singapore}}}
+
+\date{November 2025}
+
+
+
+%\setcounter{page}{0}
+%\raggedbottom
+\pagenumbering{arabic}
+
+%\begin{center} {\LARGE \textbf{Building Egocentric Procedural AI Assistant: Methods, Benchmarks, and Challenges}}\\[1em] {\large Junlong Li\textsuperscript{1}, Huaiyuan Xu\textsuperscript{1}, Sijie Cheng\textsuperscript{2}, Kejun Wu\textsuperscript{3}, Kim-Hui Yap\textsuperscript{4}, Lap-Pui Chau\textsuperscript{1}, Yi Wang\textsuperscript{1,*}\\[0.5em] } {\small \textsuperscript{1}Department of EEE, The Hong Kong Polytechnic University, Hong Kong SAR\\ \textsuperscript{2}RayNeo, Shenzhen; Tsinghua University, Beijing, China\\ \textsuperscript{3}School of EIC, Huazhong University of Science and Technology, Wuhan, China\\ \textsuperscript{4}School of EEE, Nanyang Technological University, Singapore\\ \textsuperscript{*}Email: yi-eie.wang@polyu.edu.hk }[1em] \end{center} 
+
+\abstract{Driven by recent advances in vision language models (VLMs) and egocentric perception research, we introduce the concept of an egocentric procedural AI assistant (EgoProceAssist) tailored to step-by-step support daily procedural tasks in a first-person view. In this work, we start by identifying three core tasks: egocentric procedural error detection, egocentric procedural learning, and egocentric procedural question answering. These tasks define the essential functions of EgoProceAssist within a new taxonomy. Specifically, our work encompasses a comprehensive review of current techniques, relevant datasets, and evaluation metrics across these three core areas. To clarify the gap between the proposed EgoProceAssist and existing VLM-based AI assistants, we introduce novel experiments and provide a comprehensive evaluation of representative VLM-based methods. Based on these findings and our technical analysis, we discuss the challenges ahead and suggest future research directions. Furthermore, an exhaustive list of this study is publicly available in an active repository that continuously collects the latest work: \url{https://github.com/z1oong/Building-Egocentric-Procedural-AI-Assistant}}
+
+\keywords {Egocentric perception, procedural tasks, AI assistant, VLMs.}
+
+\maketitle
+
+
+\section{Introduction}
+
+
+Procedural tasks, which require adherence to specific sequences of steps, are central to numerous daily and industrial activities. Errors in the order or execution of these steps can lead to inefficiencies, suboptimal outcomes, or even safety risks. Traditional video analysis methods, while capable of visual pattern recognition, lack a deep understanding of video content. They struggle to comprehend logical procedural narratives and face challenges in integrating multifunctional assistance, such as detection and video question answering (VQA). Recent advances in  VLM \cite{cheng2024videollama}\cite{lin2023video}\cite{li2024llava} and egocentric (first-person view) vision technologies \cite{thatipelli2025egocentric}\cite{li2025challenges}, combined with augmented and virtual reality devices, have enabled the development of egocentric AI assistants for procedural task guidance \cite{yang2025egolife,huang2024vinci}. 
+
+AI assistants with egocentric vision acquire environmental observations through head-mounted cameras and AI glasses \cite{plizzari2024outlook}. Imagine an AI assistant capable of autonomously learning key procedural steps, detecting errors in real time, and providing contextual responses to user queries. Such a system holds significant potential across various fields, including industrial assembly \cite{ding2023every}, smart homes \cite{plizzari2024outlook}, remote medical assistance, and vocational training. 
+
+Based on the envisioned functions, such as the ability to detect procedural errors in real time, the ability to learn the key steps of procedural tasks independently from videos, the ability to understand egocentric videos and answer relevant questions, this paper identifies three new technical approaches, to address key requirements for building an egocentric procedural AI assistant (EgoProceAssist): egocentric procedural error detection, egocentric procedural learning, egocentric procedural question answering. The overall structure is shown in Fig.~\ref{fig2}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{taxfinal.pdf}
+    \caption{Taxonomy of EgoProceAssist \cite{flaborea2024prego,plini2024ti,huang2025modeling,patsch2025technical,lee2024error}\cite{ding2023every}\cite{storks2024transparent,haneji2024egooops,mazzamuto2025gazing,bansal2024united,alayrac2016unsupervised,elhamifar2019unsupervised,kukleva2019unsupervised,chowdhury2024opel,sener2015unsupervised,lin2022learning,zhou2018towards,zhukov2019cross,naing2020procedure,bansal2022my,mahmood2025procedure,shah2023steps,wang2023lifelongmemory,zhang2024hcqa,zhang2025hcqa,taluzzi2025pixels}\cite{yang2025egolife}\cite{di2024grounded}\cite{huang2024vinci}\cite{suglia2024alanavlm,chen2025grounded,biswas2025raven,ye2024mm}}.
+    \label{fig1}%
+\end{figure}
+ 
+The main contributions of this work can be summarized as follows:
+
+$\bullet$ Most previous research efforts concentrated on video understanding tasks from a third-person perspective, and there are relatively few surveys focused on video analysis in egocentric vision, as shown in Fig.~\ref{fig3}. Some of them focus on the field's action recognition technology \cite{nguyen2016recognition,hamid2017survey,nunez2022egocentric}, challenges \cite{li2025challenges}, and prospects \cite{plizzari2024outlook}. Therefore, a notable absence remains in the systematic survey literature addressing the development of AI assistants for procedural tasks from an egocentric perspective, particularly in the three critical domains of Egocentric procedural error detection, Egocentric procedural learning, and Egocentric procedural question answering. This paper presents the first comprehensive survey of the state-of-the-art techniques in these areas.
+
+$\bullet$ We present novel taxonomies for methods in the three domains as shown in Fig.~\ref{fig1}, enabling systematic classification and synthesis with improved clarity and unified understanding. Our survey analyzes and compares 29 commonly used datasets and evaluation metrics relevant to these areas. 
+
+$\bullet$ To provide objective evidence and highlight the development potential of this field, we conduct two supplementary experiments evaluating recent VQA models and AI assistants across four datasets. The comparative analysis reveals key limitations of current AI assistants. 
+
+$\bullet$ Finally, we discuss significant challenges and propose directions for future research, emphasizing the essential contribution of these domains to AI assistant development. Our synthesis aims to inform and inspire future work in the field.
+
+
+\section{Primer On Egocentric Procedural AI Assistant }
+
+This section consists of two parts. First, we divide the construction of the EgoProceAssist into three core areas. Then, we analyze and summarize the relevant techniques. 
+
+\subsection{Three Core Functions and Tasks}
+
+Here, we further delineate the essential capabilities required for EgoProceAssist. First, it must be capable of detecting procedural errors in real time from video streams. This ability extends beyond mere anomaly detection, enabling the assistant to comprehend everyday procedural tasks with potential procedural errors from an egocentric perspective. Second, the assistant should autonomously learn how to perform a procedural task by observing video demonstrations, automatically identifying key steps and their sequences. This capability enables more intelligent and efficient procedural guidance for users. Finally, EgoProceAssist needs to understand egocentric videos and perform relevant question-answering tasks, improving its interactivity and allowing the assistant to provide timely guidance when needed.
+
+After conducting in-depth and comprehensive research on those capabilities, the development of EgoProceAssist can be systematically divided into three core tasks: egocentric procedural error detection, egocentric procedural learning, and egocentric procedural question answering.
+
+\subsection{Related Work}
+Progressing research in these areas will play a key role in developing EgoProceAssist, as they offer rich opportunities for further innovation. Methods in these domains leverage proven computer vision and deep learning techniques, supporting robust and scalable improvement and deployment.
+
+\textit{\textbf{LLMs and VLMs.}} Recent advances in large language models (LLMs) enable multimodal processing, fueling vision language models (VLMs) that excel at video understanding. These systems usually involve feature alignment and instruction tuning. Improving LLM and VLM capabilities can boost areas such as procedural learning, error detection, and video question answering. Yet, current models mostly use third-person data and underperform on egocentric videos. With the proposal of large-scale egocentric datasets (\textit{e.g.}, Ego4D\cite{grauman2022ego4d}\cite{damen2018scaling}), new LLM and VLM frameworks \cite{zhang2024hcqa}\cite{zhang2025hcqa}\cite{storks2024transparent} have emerged to address this gap.
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{stu2.pdf}
+    \caption{Overall Structure. In Section \uppercase\expandafter{\romannumeral 2}, domains and techniques related to the construction of EgoProceAssist are presented. In Sections \uppercase\expandafter{\romannumeral 3}, \uppercase\expandafter{\romannumeral 4}, and \uppercase\expandafter{\romannumeral 5}, we provide a comprehensive summary of the existing technical approaches, commonly used datasets, and evaluation metrics for the three core tasks, respectively. For enhanced clarity, we also present comparative tables to highlight performance differences among the methods. Section \uppercase\expandafter{\romannumeral 6} presents experimental investigations assessing the capability of existing models to understand procedural tasks across two distinct domains. Section \uppercase\expandafter{\romannumeral 7} discusses the current challenges faced in the field and explores potential trends for future research and development. Finally, Section \uppercase\expandafter{\romannumeral 8} offers a comprehensive summary of the findings and conclusions drawn from this work. }
+    \label{fig2}%
+\end{figure}
+
+\textit{\textbf{Egocentric Vision.}} Egocentric video, enabled by head-mounted cameras on task performers, provides essential visual data for AI assistants offering real-time human support. Recent advancements in this field are largely attributable to the release of large-scale annotated datasets \cite{grauman2022ego4d}\cite{damen2020epic}\cite{damen2018scaling}, which facilitate various tasks, including action recognition \cite{zhang2019comprehensive}\cite{kong2022human} and action anticipation \cite{trong2017comprehensive}\cite{rasouli2020deep}. Rapid progress in egocentric vision has laid a critical technological foundation for the development of AI assistants. 
+
+\textit{\textbf{Embodied QA.}} It represents a complex research challenge within embodied intelligence \cite{duan2022survey}\cite{das2018embodied}\cite{fan2024embodied}, requiring active exploration, navigation, and task planning in interactive 3D environments. Unlike egocentric video question answering, which is a fundamental function for egocentric AI assistants and emphasizes passive comprehension and temporal reasoning based on video content, Embodied QA focuses on spatial interaction and real-time decision-making. Consequently, Embodied QA necessitates training within simulated 3D scenes, whereas egocentric video QA relies on annotated video datasets for developing content-specific question-answering capabilities.
+
+\textit{\textbf{Video understanding.}} Long video understanding \cite{miech2019howto100m}\cite{xiao2025videoqa} and egocentric video understanding \cite{nguyen2016recognition} are two important areas in video analysis. Long video understanding focuses on processing extended video content, which can last from several minutes to hours. In contrast, egocentric video understanding deals with videos recorded from a first-person perspective and has unique characteristics and specialized applications compared to general long video analysis. This viewpoint facilitates the adoption of methods such as hand pose estimation \cite{prakash2025synthesizing}, gaze prediction \cite{mazzamuto2025gazing}, and hand-object interaction \cite{bansal2024hoi} to improve recognition performance. It is crucial for building an efficient AI assistant to skillfully leverage the characteristics of the egocentric perspective for video understanding.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1\linewidth]{sur.pdf}
+
+        \caption{A timeline with the surveys in egocentric vision \cite{bambach2015survey}\cite{nguyen2016recognition}\cite{del2016summarization}\cite{hamid2017survey}\cite{rodin2021predicting}\cite{chen2021survey}\cite{nunez2022egocentric}\cite{bandini2020analysis}\cite{plizzari2024outlook}\cite{thatipelli2025egocentric}\cite{li2025challenges}.}
+    \label{fig3}%
+\end{figure*}
+
+
+\section{Egocentric Procedural Error Detection}
+
+\subsection{Definition}
+
+Unlike general task analysis, procedural tasks such as cooking or assembling require a strict sequence, with each step contingent on the successful completion of previous ones. Mistakes, such as missing, incorrect, or extra steps, can lead to significant errors or hazards. The concept of error detection in procedural tasks was initiated by \cite{sener2022assembly101}, whereas prior work focused on anomaly detection \cite{sultani2018real} or unintentional actions detection \cite{epstein2020oops}, which identify abnormal behaviors based on semantic deviation visible in visual data (\textit{e.g.}, accidents, mistakes). However, for procedural task error detection, correct or incorrect actions are context-dependent; a step that seems plausible in isolation can be erroneous when executed at an improper time order.
+
+Video anomaly detection, which usually operates from a static viewpoint and flags deviations from regular patterns via semantic rules (such as identifying falls), differs fundamentally from procedural error detection. Procedural errors are goal-oriented and require long-term context-sensitive reasoning, rendering standard anomaly detection methods insufficient for identifying such errors.
+
+As shown in Fig.~\ref{fig4}, current error detection methods vary in their data usage. Only-video methods rely solely on video, while multimodal approaches utilize multiple data types, such as gaze, to achieve higher accuracy, reduce data requirements, and increase practicality. Both techniques help inform the development of real-time egocentric procedural AI assistants. The performance comparison of the various methods is given in Table~\ref{tab1}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{flooow1.pdf}
+    \caption{(a) shows the overall framework flowchart summarizing only-video egocentric procedural error detection methods: VQF \cite{patsch2025technical}, EgoPED \cite{lee2024error}, TI-PREGO \cite{plini2024ti}, AMNAR \cite{huang2025modeling}. (b) shows a flowchart summarizing multimodal-based methods: KRR \cite{ding2023every}, TAC \cite{storks2024transparent}, EgoOops \cite{haneji2024egooops}, GC \cite{mazzamuto2025gazing}, where some methods use gaze or procedure-related text as additional input.}
+    \label{fig4}%
+\end{figure}
+
+\subsection{Only-video Methods}
+
+Recent advances in procedural error detection include the dual-branch architecture by Flaborea et al. (PREGO) \cite{flaborea2024prego}, which takes videos as input, integrates current actions into a symbolic reasoning module, and utilizes large language models (LLMs) for contextual next-action prediction. Building on this, Plini et al. (TI-PREGO) \cite{plini2024ti} introduce Automatic Chain of Thought (ACoT) \cite{zhang2022automatic} and leverage more powerful LLMs, further enhancing predictive accuracy. Huang et al. (AMNAR) \cite{huang2025modeling} propose generating multiple dynamic representations of correct actions, which also take videos as input, enabling robust error detection across varying task executions and environmental contexts. Patsch et al. (VQF) \cite{patsch2025technical} introduce a Video Q-Former-based end-to-end framework for simultaneously detecting sequential and execution errors, providing textual explanations for identified mistakes. Lee et al. (EgoPED) \cite{lee2024error} propose learning multiple prototypes of correct execution and detecting errors by comparing actions against these prototypes.
+
+Specifically, PREGO \cite{flaborea2024prego} introduces a dual-branch architecture for procedural error detection: one branch employs MiniROAD \cite{an2023miniroad} for real-time action detection via RNN, while the other leverages an LLM to predict subsequent actions through symbolic reasoning on historical action sequences, treating actions as symbolic patterns without model fine-tuning. Errors are flagged when branch outputs diverge, requiring training only for the detection branch and allowing the prediction branch to use an off-the-shelf LLM, thereby enhancing recognition of previously unseen errors.  Building on this, TI-PREGO \cite{plini2024ti} integrates frame aggregation strategies in the prediction branch, selecting the NOMA approach for stable action sequences, upgrades to Llama-3.1 8B for superior accuracy and reasoning, and incorporates Automatic Chain of Thought (ACoT) \cite{zhang2022automatic} for step-by-step reasoning, achieving improved performance.
+
+AMNAR \cite{huang2025modeling} detects errors via three modules: a pre-trained I3D model \cite{peng2023i3d} for visual feature extraction, an action segmentation model for identifying action boundaries and labels, and PAPB, which uses a task graph and dynamic programming \cite{bellman1966dynamic} to align the executed actions to the reference sequence using the longest common subsequence (LCS) \cite{bergroth2000survey}\cite{paterson1994longest}, reducing labeling errors and omissions. The current action sequence $s_t$ is converted into $s_t^*$ by the above method. PAPB identifies the valid next actions $C_{t}$ by extracting the child nodes of $s_t^*$ in $G:$
+\begin{equation}
+    C_t=(\bigcup_{a\in s_t^*}A[a])\setminus s_t^*,
+\end{equation}where $\bigcup_{a \in s^*_t} A[a]$ aggregates all successors of nodes in $s^*_t$ from the adjacency list  $A$ of task graph  $G$, and $\backslash s^*_t$ excludes already executed actions. In the Representation Reconstruction Block (RRB) module, dilated convolution is applied to the feature $F_{1:ed_{t-1}}=\{f_{i}\}_{i=1}^{ed_{t-1}}$ before time $t$ to obtain $F_{1:ed_{t-1}}^{\mathrm{conv}}$. A local cross-attention mechanism is then employed, where  $C_{t}$ is used as the query, and $F_{1:ed_{t-1}}^{\mathrm{conv}}$ serves as both the key and value. For each valid action $y_{t, i}$, we predict a residual $r_{t, i}$ that refines the cluster center $c_{t, i}$ of the corresponding action class. The normal action representation $f_{t,i}^{normal}$ is then computed as: 
+\begin{equation}
+r_{t,i} = \mathcal{E}_{\mathrm{res}}(y_{t,i}, F_{1:ed_{t-1}}^{\mathrm{conv}}), 
+\end{equation}
+\begin{equation}
+    f_{t,i}^{normal} = c_{t,i} + r_{t,i},
+\end{equation} 
+where $\mathcal{E}_{\text{res}}$ denotes the residual prediction operation via cross-attention, and $c_{t,i}$ is the precomputed cluster center for action class $y_{t,i}$, derived from normal training samples. The resulting set of representations, denoted $f_t^{\text{normal}} = \{f_{t,i}^{\text{normal}}\}_{i=1}^{|C_t|}$, encapsulates all valid next actions:
+\begin{equation}
+    f_t^{\text{normal}} = \mathcal{E}(C_t, F_{1:ed_{t-1}}),
+\end{equation}
+where $\mathcal{E}$ integrates all operations within this block. Finally, the process proceeds to the Representation Matching Block (RMB), where the Euclidean distance between the current action feature and each normal action representation is computed to determine whether an error has occurred:
+\begin{equation}
+    d_{t,i}=\|f_t^\mathrm{action}-f_{t,i}^\mathrm{normal}\|_2,
+\end{equation}
+where$f_t^{action}$is the ongoing action feature, $f_{t,i}^{normal}$is the potential normal action representation feature.
+
+VQF \cite{patsch2025technical} is an end-to-end framework utilizing a Vision Transformer (ViT) \cite{dosovitskiy2020image} for per-frame feature extraction and a Video Q-Former \cite{li2023blip}, adapted from BLIP-2, to capture spatiotemporal dependencies in video data. The resulting features are classified via a linear layer to predict error logits $m$, with a trigger mechanism activating error explanation only when the sigmoid output exceeds a threshold $\tau$. For the explanation, the spatiotemporally-aware features are linearly projected and input to a large language model (\textit{e.g.}, LLaMA 2 \cite{touvron2023llama}) alongside a prompt, enabling the generation of natural language error explanations.
+
+EgoPED \cite{lee2024error} employs a pre-trained video feature extractor (\textit{e.g.}, I3D \cite{carreira2017quo}) for frame-level feature extraction, and Faster R-CNN to identify object and hand bounding boxes, thus detecting active objects. A 3-layer GCN processes a relation graph to derive relational features, which are input to a CSPL module \cite{lin2022prototypical}. K-means clustering generates step prototypes, and contrastive learning (InfoNCE loss \cite{oord2018representation}) aligns features with corresponding prototypes while distinguishing different steps. The loss function is defined as follows: 
+\begin{equation}
+    \mathcal{L}_{cspl} = -\sum_{i} \log \left( \frac{s_{n,i}^{+}}{s_{n,i}^{+} + s_{n,i}^{-}} \right),
+\end{equation}
+where  $s_{n,i}^{+}$ is positive sample similarity and $s_{n,i}^{-}$ is negative sample similarity. 
+
+\begin{table}[h]
+ \caption{Performance comparison of representative methods for egocentric procedural error detection, where metric values are averaged across different tasks within the same dataset, the bold text represents the best performance on this metric.}\label{tab1}%
+    \centering
+            
+    \begin{tabular}{cccccccc|c|}
+    \toprule
+       
+          \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Method}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Years}&   \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Precision}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}EDA}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}AUC}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}F1}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Recall}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Acc}&  \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Dataset}\\
+         \midrule
+         KRR \cite{ding2023every}&  arXiv 2023&  63.7&  -&  -&  71.8&  70.6&  86.0& Assemmbly101\\
+         \midrule
+         \cellcolor{gray!10}EgoPED (MSTCN++) \cite{lee2024error}&  CVPR 2024&  -&  56.7&  54.7&  -&  -&  -& \multirow{7}{*}{HoloAssist}\\
+ EgoPED (DiffACT) \cite{lee2024error}& CVPR 2024& -& 69.8& 47.0& -& -& -&\\
+ \cellcolor{gray!10}EgoPED (AF) \cite{lee2024error}& CVPR 2024& -& 69.5& 49.1& -& -& -&\\
+         VQF \cite{patsch2025technical}&   arXiv 2025&  11.0&  -&  -&  \textbf{55.0}&  21.0&  -& \\
+         \cellcolor{gray!10}GC (One-class training) \cite{mazzamuto2025gazing}&  CVPR 2025&  \textbf{14.0}&  -&  \textbf{61.0}&  22.0&  \textbf{59.0}&  -& \\
+         GC (Unsupervised training) \cite{mazzamuto2025gazing}&  CVPR 2025&  12.0&  -&  59.0&  18.0&  40.0&  -& \\
+         \cellcolor{gray!10}AMNAR \cite{huang2025modeling}&  CVPR 2025&  -&  \textbf{69.9}&  56.5&  -&  -&  -& \\
+         \midrule
+ PREGO (Oracle+GPT-3.5) \cite{flaborea2024prego}& CVPR 2024& 29.2& -& -& 42.1& 75.8& -&\multirow{7}{*}{Assembly101-O}\\
+ \cellcolor{gray!10}PREGO (Oracle+LLAMA) \cite{flaborea2024prego}& CVPR 2024& \textbf{30.7}& -& -& \textbf{46.3}& 94.0& -&\\
+ PREGO (OadTR+LLAMA) \cite{flaborea2024prego}& CVPR 2024& 22.1& -& -& 35.8& 94.2& -&\\
+ \cellcolor{gray!10}PREGO (MiniRoad+GPT-3.5) \cite{flaborea2024prego}& CVPR 2024& 16.2& -& -& 27.3& 87.5& -&\\
+ PREGO (MiniRoad+LLAMA) \cite{flaborea2024prego}& CVPR 2024& 27.8& -& -& 41.8& 84.1& -&\\
+\cellcolor{gray!10}TI-PREGO (Oracle+Llama 3.1) \cite{plini2024ti}& arXiv 2024& -& -& -& -& \textbf{97.8}& -&\\
+ TI-PREGO (MiniRoad+Llama 3.1) \cite{plini2024ti}& arXiv 2024& -& -& -& -& 97.2& -&\\
+ \midrule
+ \cellcolor{gray!10}PREGO (Oracle+GPT-3.5) \cite{flaborea2024prego}& CVPR 2024& 9.9& -& -& 17.4& 73.3& -&\multirow{7}{*}{Epic-tent-O}\\
+ PREGO (Oracle+LLAMA) \cite{flaborea2024prego}& CVPR 2024& \textbf{10.7}& -& -& \textbf{19.1}& 86.7& -&\\
+ \cellcolor{gray!10}PREGO (OadTR+LLAMA) \cite{flaborea2024prego}& CVPR 2024& 9.5& -& -& 17.2& 93.3& -&\\
+ PREGO (MiniRoad+GPT-3.5) \cite{flaborea2024prego}& CVPR 2024& 4.3& -& -& 8.0& 66.6& -&\\
+ \cellcolor{gray!10}PREGO (MiniRoad+LLAMA) \cite{flaborea2024prego}& CVPR 2024& 8.6& -& -& 12.0& 20.0& -&\\
+ TI-PREGO (Oracle+Llama 3.1) \cite{plini2024ti}& arXiv 2024& -& -& -& -& \textbf{100.0}& -&\\
+ \cellcolor{gray!10}TI-PREGO (MiniRoad+Llama 3.1) \cite{plini2024ti}& arXiv 2024& -& -& -& -& 93.3& -&\\
+ \midrule
+ EgoPED (MSTCN++) \cite{lee2024error}& CVPR 2024& -& 48.4& 58.5& -& -& \textbf{74.6}&\multirow{4}{*}{EgoPER}\\
+ \cellcolor{gray!10}EgoPED (DiffACT) \cite{lee2024error}& CVPR 2024& -& 49.2& 61.9& -& -& 69.5&\\
+ EgoPED (AF) \cite{lee2024error}& CVPR 2024& -& 57.0& 62.0& -& -& 68.5&\\
+ \cellcolor{gray!10}AMNAR \cite{huang2025modeling}& CVPR 2025& -& \textbf{64.4}& \textbf{68.5}& -& -& -&\\
+ \midrule
+ GC (One-class training) \cite{mazzamuto2025gazing}& CVPR 2025& \textbf{37.0}& -& 69.0& \textbf{52.0}& 85.0& -&\multirow{2}{*}{Epic-tent}\\
+ \cellcolor{gray!10}GC (Unsupervised training) \cite{mazzamuto2025gazing}& CVPR 2025& 36.0& -& 69.0& 51.0& 85.0& -&\\
+  \midrule
+ GC (One-class training) \cite{mazzamuto2025gazing}& CVPR 2025& \textbf{18.0}& -& \textbf{63.0}& \textbf{24.0}& \textbf{35.0}& -&\multirow{2}{*}{IndustReal}\\
+ \cellcolor{gray!10}GC (Unsupervised training) \cite{mazzamuto2025gazing}& CVPR 2025& 16.0& -& 62.0& 21.0& 33.0& -&\\
+ \midrule
+ EgoPED \cite{lee2024error}& CVPR 2024& 56.5& 69.8& 54.9& -& -& -&\multirow{2}{*}{CaptainCook4D}\\
+ \cellcolor{gray!10}AMNAR \cite{huang2025modeling}& CVPR 2025& \textbf{66.8}& \textbf{72.3}& \textbf{60.2}& -& -& -&\\
+ 
+ \bottomrule
+    \end{tabular}
+   
+\end{table}
+
+\subsection{Multimodal-based Methods}
+
+Besides only-video approaches, numerous methods integrate multimodal data, such as text for error detection. Some techniques also learn the correct behavioral patterns associated with a given label and compare them with actual executions to identify potential errors. 
+
+Ding et al. (KRR) \cite{ding2023every} construct a dynamically updated knowledge base to formalize assembly logic into inferable rules, enabling adaptation to complex scenarios via comparison of current and historical actions. Storks et al. (TAC) \cite{storks2024transparent} utilize Vision Language Models (VLMs) for self-dialogue explanations through a question-answering mechanism, ensuring transparent and interpretable mistake detection. Haneji et al. (EgoOops) \cite{haneji2024egooops} integrate video-text alignment with mistake classification, using procedural text to identify erroneous actions in videos. Mazzamuto et al. (GC) \cite{mazzamuto2025gazing} employ analysis of users’ eye movements to identify attentional deviations as indicators of procedural errors.
+
+Specifically, KRR \cite{ding2023every} employs graph-based spatial and temporal beliefs to assess action feasibility and order. The knowledge base is dynamically updated with observed actions. Error detection utilizes reasoning based on current and stored historical actions via encoded rules. This framework innovatively models assembly error detection as a knowledge representation and reasoning task, yielding strong, interpretable results.
+
+TAC \cite{storks2024transparent} accepts procedural text and a video frame as input, outputting a binary success/error decision accompanied by a self-dialogue rationale, which is an iteratively generated sequence of question-answer pairs reflecting the reasoning process. Users can review these pairs to assess model reliability. The model creates candidate questions based on procedural text and dialogue context, and then determines correctness by synthesizing these questions with the current frame. Explanation rationality is further evaluated by a natural language inference (NLI) model (BART-MNLI) \cite{lewis2019bart}, which quantifies the relevance and informativeness of each Q\&A pair.
+
+EgoOops \cite{haneji2024egooops} builds on StepFormer \cite{pramanick2023egovlpv2} for self-supervised video-text alignment, introducing StepFormer++ with fully supervised loss and fine-tuning on EgoOops dataset annotations. EgoVLPv2 \cite{cui2019class} replaces UniVL for improved egocentric video feature extraction, followed by temporal pooling and concatenation with text features. A two-layer MLP \cite{kruse2022multi} predicts probabilities for correct, mistake, and correction labels. Error detection occurs offline after task completion, requiring full procedural text and complete video, thus precluding real-time feedback.
+
+GC \cite{mazzamuto2025gazing} utilizes egocentric videos and prior gaze trajectories as inputs, building upon \cite{lai2022eye} by introducing a Transformer-based encoder-decoder architecture with two fusion strategies: channel fusion, which concatenates gaze heatmaps with video frames, and correlation fusion, which applies an attention mechanism to model the interplay between gaze and visual features. The model predicts future gaze trajectories, which are then compared to ground truth to calculate a deviation score. Notably, this method detects procedural errors by analyzing gaze behaviors without relying on error-labeled data, and both fusion strategies contribute to its robustness.
+
+\begin{table}
+\caption{Summarize the representative datasets in egocentric procedural error detection, Ego means egocentric view and Exo means third-person view.}
+    \centering
+
+     \begin{tabular}{cccccccc}
+     \toprule
+        \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Dataset}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Years}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Duration}&   \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Videos}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Segments}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Activity}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Domain}&  \multicolumn{1}{c}{ \cellcolor[HTML]{EFEFEF}View} \\
+         \midrule
+          EPIC-KITCHENS \cite{damen2020epic}&  ECCV 2018&  200h&  700&  90k&  -&Cooking& Ego \\
+          Epic-tent \cite{jang2019epic}& ICCV 2019& 5.4h& 72& 921& 38&Outdoor&Ego \\
+          EgoCom \cite{northcutt2020egocom}&  TPAMI 2020& 38.5h& 70& -& -&Communication&Ego \\
+         Assembly101 \cite{sener2022assembly101}&  CVPR 2022&  -&  4321&  1M&  15&Assembly& Ego \\
+         Ego4D \cite{grauman2022ego4d}&  CVPR 2022&  3670h&  -&  -&  100+&Mixed& Ego \\
+         HoloAssist \cite{wang2023holoassist}&  ICCV 2023&  166h&  -&  -&  20&Mixed& Ego \\
+         Ego-Exo4D \cite{grauman2024ego}&  CVPR 2024&  1286h&  -&  -&  123&Mixed& Ego+Exo \\
+         IKEA Manuals at Work \cite{liu2024ikea}& NeurIPS 2024&  10h&  98&  1120&  -&Assembly& Ego+Exo \\
+         EgoOops \cite{haneji2024egooops}& arXiv 2024& 6.8h& 50& 538& 5&Mixed&Ego \\
+         EgoPER \cite{lee2024error}& CVPR 2024& 28h& 386& -& 5&Cooking&Ego \\
+         IndustReal \cite{schoonbeek2024industreal}& WACV 2024& 5.8h& 84& 9273& 75&Industrial&Ego \\ 
+         CaptainCook4D \cite{peddi2024captaincook4d}& NeurIPS 2024& 94.5h& 384& 5.8k& -&Cooking&Ego \\   
+   \bottomrule
+      \end{tabular}
+
+\label{tab2}%
+    
+    
+\end{table}
+
+\subsection{Datasets}
+
+This section reviews egocentric datasets relevant to egocentric procedural error detection, as shown in Table~\ref{tab2}, with a focus on those involving procedural activities. We summarize and analyze these datasets in terms of their scale and data types.
+
+\textit{EPIC-Kitchens} \cite{damen2020epic} is a large-scale egocentric dataset of 32 participants cooking in diverse home kitchens, totaling 55 hours of unscripted video with audio. The dataset includes rich annotations spanning action categories, temporal boundaries, and participant metadata.
+
+\textit{EPIC-Tent} \cite{jang2019epic} features outdoor tent-pitching videos from 24 users wearing head-mounted cameras, addressing non-rigid object manipulation scenarios. It uniquely includes participant-provided subjective uncertainty scores.
+
+\textit{EgoCom} \cite{northcutt2020egocom} comprises 38.5 hours of synchronized binaural audio and egocentric video, with 20,000 timestamped transcriptions and speaker labels from 34 speakers, providing interactive visual and conversational data, including implicit cues absent in third-person datasets.
+
+\textit{Assembly 101} \cite{sener2022assembly101} contains 4,321 videos of users assembling and disassembling 101 types of toy vehicles, allowing diverse action sequences, step errors, and corrections. It includes annotations for over 100k coarse- and 1M fine-grained action segments, as well as 18M 3D hand poses.
+
+\textit{Ego4D} \cite{grauman2022ego4d}  comprises over 3,670 hours of daily activity videos from 74 locations in 9 countries, captured with seven types of head-mounted cameras. It includes diverse environments and provides multimodal data, including 3D scans, audio, gaze data, and stereo recordings.
+
+\textit{HoloAssist} \cite{wang2023holoassist} is tailored for AI assistant training in physical tasks, featuring 166 hours of data from 350 performer-instructor pairs across 20 object manipulation categories. It provides 414 coarse- and 1,887 fine-grained action classes, with manual annotations for actions, error types, and dialogues. Timely error corrections and proactive interventions are included.
+
+\textit{Ego-Exo4D} \cite{grauman2024ego} features over 1,400 hours of paired egocentric and third-person videos from nearly 800 skilled participants across diverse scenarios, including sports, music, dance, and bicycle repair, capturing both egocentric and contextual views
+
+\textit{IKEA Manuals at Work} \cite{liu2024ikea} targets furniture assembly with complex scenes, aligning manual instructions and videos for 4D localization of 3D assembly processes. It includes 3D models for 36 items, 98 real assembly videos, and detailed step-level spatiotemporal annotations.
+
+\textit{EgoOops} \cite{haneji2024egooops} is dedicated to error detection, spanning diverse tasks such as circuit assembly, chemistry experiments, color mixing, block construction, and paper crafts. Unlike prior datasets focused on assembly or cooking, EgoOops offers both correct and incorrect demonstrations with detailed fine-grained annotations.
+
+\textit{EgoPER} \cite{lee2024error} comprises 386 kitchen cooking videos (28 hours), with 213 showing correct and 173 showing erroneous executions. It features a manually constructed recipe task graph covering all correct and incorrect paths for script-based video generation. 
+
+\textit{IndustReal} \cite{schoonbeek2024industreal} features 84 videos (5.8 hours) of 27 participants assembling 3D-printed toy cars with HoloLens 2. It covers both assembly and maintenance, documenting 724 correct and 38 error steps across 38 error types, including procedural and execution errors.
+
+\textit{CaptainCook4D} \cite{peddi2024captaincook4d} offers 384 kitchen cooking videos (94.5 hours) across 24 recipes, capturing both regular and error executions. It includes 5.3K step-level and 10K fine-grained action annotations.
+
+\subsection{ Evaluation}
+ 
+Current egocentric procedural error detection is commonly evaluated using F1 score \cite{ding2023every}\cite{flaborea2024prego}, Accuracy\cite{ding2023every}, per-class Precision \cite{flaborea2024prego} and Recall \cite{flaborea2024prego}. Additional metrics such as Error Detection Accuracy (EDA) \cite{huang2025modeling}, Area Under the Curve (AUC) \cite{huang2025modeling}, and Edit Distance are also employed in relevant studies.
+
+Precision denotes the proportion of true positive error detections among all predicted errors, reflecting the reliability of the model’s error predictions.
+
+Recall represents the ratio of true positive error detections to all actual error instances, indicating the model’s completeness in identifying errors.
+
+Accuracy is the proportion of correctly classified instances, both erroneous and normal, among all samples, reflecting the overall correctness of the model.
+
+The F1 scores or F1@$\mathcal{\tau}$ assess segmentation by calculating the Intersection over Union (IoU) between predicted and ground-truth segments at a threshold $\mathcal{\tau}$/100. Segments with IoU above the threshold are counted as true positives, while additional overlapping predictions are considered false positives. The F1 score is computed as the harmonic mean of precision and recall under these criteria: 
+\begin{equation}
+    \mathrm{F1}=2\cdot\frac{\mathrm{precision}*\mathrm{recall}}{\mathrm{precision}+\mathrm{recall}}.
+\end{equation}
+Typically, $\mathcal{\tau}$ is chosen from the set \{10, 25, 50\}. 
+
+Semantic similarity of error explanations is evaluated using BLEU for n-gram overlap, ROUGE-L for longest common subsequence, and CIDEr for TF-IDF weighted similarity.
+
+Omission Accuracy (O-Acc) quantifies the proportion of detected ground-truth omission errors. Omission Intersection over Union (O-IoU) measures the overlap between predicted and ground-truth omission errors:
+\begin{equation}
+    \mathrm{O-IoU}=\frac{|GT_o\cap PD_o|}{|GT_o\cup PD_o|},
+\end{equation}
+where $GT_o$ is the set of ground-truth omission errors and $PD_o$ is the set of predicted omission errors.
+
+Error Detection Accuracy (EDA) is the proportion of segments correctly classified as erroneous or normal, indicating overall segment-level performance in error detection.
+
+Area Under the Curve (AUC) quantifies the model’s discriminative ability by integrating the true positive and false positive rates over varying thresholds, and is commonly applied in binary classification.
+
+Edit Distance measures the dissimilarity between predicted and ground-truth step sequences, enabling assessment of omissions and ordering errors.
+
+\section{Egocentric Procedural Learning}
+
+\subsection{Definition}
+
+Procedure learning entails identifying key steps and their logical order while filtering out irrelevant or redundant actions, given the variability in task execution sequences. For AI assistants, autonomously acquiring step sequences facilitates effective error detection and enables stepwise task guidance.
+
+Action recognition \cite{kong2022human} classifies the main action in a segment without considering temporal boundaries. Action segmentation \cite{ding2023temporal} assigns frame-level action labels to untrimmed videos, identifying both action types and boundaries. In contrast, procedure learning segments and analyzes multiple videos to identify and sequence key steps for completing a specific task.
+
+Recent advances in egocentric procedural learning rely on varying levels of annotation, with mainstream methods categorized as self-supervised, unsupervised, or weakly-supervised. Organizing these approaches by supervision level provides a clear analytical framework. The following sections review representative works in each category. The performance comparison of the various methods is given in Table~\ref{tab3}.
+
+\begin{table}
+ \caption{Performance comparison of representative methods of egocentric procedural learning, where metric values are averaged across different tasks within the same dataset, the bold text represents the best performance on this metric.}
+    \centering
+    \begin{tabular}{ccccccccc|c|}
+    \toprule
+         \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Method}&  \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Years}&  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Precision}&  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}MoF}&  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}IoU}&  \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}F1}&  \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Recall} &  \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}mIoU}& \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Jaccard}&  \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Dataset}\\
+         \midrule
+         ULNI \cite{alayrac2016unsupervised}&  CVPR 2016&  76.0&  -&  -&  \textbf{46.0}&  67.0 & -&-&  \multirow{2}{*}{YouTube}\\
+         \cellcolor{gray!10}ULAC \cite{kukleva2019unsupervised}&  CVPR 2019&  -&  39.0&  -&  28.3&  - & -&-&  \\
+         
+          \midrule
+ ProcNets-NMS \cite{zhou2018towards}& AAAI 2018& 30.4& -& -& 33.4&  37.1& 33.9&47.6&\multirow{2}{*}{YouCook2}\\
+ \cellcolor{gray!10}ProcNets-LSTM \cite{zhou2018towards}& AAAI 2018& -& -& -& -& -& \textbf{37.0}& \textbf{50.6}&\\
+  \midrule
+ ULAC \cite{kukleva2019unsupervised}& CVPR 2019& -& 32.9& -& -& - & -&-& 50salads\\
+  \midrule
+         
+         \cellcolor{gray!10}ULAC \cite{kukleva2019unsupervised}&  CVPR 2019&  -&  41.8&  -&  26.4&  - & -&-&  \multirow{3}{*}{Breakfast}\\
+ SPS-FL \cite{naing2020procedure}& BMVC 2020& -& -& -& 45.4& - & -&-& \\
+ \cellcolor{gray!10}SPS-LC \cite{naing2020procedure}& BMVC 2020& -& -& -& \textbf{53.2}& - & -&-& \\
+ \midrule
+ SPS-FL \cite{naing2020procedure}& BMVC 2020& 39.6& -& -& 48.1& 64.2 & -&-& \multirow{2}{*}{Inria}\\
+ \cellcolor{gray!10}SPS-LC \cite{naing2020procedure}& BMVC 2020& \textbf{47.4}& -& -& \textbf{56.0}& \textbf{72.8} & -&-& \\
+
+         \midrule
+         JointSeqFL \cite{elhamifar2019unsupervised} &  ICCV 2019&  -&  -&  -&  28.6&  - & -&-&  \multirow{6}{*}{ProceL}\\
+          \cellcolor{gray!10}CnC \cite{bansal2022my}& ECCV 2022& 20.7& -& -& 21.6& 22.6& -& -&\\
+ STEPs \cite{shah2023steps}& ICCV 2023& 23.5& -& -& 24.9& 26.7& -& -&\\
+         \cellcolor{gray!10}GPL \cite{bansal2024united}&  WACV 2024&  22.4&  &  &  23.4&  24.5 &     -& -&  \\
+ OPEL \cite{chowdhury2024opel}& NeurIPS 2024& 33.6& -& 17.9& 34.9& 36.3 & -&-& \\
+ \cellcolor{gray!10}RGWOT \cite{mahmood2025procedure}& arXiv 2025& \textbf{42.2}& -& \textbf{29.4}& \textbf{44.3}& \textbf{46.7} & -&-& \\
+
+ \midrule
+  CnC \cite{bansal2022my}& ECCV 2022& 22.8& -& -& 22.6& 22.5& -& -&\multirow{5}{*}{CrossTask}\\
+ \cellcolor{gray!10}STEPs \cite{shah2023steps}& ICCV 2023& 26.2& -& -& 25.9& 25.8& -& -&\\
+ GPL \cite{bansal2024united}& WACV 2024& 24.9& -& -& 24.5&  24.1& -&-& \\
+\cellcolor{gray!10} OPEL \cite{chowdhury2024opel}& NeurIPS 2024& 35.6& -& 16.9& 35.1& 34.8 & -&-& \\
+ RGWOT \cite{mahmood2025procedure}& arXiv 2025& \textbf{40.4}& -& \textbf{26.3}& \textbf{40.4}& \textbf{40.7} & -&-& \\
+
+
+ \midrule
+   \cellcolor{gray!10}CnC \cite{bansal2022my}& ECCV 2022& -& -& 10.7& 22.0& -& -& -&\multirow{4}{*}{EgoProceL}\\
+ GPL \cite{bansal2024united}& WACV 2024& -& -& 13.9& 25.6& -& -& -&\\
+ \cellcolor{gray!10}OPEL \cite{chowdhury2024opel}& NeurIPS 2024& -& -& 16.3& 32.0& - & -&-& \\
+ RGWOT \cite{mahmood2025procedure}& arXiv 2025& -& -& \textbf{31.2}& \textbf{46.8}& - & -&-& \\
+
+  \bottomrule
+
+    \end{tabular}
+   
+   \label{tab3}%
+\end{table}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{flooow2.pdf}
+    \caption{(a) shows a flowchart summarizing unsupervised learning methods: GPL \cite{bansal2024united}, ULNI \cite{alayrac2016unsupervised}, JointSeqFL \cite{elhamifar2019unsupervised}, ULAC \cite{kukleva2019unsupervised}, OPEL \cite{chowdhury2024opel}, BP-HMM \cite{sener2015unsupervised}, (b) shows a flowchart summarizing weakly-supervised learning methods: PLDS \cite{lin2022learning}, ProNets \cite{zhou2018towards}, CrossTask \cite{zhukov2019cross}, SPS \cite{naing2020procedure}.}
+    \label{fig5}%
+\end{figure}
+
+\subsection{ Unsupervised Learning}
+
+Unsupervised learning operates without manual labels, leveraging raw data, ideal for annotation-scarce settings. Unlike supervised methods, it avoids label-induced biases and exploits latent information in unannotated data. In procedural learning, unsupervised approaches are mainly utilized for clustering. A flowchart is shown in Fig.~\ref{fig5}.
+
+Clustering partitions data into groups of high intra-cluster similarity and low inter-cluster similarity, utilizing the data’s inherent distribution without relying on predefined labels. Given a dataset $X=\{x_1,x_2,...,x_n\}$, where $x_i\in\mathbb{R}^d$ , the goal is to find a mapping:
+\begin{equation}
+    C:X\to\{1,2,...,k\},
+\end{equation}
+where $k$ is the number of clusters, and $C(x_i)$ denotes the cluster label of sample $x_i$. Clustering is typically achieved by optimizing certain objective functions; for example, K-means minimizes the Sum of Squared Errors (SSE) within clusters:
+\begin{equation}
+    \mathrm{SSE}=\sum_{i=1}^k\sum_{x\in C_i}\|x-\mu_i\|^2,
+\end{equation}
+where $\mu_i$ is the center of cluster $C_i$.
+
+Bansal et al. (GPL) \cite{bansal2024united} introduced a graph-based framework with K-means clustering for unsupervised key-step discovery using spatiotemporal and semantic relations. Alayrac et al. (ULNI) \cite{alayrac2016unsupervised} performed text clustering to guide discriminative video clustering for key-step identification. Elhamifar et al. (JointSeqFL) \cite{elhamifar2019unsupervised} employed HMMs and optimization to select representative sub-activity sequences. Kukleva et al. (ULAC) \cite{kukleva2019unsupervised} learned frame embeddings with a neural network and clustered them to infer key steps and order. Chowdhury et al. (OPEL) \cite{chowdhury2024opel} used Optimal Transport theory for video alignment and key-step clustering, thereby avoiding the need for manual annotation. Sener et al. (BP-HMM) \cite{sener2015unsupervised} automatically discovered and parsed semantic steps in large video collections, also generating textual descriptions.
+
+Specifically, GPL \cite{bansal2024united} operates in three stages: segmenting videos into clips using I3D ResNet-50 features to form graph nodes; connecting nodes via semantic and temporal edges and filtering backgrounds through hand-object interaction detection; and optimizing node embeddings with Node2Vec \cite{grover2016node2vec}. Key steps are identified by K-means clustering, with sequence order determined by timestamps. 
+
+ULNI \cite{alayrac2016unsupervised} first clusters text narrations by extracting verb-direct object pairs and optimizing an IQP via the Frank-Wolfe algorithm, using WordNet \cite{kilgarriff2000wordnet} for semantic similarity. The top K aligned steps are designated key steps. Subsequently, discriminative clustering of video frame features under text constraints temporally localizes these key steps in the videos. 
+
+JointSeqFL \cite{elhamifar2019unsupervised} segments videos and extracts concatenated appearance (VGG16 BoW) and motion (HOF) features, reduced by PCA. HMMs generate sub-activity sequences, with a greedy dynamic programming algorithm and the Frank-Wolfe method used to align and extract global key steps across all videos.
+
+ULAC \cite{kukleva2019unsupervised} extracts frame-level features and timestamps, learning continuous temporal embeddings with an MLP. K-means clusters these embeddings into action classes, and the Viterbi algorithm \cite{richard2018neuralnetwork} infers the optimal sequence of action labels.
+
+OPEL \cite{chowdhury2024opel} is primarily modeled as an optimal transport (OT) problem. It takes two video sequences as input and uses a deep encoder (\textit{e.g.}, ResNet-50) to extract frame-level embeddings. The frame alignment problem is formulated as an OT problem aimed at minimizing the transport cost: 
+\begin{equation}
+    W_p^p(f,g)=\min_{\mathbf{T}\in U(\alpha,\beta)}\langle\mathbf{T},\mathbf{D}\rangle,
+\end{equation}
+where $D$ denotes the frame-to-frame distance matrix and $T$ is the transport matrix. To enhance performance, OPEL incorporates two types of priors as regularization terms. The Optimality Prior is based on the OT transport matrix $T$, which encourages the alignment of frames that are both semantically similar in the embedding space and temporally close. It is modeled using a Laplacian distribution: 
+\begin{equation}
+    \mathbf{Q}_o(i,j)=\frac{1}{2b}e^{-\frac{|d_o(i,j)|}{b}},
+\end{equation}
+where $d_o(i,j)$ represents the distance of a frame to its optimal aligned position. Temporal Prior promotes the alignment of temporally proximate frames and is also modeled via a Laplacian distribution: 
+\begin{equation}
+    \mathbf{Q}_t(i,j)=\frac{1}{2b}e^{-\frac{|d_t(i,j)|}{b}},
+\end{equation}
+where $d_t(i,j)$ denotes the distance of a frame to the temporal diagonal. The two priors are combined using a dynamic weighting strategy: 
+\begin{equation}
+    \mathbf{Q}(i,j)=\phi\mathbf{Q}_t(i,j)+(1-\phi)\mathbf{Q}_o(i,j).
+\end{equation} 
+BP-HMM \cite{sener2015unsupervised} uses cross-video proposal clustering to extract visual atoms and TF-IDF to select language atoms from ASR captions. Frames are represented multimodally and input to a Beta Process Hidden Markov Model \cite{fox2014joint}, with Gibbs sampling used for step inference. This approach identifies step presence, assignments, and frame-step associations, and generates concise textual descriptions with a third-order Markov language model \cite{shannon1948mathematical}.
+
+
+\subsection{ Weakly-Supervised Learning}
+
+Weakly-supervised methods use limited annotations (\textit{e.g.}, video-level tags), thereby reducing labeling costs compared to full supervision. They offer greater accuracy and a narrower search space than unsupervised methods, and avoid proxy task limitations and pseudo-label errors common in self-supervised approaches.
+
+Lin et al. (PLDS) \cite{lin2022learning}\cite{anthonio2020wikihowtoimprove} apply distant supervision, generating pseudo-labels by aligning ASR transcripts with external text. Zhou et al. (ProcNets) \cite{zhou2018towards} train using only temporal boundaries, reducing annotation cost. Zhukov et al. (CrossTask) \cite{zhukov2019cross} use shared component classifiers and ordered step lists with narrations for cross-task supervision without temporal labels. Naing et al. (SPS) \cite{naing2020procedure} infer and localize unannotated key steps from partial summaries, framing step completion as joint representation learning and greedy search.
+
+Specifically, PLDS \cite{lin2022learning} consists of three stages. In the first stage, the input is segmented into multiple clips from HowTo100M's long videos \cite{miech2019howto100m}, each containing generated ASR text. Step description texts are retrieved from WikiHow, and pseudo-labels for each clip are obtained by comparing text similarity $S$ :
+\begin{equation}
+    \mathcal{S}(a_l,y_s^{(t)})=e(a_l)^\top\cdot e(y_s^{(t)}),
+\end{equation}
+where $e(a_l)$ and $e(y_s^{(t)})$ $\in\mathbb{R}^d$ and $d$ is the dimension of the language embedding space. A Softmax yields a step probability per clip. In the second stage, TimeSformer \cite{bertasius2021space} is trained with Distribution Matching, which minimizes the KL divergence between output and pseudo-label distributions. The resulting representations enable downstream tasks such as procedural learning and action anticipation.
+
+ProcNets \cite{zhou2018towards} is an end-to-end model using ResNet-34 \cite{he2016deep} for frame-level spatial features. A bidirectional LSTM encodes features, and an anchor mechanism generates candidate segments. High-scoring segments are selected and ordered to produce the final step sequence with temporal boundaries. 
+
+CrossTask \cite{zhukov2019cross} defines a task as a collection of videos with an ordered step list. For each step, classifiers are trained to identify whether a video segment corresponds to that step. Unlike conventional methods, steps are decomposed into components (\textit{e.g.}, verbs, nouns), with classifiers trained for each component: 
+\begin{equation}
+    \begin{array}{l}{\text { \texttt{"}pour milk\texttt{"} } = \text { aver }\left(g_{\text {pour }}(x), g_{\text {milk }}(x)\right)} \\ {\text { \texttt{"}pour egg\texttt{"} } = \text { aver }\left(g_{\text {pour }}(x), g_{\text {egg }}(x)\right)}\end{array}.
+\end{equation}
+This approach enables component sharing across tasks, allowing new steps to be addressed by recombining existing classifiers. Weak supervision is applied, relying only on step order and matching instructional text. Alternating optimization ensures convergence. The method efficiently recognizes steps without explicit filtering or sorting.
+
+SPS \cite{naing2020procedure} takes video segment features (extracted by VGG and LSTM) and partial key-step annotations $\left\{(Y^{(\ell)},\mathcal{S}_{\ell})\right\}_{\ell=1}^{L} $ as input. The set of entire video key-steps $\{Y^{(\ell)}\}_{\ell=1}^L$ and the set of unobserved key-steps $\{\mathcal{U}_\ell\}_{\ell=1}^L$ are defined. A mapping function projects data into feature space, enabling observed and unobserved key steps to represent the video optimally. Joint optimization of encoding, dissimilarity, and autoencoder losses ensures selected key steps can linearly reconstruct the video (similar to sparse coding): 
+\begin{equation}
+    \mathcal{L}_{\text{enc},\mathcal{M}}(\theta,\Lambda_{1},\ldots,\Lambda_{L}) \triangleq \sum_{\ell=1}^{L}d_{\mathcal{M}}(F_{\Lambda_{\ell}}^{(\ell)},F^{(\ell)}),
+\end{equation}
+where $d_{\mathcal{M}}(\cdot,\cdot)$ measures the goodness of the transformed key-steps $F_{\Lambda_{\ell}}^{(\ell)}$ for representing the $\ell$-th video, $F^{(\ell)}$, under the subset selection model $\mathcal{M}$. . The dissimilarity loss encourages the key steps to be dispersed in the feature space to avoid redundancy :
+\begin{equation}
+    \mathcal{L}_{dis}(\theta,\Lambda_1,\ldots,\Lambda_L)\triangleq-\sum_{\ell=1}^L\sum_{i\in\Lambda_\ell}\sum_{\binom{j\in\Lambda_\ell}{j\neq i}}\|f_i^{(\ell)}-f_j^{(\ell)}\|_2^2.
+\end{equation}
+Autoencoder loss mitigates overfitting and maintains local data structure through LSTM reconstruction. Alternating Minimization is used for optimization, yielding the complete set of key steps.
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{flooow3.pdf}
+    \caption{A flowchart summarizing self-supervised egocentric procedural learning methods: CnC\cite{bansal2022my}, RGWOT\cite{mahmood2025procedure} and STEPS\cite{shah2023steps}.}
+    \label{fig6}%
+\end{figure}
+
+\subsection{Self-Supervised Learning}
+
+Self-supervised learning creates auxiliary tasks to generate supervisory signals from unlabeled data. As a subset of unsupervised learning, it reduces human annotation effort and enhances generalization for large-scale training.
+
+Bansal et al. (CnC) \cite{bansal2022my} use temporal cycle consistency to learn correspondences and generate pseudo-labels for sequence alignment. Mahmood et al. (RGWOT) \cite{mahmood2025procedure} apply FGWOT with contrastive loss to align frame sequences and create pseudo-labels. Shah et al. (STEPS) \cite{shah2023steps} design unimodal temporal and cross-modal contrastive losses for self-supervision.
+
+Specifically, CnC \cite{bansal2022my} operates in three stages: generating pseudo-labels and frame embeddings with Temporal Cycle Consistency and regularization; modeling clustering as a multi-label graph cut to assign key-step labels; and analyzing temporal occurrences to order key steps, accommodating varied sequences across videos.
+
+RGWOT \cite{mahmood2025procedure} first encodes video frames using 3D convolutional layers and global max pooling, producing 128-dimensional embedding vectors for temporal context representation.For two input videos $X$ and $Y$, the embedding are written as $\mathbf{X}=f_{\boldsymbol{\theta}}(X)\in\mathbb{R}^{N\times D}$ and $\mathbf{Y}=f_{\boldsymbol{\theta}}(Y)\in\mathbb{R}^{M\times D}$, where $f_{\boldsymbol{\theta}}$ is the embedding function and $D$ is the length of  the embedding vector. In the second stage, RGWOT aligns frames with FGWOT and contrastive regularization, then constructs a graph and uses $\mathcal{\alpha}$-Expansion to assign key-steps. Final ordering is based on key-step frequency analysis.
+
+STEPS \cite{shah2023steps} primarily consists of two stages. In the first stage, representation learning is performed by inputting multi-modal video data. Used pre-trained networks (VGG-19 and ResNet-50) to extract frame-level appearance features $p_t^{appearance}$, while motion features $p_t^{motion}$ are extracted using RAFT optical flow \cite{teed2020raft} or OpenPose pose estimation \cite{martinez2019openpose}. A bidirectional LSTM is employed to model the temporal relationships in the feature sequences, generating task-adapted frame-level feature representations. Feature learning is then guided by two loss functions, per-modality temporal loss $\mathcal{L}_{T}$ and cross-cue local loss $\mathcal{L}_{CCL}$.Then it trained the model with the weighted loss function:
+\begin{equation}
+    \mathcal{L}=\mathcal{L}_{T}+\lambda_{1}\mathcal{L}_{\mathrm{CCL}}.
+\end{equation}
+In the second stage, using K-Means to cluster and extract key-steps. A flowchart of all the mentioned methods is shown in Fig.~\ref{fig6}.
+
+\begin{table}
+\caption{Summarize the representative datasets in egocentric procedural learning, Ego means egocentric view and Exo means third-person view.}
+    \centering
+    \begin{tabular}{cccccccccc}
+    \toprule
+         \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Dataset}&  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Years}&  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Duration}&  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Videos}&  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Segments}&  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Tasks}&  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Steps}&  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Domain}& \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}View} &\multicolumn{1}{c}{\cellcolor[HTML]{EFEFEF}Step annotations}\\
+         \midrule
+         Breakfast \cite{kuehne2014language}&  CVPR 2014&  77h&  -&  -&  10&  48&  Cooking& Exo &\makecell{\ding{51}}\\
+         Inria \cite{alayrac2016unsupervised}&  CVPR 2016&  5h&  150&  800k&  5&  -&  Mixed&  Exo&\makecell{\ding{51}}\\
+         YouCook2 \cite{zhou2018towards}&  AAAI 2018&  176h&  2000&  14k&  89&  15k&  Cooking& Exo &\makecell{\ding{51}}\\
+         COIN \cite{tang2019coin}&  CVPR 2019&  476h&  11827&  46354&  180&  -&  Mixed& Exo &\makecell{\ding{51}}\\
+         HowTo100M \cite{miech2019howto100m}&  ICCV 2019&  134472h&  1.22M&  136M&  23611&  -&  Mixed& Exo &\makecell{\ding{55}}\\
+         CrossTask \cite{zhukov2019cross}&  CVPR 2019&  376h&  4700&  133&  83&  705&  Mixed& Exo &\makecell{\ding{51}}\\
+         ProceL \cite{elhamifar2019unsupervised}&  ICCV 2019&  47.3h&  720&  720&  12&  -&  Mixed& Exo &\makecell{\ding{51}}\\
+         EgoProceL \cite{bansal2022my}&  ECCV 2022&  62h&  -&  720&  16&  8.7Avg&  Mixed& Ego &\makecell{\ding{51}}\\
+   \bottomrule
+    \end{tabular}
+    
+    \label{tab4}%
+
+\end{table}
+
+\subsection{ Datasets}
+ 
+For procedural error detection, various egocentric datasets have been introduced, covering scenarios such as cooking \cite{damen2020epic}\cite{peddi2024captaincook4d}, assembly \cite{sener2022assembly101}\cite{liu2024ikea}, outdoor tent pitching \cite{jang2019epic}, and specialized domains like chemical experiments \cite{haneji2024egooops}. Several additional datasets are also prevalent in procedural learning research, as shown in Table~\ref{tab4}.
+
+\textit{Breakfast} \cite{kuehne2014language} includes 77 hours of video for 10 cooking activities by 52 participants in 18 kitchens. Each video averages 5.2 unique actions and 6.9 action segments, with 10\% of actions repeated.
+
+\textit{Inria} \cite{alayrac2016unsupervised} is an instructional dataset of 150 videos (30 per task) spanning five tasks, with 800,000 frames and comprehensive annotations.
+
+\textit{YouCook2} \cite{zhou2018towards} contains 2,000 untrimmed videos featuring 89 global cooking recipes, averaging 22 videos per recipe and encompassing diverse cooking styles. 
+
+\textit{COIN} \cite{tang2019coin} contains 11,827 YouTube videos across 180 tasks in 12 daily domains, totaling 476 hours and 46,354 annotated segments, with an average video length of 2.36 minutes.
+
+\textit{HowTo100M} \cite{miech2019howto100m} includes 1.22 million instructional videos, covering 23,000+ visual tasks and 136 million clips, each with narrations and auto-downloaded subtitles from YouTube.
+
+\textit{CrossTask} \cite{zhukov2019cross} consists of instructional videos for 83 tasks (\textit{e.g.}, making a bread, preparing a latte, building a stool), each annotated with an ordered, human-written list of steps.
+
+\textit{ProceL} \cite{elhamifar2019unsupervised} contains 47.3 hours of annotated instructional video from 720 clips across 12 tasks (\~60 per task). Five tasks overlap with Inria \cite{alayrac2016unsupervised}, while seven are new; videos are sourced from YouTube and trimmed for relevance.
+
+\textit{EgoProceL} \cite{bansal2022my} comprises 62 hours of egocentric video across 16 domains, emphasizing key steps for task completion rather than every action. Key step orders may vary across videos.
+
+\subsection{Evaluation}
+
+Evaluation in procedural learning typically employs metrics like F1 score, Precision, and Recall \cite{bansal2024united}\cite{alayrac2016unsupervised}, especially in the context of error detection. Other approaches may utilize Intersection over Union (IoU) \cite{chowdhury2024opel}, the frame-level metric MoF \cite{kukleva2019unsupervised}, as well as the Hungarian algorithm, MidH, and the Jaccard index \cite{zhou2018towards}.
+
+The Hungarian algorithm can generate a one-to-one mapping between ground truth and predicted values. IoU is calculated using the formula: 
+\begin{equation}
+    \mathrm{IoU}=\frac{1}{A}\sum_a|GT_a\cap D_a|/|GT_a\cup D_a|,
+\end{equation}
+where $GT_a$ and $D_a$ represent the ground truth frame set and the predicted frame set for action $a$, respectively.
+
+MoF is the percentage of frames with correctly predicted action labels. It is defined as
+\begin{equation}
+    { \mathrm { M o F } } = { \frac { \# { \mathrm { o f ~ c o r r e c t ~ f r a m e s } } } { \# { \mathrm { o f ~ a l l ~ f r a m e s } } } }, 
+\end{equation}
+where \# represents "number".
+
+MidH measures the percentage of predicted action segments whose midpoint falls within a ground truth action segment. Some methods employ the Jaccard score, which quantifies evaluation by computing the maximum intersection between predicted proposals and ground truth segments for each video, averaging these per video, and then averaging across all videos to obtain the final metric.
+
+These metrics often yield high scores for models that cluster frames into a single group, since the majority key-step typically corresponds to background frames in ground truth. In untrimmed procedural videos, this background predominance can artificially inflate evaluation results. Shen et al. \cite{shen2021learning} examined this issue using the MoF metric, which, as noted by \cite{kukleva2019unsupervised}, is unsuitable for imbalanced datasets. Bansal et al. \cite{bansal2022my} propose computing frame-level scores per key-step and averaging over all key-steps, penalizing uneven performance, such as assigning all frames to a single key-step. This protocol results in lower scores for all methods.
+
+\section{Egocentric Procedural Question Answering}
+
+\subsection{Definiton}
+
+An AI assistant with autonomous procedural learning can identify key steps and provide real-time responses to user queries (\textit{e.g.}, tool location or selection) by reasoning over long-term egocentric videos, thereby enhancing task guidance in daily life.
+
+Video Question Answering (VideoQA) requires models to answer questions about video content using spatial and temporal information to connect computer vision and NLP. Egocentric VideoQA differs from third-person VideoQA, as it contains questions about the camera wearer and features rapid scene changes, diverse actions, and complex long-term dependencies. Consequently, third-person models often underperform in egocentric settings.
+
+VideoQA has evolved from “CNN+RNN” to “CNN/ViT+BERT” and now to the “CLIP+LLM” stage \cite{xiao2025videoqa}, leveraging cross-modal encoders (\textit{e.g.}, CLIP-ViT \cite{zeng2025multimodal}\cite{yang2024clip}) and frozen LLMs (\textit{e.g.}, Flan-T5, LLaMA). Current methods either use LLMs as fixed reasoning engines with processed video inputs or train dedicated egocentric VideoQA models. Leading models now approach human-level performance. Subsequent sections review these approaches by category, and the flowchart is shown in Fig.~\ref{fig7}. The performance comparison of the various methods is given in Table~\ref{tab5}.
+
+
+\begin{table}
+\caption{Performance comparison of representative methods of egocentric video question answering, where metric values are averaged across different tasks within the same dataset, the bold text represents the best performance on this metric.}
+    \centering
+    \begin{tabular}{cccccc|c|}
+    \toprule
+         \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Method}& \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Year} &  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Accrarcy}&  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Comp.}&  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Coher.}&  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}QA Score}&  \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Benchmark}\\
+         \midrule
+         
+         Lifelong (Claude-3-Haiku) \cite{wang2023lifelongmemory}&  arXiv 2023&  55.2&  -&  -&  -&  \multirow{10}{*}{EgoSchema}\\
+         \cellcolor{gray!10}Lifelong (GPT-4) \cite{wang2023lifelongmemory}&  arXiv 2023&  62.1&  -&  -&  -&  \\
+         Lifelong (GPT-4o) \cite{wang2023lifelongmemory}&  arXiv 2023&  64.6&  -&  -&  -&  \\
+ \cellcolor{gray!10}Lifelong (Llama3-8B) \cite{wang2023lifelongmemory}& arXiv 2023& 60.4& -& -& -& \\
+ Lifelong (GPT-3.5 ) \cite{wang2023lifelongmemory}& arXiv 2023& 64.0& -& -& -& \\
+ \cellcolor{gray!10}HCQA \cite{zhang2024hcqa}& arXiv 2024& 75.0& -& -& -& \\
+  MM-Ego \cite{ye2024mm}& arXiv 2024& 69.0& -& -& -&\\
+ \cellcolor{gray!10}HCQA 1.5 \cite{zhang2025hcqa}& arXiv 2025& \textbf{77.3}& -& -& -& \\
+
+ EgoGPT (EgoIT) \cite{yang2025egolife}&  CVPR 2025&  73.2&  -&  -&  -&  \\
+         \cellcolor{gray!10}EgoGPT (EgoIT+D1) \cite{yang2025egolife}&  CVPR 2025&  75.4&  -&  -&  -&  \\
+  \midrule
+ MM-Ego \cite{ye2024mm}& arXiv 2024& 61.3& -& -& -& EgoMemoria\\
+ \midrule
+ \cellcolor{gray!10}ALANAVLM \cite{suglia2024alanavlm}& arXiv 2024& 46.7& -& -& -& OpenEQA\\
+ \midrule
+ GeLM \cite{chen2025grounded}& AAAI 2025& -& -& -& 4.8& MULTIHOP-EGOQA\\
+ \midrule
+ \cellcolor{gray!10}EgoGPT (EgoIT) \cite{yang2025egolife}& CVPR 2025& 32.4& -& -& -& \multirow{2}{*}{EgoPlanbench}\\
+ EgoGPT (EgoIT+D1) \cite{yang2025egolife}& CVPR 2025& \textbf{33.4}& -& -& -& \\
+ \midrule
+ \cellcolor{gray!10}EgoGPT (EgoIT) \cite{yang2025egolife}& CVPR 2025& \textbf{61.7}& -& -& -& \multirow{3}{*}{EgoThink}\\
+ EgoGPT (EgoIT+D1) \cite{yang2025egolife}& CVPR 2025& 61.4& -& -& -& \\
+ \cellcolor{gray!10}RAVEN \cite{biswas2025raven}& arXiv 2025& 54.0& -& -& -& \\
+ \midrule
+ EgoGPT (EgoIT) \cite{yang2025egolife}& CVPR 2025& 33.1& -& -& -& \multirow{2}{*}{EgolifeQA}\\
+ \cellcolor{gray!10}EgoGPT (EgoIT+D1) \cite{yang2025egolife}& CVPR 2025& \textbf{36.0}& -& -& -& \\
+ \midrule
+ RAVEN \cite{biswas2025raven}& arXiv 2025& 61.0& 71.0& 69.0& -& AVS-QA\\
+
+ \bottomrule
+    \end{tabular}
+    
+   \label{tab5}%
+\end{table}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{flooow4.pdf}
+    \caption{(a) shows the different methods that using LLMs as the main inference engine to obtaining answers: Lifelongmemory \cite{wang2023lifelongmemory}, HCQA \cite{zhang2024hcqa}, HCQA 1.5 \cite{zhang2025hcqa}, FPG \cite{taluzzi2025pixels}, Egolife \cite{yang2025egolife}, and (b) shows the different methods that training specialized videoQA model to obtaining answers: GroundVQA \cite{di2024grounded}, Vinci \cite{huang2024vinci}, ALANAVLM \cite{suglia2024alanavlm}, GeLM \cite{chen2025grounded}, RAVEN \cite{biswas2025raven}.}
+    \label{fig7}%
+\end{figure}
+
+\subsection{Leveraging LLMs As Reasoning Engines}
+
+These methods exploit pre-trained LLM reasoning without training large multimodal models, allowing efficient development. However, their accuracy is constrained by potential information loss during video-to-text conversion.
+
+Wang et al. \cite{wang2023lifelongmemory} introduce a question-answering framework for long-term egocentric videos utilizing Large Language Models (LLMs). The system first employs a pre-trained multimodal large model to segment videos and generate interval-based textual descriptions. These descriptions are then compressed via text summarization to remove redundancy and irrelevance. The condensed descriptions, together with user queries, are fed into an LLM to produce answers, candidate time intervals, and confidence scores. Post-processing with a pre-trained Natural Language Query (NLQ) model \cite{ramakrishnan2023naq} further refines the temporal granularity, and iterative reasoning is used to select the answer with the highest confidence.
+
+Zhang et al. \cite{zhang2024hcqa} propose a three-stage pipeline (HCQA) for multiple-choice question answering on the EgoSchema egocentric video benchmark. First, the 180-second video is divided into 45 four-second clips, with the LaViLa model generating five diverse captions per clip. Second, context-driven summarization integrates these captions into a coherent global summary using GPT-4o, leveraging in-context learning for temporal comprehension. Finally, inference is performed via Chain-of-Thought reasoning to produce step-by-step answers.
+
+Subsequently, the team introduced HCQA 1.5 \cite{zhang2025hcqa}, which enhances the original HCQA by replacing single-model inference with a dual-stage decision protocol. In the Multi-source Aggregation stage, multiple leading LLMs (\textit{e.g.}, Gemini-1.5-Pro, GPT-4.1, Qwen2.5) independently generate answers and confidence scores. Responses with high confidence ($\geq$4) are output directly. For lower-confidence cases, a Fine-grained Reasoning stage applies two distinct reasoning paths using DeepSeek-R1. The output with the higher confidence score is selected as the final answer, improving robustness under ambiguous visual conditions.
+
+Taluzzi et al. \cite{taluzzi2025pixels} introduce two graph-structured video question-answering approaches (FPG). SceneNet extracts structured scene graphs using an MLLM (Gemini 2.0 Flash) to represent objects, attributes, spatial and temporal relations, with specialized nodes for Agent, Environment, and Dynamic Objects. Graphs are generated segment-wise and temporally unified. KnowledgeNet constructs object-centric commonsense knowledge graphs by leveraging external resources (\textit{e.g.}, ConceptNet); Sentence Transformers perform domain filtering to retain relevant pathways, yielding structured textual outputs for enhanced reasoning.
+
+Yang et al. \cite{yang2025egolife} introduce EgoButler, an egocentric AI assistant comprising two subsystems: EgoGPT, a multimodal model (fine-tuned from LLaVA-OneVision) for visual and audio understanding with personalized recognition, and EgoRAG, a Retrieval-Augmented Generation module enabling long-term, cross-day information retrieval. Final responses are generated by an LLM (\textit{e.g.}, GPT-4o) using contextually relevant memory clips.
+
+\subsection{Training Specialized VideoQA Model}
+
+In this paradigm, models are trained end-to-end on video data to integrate visual and linguistic features directly. This approach excels at capturing visual nuances and spatiotemporal relations but demands significant computational resources and large-scale annotated datasets.
+
+Di et al. \cite{di2024grounded} present an end-to-end framework unifying query localization and answering to reduce error propagation. The model encodes questions and candidate answers with Flan-T5 and extracts video features via EgoVLP \cite{lin2022egocentric} or InternVideo \cite{chen2022internvideo}, projecting them into a shared language space. Multimodal fusion is achieved with a Transformer, while a dual-head decoder predicts temporal segments and answers, supporting both open-ended and multiple-choice QA.
+
+Huang et al. \cite{huang2024vinci} introduce Vinci, a real-time embodied assistant based on the EgoVideo-VL model, which combines EgoVideo \cite{pei2024egovideo} and InternLM-7B \cite{cai2024internlm2}, instruction-tuned on Ego4D, EgoExoLearn, and Ego4D-Goalstep. Vinci processes continuous egocentric video, supports real-time and historical QA, and provides task planning. It features a memory module for temporal context, a SEINE-based video generation module for visual demonstrations, and a retrieval system (using FAISS) for relevant instructional content from HowTo100M. Multimodal reasoning and answer synthesis are conducted via InternLM-7B.
+
+Suglia et al. \cite{suglia2024alanavlm} introduce a multimodal foundation model for egocentric video understanding, trained on the newly constructed EVUD dataset, comprising annotated and synthetic QA pairs from Ego4D NLQ \cite{mo2022simple} and converted VSR data. Using Chat-UniVi \cite{jin2024chat}, fine-tuned with LoRA for parameter efficiency and incorporating a rehearsal mechanism to mitigate catastrophic forgetting, the model is explicitly optimized for egocentric video QA. This represents the first VLM training pipeline tailored to egocentric data, yielding robust video comprehension and QA abilities.
+
+Chen et al. \cite{chen2025grounded} propose GeLM, an end-to-end multimodal large language model enabling multi-hop temporal reasoning in egocentric video QA. GeLM employs InternVideo \cite{wang2022internvideo} for video feature extraction and Vicuna-7B \cite{chiang2023vicuna} as its language backbone. Special grounding tokens ($<T>$, $</T>$) are integrated to mark information requiring temporal localization. Its evidence localization module incorporates a saliency branch for global evidence detection and a similarity branch to align grounding tokens with relevant frames, thereby supporting precise multi-segment reasoning.
+
+Biswas et al. \cite{biswas2025raven} present RAVEN, a unified multimodal QA framework centered on the QuART module, which employs a learnable relevance projection head $\mathbf{W}^{R}$ to assign query-conditioned weights to each token. Tokens are fused via weighted summation to generate a context vector $C$, selectively emphasizing relevant information while suppressing noise. This design enhances robustness to misalignment and underpins a three-stage training regimen.
+
+Ye et al. \cite{ye2024mm} propose a two-stage progressive QA framework: “Global Glimpse” first compresses visual embeddings to obtain global context and rapidly identifies key frames; “Fallback” then uses high-resolution embeddings of those frames to generate precise answers. SigLIP-so400m extracts frame features, mapped via MLP into the Qwen2-7B LLM space. The Memory Pointer Prompting mechanism facilitates relevance-based key frame localization followed by detailed answer generation, balancing efficiency and accuracy. Training addresses both frame localization and answer generation.
+ 
+ \begin{table}
+ \caption{Summarize the representative datasets in egocentric video question answering, Ego means egocentric view, and Exo means third-person view. Q-As represent question-answer pairs.}
+     \centering
+     \begin{tabular}{ccccccccc}
+     \toprule
+           \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Dataset}&   \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Years}&   \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Duration}&   \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Videos}&   \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Segments}&    \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Tasks}& \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Q-As/Questions}&   \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Domain}&  \multicolumn{1}{c}{\cellcolor[HTML]{EFEFEF}View}\\
+          \midrule
+           EQA \cite{das2018embodied}& CVPR 2018& -& -& -& 4& 5000+& Indoor&Ego\\
+            AssistQ \cite{wong2022assistq}& ECCV 2022& 192h& 100& -& 25& 531& Household&Ego\\
+          EgoSchema \cite{mangalam2023egoschema}&  NeurIPS 2023&  250h&  -&  844&   1&5063&  Mixed& Ego\\
+           VIEW-QA \cite{song2024video}&  arXiv 2024&  10h&  1030&  -&   5&4120&  VIPs Assist& Ego\\
+          EVUD \cite{suglia2024alanavlm}&  arXiv 2024&  21.3h&  -&  2.4W&   9&10.5W&  Mixed& Ego\\
+          HOI-QA \cite{bansal2024hoi}& arXiv 2024& -& 3956& -& 8& 390w& Mixed&Ego\\
+          EgoTempo \cite{plizzari2025omnia}&  CVPR 2025&  274h&  221&  365&   10&500&  Mixed& Ego\\
+          EgoBlind \cite{xiao2025egoblind}&  arXiv 2025&  9h&  478&  1329&   6&5311&  VIPs Assist& Ego\\
+ EgoTextVQA \cite{zhou2025egotextvqa}& CVPR 2025& 253h& 1507& -& 11& 7064& Mixed&Ego\\ 
+     \bottomrule
+     \end{tabular}
+     
+    \label{tab6}%
+ \end{table}
+
+\subsection{Datasets}
+
+Several relevant benchmarks and datasets have been introduced as shown in Table~\ref{tab6}.
+
+\textit{EQA} \cite{das2018embodied} is a comprehensive benchmark for embodied agent training and evaluation, built on the House3D platform with over 45,000 SUNCG-based \cite{song2017semantic} 3D indoor scenes. It defines queries involving 12 room types and 50 object categories.
+
+\textit{AssistQ} \cite{wong2022assistq} comprises 100 egocentric instructional videos (mean duration: 115 seconds) covering 25 household appliances, with 531 multi-step QA pairs. Questions are classified into general and specific functional categories, addressing appliance operation and settings.
+
+\textit{EgoSchema} \cite{mangalam2023egoschema} comprises 5,063 video-question pairs drawn from 250 hours of Ego4D egocentric footage, with 3-minute clips annotated by $\geq$30 timestamps. It includes diverse question types, such as action reasoning and scene understanding. EgoSchema introduces the Temporal Certificate metric, which represents the minimal cumulative duration of segments required to verify annotation validity.
+
+\textit{VIEW-QA} \cite{song2024video} comprises 1,030 videos (\~10 hours) and 4,120 QA pairs, with questions divided into five categories reflecting the practical needs of visually impaired users. Its dynamic, multi-task video QA design better mirrors real-world use cases.
+
+\textit{EVUD} \cite{suglia2024alanavlm} supports both video captioning and QA tasks, comprising 13,849 Ego4D NLQ clips with 1,137 human-annotated QA pairs, 96,523 Gemini Pro 1.5-generated QA pairs across 7 categories, 7,680 polar QA pairs for spatial reasoning, 7,000 EgoClip videos with captions, and 3,475 short videos with captions generated via Habitat for HM3D scenes in OpenEQA \cite{majumdar2024openeqa}.
+
+\textit{HOI-QA} \cite{bansal2024hoi} comprises 3.9 million QA pairs: 1.8M from EPIC-Kitchens (with narratives, object bounding boxes, and hand-object contact) and 2.1M from Ego4D’s FHO benchmark (narratives, hand/object bounding boxes). The data is split into 3.2M training samples and 0.75M test samples.
+
+\textit{EgoTempo} \cite{plizzari2025omnia} features 500 QA pairs spanning 10 temporal reasoning tasks using egocentric videos (avg. 45 seconds) from 40 scenarios, designed to evaluate MLLM temporal integration abilities.
+
+\textit{EgoBlind} \cite{xiao2025egoblind} is the first QA dataset constructed from real-world egocentric videos recorded by blind individuals. Unlike prior datasets such as VizWiz (static images) \cite{gurari2018vizwiz} and VIEW-QA (simulated blindness) \cite{song2024video}, EgoBlind uniquely addresses the dynamic informational needs of blind users, which are not captured by general video QA resources.
+
+\textit{EgoTextVQA} \cite{zhou2025egotextvqa} targets scene text understanding in egocentric contexts, comprising 1,507 curated indoor and outdoor videos and 7,064 QA pairs. Videos were filtered using OCR \cite{li2022pp} from RoadTextVQA \cite{tom2023reading}, EgoSchema, and Ego4D, with manual quality control to ensure the presence of relevant text.
+
+\subsection{Evaluation}
+
+Evaluating egocentric video question answering requires a comprehensive assessment of memory, reasoning, comprehension, and interpretability. Therefore, certain benchmarks \cite{mangalam2023egoschema}\cite{biswas2025raven}\cite{yang2025egolife} are typically selected for testing. 
+
+In benchmark evaluations, accuracy \cite{yang2025egolife} is frequently employed, defined in multiple-choice question answering as the proportion of correctly answered questions to the total.
+
+Some approaches employ "Sent.Sim." \cite{chen2025grounded}, which uses Sentence-BERT cosine similarity to assess the semantic alignment between predicted and ground truth answers. "Comp." evaluates whether the answer comprehensively incorporates all multimodal evidence required by the question. "Coher." \cite{biswas2025raven} assesses logical and semantic coherence, ensuring that answers are both contradiction-free and contextually consistent.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{dataset2.pdf}
+    \caption{Examples of datasets, EgoPER \cite{lee2024error} and CaptainCook4D \cite{peddi2024captaincook4d} focus on kitchen cooking scenarios, EgoOops \cite{haneji2024egooops} designs complex scenarios such as chemical experiments and building blocks, and EgoproceL \cite{bansal2022my} focuses on pc assembly and disassembly tasks.}
+    \label{fig8}%
+\end{figure}
+
+\section{Experiments}
+
+This section presents supplementary experiments, designed to show that popular vision-language models still have substantial room for improvement in assisting with procedural tasks. We begin by introducing the four selected datasets shown in Fig.~\ref{fig8}, followed by a detailed description of the experimental procedures. Finally, we present a comparative analysis of the experimental results using tables and provide an in-depth discussion. More detailed experimental information and visual results are provided in the attached \textcolor{blue}{Appendix} file.
+
+\begin{table}
+\caption{Experimental results in egocentric procedural error detection, the part highlighted in purple is the result of our supplementary experiments, bold text represents the best performance on this metric in each part.}
+    \centering
+    \begin{tabular}{cccccccc|c|}
+    \toprule
+         \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Method}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Years}&   \multicolumn{1}{c|}{\cellcolor[HTML]{EFEFEF}Precision}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}EDA}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}AUC}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}F1}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Recall}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Acc}&  \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Dataset}\\
+         \midrule
+         EgoPED \cite{lee2024error}& CVPR 2024& 56.5& 69.8& 54.9& -& -& 69.8&\multirow{8}{*}{CaptainCook4D}\\
+ AMNAR \cite{huang2025modeling}& CVPR 2025& \textbf{66.8}& \textbf{72.3}& \textbf{60.2}& -& -& \textbf{72.3}&\\
+\cellcolor{blue!7}Just Ask \cite{yang2021just}&  \cellcolor{blue!7}ICCV 2021& \cellcolor{blue!7}35.1&  \cellcolor{blue!7}35.1&  \cellcolor{blue!7}50.0&  \cellcolor{blue!7}\textbf{51.2}&  \cellcolor{blue!7}-&  \cellcolor{blue!7}35.1& \\
+  \cellcolor{blue!7}{Vinci} \cite{huang2024vinci}&  \cellcolor{blue!7}{arXiv 2024}&  \cellcolor{blue!7}{35.6}&  \cellcolor{blue!7}{49.7}&  \cellcolor{blue!7}{48.5}&  \cellcolor{blue!7}{-}&  \cellcolor{blue!7}{-}&  \cellcolor{blue!7}{49.7}&\\
+\cellcolor{blue!7}Video-LLaVA \cite{lin2023video}&  \cellcolor{blue!7}arXiv 2024& \cellcolor{blue!7}\textbf{40.1}&  \cellcolor{blue!7}60.8&  \cellcolor{blue!7}52.2&  \cellcolor{blue!7}29.6&  \cellcolor{blue!7}23.4&  \cellcolor{blue!7}60.8& \\
+
+\cellcolor{blue!7}Video-LLaMA2 \cite{cheng2024videollama}&  \cellcolor{blue!7}arXiv 2024& \cellcolor{blue!7}36.5&  \cellcolor{blue!7}58.4&  \cellcolor{blue!7}50.1&  \cellcolor{blue!7}29.8&  \cellcolor{blue!7}25.2&  \cellcolor{blue!7}58.4& \\
+\cellcolor{blue!7}LLaVA-OneVision \cite{li2024llava}&  \cellcolor{blue!7}arXiv 2024& \cellcolor{blue!7}39.8&  \cellcolor{blue!7}\textbf{63.0}&  \cellcolor{blue!7}\textbf{53.1}&  \cellcolor{blue!7}17.0&  \cellcolor{blue!7}10.8&  \cellcolor{blue!7}\textbf{63.0}& \\
+ \cellcolor{blue!7}{EgoGPT} \cite{yang2025egolife}&  \cellcolor{blue!7}{CVPR 2025}&  \cellcolor{blue!7}{36.0}&  \cellcolor{blue!7}{46.5}&  \cellcolor{blue!7}{49.6}&  \cellcolor{blue!7}{47.0}&  \cellcolor{blue!7}{\textbf{67.5}}&  \cellcolor{blue!7}{46.5}&\\
+   \midrule
+
+\cellcolor{blue!7}{Vinci} \cite{huang2024vinci}&  \cellcolor{blue!7}{arXiv 2024}&  \cellcolor{blue!7}{19.4}&  \cellcolor{blue!7}{26.9}&  \cellcolor{blue!7}{47.3}&  \cellcolor{blue!7}{\textbf{30.8}}&  \cellcolor{blue!7}{\textbf{74.3}}&  \cellcolor{blue!7}{26.9}&\multirow{5}{*}{EgoOops}\\
+\cellcolor{blue!7}Video-LLaVA \cite{lin2023video}&  \cellcolor{blue!7}arXiv 2024& \cellcolor{blue!7}14.6&  \cellcolor{blue!7}60.0&  \cellcolor{blue!7}44.6&  \cellcolor{blue!7}15.8&  \cellcolor{blue!7}17.1&  \cellcolor{blue!7}60.0& \\
+\cellcolor{blue!7}Video-LLaMA2 \cite{cheng2024videollama}&  \cellcolor{blue!7}arXiv 2024& \cellcolor{blue!7}15.4&  \cellcolor{blue!7}50.0&  \cellcolor{blue!7}42.4&  \cellcolor{blue!7}20.0&  \cellcolor{blue!7}28.6&  \cellcolor{blue!7}50.0& \\
+\cellcolor{blue!7}LLaVA-OneVision \cite{li2024llava}&  \cellcolor{blue!7}arXiv 2024& \cellcolor{blue!7}26.1&  \cellcolor{blue!7}64.4&  \cellcolor{blue!7}54.1&  \cellcolor{blue!7}29.6&  \cellcolor{blue!7}34.3&  \cellcolor{blue!7}64.4& \\
+\cellcolor{blue!7}{EgoGPT} \cite{yang2025egolife}&  \cellcolor{blue!7}{CVPR 2025}&  \cellcolor{blue!7}{\textbf{34.8}}&  \cellcolor{blue!7}{\textbf{73.8}}&  \cellcolor{blue!7}{\textbf{55.1}}&  \cellcolor{blue!7}{27.6}&  \cellcolor{blue!7}{22.9}&  \cellcolor{blue!7}{\textbf{73.8}}&\\
+   \midrule
+   
+   \cellcolor{blue!7}{Vinci} \cite{huang2024vinci}&  \cellcolor{blue!7}{arXiv 2024}&  \cellcolor{blue!7}{12.0}&  \cellcolor{blue!7}{49.3}&  \cellcolor{blue!7}{47.4}&  \cellcolor{blue!7}{19.3}&  \cellcolor{blue!7}{\textbf{49.2}}&  \cellcolor{blue!7}{49.3}&\multirow{5}{*}{EgoPER}\\
+   \cellcolor{blue!7}Video-LLaVA \cite{lin2023video}&  \cellcolor{blue!7}arXiv 2024& \cellcolor{blue!7}13.5&  \cellcolor{blue!7}\textbf{77.5}&  \cellcolor{blue!7}50.7&  \cellcolor{blue!7}14.3&  \cellcolor{blue!7}15.3&  \cellcolor{blue!7}\textbf{77.5}& \\
+   \cellcolor{blue!7}Video-LLaMA2 \cite{cheng2024videollama}&  \cellcolor{blue!7}arXiv 2024& \cellcolor{blue!7}13.6&  \cellcolor{blue!7}75.2&  \cellcolor{blue!7}51.6&  \cellcolor{blue!7}15.8&  \cellcolor{blue!7}18.9&  \cellcolor{blue!7}75.2& \\
+   \cellcolor{blue!7}LLaVA-OneVision \cite{li2024llava}&  \cellcolor{blue!7}arXiv 2024& \cellcolor{blue!7}14.0&  \cellcolor{blue!7}60.1&  \cellcolor{blue!7}\textbf{54.5}&  \cellcolor{blue!7}\textbf{21.3}&  \cellcolor{blue!7}43.7&  \cellcolor{blue!7}60.1& \\
+   \cellcolor{blue!7}{EgoGPT} \cite{yang2025egolife}&  \cellcolor{blue!7}{CVPR 2025}&  \cellcolor{blue!7}{\textbf{14.4}}&  \cellcolor{blue!7}{69.6}&  \cellcolor{blue!7}{51.3}&  \cellcolor{blue!7}{19.4}&  \cellcolor{blue!7}{29.8}&  \cellcolor{blue!7}{69.6}&\\
+   \bottomrule
+   \end{tabular}
+   \label{tab7}%
+\end{table}
+
+\subsection{Datasets and Implementation Details}
+
+To more rigorously evaluate agents’ and AI assistants’ comprehension of egocentric procedural tasks, we conducted supplementary experiments on egocentric procedural error detection and egocentric procedural learning tasks. Four video question-answering models and two egocentric AI assistants were compared across four datasets to evaluate their proficiency in understanding procedural tasks.
+
+\textit{Datasets.} To ensure broad scenario coverage, three egocentric datasets named CaptainCook4D \cite{peddi2024captaincook4d}, EgoPER \cite{lee2024error}, and EgoOops \cite{haneji2024egooops} were employed for the egocentric procedural error detection task: CaptainCook4D and EgoPER address diverse kitchen activities, while EgoOops targets niche contexts such as chemical experiments and block-building. As these datasets lack predefined test sets, 20\% of CaptainCook4D and 30\% of EgoOops samples were randomly designated as test sets. For the procedural learning task, EgoProceL \cite{bansal2022my} was used, with PC assembly and disassembly tasks selected to assess the AI assistant’s competence in extracting critical procedural steps.
+
+\textit{Implementation Details.} Both video question answering models and AI assistants are evaluated using question answering tasks. For egocentric procedural error detection, each model receives 4 to 5 randomly selected questions, with prompts tailored to highlight the error detection objective and specify potential error categories, thereby maximizing detection performance without fine-tuning. Following the protocol described in \cite{huang2025modeling}, keywords from model outputs are parsed to generate confidence scores, which are then used to calculate Precision, EDA, AUC, F1, Recall, and Accuracy. This comprehensive metric set ensures a robust assessment of error detection. Consistent prompt formats and confidence rules are applied across EgoPER and EgoOops, with minor adjustments for CaptainCook4D to accommodate model-specific attributes. For egocentric procedural learning, five models were systematically evaluated on the PC assembly and PC disassembly tasks within EgoproceL, adhering to the experimental protocol established by \cite{mahmood2025procedure}. Performance was quantitatively assessed using the F1 score and Intersection over Union (IoU) metrics, and the results were benchmarked against existing procedural learning methodologies. To address relevant task requirements, tailored prompts were introduced. Given that the models lacked fine-tuning for key step learning and acknowledging the inherent challenge in uniformly evaluating semantically similar key step sequences, the egocentric procedural learning task was suitably simplified. To mitigate excessive deviation between model predictions and expected outputs, a predefined set of candidate key steps was embedded in the prompts, thereby enabling the models to select the sequence of steps most closely matching each video segment. In accordance with the specifications of \cite{mahmood2025procedure}, and to enhance the objectivity of evaluating procedural learning abilities, the Hungarian matching algorithm was employed to analyze the result.
+
+\subsection{Experimental Results}
+
+The performance of egocentric procedural error detection models is evaluated using the metrics EDA, Accuracy, and Precision. In this study, EDA and Accuracy refer to the same concept, indicating the proportion of instances in which the model correctly classifies both normal and erroneous segments. This reflects the model’s overall ability to perform accurate classification. Precision measures the proportion of actual errors among all segments identified as erroneous by the model and serves as a key indicator of its effectiveness in detecting errors. Additional metric definitions are provided in previous sections.
+
+Among the evaluated models, EgoGPT and Vinci are trained explicitly on egocentric datasets. Experimental results in Table~\ref{tab7} demonstrate that their classification performance on the CaptainCook4D dataset approaches random guessing, indicating limited detection capability. Other models, except Just Ask, exhibit only marginally better results. In terms of precision, these assistants significantly underperform compared to specialized error detection models like AMNAR, reflecting a limited understanding of error identification and limiting their suitability for direct application in error detection tasks. Further analysis reveals a consistent bias toward classifying observed segments as correct, with prompt adjustments yielding slight improvement. This deficiency likely stems from insufficient exposure to error-containing data during training, impairing the models’ understanding and detection of procedural mistakes. Moreover, unlike standard anomaly detection, procedural error detection requires comprehensive video understanding, as contextually correct actions may still constitute errors.
+
+Experimental results on EgoOops and EgoPER show that only EgoGPT, which was trained on egocentric datasets, effectively understands errors, while other models yield low precision scores. Vinci demonstrates some error detection for egocentric videos. However, under identical token length and prompt settings, it tends to generate lengthy analytical responses. This hampers the accurate calculation of confidence scores. For the EDA metric, some approaches surpass 70, but this does not imply stronger classification ability than EgoPED and AMNAR. Instead, models generally classify the majority of segments as correct, where performance relies heavily on the dataset’s ratio of positive samples. Thus, a higher proportion of correct segments yields higher EDA scores, but this does not mean these models outperform EgoPED or AMNAR in classification ability.
+
+In summary, through carefully designed experiments evaluating recent visual question answering models, we conclude that current VQA models cannot be directly applied to egocentric procedural error detection tasks. Their understanding of errors is limited, indicating their overall video comprehension requires further improvement.
+
+In the experimental evaluation of egocentric procedural learning shown in Table~\ref{tab8}, the F1 and IoU metrics are utilized to assess the model’s capability. The F1 score evaluates step recognition accuracy, while the IoU quantifies the temporal overlap between predicted steps and ground-truth segments.
+
+Analysis of both PC assembly and disassembly tasks indicates that providing models with procedural knowledge does not yield satisfactory step recognition performance. However, in the context of PC disassembly and known procedural steps, Video-LLaMA2 outperforms two existing methods in step recognition accuracy, but still falls short of the state-of-the-art.
+
+Regarding the IoU metric, LLaVA-OneVision demonstrates improved temporal localization accuracy in the PC assembly task, surpassing one method but still requiring enhancement. Video-LLaMA2 also attains strong IoU results in PC disassembly. Although EgoGPT and Vinci are pre-trained on egocentric datasets, they do not show marked advantages. As they lack task-specific fine-tuning for egocentric procedural error detection or learning, definitive comparisons with other models are unwarranted. Further rigorous experiments are needed to assess their capabilities thoroughly.
+
+In conclusion, current VQA models are not directly applicable to egocentric procedural learning tasks. Even with simplified step recognition settings, their overall performance remains unsatisfactory, despite some models showing potential in step identification. 
+
+
+
+\begin{table}
+\caption{Experimental results in egocentric procedural learning, the part highlighted in purple is the result of the model we selected, bold text represents the best performance on this metric in each part.}
+    \centering
+    \begin{tabular}{cccc|c|cc|c|}
+    \toprule
+    \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Method}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Years}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}F1}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}IoU}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Task in EgoproceL}  &\multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}F1}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}IoU}&   \multicolumn{1}{c|}{ \cellcolor[HTML]{EFEFEF}Task in EgoproceL}\\
+    \midrule
+         CnC \cite{bansal2022my}&  ECCV 2022&  25.1&  12.8& \multirow{8}{*}{PC Assembly}&  27.0&  14.8& \multirow{8}{*}{PC Disassembly}\\
+         OPEL \cite{chowdhury2024opel}&  NeurIPS 2024&  33.7&  17.9& &32.2&  16.9& \\
+         RGWOT \cite{mahmood2025procedure}&  arXiv 2025&  \textbf{43.6}&  \textbf{28.0}& &\textbf{45.9}&  \textbf{30.1}& \\
+          
+            \cellcolor{blue!7}{Vinci} \cite{huang2024vinci}&  \cellcolor{blue!7}{arXiv 2024}&  \cellcolor{blue!7}{14.1}&  \cellcolor{blue!7}{7.5}& &  \cellcolor{blue!7}{27.2}&  \cellcolor{blue!7}{14.7}&\\
+            \cellcolor{blue!7}Video-LLaVA \cite{lin2023video}&  \cellcolor{blue!7}arXiv 2024& \cellcolor{blue!7}\textbf{22.9}&  \cellcolor{blue!7}12.4& & \cellcolor{blue!7}10.0&  \cellcolor{blue!7}4.9&\\
+            \cellcolor{blue!7}Video-LLaMA2 \cite{cheng2024videollama}&  \cellcolor{blue!7}arXiv 2024& \cellcolor{blue!7}12.0&  \cellcolor{blue!7}6.9& & \cellcolor{blue!7}\textbf{35.8}&  \cellcolor{blue!7}\textbf{21.6}&\\
+            \cellcolor{blue!7}LLaVA-OneVision \cite{li2024llava}&  \cellcolor{blue!7}arXiv 2024& \cellcolor{blue!7}22.2&  \cellcolor{blue!7}\textbf{13.0}& & \cellcolor{blue!7}16.8&  \cellcolor{blue!7}8.8&\\
+            \cellcolor{blue!7}{EgoGPT} \cite{yang2025egolife}&  \cellcolor{blue!7}{CVPR 2025}&  \cellcolor{blue!7}{6.6}&  \cellcolor{blue!7}{3.7}& &  \cellcolor{blue!7}{8.9}&  \cellcolor{blue!7}{4.3}&\\
+            \bottomrule
+    \end{tabular}
+    
+    \label{tab8}%
+\end{table}
+
+\section{Challenges And Outlook}
+
+Our extensive experiments reveal that current vision-language models, including egocentric AI assistants, are insufficient for supporting procedural tasks. This highlights the necessity for further innovation to enable effective AI facilitation of such processes. Although notable progress has been made, egocentric vision tasks face ongoing challenges as they transition from controlled settings to real-world applications.
+
+\textit{\textbf{Data scarcity and bias.}} It impedes development in this domain. Existing egocentric video datasets are scarce, lack diversity, and provide limited annotation detail, constraining both error detection and procedural learning. While many procedural learning datasets are captured from third-person perspectives, they are ill-suited for egocentric tasks. Most available egocentric error detection datasets also cover narrow ranges of activities, failing to support comprehensive AI training for a wide range of real-world tasks. Additionally, cultural and individual biases present in current datasets further hinder robust generalization.
+
+\textit{\textbf{Limited understanding of long-term procedural tasks.}} Current models are struggling to capture logical and temporal dependencies in procedural videos, failing to distinguish true procedural errors or provide actionable explanations. They encounter difficulties in computational efficiency, semantic understanding, and the effective integration of multimodal signals, which hampers comprehensive video interpretation. Existing approaches, such as error detection, rely on a foundational model comprehension of procedural steps. Future research should prioritize adapting advanced long-video understanding frameworks to egocentric contexts and enhancing multimodal fusion for deeper procedural task analysis and improved model support.
+
+\textit{\textbf{Significantly depend on manual annotations and lack real-time capability.}} For AI assistants to effectively support daily life, real-time operation is essential. Human annotation dependence limits the practicality of real-world applications, constrains real-time detection, and narrows application domains. Currently, few approaches perform effectively in real-time online contexts. Providing AI assistants with instantaneous assistance and rapid responses remains a critical challenge. The methodology of predicting subsequent steps from previous actions or eye-tracking data requires further scholarly exploration \cite{mazzamuto2025gazing}\cite{flaborea2024prego}. Integrating this predictive framework with the reasoning and learning abilities of LLMs may improve real-time assistance performance.
+
+Despite existing limitations, research on egocentric vision and AI assistants is advancing rapidly, with expanding domains and growing scholarly interest.
+
+\textit{\textbf{Egocentric procedural planning}} \cite{liu2023egocentric}\cite{chen2025planning}. It focuses on analyzing completed actions to generate context-appropriate subsequent steps. This task requires advanced comprehension and reasoning over egocentric video streams, enabling models to autonomously select optimal next actions based on real-time context.
+
+\textit{\textbf{Egocentric reasoning}} \cite{vinod2025egovlm}\cite{lee2025towards}\cite{peirone2025hier}.  It is an emerging area aiming for deep causal, temporal, and logical inference over egocentric video content. Recent research prioritizes understanding action relationships, accurate episodic memory retrieval, social interaction, and hand-object analysis \cite{su2024care}\cite{su2025annexe}\cite{deng2025egocentric}, moving beyond simple associative learning.
+
+Integrating techniques from these domains can significantly enhance models' comprehension of procedural tasks, leading to comprehensive performance improvements and enabling AI assistants to better support our daily lives.
+
+\section{Conclusion}
+
+This work conceptualizes an egocentric procedural AI assistant (EgoProceAssist), structuring the field into three core areas: egocentric procedural error detection, egocentric procedural learning, and egocentric procedural question answering. Existing literature is systematically reviewed and categorized. 
+A novel taxonomy is introduced, providing a systematic classification and synthesis of existing methodological approaches. Subsequently, a thorough examination of prevalent datasets and evaluation metrics used in assessing the three principal tasks is presented. In addition, a new experimental paradigm is devised to rigorously evaluate the performance of generative AI assistants in the domains of egocentric procedural error detection and procedural learning. Empirical findings substantiate that extant AI assistants are presently insufficient for the direct support of procedural tasks. Lastly, the study delineates the persistent challenges and inherent limitations in egocentric vision research, with a particular emphasis on the construction of intelligent agents, and elucidates prospective avenues that may significantly influence subsequent advances in the field. We hope this work informs and inspires further research within the community.
+
+\section{Acknowledgment}
+
+The research work was conducted in the JC STEM Lab of Machine Learning and Computer Vision funded by The Hong Kong Jockey Club Charities Trust.
+
+\section{Data Availability Statement}
+
+The datasets used for the supplementary experiment are all publicly available; however, to obtain EgoPER, you must email the author. The datasets we show in Table~\ref{tab2}, ~\ref{tab4} and ~\ref{tab6} are all publicly available. The experiment data shown in Table~\ref{tab1}, ~\ref{tab3} and ~\ref{tab5} are all publicly available. To make it easier to use, we have summarized them in \url{https://github.com/z1oong/Building-Egocentric-Procedural-AI-Assistant}.
+
+ \bibliography{reference}
+%\bibliographystyle{plain}
+%\bibliography{reference}
+
+\iffalse
+\section{Appendix}
+\label{Appendix}
+
+In the egocentric procedural error detection experiment, since the selected video question answering model is fundamentally generative, we employed an error detection paradigm in which a question was randomly drawn from a question pool with 4-5 questions, as shown in Figs.~\ref{fig9},~\ref{fig10},~\ref{fig11}. Through repeated experimentation and methodological refinements, we observed that model-generated responses do not consistently provide explicit judgments regarding the correctness of each step. Instead, responses are often characterized by detailed descriptions and analyses, consistent with the behavior of generative models. Furthermore, models may produce responses such as, “The initial step was correct, but he used the wrong tools in the later stages,” where an initial assessment is amended by identifying subsequent errors. Such nuanced answers, reflecting both correct and erroneous elements, are typical of generative model outputs.
+
+Consequently, following extensive experimentation and iterative refinement, we introduce a methodology that quantifies the presence of “error”- and “normal”-related keywords such as “skip,” “wrong,” and “error,” in the generated responses, to compute a confidence score. Should this confidence score surpass a predefined threshold, the corresponding step is adjudged erroneous. This methodology facilitates a more objective and balanced assessment of the models’ error detection capacity. For all three datasets, the respective question pools utilized for each model are depicted in the related figure.
+
+In the experiments conducted on EgoOops, the error detection confidence threshold was set to 0.5 for EgoGPT, Vinci, and VideoLLaVA, in accordance with the characteristics and empirical performance of these models. By contrast, a threshold of 0.3 was employed for VideoLLaMA2 and LLaVA-OneVision. For the experiments on EgoPER and CaptainCook4D, the confidence threshold was uniformly set to 0.5 for all models. To enhance the interpretability of the experimental findings, a subset of model-generated outputs was randomly selected and visualized for each dataset, as illustrated in the corresponding figures.
+
+As shown in Fig.~\ref{fig9},~\ref{fig10},~\ref{fig11}, when “is\_error: true” is present, it denotes that the step is objectively erroneous. Conversely, a value of “predicted\_error: true” indicates that, following the calculation of confidence scores, the model’s final output classifies the step as an error. Accordingly, the concurrence of both values being “true” reflects an accurate identification of an erroneous step by the model. In contrast, both values being “false” signifies a correct identification of a non-erroneous step. Any mismatch between the two labels indicates a potential misclassification by the model. It is essential to recognize the limitations inherent in this experimental methodology. Notably, this approach is unable to assess the model’s ability to identify distinct error types or categories accurately. This constraint stems from two principal sources: firstly, the absence of detailed error-type annotations in specific datasets; and secondly, the inherent uncertainty and stochastic nature associated with the outputs of generative models. Consequently, additional research is warranted to devise robust strategies for evaluating a model’s competency in error classification that extend beyond mere binary detection.
+
+
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1\linewidth]{egoops.pdf}
+    \caption{Examples of some models' egocentric procedural error detection answers in EgoOops, and EgoOops's questions pool.}
+    \label{fig9}%
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1\linewidth]{captain.pdf}
+    \caption{Examples of some models' egocentric procedural error detection answers in CaptainCook4D, and CaptainCook4D's questions pool.}
+    \label{fig10}%
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1\linewidth]{egope.pdf}
+    \caption{Examples of some models' egocentric procedural error detection answers in EgoPER, and EgoPER's question pool.}
+    \label{fig11}%
+\end{figure*}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{egopro.pdf}
+    \caption{Examples of EgoGPT 's answer in egocentric procedural learning.}
+   \label{fig12}%
+\end{figure}
+\fi
+
+\end{document}

@@ -1,0 +1,1144 @@
+%File: formatting-instructions-latex-2026.tex
+%release 2026.0
+\documentclass[letterpaper]{article} % DO NOT CHANGE THIS
+\usepackage{aaai2026}  % DO NOT CHANGE THIS
+\usepackage{times}  % DO NOT CHANGE THIS
+\usepackage{helvet}  % DO NOT CHANGE THIS
+\usepackage{courier}  % DO NOT CHANGE THIS
+\usepackage[hyphens]{url}  % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\urlstyle{rm} % DO NOT CHANGE THIS
+\def\UrlFont{\rm}  % DO NOT CHANGE THIS
+\usepackage{natbib}  % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\usepackage{caption} % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\frenchspacing  % DO NOT CHANGE THIS
+\setlength{\pdfpagewidth}{8.5in}  % DO NOT CHANGE THIS
+\setlength{\pdfpageheight}{11in}  % DO NOT CHANGE THIS
+%
+% These are recommended to typeset algorithms but not required. See the subsubsection on algorithms. Remove them if you don't have algorithms in your paper.
+%\usepackage{algorithm}
+%\usepackage{algorithmic}
+
+\usepackage{amssymb} 
+\usepackage{algorithm,algpseudocode}
+\algrenewcommand\algorithmiccomment[1]{\hfill$\triangleright$~#1}
+\algtext*{EndFor}
+\algtext*{EndIf}
+\usepackage{enumitem} 
+\usepackage{booktabs}           
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable}
+\usepackage{amsmath}
+
+\usepackage[table]{xcolor}
+\definecolor{lampbg}{HTML}{EAF4FF}
+% These are are recommended to typeset listings but not required. See the subsubsection on listing. Remove this block if you don't have listings in your paper.
+\usepackage{newfloat}
+\usepackage{listings}
+\DeclareCaptionStyle{ruled}{labelfont=normalfont,labelsep=colon,strut=off} % DO NOT CHANGE THIS
+\lstset{%
+	basicstyle={\footnotesize\ttfamily},% footnotesize acceptable for monospace
+	numbers=left,numberstyle=\footnotesize,xleftmargin=2em,% show line numbers, remove this entire line if you don't want the numbers.
+	aboveskip=0pt,belowskip=0pt,%
+	showstringspaces=false,tabsize=2,breaklines=true}
+\floatstyle{ruled}
+\newfloat{listing}{tb}{lst}{}
+\floatname{listing}{Listing}
+%
+% Keep the \pdfinfo as shown here. There's no need
+% for you to add the /Title and /Author tags.
+\pdfinfo{
+/TemplateVersion (2026.1)
+}
+
+% DISALLOWED PACKAGES
+% \usepackage{authblk} -- This package is specifically forbidden
+% \usepackage{balance} -- This package is specifically forbidden
+% \usepackage{color (if used in text)
+% \usepackage{CJK} -- This package is specifically forbidden
+% \usepackage{float} -- This package is specifically forbidden
+% \usepackage{flushend} -- This package is specifically forbidden
+% \usepackage{fontenc} -- This package is specifically forbidden
+% \usepackage{fullpage} -- This package is specifically forbidden
+% \usepackage{geometry} -- This package is specifically forbidden
+% \usepackage{grffile} -- This package is specifically forbidden
+% \usepackage{hyperref} -- This package is specifically forbidden
+% \usepackage{navigator} -- This package is specifically forbidden
+% (or any other package that embeds links such as navigator or hyperref)
+% \indentfirst} -- This package is specifically forbidden
+% \layout} -- This package is specifically forbidden
+% \multicol} -- This package is specifically forbidden
+% \nameref} -- This package is specifically forbidden
+% \usepackage{savetrees} -- This package is specifically forbidden
+% \usepackage{setspace} -- This package is specifically forbidden
+% \usepackage{stfloats} -- This package is specifically forbidden
+% \usepackage{tabu} -- This package is specifically forbidden
+% \usepackage{titlesec} -- This package is specifically forbidden
+% \usepackage{tocbibind} -- This package is specifically forbidden
+% \usepackage{ulem} -- This package is specifically forbidden
+% \usepackage{wrapfig} -- This package is specifically forbidden
+% DISALLOWED COMMANDS
+% \nocopyright -- Your paper will not be published if you use this command
+% \addtolength -- This command may not be used
+% \balance -- This command may not be used
+% \baselinestretch -- Your paper will not be published if you use this command
+% \clearpage -- No page breaks of any kind may be used for the final version of your paper
+% \columnsep -- This command may not be used
+% \newpage -- No page breaks of any kind may be used for the final version of your paper
+% \pagebreak -- No page breaks of any kind may be used for the final version of your paperr
+% \pagestyle -- This command may not be used
+% \tiny -- This is not an acceptable font size.
+% \vspace{- -- No negative value may be used in proximity of a caption, figure, table, section, subsection, subsubsection, or reference
+% \vskip{- -- No negative value may be used to alter spacing above or below a caption, figure, table, section, subsection, subsubsection, or reference
+
+\setcounter{secnumdepth}{2} %May be changed to 1 or 2 if section numbers are desired.
+
+% The file aaai2026.sty is the style file for AAAI Press
+% proceedings, working notes, and technical reports.
+%
+
+% Title
+
+% Your title must be in mixed case, not sentence case.
+% That means all verbs (including short verbs like be, is, using,and go),
+% nouns, adverbs, adjectives should be capitalized, including both words in hyphenated terms, while
+% articles, conjunctions, and prepositions are lower case unless they
+% directly follow a colon or long dash
+%\title{AAAI Press Formatting Instructions \\for Authors Using \LaTeX{} --- A Guide}
+\title{Think, Speak, Decide: Language-Augmented Multi-Agent Policy Learning in Economic Environments}
+\author{
+    Heyang Ma\textsuperscript{\rm 1,\rm 2,\rm 3,\rm4}\equalcontrib,
+    Qirui Mi\textsuperscript{\rm 1,\rm 5}\equalcontrib,
+    Qipeng Yang\textsuperscript{\rm 6,\rm 2,\rm 3},
+    Zijun Fan\textsuperscript{\rm 6, \rm 2,\rm 3},
+    Bo Li\textsuperscript{\rm 7},
+    Haifeng Zhang\textsuperscript{\rm 1,\rm 2,\rm 5}\thanks{Corresponding author: haifeng.zhang@ia.ac.cn}
+}
+\affiliations{
+    \textsuperscript{\rm 1}Institute of Automation, Chinese Academy of Sciences,
+    \textsuperscript{\rm 2}Nanjing Artificial Intelligence Research of IA\\
+    \textsuperscript{\rm 3}University of Chinese Academy of Sciences, Nanjing, 
+    \textsuperscript{\rm 4}University of International Business and Economics\\
+    \textsuperscript{\rm 5}School of Artificial Intelligence, Chinese Academy of Sciences,
+    \textsuperscript{\rm 6}Nanjing University of Posts and Telecommunications\\
+    \textsuperscript{\rm 7}School of Economics, Peking University\\
+    haifeng.zhang@ia.ac.cn
+}
+
+
+% REMOVE THIS: bibentry
+% This is only needed to show inline citations in the guidelines document. You should not need it and can safely delete it.
+%\usepackage{bibentry}
+% END REMOVE bibentry
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Economic decision‑making depends not only on structured signals—such as prices and taxes—but also on unstructured language, including peer dialogue and media narratives. While multi‑agent reinforcement learning (MARL) has shown promise in optimizing economic decisions, it struggles with the semantic ambiguity and contextual richness of language. We propose \textbf{LAMP} (\textbf{L}anguage‑\textbf{A}ugmented \textbf{M}ulti‑Agent \textbf{P}olicy), the first framework to integrate language into economic decision‑making, narrowing the gap to real‑world settings.
+LAMP follows a \textbf{Think–Speak–Decide} pipeline:
+\textbf{(1) Think} interprets numerical observations to extract short‑term shocks and long‑term trends, caching high‑value reasoning trajectories.
+\textbf{(2) Speak} crafts and exchanges strategic messages based on the reasoning, updating beliefs by parsing peer communications.
+\textbf{(3) Decide} fuses numerical data, reasoning, and reflections into a MARL policy to optimize language‑augmented decision‑making.
+Experiments in economic simulation show that LAMP outperforms both MARL and LLM‑only baselines in cumulative return (\textbf{+63.5\%, +34.0\%}), robustness (\textbf{+18.8\%, +59.4\%}), and interpretability. These results demonstrate the potential of language‑augmented policies to deliver more effective and robust economic strategies.
+\end{abstract}
+
+% Uncomment the following to link to your code, datasets, an extended version or similar.
+% You must keep this block between (not within) the abstract and the main body of the paper.
+\begin{links}
+    \link{Code}{https://github.com/hey0223/LAMP}
+    %\link{Datasets}{https://aaai.org/example/datasets}
+    %\link{Extended version}{https://aaai.org/example}
+\end{links}
+
+\section{Introduction}
+
+Real-world economic settings are rich in multi-agent interactions and decision-making challenges, spanning labor markets, firm pricing, and government policy design. Solving these economic decision‑making problems can yield explanatory insights into economic phenomena and prescriptive guidance for policy and strategy design~\cite{tversky1974judgment,varian1992microeconomic}. However, their characteristics—dynamic interactions, long‑term incentives, and uncertainty-make them substantially more challenging than conventional fixed‑rule benchmarks with fully specified dynamics~\cite{charpentier2023reinforcement,mi2023taxai}.
+Recent advances in artificial intelligence (AI), particularly RL, have been applied to model and optimize economic decision‑making processes, with applications spanning household savings~\cite{shiCanAIAgent2021, shi2021learning, atashbarAIMacroeconomicModeling2023}, market pricing~\cite{danassisAIdrivenPricesExternalities2023}, and tax policy~\cite{zheng2022ai,mi2023taxai,mi2025learning}. These studies provide evidence that RL can effectively address dynamic, multi‑agent economic problems.
+
+\begin{figure}
+    \centering
+      
+    \includegraphics[width=0.95\linewidth]{problem_statement}
+\caption{\textbf{Comparison of prior studies and our target}: Unstructured language signals, alongside structured numerical data, are critical to economic decision‑making.}
+  \label{fig1}
+      
+\end{figure}
+
+However, economic decision‑making relies not only on numerical signals but also on language‑based information, such as peer dialogue and media narratives~\cite{luketina2019survey}. The above-mentioned RL-based studies largely ignore the impact of language. Standard MARL algorithms typically assume clean, structured communication protocols~\cite{zhu2024survey}, whereas real‑world economic decisions involve noisy, semantically rich, and sometimes deceptive natural language.
+LLMs offer powerful tools to process such language. 
+Recent work in policy evaluation~\cite{li2024econagent,hao2025multi}, trading~\cite{xiao2024tradingagents}, and simulation~\cite{mi2025econgym} demonstrates LLMs’ potential for language‑aware economic modeling. However, most employ LLMs to generate actions or simulate behaviors, without systematically optimizing agents’ policies. This remains insufficient for solving complex economic problems or producing robust, actionable policy insights. We therefore focus on the key question: \textbf{In complex multi‑agent economic environments, how can agents interpret and leverage natural‑language information to support optimal decisions?}
+
+To address this challenge, we propose \textbf{LAMP} (\textbf{L}anguage‑\textbf{A}ugmented \textbf{M}ulti‑\textbf{A}gent \textbf{P}olicy Learning), which integrates LLM‑driven reasoning and reflection over both numerical observations and textual signals to support optimal decision‑making. LAMP follows a unified \textbf{Think–Speak–Decide} pipeline:
+(1) \textbf{Think}: Agents receive environment observations and generate both short‑term shock analysis and long‑term trend reasoning via an LLM. High‑reward reasoning trajectories are stored in an experience pool for retrieval in similar contexts. The long‑term reasoning is also passed to the Speak module to inform message generation.
+(2) \textbf{Speak}: Guided by the Think module, each agent formulates multiple candidate public messages. A lightweight attention‑based scorer selects one for broadcast. Other agents parse the message via the LLM, updating their beliefs, trust, and reflective states. These updated reflections are then passed to the Decide module.
+(3) \textbf{Decide}: The policy network integrates numerical observations, \textit{Think}’s reasoning outputs, and \textit{Speak}’s reflections into the RL policy. Under centralized training with a shared critic, agents learn strategies capable of processing reasoning and reflection signals to produce robust, language‑aware economic decisions.
+We evaluate LAMP in TaxAI: it outperforms MARL and LLM-only baselines with up to \textbf{63\%} higher returns and \textbf{55\%} better shock robustness. Its reasoning traces explain language-guided choices, aiding insight and policy.
+
+\textbf{Our contributions are threefold:}
+\begin{enumerate}
+\item \textbf{Framework}: We propose LAMP, a language‑augmented MARL framework that models the role of natural language in economic decision‑making, bringing it closer to real‑world contexts.
+\item \textbf{Mechanism}: We introduce the \textit{Think–Speak–Decide} pipeline, explicitly structuring how agents reason over trends, exchange and interpret strategic messages, and integrate these insights into policy optimization.
+\item \textbf{Empirical Results}: LAMP surpasses MARL and LLM‑only baselines in language‑guided decision performance, while providing interpretable reasoning trajectories for transparent policy analysis.
+\end{enumerate}
+
+\begin{algorithm}[h]
+  \caption{Language-Augmented Multi-agent Policy}
+  \label{alg:lamp-core}
+  \small
+  \begin{algorithmic}[1]
+    \For{episode $e=1,2,\dots$}
+      \State Reset environment; clear short experience
+      \For{$t=0$ to $T$}
+        \State Determine news type: $type \gets long,short,none$
+        \State Generate news: $\mathcal{R}^{type}_t \gets \textproc{Think}(\cdot)_{type}$
+        \ForAll{agents $i$}
+             \State Clear the current step’s experience $\mathcal{H}_{k,t}^i$
+            \If{$t$ is long‐term checkpoint}
+              \State Retrieve $\mathcal{H}_{k,t}^i$ from $\mathcal{H}^{\text{long}}$ and $\mathcal{H}_{t,i}^{\text{short}}$
+            \EndIf
+            \State Generate economic status and reasoning:
+            \State $\mathcal{L}_{\text{reason}}(\mathcal{R}^{type}_t,O_t^{h,i},\mathcal{H}_{k,t}^i)$ 
+              \If{$t$ is long‐term checkpoint}
+              \State Generate statement: $v_t^{i} \gets
+                     \textproc{Speak}(O_t^{h,i},\mathcal{R}_t,\text)$
+              \State  Self-reflection and update belief and trust:
+              \State $\left(w_{t}^{i\rightarrow j},\, \tau_{t}^{i\rightarrow j},\, \alpha_t^{i}\right) \leftarrow \mathcal{L}_{\mathrm{reflect}}(\cdot)$
+            \EndIf
+         \State Generate action: $a_t^{i} \gets
+                     \mu_{\theta_i}(o_t^{i},
+                     E_{\text{text}}(v_t^{i},\mathcal{R}_t))$
+        \EndFor
+        \State Execute $a_t$; observe $(r_t,x_{t+1})$; store in $\mathcal{D}$
+        \State Update $Q_\phi,\{\theta_i\}$ from $\mathcal{D}$
+          \State Harvest top trajectories $\to$ short experience $\mathcal{H}_{t,i}^{\text{short}}$
+      \EndFor
+     \State Harvest top trajectories $\to$ long experience $\mathcal{H}^{\text{long}}$
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}
+
+\section{Related Work}
+\textbf{RL for Economic Decision-Making.}
+Artificial intelligence provides a powerful computational tool for solving complex economic decision‑making problems. Early work includes Bayesian structural time series for policy causal inference~\cite{brodersen2015inferring} and heuristic search for tax design~\cite{malecka2020application}, but these approaches struggle with real-world complexity. Reinforcement learning (RL) now supports a broad macroeconomic research agenda, including tax policy design (AI Economist~\cite{zheng2022ai}, TaxAI~\cite{mi2023taxai}), monetary rule learning~\cite{hinterlangOptimalMonetaryPolicy2021, chenDeepReinforcementLearning2023}, trade bargaining~\cite{sch2021intelligence}, heterogeneous general equilibrium solvers~\cite{kurikshaEconomyNeuralNetworks2021, hill2021solvingheterogeneousgeneralequilibrium}, and large‑population policy learning~\cite{zhao2024mean, mi2025learning}. At the microeconomic level, RL has modeled household consumption–saving behavior~\cite{shiCanAIAgent2021, shi2021learning}, responses to income shocks~\cite{atashbarAIMacroeconomicModeling2023}, and emergent barter and exchange~\cite{johansonEmergentBarteringBehaviour2022, ozhamaratliDeepReinforcementLearning2022a}. 
+While these studies show RL’s effectiveness in economic decision-making, they largely ignore language signals—policy debates, media reports, public opinion—thereby oversimplifying real-world settings.
+
+
+\textbf{LLMs for Economic Research.}
+Large language models (LLMs) excel at processing language signals, and recent studies have explored their applications in economics. \emph{Homo Silicus} models human fairness and risk aversion~\cite{horton2023large}. \emph{Generative Agents} simulate sandbox societies~\cite{park2023generative}. \emph{EconAgent} uses LLM agents to evaluate fiscal and monetary policies~\cite{li2024econagent}. Other studies extend LLM agents to policy debate~\cite{hao2025multi}, population behavior simulation~\cite{mi2025mf}, long‑term financial planning~\cite{douglas2024consumption}, and market trading~\cite{xiao2024tradingagents, yu2024fincon}. General platform \emph{EconGym}~\cite{mi2025econgym} benchmarks LLM agents in diverse economic scenarios. While these studies demonstrate the versatility of LLMs in economics, most remain focused on direct action generation or simulation, leaving open questions about their role in optimizing economic policies.
+
+
+\textbf{Integration of MARL and LLMs.}  
+We focus on combining MARL’s strength in policy optimization for multi‑agent settings with LLMs’ capacity to process language signals. Recent work explores this direction: \emph{FAMA} aligns LLM knowledge for multi‑agent coordination~\cite{slumbers2023fama}; \emph{LAMARL} uses LLM‑generated priors for policy and reward design~\cite{zhu2025lamarl}; \emph{MAPoRL} co‑trains LLMs to enhance cooperation~\cite{park2025maporl}; and \emph{CORY} fine‑tunes duplicated LLM agents in cooperative settings~\cite{ma2024cory}.  
+Economic decision‑making is typically dynamic, non‑cooperative, and long‑horizon. Agents must interpret diverse numerical signals alongside semantically rich and potentially noisy language inputs, rendering prior MARL–LLM methods inadequate for such settings.
+
+\section{Language-Augmented Multi-Agent Policy}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{fig2} 
+\caption{\textbf{Workflow of LAMP}: (a) Dual‑path \textit{Think} module extracts long‑term trends and short‑term shocks into compact reasoning embeddings; (b) \textit{Speak} module applies self‑attention to sample and broadcast a single message and performs a reflection step to update beliefs; (c) \textit{Decide} module’s policy network concatenates numeric observations with language and reflection embeddings to select actions.}
+\label{fig2}
+\end{figure*}
+
+This section first presents a mathematical formulation of the language-augmented multi-agent decision-making problem in economic environments (Section~\ref{problem}) and then details our proposed LAMP framework (Section~\ref{Framework}).
+
+
+\subsection{Problem Formulation}\label{problem}
+We formulate the economic decision‑making problem with language involvement. Building on the economic modeling in TaxAI~\cite{mi2023taxai}, we incorporate language by augmenting each household’s observation as
+\[
+  m_t^i = \mathcal{E}\bigl(\mathcal{L}(a_t^i, e_t^i, O_t^g))
+\]
+Here, $\mathcal{L}$ denotes a large language model producing a textual message from inputs, and $\mathcal{E}$ denotes an embedding model that maps this text into $\mathbb{R}^n$.
+For inputs, all agents share a global observation \(O_t^g\).
+The government observes
+\(
+O_t^g = \left\{ W_t,\, \bar{a}_t^{r,p},\, \bar{i}_t^{r,p},\, \bar{e}_t^{r,p} \right\},
+\)
+where $W_t$ denotes the wage, and the remaining terms are group-level averages of assets, income, and efficiency.
+Each household $i$ observes the same \(O_t^g\) and, in addition, its private asset \(a_t^i\) and efficiency \(e_t^i\).
+
+
+
+We then model the economic decision‑making problem as a partially observable Markov game
+\(
+\mathcal{M} = \bigl\langle N,\,S,\,O,\,A,\,P,\,R,\,\gamma\bigr\rangle,
+\)
+where \(N = \{1,\dots,N_h\}\), \(\gamma\in[0,1)\), and \(P\) is the transition kernel induced by
+$ A = A^g \times A^{h,1} \times \cdots \times A^{h,N_h}.$
+At each step, the government’s action is
+$
+A_t^g=\{\tau_t,\ \xi_t,\ \tau_{a,t},\ \xi_{a,t},\ r_t^{G}\},
+$
+where \(\tau_t\) and \(\xi_t\) parameterize the marginal income-tax schedule, \(\tau_{a,t}\) and \(\xi_{a,t}\) analogously parameterize the marginal asset-tax schedule, and \(r_t^{G}\) denotes the expenditure-to-output ratio.
+Each household \(i\) selects a savings rate and labor supply \(h_t^i \in [0, h_{\max}]\):
+$
+A_t^{h,i} = \{p_t^i, h_t^i\}.
+$
+
+The government policy \(\pi_g\) and household policies \(\pi_i\) map their observations to actions.
+The household’s objective is to maximize lifetime utility from consumption and leisure, with consumption increasing utility and labor hours reducing it:
+\[
+\max\;
+\mathbb{E}_0 \sum_{t=0}^{T_N}
+\beta^{t}\left(
+  \frac{c_t^{1-\eta}}{1-\eta}
+  - \frac{h_t^{1+\gamma}}{1+\gamma}
+\right)
+\]
+\[
+\text{s.t.} \quad (1+\tau_s)c_t + a_{t+1}
+= i_t - T(i_t) + a_t - T^a(a_t)
+\]
+where \(c_t\) and \(h_t\) are consumption and labor, \(\beta\) is the discount factor, \(\eta\) is the relative risk aversion coefficient, and \(\gamma\) is the inverse Frisch elasticity.
+
+The government’s objective is GDP growth; the government remains as in TaxAI, full details are provided in Appendix~\ref{app:setup}.
+
+\subsection{LAMP Framework}\label{Framework}
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{ll}
+\toprule
+\textbf{Symbol} & \textbf{Description} \\
+\midrule
+\multicolumn{2}{l}{\textit{Economic Variables}} \\
+$N_h$ & Number of households \\
+$O_t^g$ & Government observation (wage, group averages) \\
+$a_t^i,\, e_t^i$ & Asset, efficiency of household $i$ \\
+$c_t,\, h_t$ & Consumption, labor \\
+$\beta,\, \eta,\, \gamma$ & Discount, risk aversion, Frisch elasticity \\
+$Y_t,\, G_t,\, B_t,\, T_t$ & GDP, spending, debt, tax \\
+\midrule
+\multicolumn{2}{l}{\textit{Framework Variables}} \\
+$\mathcal{X}_t$ & Global indicators (Gini, welfare, GDP) \\
+$\mathcal{L},\mathcal{E}$ & Language model, Embedding model \\
+$\sigma,\, L_i$ & Shock threshold, long-term step size \\
+$\mathcal{R}_t^{s},\, \mathcal{R}_{L_i}^{l}$ & Short-/long-term news \\
+$\mathcal{H}^{s},\, \mathcal{H}^{l}$ & Short-/long-term experience \\
+$\psi_t^{i},\, V_t$ & Reasoning, public statements \\
+$m_t^i,\, x_t$ & Embedding, fused state \\
+\bottomrule
+\end{tabular}
+\caption{Key symbols in the economic problem and LAMP.}
+\label{tab:symbols_combined}
+\end{table}
+
+To address the above problem, we propose the LAMP framework (see Pseudocode~\ref{alg:lamp-core}), which comprises three modules:
+
+
+\paragraph{Think}  
+\textit{Think} translates global numerical signals into shared news, providing both short- and long-term economic interpretations to guide agents’ reasoning and dialogue.  
+At fixed checkpoints $L_i$, it issues \textbf{long-term news} capturing structural trends. Whenever a key indicator \(
+\mathcal{X}_t = \bigl(G_w,\,W,\,Y\bigr)
+\) —wealth Gini $G_w$, social welfare $W$, or per-capita GDP $Y$—changes by more than a threshold $\sigma$, it broadcasts a \textbf{short-term shock}. 
+Then the news type is:  
+\[
+\text{type}(t) =
+\begin{cases}
+\text{long}, & t \in \{L_1, \dots, L_n\},\\[4pt]
+\text{short}, & \displaystyle \max_j \bigl|\mathcal{X}_{j,t} - \mathcal{X}_{j,t-1}\bigr| > \sigma,\\[6pt]
+\text{none}, & \text{otherwise}.
+\end{cases}
+\]  
+This design ensures agents receive timely, context-rich updates—similar to how real-world economic actors rely on news outlets—rather than raw numerical data.  
+
+A shared LLM-driven news service synthesizes appropriate texts $\mathcal{R}^{\text{short}}_t$ or $\mathcal{R}^{\text{long}}_{L_i}$ and disseminates them to all agents. Short-term news is generated as:  
+\[
+\mathcal{R}^{\text{short}}_t
+= \mathcal{L}_{\text{S}}\!\left(O_t^g,\, O_{t-1}^g,\, \mathcal{R}^{\text{long}}_{L_k} \right), \quad  L_k < t < L_{k+1}
+\]  
+incorporating the current and previous global observations, as well as the most recent long-term news. Long-term news is generated over a two-step observation window:  
+\[
+\mathcal{R}^{\text{long}}_{L_i}
+= \mathcal{L}_{\text{L}}\!\left(O_{L_i-1:L_i}^g\right), \quad i = 1,2,\dots,n
+\]  
+
+Upon receiving short-term news, each agent infers its economic status $\kappa_t^{\,i} \in \{0,1,2\}$ (good / neutral / poor) and produces a private reasoning $\psi_t^{\,i}$. Long-term news additionally triggers the Experience Pool and Speak module for deeper reasoning.  
+After each short-term reasoning phase, agent $i$ ranks candidate reasoning trajectories by reward and stores its top $k_1$ reasoning trajectories into a \emph{short-term} buffer:  
+\[
+\mathcal{H}_{t,i}^{\text{short}} = \mathrm{Top}_{k_1}(\mathcal{T}_i)
+\]  
+At each long-term checkpoint $k$, the system collects the top $k_2$ trajectories (by reward) across all agents and appends them to the \emph{long-term} FAISS index:  
+\[
+\mathcal{H}_{k}^{\text{long}} = \mathcal{H}_{k-1}^{\text{long}} \cup \mathrm{Top}_{k_2}\bigl(\bigcup_{i=1}^{N_h}\mathcal{T}_i\bigr)
+\]  
+
+Before the next long-term reasoning step, agent \(i\) retrieves the \(k_3\) nearest neighbors from \(\mathcal{H}_{k}^{\text{long}}\) using FAISS, where similarity is computed against a query embedding derived from its current observation \(O_t^{\,h,i}\), and merges them with its current \(\mathcal{H}_{t,i}^{\text{short}}\). 
+This combined set of past high-reward insights is then used as contextual prompts for the LLM:  
+\[
+\mathcal{H}_{k,t}^{i} = \mathrm{kNN}_{k_3}(\mathcal{H}_k^{\text{long}}) \cup \mathcal{H}_{t,i}^{\text{short}}
+\]  
+allowing the agent to remember and reuse successful strategies in similar future scenarios.
+
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.8\textwidth]{fig3} 
+\caption{Across three economic environments, LAMP outperforms non-language baselines (Random, rule-based, MADDPG) with higher social welfare and consumption, lower welfare variance, and similar labor usage.}
+\label{fig3}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.8\textwidth]{fig4} 
+\caption{LAMP vs. other language-based agents (Only-LLM, CoT, ReAct, Reflection) on the same metrics across the three economic environments. LAMP outperforms all these LLM-driven baselines, obtaining higher social welfare and consumption and generally lower welfare variance in each environment.}
+\label{fig4}
+\end{figure*}
+
+\paragraph{Speak}  
+Building on the news from \textit{Think} and each agent’s private reasoning, \textit{Speak} produces a concise strategic statement per agent, broadcasts it to peers, and returns language-based peer assessments for the next reasoning step.
+
+Inspired by ~\cite{xu2023language}, the LLM generates three candidate statements for agent \(i\); a self-attention selector \(\mathcal{S}\) scores them to form a distribution \(p_t^{\,i,\cdot}\), from which one statement is sampled and broadcast to all agents. Let \(V_t\) denote the multiset of broadcast statements. After broadcasting and receiving messages \(V_t\), each agent \(i\) uses a Reflection Module \(\mathcal{L}_{reflect}\) to interpret the content. This produces an assessment of each peer \(j\), including an estimated wealth tier (\(w_t^{\,i\!\to j} \in \{\text{low, mid, high}\}\)) and a numeric belief confidence \(\tau_t^{\,i\!\to j} \in [0,10]\). The evaluator also generates a brief self-reflection \(\alpha_t^{\,i}\) summarizing agent \(i\)’s own situation:  
+\[
+\bigl(w_{t}^{\,i\!\rightarrow j},\, \tau_{t}^{\,i\!\rightarrow j},\, \alpha_t^{\,i}\bigr)
+= \mathcal{L}_{\mathrm{reflect}}\!\bigl(O_t^{\,h,i}, V_t, \psi_t^{\,i}\bigr)
+\]  
+
+These peer assessments are fed back to \(\mathcal{S}\) and the LLM policy to guide the next round of reasoning and candidate selection, closing a loop that links language reasoning, dialogue, and adaptive coordination.  
+
+\paragraph{Decide}  
+Consuming language embeddings from \textit{Think} and \textit{Speak} together with numeric observations, \textit{Decide} compresses language vectors and maps the enriched state to actions under centralized training with decentralized execution (CTDE).
+All texts (private reasoning and reflection) are encoded by a text encoder \(\mathcal{E}_{\text{text}}\), pooled into a fixed-length vector \(h_t^{\,i}\), and passed through a small projection \(P:\mathbb{R}^{D}\!\to\!\mathbb{R}^{d}\) for dimensionality reduction and feature alignment:  
+\[
+m_t^{\,i}=\frac{P(h_t^{\,i})}{\|P(h_t^{\,i})\|_2}\in\mathbb{R}^{d}.
+\]
+Unless otherwise noted, gradients do not flow into \(\mathcal{E}_{\text{text}}\) (the encoder is frozen for stability) and only \(P(\cdot)\) is updated during RL. 
+At time \(t\), the global observation is concatenated with household language embeddings to form:  $x_t = \bigl( O_t^{g},\,{m}_t^{\,1:\!N_h} \bigr),$
+which, together with the joint action \(a_t\), is stored in the replay buffer \(\mathcal{D}\).  
+We adopt a standard MADDPG framework~\cite{lowe2017multi}, where a centralized critic minimizes Bellman error, and decentralized actors update their policies by maximizing the expected \(Q\)-value via deterministic policy gradients.  
+Full optimization details and loss formulations are provided in Appendix~\ref{app:setup}.
+
+
+\begin{table*}[t]
+  \centering
+  \small
+  \begin{tabular}{llcccc}
+    \toprule
+    \textbf{Category} & \textbf{Algorithms} & \textbf{Avg. Reward} ( $\uparrow$ ) & \textbf{Social Welfare} ( $\uparrow$ ) & \textbf{Consumption} ( - ) & \textbf{Labor} ( - ) \\
+    \midrule
+    \textbf{Ours} & \textbf{LAMP}
+      & \textbf{8.52 $\pm$ 0.13}
+      & \textbf{2.56e+03 $\pm$ 3.77e+01}
+      & 2.30e+05 $\pm$ 7.52e+04
+      & 3.13e+05 $\pm$ 8.46e+04 \\
+    \midrule
+    \textbf{Conventional} & \textbf{MADDPG}
+      & 5.21 $\pm$ 0.16
+      & 1.17e+03 $\pm$ 5.51e+02
+      & 5.32e+05 $\pm$ 1.31e+05
+      & 7.82e+05 $\pm$ 3.20e+05 \\
+    ~ & \textbf{Rule-Based}
+      & 7.60 $\pm$ 0.33
+      & 2.28e+03 $\pm$ 9.99e+01
+      & 3.19e+05 $\pm$ 5.46e+04
+      & 5.68e+05 $\pm$ 6.73e+04 \\
+    ~ & \textbf{Random}
+      & 6.53 $\pm$ 0.35
+      & 1.96e+03 $\pm$ 1.06e+02
+      & 1.45e+05 $\pm$ 3.10e+04
+      & 4.84e+05 $\pm$ 6.41e+04 \\
+    \midrule
+    \textbf{LLM-based} & \textbf{LLM-Only}
+      & 6.35 $\pm$ 0.32
+      & 1.90e+03 $\pm$ 9.56e+01
+      & 3.06e+05 $\pm$ 6.14e+04
+      & 1.03e+06 $\pm$ 2.18e+05 \\
+    ~ & \textbf{CoT}
+      & 6.75 $\pm$ 0.34
+      & 2.03e+03 $\pm$ 1.03e+02
+      & 4.35e+05 $\pm$ 1.14e+05
+      & 1.03e+06 $\pm$ 2.19e+05 \\
+    ~ & \textbf{ReAct}
+      & 7.44 $\pm$ 0.26
+      & 2.23e+03 $\pm$ 7.92e+01
+      & 6.21e+05 $\pm$ 1.66e+05
+      & 1.02e+06 $\pm$ 2.21e+05 \\
+    ~ & \textbf{Reflection}
+      & 6.59 $\pm$ 0.31
+      & 1.98e+03 $\pm$ 9.16e+01
+      & 3.50e+05 $\pm$ 9.51e+04
+      & 1.03e+06 $\pm$ 2.16e+05 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Comparison of LAMP with conventional and LLM-based baselines in the real-data–calibrated environment (S1: Economic Stability). Results for S2 and S3 appear in Appendix~\ref{app:setup}.
+Values are mean $\pm$ SD; all runs last \textbf{300 years}. 
+Notation: $(\uparrow)$ higher is better; $(\text{--})$ non-monotonic. 
+\textbf{Consumption} and \textbf{Labor} jointly shape household utility with non-monotonic effects.
+}
+  \label{tab:baseline_methods_compact}
+\end{table*}
+
+
+\begin{table*}[t]
+  \centering
+  \small
+  \begin{tabular}{lccccc}
+    \toprule
+    \textbf{Ablation Setting} & \textbf{Avg. Reward} ( $\uparrow$ ) & \textbf{Social Welfare} ( $\uparrow$ ) & \textbf{Consumption} ( - ) & \textbf{Labor} ( - ) & \textbf{Years} ( $\uparrow$ ) \\
+    \midrule
+    %\rowcolor{lampbg}
+    \textbf{LAMP (Ours)}
+      & \textbf{8.52} & \textbf{2.56e+03} & 2.30e+05 & 3.13e+05 & \textbf{3.00e+02} \\
+    \midrule
+    \textbf{\,\,w/o Speak}
+      & 8.42 ({$-1\%$})
+      & 2.53e+03 ({$-1\%$})
+      & 3.24e+05 ({$+41\%$})
+      & 5.36e+05 ({$+71\%$})
+      & \textbf{3.00e+02} ({$+0\%$}) \\
+    \textbf{\,\,w/o Experience Pool}
+      & 8.45 ({$-1\%$})
+      & 1.25e+03 ({$-51\%$})
+      & 5.12e+05 ({$+122\%$})
+      & 4.50e+05 ({$+44\%$})
+      & 1.50e+02 ({$-50\%$}) \\
+    \textbf{\,\,w/o Long-Term}
+      & 5.31 ({$-38\%$})
+      & 1.15e+03 ({$-55\%$})
+      & 2.27e+05 ({$-2\%$})
+      & 4.10e+05 ({$+31\%$})
+      & 2.19e+02 ({$-27\%$}) \\
+    \textbf{\,\,w/o Short-Term}
+      & 8.18 ({$-4\%$})
+      & 1.67e+03 ({$-35\%$})
+      & 3.51e+05 ({$+53\%$})
+      & 5.25e+05 ({$+68\%$})
+      & 2.08e+02 ({$-30\%$}) \\
+    \textbf{\,\,w/o Timing Scheduler}
+      & \textbf{8.52} ({$-0\%$})
+      & 1.19e+03 ({$-53\%$})
+      & 3.48e+05 ({$+51\%$})
+      & 5.70e+05 ({$+82\%$})
+      & 1.41e+02 ({$-53\%$}) \\
+    \bottomrule
+  \end{tabular}
+  \label{tab:ablation_metrics_compact}
+  \caption{Ablation under the baseline economy. Percentages denote change vs.\ \textbf{LAMP (Ours)}. Notation: $(\uparrow)$ higher is better; $(\text{--})$ non-monotonic. 
+\textbf{Consumption} and \textbf{Labor} jointly shape household utility with non-monotonic effects.}
+\end{table*}
+
+\section{Experiments}
+
+
+Our experiments address two key questions:  
+\begin{enumerate}[leftmargin=*,itemsep=0pt,topsep=0pt]
+\item \textbf{How effective is LAMP?} (\S~\ref{sec:compare}): We compare LAMP with non-language and LLM-based baselines across 3 economic scenarios to evaluate its performance.  
+\item \textbf{What drives LAMP’s gains?} (\S~\ref{sec:ablation}): We remove core modules of LAMP to assess their contribution to performance and stability.
+\end{enumerate}
+
+
+\subsection{Experimental Setup}
+\label{sec:setup}
+
+\paragraph{Environment}
+All experiments are conducted in \textbf{TaxAI}~\cite{mi2023taxai}, a dynamic economic simulator. It models complex economic interactions between heterogeneous households and a government, and is calibrated with real-world data—making it a realistic and challenging testbed for economic decision-making.
+
+\paragraph{Evaluation Metrics}
+We evaluate LAMP and baselines with five metrics: (1) \textbf{Average Household Reward} — mean reward per step across households; (2) \textbf{Social Welfare}: sum of utilities across all households over the horizon; (3) \textbf{Total Consumption}: aggregate consumption of households; (4) \textbf{Total Labor}: aggregate labor supply in an economy; and (5) \textbf{Years}: number of simulated years before collapse (max 300, higher indicates greater stability). \textit{Total Consumption} and \textit{Total Labor} do not directly measure policy performance, but help analyze policy preferences.
+
+
+\paragraph{Baselines.}
+We benchmark LAMP against two baseline categories with identical training budgets and horizons. All LLM-based baselines use the same backbone (\textbf{Qwen2.5-72B-Instruct-INT4}) and prompts. We compare different language models in Appendix~\ref{app:setup}.
+
+\textbf{(1) Conventional Baselines:}
+\textbf{Random}: Agents select actions uniformly at random.
+\textbf{Rule-Based}: Economic method based on the utility–production model (details in extended version).
+\textbf{MADDPG}: Multi-Agent Deep Deterministic Policy Gradient~\cite{lowe2017multi}. We also compare different MARL algorithms in Appendix~\ref{app:setup}.
+
+
+\textbf{(2) LLM-based Baselines:}
+ \textbf{Only-LLM}: Directly query an LLM to generate actions.
+ \textbf{CoT / ReAct / Reflection}: LLM reasoning methods using CoT~\cite{wei2022chain}, ReAct~\cite{yao2022react}, or Reflection~\cite{shinn2023reflexion}.
+
+\subsection{How effective is LAMP?}
+\label{sec:compare}
+
+We evaluate LAMP and baselines under three settings:
+\begin{itemize}[leftmargin=1.2em, itemsep=0pt, topsep=0pt]
+\item \textbf{Economic Stability (S1):} Matches training conditions, representing a stable macroeconomic scenario.
+\item \textbf{Economic Slowdown (S2):} Introduces a moderate shift, simulating reduced growth and mild market stress.
+\item \textbf{Crisis Shock (S3):} Applies a large, coupled shift, modeling severe economic shocks for robustness evaluation.
+\end{itemize}
+Detailed setup is provided in Appendix~\ref{app:setup}.
+
+
+\paragraph{Quantifying Gains over LLM-based Baselines.}
+LAMP also outperforms language-integrated baselines, demonstrating the advantage of combining MARL with language-guided policy optimization.
+In \textbf{S1}, using the same backbone and prompt budget, LAMP surpasses the strongest language baseline (ReAct) with \textbf{+14.8\%} higher welfare and \textbf{+14.5\%} higher reward, while reducing consumption and labor.
+Under distribution shifts, the advantage remains: in \textbf{S2} and \textbf{S3}, welfare gains are \textbf{+1.0\%} and \textbf{+10.4\%}, reward gains are \textbf{+16.0\%} and \textbf{+18.1\%}, with corresponding reductions in consumption and labor.
+These results confirm that LAMP’s language-guided coordination improves both stability and efficiency, even in stressed economic conditions.
+
+\begin{tcolorbox}[title=\textbf{Representative LLM Reasoning and Reflection}, breakable]
+\small
+\begin{description}[leftmargin=0pt, labelsep=0.6em, style=nextline, font=\ttfamily]
+
+  \item[Short-term]
+  \textbf{Reasoning:} ``... The family's personal productivity (0.7741) and wealth (0.0957) place them in a vulnerable position. Given the volatility and risk of instability, the economic status is rated as `Bad'.''\\
+  \textbf{Economic status:} \texttt{0}
+
+  \item[Long-term]
+  \textbf{Statement:} ``We should advocate for policies that promote fair wage growth and equitable wealth distribution to stabilize the broader economic environment and ...''\\
+  \textbf{Reasoning:} ``The family should avoid overwork and instead focus on savings, education, and...''\\
+  \textbf{Reflection:} ``The statements from other households highlight the importance of balancing increased labor time... Investing in education and advocating for fairness improves resilience and security.''\\
+  \textbf{Economic status:} \texttt{1}\\
+  \textbf{Belief:} \texttt{[0, 1, 0, 0, 0, 1, 1, 1, 0, 2]}\\
+  \textbf{Trust:} \texttt{[8, 9, 9, 8, 9, 8, 9, 9, 8, 10]}
+
+\end{description}
+\end{tcolorbox}
+
+\paragraph{Isolating Language Effects.}
+LAMP consistently outperforms non-language baselines, demonstrating the benefit of language integration in economic decision-making.
+In \textbf{S1}, LAMP achieves the highest \emph{Social Welfare} and \emph{Average Household Reward}. Compared to the strongest non-language baseline (Rule-Based), welfare improves by \textbf{+12.3\%} and reward by \textbf{+12.1\%}; relative to numeric MARL (MADDPG), gains reach \textbf{+118.8\%} and \textbf{+63.5\%}, respectively.
+Efficiency gains are evident from lower \emph{Consumption} and \emph{Labor}. Versus Rule-Based, LAMP uses –26.5\% consumption and –44.9\% labor (vs.\ MADDPG: –56.8\% and –60.0\%), suggesting that higher welfare stems from efficiency rather than brute-force spending or overwork. Under \textbf{S2} and \textbf{S3}, LAMP consistently outperforms the baselines
+
+\paragraph{Analysis and Insights.}
+We share \textbf{interesting findings} from experiments, supported by LLM outputs:
+
+(1) Economic decision‑making involves many interdependent variables that change frequently, with causal links often unclear. Purely data‑driven MARL starts from scratch, fitting policies without explicit understanding of these variables, making optimal policy search slow and uncertain.
+
+(2) LAMP addresses this by using LLM reasoning and reflection at each step to extract concise, high‑value insights, which are then passed to the MARL component (e.g., MADDPG). These structured signals—hard for pure data‑driven methods to obtain—are readily produced by pretrained LLMs.
+Representative examples (above) illustrate the LLM’s clear interpretation of economic variables and targeted reasoning that enhance decision‑making. More examples are shown in Appendix~\ref{app:text_examples}.
+
+\begin{tcolorbox}[title=\textbf{Representative Statements and Experience}, breakable]
+\small
+\begin{description}[leftmargin=0pt, labelsep=0.6em, style=nextline, font=\ttfamily]
+    \item[Statements]
+    ``...advocate fair wage growth and equitable wealth distribution...'' \\
+    ``...To navigate the current economic volatility, families should focus on optimizing their work-life balance, ensuring that increased labor does not come at the cost of reduced utility....''\\
+    ``...focus on optimizing our working hours to avoid reducing utility...''\\
+     ``...investing in personal development to enhance long-term productivity and financial stability...''
+    \item[Experience]
+     ID=Household1,\\
+     Reward=0.95,\\
+     Personal productivity(e): 1.846,\\
+     Personal wealth: 0.196, \\
+     savings ratio:-0.947,\\
+     working time ratio:-0.963,\\
+     Reasoning: ``...''
+\end{description}
+\end{tcolorbox}
+
+
+\subsection{What drives LAMP’s gains?}
+\label{sec:ablation}
+
+\paragraph{Speak Module: Strategy Communication \& Opponent Modeling.}
+The \textit{Speak} module enables agents to exchange strategic messages and infer others’ states, providing the coordination essential for high performance. Removing it causes a 1.2\% welfare drop alongside sharp increases in labor and consumption. This indicates that, without strategic communication, agents compensate through brute‑force effort. With Speak enabled, comparable or higher welfare is achieved with far less input. Representative outputs (below) show the mechanism: after detecting widening inequality and low wages, the LLM revises beliefs toward demand fragility and restraint, then recommends disciplined actions such as moderating labor expansion and investing in human capital, thereby reducing overshooting and volatility.
+
+
+\paragraph{Experience Pool: Enhancing Stability and Efficiency.}
+The experience pool substantially improves efficiency and stability. Removing it \textbf{cuts social welfare by 50.9}\% and average household reward by 0.8\%, while labor rises 43.6\% and consumption surges 122.4\%. The unexpected jump in consumption suggests that, without stored successful trajectories, agents overshoot spending and output, oscillating in search of workable strategies. Stability also deteriorates, with \textbf{50.2\% fewer simulated years} sustained before failure. Beyond performance, the pool improves interpretability by preserving reasoning traces as an auditable knowledge base explaining why certain strategies are followed.
+
+
+\paragraph{Reasoning Paths: Trend Tracking \& Shock Response.}
+\textit{Long‑term reasoning} is essential for capturing structural trends. Removing it \textbf{drops average household reward by 37.7\%} and reduces stable years from 300.0 to 219. Without long‑term reasoning, agents become myopic, reacting only to immediate stimuli and producing unstable policies.
+
+\textit{Short‑term reasoning} supports rapid adjustment to shocks. Disabling it has a moderate effect on final returns (\textbf{–3.99\% reward}) but significantly harms efficiency: labor rises 67.7\%, consumption 52.7\%, and stable years fall from 300.0 to 208.
+
+\textit{Trigger timing} is critical. LAMP schedules long-term reasoning at fixed intervals and short-term reasoning when indicators deviate. Random triggers keep welfare similar but collapse efficiency: labor increases 81.9\%, consumption 51.2\%, and \textbf{stable years drop by 141}. This shows aligning reasoning with actual needs reduces turbulence and sustains consistent performance.
+
+\textbf{We observe an adaptive policy shift in LLM outputs}: upon detecting rising inequality—top 10\% volatility widening and bottom 50\% declining—the LLM revised its earlier “work more” stance. It recommended slightly reducing work hours, increasing savings, delaying non‑essential spending, and investing in skills for long‑term stability, while publicly supporting progressive taxation and minimum wages.
+
+\section{Conclusion}
+This paper introduced the \textbf{Language‑Augmented Multi‑Agent Policy (LAMP)} framework, offering a new approach to complex economic decision‑making. LAMP leverages LLM reasoning and reflection over language signals—such as peer dialogue and public news—alongside numerical data to inform optimal policies.
+The framework follows a \textit{Think–Speak–Decide} pipeline: agents extract short‑term shocks and long‑term trends, communicate strategic insights, and execute language‑informed policies. \textbf{Experiments demonstrate LAMP’s strong performance and reveal interesting insights}: LLM reasoning and reflection dynamically distill key information from numerous, volatile economic variables, enabling agents to make efficient decisions.
+
+This contrasts with fully data-driven methods that search for optimal solutions from scratch—a process particularly challenging in economics. We hope this work offers novel methods and insights for AI in economic decision-making.
+
+\section*{Acknowledgments}
+We sincerely thank Prof. Hao Huang from the University of International Business and Economics for his valuable guidance and insightful suggestions during the early stage of this work. 
+
+This work was supported in part by the National Natural Science Foundation of China under the Original Exploration Program (Grant No. 72450002).
+
+\bibliography{aaai2026}
+
+\clearpage
+
+\appendix
+
+\section*{Appendix}
+\addcontentsline{toc}{section}{Appendix}
+
+\vspace{0.3em}
+\noindent\textbf{Appendix Table of Contents}
+\vspace{0.3em}
+
+\begin{flushleft}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}ll}
+  \textbf{A.} & Representative Text Examples (Section~\ref{app:text_examples}) \\
+  \textbf{B.} & Prompt Template           (Section~\ref{app:prompt_template}) \\
+  \textbf{C.} & Experimental Setup and Results (Section~\ref{app:setup}) \\
+\end{tabular}
+\end{flushleft}
+
+\vspace{0.8em}
+\hrule
+\vspace{1em}
+
+
+\section{Representative Text Examples}
+\label{app:text_examples}
+\begin{tcolorbox}[title=\textbf{Short-term}, breakable]
+\small
+
+% 使用 description 列表，几乎无缩进，标签放等宽字体
+\begin{description}[leftmargin=0pt, labelsep=0.6em, style=nextline, font=\ttfamily]
+
+  \item[Example 1]
+  \textbf{Reasoning:} ``The current economic conditions are characterized by significant economic disparity, with both the top 10\% and bottom 50\% experiencing severe declines in wealth and income. The surge in wage rates has not translated into proportional gains in productivity or income, indicating a fragile economic environment. The family's personal productivity (0.7741156555876485) and wealth (0.09572083033270215) place them in a vulnerable position, with low wealth levels and moderate productivity. Given the economic volatility and the potential for increased social unrest and economic instability, the economic status is rated as 'Bad'.''\\
+  \textbf{Economic status:} \texttt{0}\\
+
+  \item[Example 2]
+  \textbf{Reasoning:} ``The recent economic data indicate a significant improvement in wealth and income for the bottom 50\% of the population, with wealth increasing by 259.02\% and income by 221.43\%. This surge is accompanied by a notable boost in productivity (90.87\%) and an overall wage rate increase of 15.34\%. These positive trends suggest a more equitable distribution of economic gains, which can drive higher consumer spending and economic growth. The family's personal productivity (6.79) and wealth (3.48) are above average, placing them in a favorable position to benefit from these economic improvements. While maintaining a balance between increased labor time and managed consumption is crucial, the current economic conditions are robust and supportive, warranting a 'Good' rating.''\\
+  \textbf{Economic status:} \texttt{2}\\
+
+\end{description}
+
+\end{tcolorbox}
+\begin{tcolorbox}[title=\textbf{Long-term}, breakable]
+\small
+
+% 使用 description 列表，几乎无缩进，标签放等宽字体
+\begin{description}[leftmargin=0pt, labelsep=0.6em, style=nextline, font=\ttfamily]
+
+  \item[Example 1]
+  \textbf{Statement:}``We should advocate for policies that promote fair wage growth and equitable wealth distribution to stabilize the broader economic environment and benefit all families.''\\
+  \textbf{Reasoning:}``The economic data reveal significant volatility and disparities in wealth, income, and productivity between the top 10\% and the bottom 50\% of the population. The top 10\% experience substantial fluctuations in wealth and income, while the bottom 50\% face more erratic and often negative changes. Despite some positive trends in productivity and wage rates, the overall economic environment remains challenging, with a low wage rate and persistent wealth gaps. The family's personal productivity and wealth place them in a moderate but vulnerable position, requiring careful financial management and strategic decisions to improve economic stability and self-utility.Given the neutral economic conditions, the family should focus on maintaining a balance between productivity and personal well-being. Overworking can reduce utility, while prudent consumption and savings can improve financial stability. Investing in education and skill development can enhance productivity and long-term economic resilience. Advocating for fair economic policies, such as progressive taxation and minimum wage increases, can help address broader inequalities and create a more stable economic environment, benefiting the family in the long run.''\\
+  \textbf{Reflection:} ``The consensus among the households emphasizes the importance of balancing increased labor time with managed consumption to maintain personal well-being and financial stability. This aligns with our internal reasoning, which highlights the need for careful financial management and strategic decisions. Given our moderate but vulnerable economic position, we should focus on maintaining a balance to avoid overworking, which can reduce utility, while ensuring prudent consumption and savings. Investing in education and skill development will enhance productivity and long-term economic resilience. We should also advocate for fair economic policies to address broader inequalities and create a more stable environment for our family.''
+  
+  \textbf{Economic status:} \texttt{1}\\
+  \textbf{Belief:} \texttt{[0, 1, 0, 0, 0, 1, 1, 1, 0, 2]}\\
+  \textbf{Trust:} \texttt{[8, 9, 9, 8, 9, 8, 9, 9, 8, 10]}
+  
+  \item[Example 2]
+  \textbf{Statement:} ``We urge policymakers to implement progressive taxation and minimum wage increases to address the growing wealth and income disparities and promote a more equitable economic environment."\\
+  \textbf{Reasoning:} "The economic data reveal significant volatility and disparities in wealth, income, and productivity between the top 10\% and the bottom 50\% of the population. The top 10\% experience substantial fluctuations in wealth and income, while the bottom 50\% face more erratic and often negative changes. Despite some positive trends in productivity and wage rates, the overall economic environment remains challenging, with a low wage rate and persistent wealth gaps. The family's personal productivity and wealth place them in a moderate but vulnerable position, requiring careful financial management and strategic decisions to improve economic stability and self-utility.Given the neutral economic conditions, the family should focus on maintaining a balance between productivity and personal well-being. Overworking can reduce utility, while prudent consumption and savings can improve financial stability. Investing in education and skill development can enhance productivity and long-term economic resilience. Advocating for fair economic policies, such as progressive taxation and minimum wage increases, can help address broader inequalities and create a more stable economic environment, benefiting the family in the long run.''\\
+  \textbf{Reflection:} ``The statements from other households highlight the importance of balancing increased labor time with managed consumption to maintain personal well-being and financial stability. Given our moderate but vulnerable economic position, it is crucial to avoid overworking, which can reduce utility, and instead focus on prudent financial management. Investing in education and skill development can enhance productivity and long-term economic resilience. Advocating for fair economic policies can also help address broader inequalities and create a more stable environment, benefiting our family in the long run.''\\
+
+  \textbf{Economic status:} \texttt{1}\\
+  \textbf{Belief:} \texttt{[1, 2, 0, 0, 0, 1, 1, 0, 0, 1]}\\
+  \textbf{Trust:} \texttt{[8, 7, 8, 8, 9, 8, 9, 8, 8, 6]}
+\end{description}
+
+\end{tcolorbox}
+
+
+\section{Prompt Template}
+\label{app:prompt_template}
+
+\begin{tcolorbox}[title=\textbf{Long‐term reasoning},breakable]
+\small
+
+You are a family decision inferent. Analyze the given data and provide insights.
+
+Long‐Term News: \{long\_term\_news\}
+
+Private Observation:
+\begin{itemize}
+  \item Personal productivity (e): \{private\_observation[0]\}
+  \item Personal wealth: \{private\_observation[1]\}
+\end{itemize}
+
+Similar Experiences: \{similar\_experience if similar\_experience else "No similar experiences found."\}
+
+Your final goal is to improve the self‐utility of the current family, where increased labor time reduces utility and increased consumption improves utility, under the Bewley–Aiyagari model.
+
+\textbf{Tasks:}
+\begin{enumerate}
+  \item Summarize key economic insights in “analysis”.
+  \item Rate the economic condition as:
+    \begin{itemize}
+      \item 0 = Bad
+      \item 1 = Neutral
+      \item 2 = Good
+    \end{itemize}
+    Store this as “economic\_status”.
+  \item Based on the current situation and private observation, give suggestions in “reasoning”.
+  \item Generate 3 unique public statements in “statements”.
+\end{enumerate}
+
+Return exactly this JSON (no extra keys or commentary):
+\begin{verbatim}
+{
+  "analysis": "...",
+  "economic_status": 0,
+  "reasoning": "..."
+}
+\end{verbatim}
+
+\end{tcolorbox}
+
+ \begin{tcolorbox}[title=\textbf{Short-term reasoning},breakable]
+\small
+You are a family decision inferent. Your goal is to improve the family’s self-utility under the Bewley–Aiyagari model (more labor ↓ utility, more consumption ↑ utility).
+
+\textbf{Inputs:}
+\begin{itemize}
+  \item Short-Term News: \{short\_term\_news\}
+  \item Recent Long-Term News: \{recent\_long\_term\_result if recent\_long\_term\_result else "None"\}
+  \item Private Observation:
+    \begin{itemize}
+      \item Personal productivity (e): \{private\_observation[0]\}
+      \item Personal wealth: \{private\_observation[1]\}
+    \end{itemize}
+\end{itemize}
+
+\textbf{Tasks:}
+\begin{enumerate}
+  \item Provide a detailed analysis of current economic conditions, considering savings rate and working hours.
+  \item Rate the economic condition:
+    \begin{itemize}
+      \item 0 = Bad
+      \item 1 = Neutral
+      \item 2 = Good
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Output:}  
+Return exactly this JSON (no extra keys or commentary):
+\begin{verbatim}
+{
+  "economic_status": 0,
+  "reasoning": "..."
+}
+\end{verbatim}
+\end{tcolorbox}
+
+\begin{tcolorbox}[title=\textbf{Reflection and update belief},breakable]
+\small
+You are a family decision inferent. Analyze the given other households’ statements and provide private insights.
+
+Private Observation:
+\begin{itemize}
+  \item Personal productivity (e): \{private\_observation[0]\}
+  \item Personal wealth: \{private\_observation[1]\}
+\end{itemize}
+
+Internal Reasoning: \{personal\_reasoning\}
+
+Public Personal Statement: \{personal\_statement\}
+
+Other Households’ Statements: 
+\{chr(10).join([f"- {stmt}" for stmt in other\_agents\_statements])\}
+
+Your final goal is to improve the self‐utility of the current family, where increased labor time reduces utility and increased consumption improves utility, under the Bewley–Aiyagari model.
+
+\textbf{Tasks:}
+\begin{enumerate}
+  \item Classify each household’s wealth level as \texttt{wealth\_guesses} (0=Low, 1=Medium, 2=High) with exactly \{expected\_num\} elements. Notice one has status 2, four have status 1, and five have status 0.
+  \item Rate each statement’s trustworthiness from 0 (not trustworthy) to 10 (highly trustworthy) as \texttt{trust\_levels} with exactly \{expected\_num\} elements.
+  \item Provide a brief reflection in \texttt{reflection\_text}, focusing on yourself, others’ statements, and ensuing economic decisions.
+\end{enumerate}
+
+Return exactly this JSON (no extra keys or commentary):
+\begin{verbatim}
+{
+  "wealth_guesses": [...],
+  "trust_levels": [...],
+  "reflection_text": "..."
+}
+\end{verbatim}
+\end{tcolorbox}
+
+
+\section{Experimental Setup and Results}
+\label{app:setup}
+
+In this appendix, we provide further details on our LAMP framework’s methodology (Appendix~\ref{app:method}) and experimental setup and results (Appendix~\ref{app:experience}). We elaborate on the mathematical formulations, training procedure, and environment configurations that were summarized in the main text. We also include additional results and explanations, including detailed scenario parameters and expanded discussions of Economic Slowdown (S2) and Crisis Shock (S3) from the main paper.
+
+\subsection{Method}\label{app:method}
+
+\textbf{Economic Environment and Tax Functions.} Our multi-agent economic environment (TaxAI) is based on a heterogeneous-agent macroeconomic model with a government and $N_h$ households. In each period, the government sets five policy variables: labor income tax $(\tau_t, \xi_t)$, wealth tax $(\tau_{a,t}, \xi_{a,t})$, and a public spending ratio $r^G_t = G_t / Y_t$. Here $\tau$ and $\tau_a$ control the average tax rates, while $\xi$ and $\xi_a$ control the progressivity (marginal rate) of the income and wealth taxes. 
+The income and asset tax functions follow nonlinear HSV formulations:
+\[
+T(i_t) = i_t - (1-\tau)\frac{i_t^{1-\xi}}{1-\xi},\;
+T^a(a_t) = a_t - \frac{1 - \tau_a}{1 - \xi_a} a_t^{1 - \xi_a}
+\]
+where \(T(\cdot)\) and \(T^a(\cdot)\) represent the income and asset tax schedules respectively, and \(\tau, \tau_a, \xi, \xi_a\) control the average and marginal tax rates.
+The total tax revenue \(T_t\) is composed of income tax, wealth tax, and consumption tax across all households, \[T_t = \sum_{i=1}^N \bigl(T(i_t^i) + T(a_t^i) + \tau_s c_t^i\bigr)\].
+
+
+\begin{table*}[t]
+  \centering
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Algorithms} & \textbf{Avg. Reward} & \textbf{Social Welfare} & \textbf{Consumption} & \textbf{Labor} \\
+    \midrule
+    \rowcolor{lampbg}\textbf{LAMP (Ours)}
+      & \textbf{8.21 $\pm$ 0.12}
+      & \textbf{2.10e+03 $\pm$ 6.93e+02}
+      & 2.02e+05 $\pm$ 7.35e+04
+      & 3.72e+05 $\pm$ 1.42e+05 \\
+    \midrule
+    \textbf{MADDPG}
+      & 5.07 $\pm$ 0.16
+      & 1.17e+03 $\pm$ 3.77e+02
+      & 4.07e+05 $\pm$ 6.46e+04
+      & 7.42e+05 $\pm$ 1.50e+05 \\
+    \textbf{Rule-Based}
+      & 7.39 $\pm$ 0.45
+      & 1.88e+03 $\pm$ 6.09e+02
+      & 2.65e+05 $\pm$ 6.35e+04
+      & 6.15e+05 $\pm$ 1.20e+05 \\
+    \textbf{Random}
+      & 6.17 $\pm$ 0.41
+      & 1.57e+03 $\pm$ 5.20e+02
+      & 1.18e+05 $\pm$ 2.88e+04
+      & 5.20e+05 $\pm$ 1.01e+05 \\
+    \midrule
+    \textbf{LLM-Only}
+      & 6.01 $\pm$ 0.24
+      & 6.30e+03 $\pm$ 5.68e+03
+      & 2.54e+05 $\pm$ 3.38e+04
+      & 1.06e+06 $\pm$ 1.54e+05 \\
+    \textbf{CoT}
+      & 6.33 $\pm$ 0.35
+      & 1.90e+03 $\pm$ 1.06e+02
+      & 3.42e+05 $\pm$ 8.59e+04
+      & 1.03e+06 $\pm$ 2.20e+05 \\
+    \textbf{ReAct}
+      & 6.95 $\pm$ 0.22
+      & 2.08e+03 $\pm$ 6.46e+01
+      & 4.46e+05 $\pm$ 8.47e+04
+      & 9.59e+05 $\pm$ 1.58e+05 \\
+    \textbf{Reflection}
+      & 3.54 $\pm$ 0.40
+      & 1.06e+03 $\pm$ 1.20e+02
+      & 1.82e+05 $\pm$ 4.59e+04
+      & 1.15e+06 $\pm$ 2.42e+05 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Performance comparison under Scenario S2 (Economic Slowdown).}
+  \label{tab:scenario2_results}
+\end{table*}
+
+\begin{table*}[t]
+  \centering
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Algorithms} & \textbf{Avg. Reward} & \textbf{Social Welfare} & \textbf{Consumption} & \textbf{Labor} \\
+    \midrule
+    \rowcolor{lampbg}\textbf{LAMP (Ours)}
+      & \textbf{8.18 $\pm$ 0.16}
+      & \textbf{2.33e+03 $\pm$ 3.16e+02}
+      & 1.96e+05 $\pm$ 3.14e+04
+      & 3.21e+05 $\pm$ 5.93e+04 \\
+    \midrule
+    \textbf{MADDPG}
+      & 5.19 $\pm$ 0.34
+      & 1.13e+03 $\pm$ 5.69e+02
+      & 5.49e+05 $\pm$ 3.10e+05
+      & 8.61e+05 $\pm$ 4.71e+05 \\
+    \textbf{Rule-Based}
+      & 7.36 $\pm$ 0.38
+      & 2.09e+03 $\pm$ 2.53e+02
+      & 2.71e+05 $\pm$ 4.92e+04
+      & 5.95e+05 $\pm$ 1.02e+05 \\
+    \textbf{Random}
+      & 6.24 $\pm$ 0.29
+      & 1.77e+03 $\pm$ 2.14e+02
+      & 1.21e+05 $\pm$ 2.09e+04
+      & 5.05e+05 $\pm$ 9.87e+04 \\
+    \midrule
+    \textbf{LLM-Only}
+      & 6.10 $\pm$ 0.23
+      & 6.39e+03 $\pm$ 5.76e+03
+      & 2.82e+05 $\pm$ 3.75e+04
+      & 1.06e+06 $\pm$ 1.54e+05 \\
+    \textbf{CoT}
+      & 6.46 $\pm$ 0.35
+      & 1.94e+03 $\pm$ 1.05e+02
+      & 3.92e+05 $\pm$ 1.02e+05
+      & 1.03e+06 $\pm$ 2.20e+05 \\
+    \textbf{ReAct}
+      & 7.05 $\pm$ 0.18
+      & 2.11e+03 $\pm$ 5.53e+01
+      & 5.00e+05 $\pm$ 7.60e+04
+      & 9.58e+05 $\pm$ 1.52e+05 \\
+    \textbf{Reflection}
+      & 3.68 $\pm$ 0.41
+      & 1.10e+03 $\pm$ 1.24e+02
+      & 2.10e+05 $\pm$ 5.60e+04
+      & 1.15e+06 $\pm$ 2.42e+05 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Performance comparison under Scenario S3 (Crisis Shock).}
+  \label{tab:scenario3_results}
+\end{table*}
+
+\textbf{Think–Speak–Decide Pipeline Recap.} In the main text, we introduced the three core modules of LAMP: Think, Speak, and Decide. For completeness, we restate how these modules function and detail how their outputs are integrated into the learning process:
+
+(1)Think Module: At specific times, the environment produces a natural-language news description of the state of the economy, which agents use for reasoning. To ensure agents focus on the appropriate temporal scale, we schedule two types of news events as described in the main text (Section 3). At fixed long-term intervals $L_i$ (e.g., every $L$ steps), a long-term news summary $\mathcal{R}^{long}_{L_i}$ is generated by an LLM based on the recent trajectory of global observations. This reflects structural trends (e.g. sustained growth slowdown or rising inequality over time). Meanwhile, at any intermediate step, if there is a sudden significant change in key indicators, a short-term news $\mathcal{R}^{short}_t$ is triggered to announce the shock. Formally, letting $\mathcal{X}_t = (G_w(t), W(t), Y(t))$ represent the current values of critical metrics (wealth Gini, social welfare, and per-capita GDP, respectively), we set a shock threshold $\sigma$. If $\max_j |,\mathcal{X}_{j,t} - \mathcal{X}_{j,t-1},| > \sigma$ for any metric $j$, then $\text{type}(t) = \textit{short}$; if $t$ coincides with a long-term checkpoint $L_i$, then $\text{type}(t) = \textit{long}$; otherwise no news is issued ($\text{type}(t) = \textit{none}$). This mechanism, summarized by Equation (4) in the main paper, ensures that agents receive timely, context-rich language updates rather than raw numbers – similar to how real economic agents rely on news media for important developments. In our implementation, we chose $\sigma$ and $L$ so that long-term news arrives periodically (every few years of simulation) and short-term news flags large quarterly swings in indicators (exact values are chosen to balance frequency of news with not overwhelming the agent with constant messages). Given a news text, each household agent uses a large language model $\mathcal{L}_{reason}$ to interpret the news relative to its own state. The agent produces a short private reasoning $\psi_t^i$ which may include its assessment of the economy (e.g., “good” or “bad” times, encoded as an economic status label 2/1/0) and a rationale for its next action (e.g., “reduce consumption and save more because a recession is coming”). In generating this reasoning, the agent can draw upon an experience pool of past reasoning trajectories. We maintain two experience memories per agent: a short-term memory $\mathcal{H}^{short}_{t,i}$ that caches the agent’s top reasoning trajectories from recent steps, and a long-term memory $\mathcal{H}^{long}$ that indexes high-value reasoning trajectories from across all agents and past episodes using a FAISS similarity index. At the start of a long-term reasoning phase, each agent retrieves a few most relevant past experiences $\mathrm{kNN}_{k_3}(\mathcal{H}^{l})$ (based on similarity of current news and state to past situations) and combines them with its recent short-term experiences $\mathcal{H}^{s}_{t,i}$ as contextual examples for the LLM prompt. This helps the agent “remember” successful strategies or important lessons from history, improving stability in sparse-reward, long-horizon settings. After the LLM produces the new reasoning $\psi_t^i$, we store the trajectory and its outcome (e.g., obtained reward) back into the short-term memory, and periodically (at long-term checkpoints) update the long-term memory with top trajectories from all agents. This design mitigates forgetting and allows re-use of good strategies, as evidenced by the performance drop when disabling the experience pool (see ablation results).
+
+(2)Speak Module: After forming its private reasoning, each agent may broadcast a concise public message summarizing its strategy or perspective. To generate a message, we use another LLM $\mathcal{L}_{stmt}$ that takes as input the agent’s state and reasoning and produces a few candidate statements. An internal scoring function (a self-attention mechanism) selects one statement $v_t^i$ to broadcast. At a long-term news step (when agents typically communicate strategic intent), all agents exchange these statements simultaneously, resulting in a set $V_t = {v_t^1, v_t^2, \dots, v_t^{N_h}}$ visible to everyone. Each agent then interprets the incoming messages using a reflection function $\mathcal{L}_{reflect}$. This produces: (a) an updated belief about each other agent’s hidden state (for example, agent $i$ may infer whether agent $j$ is likely wealthy or poor based on $j$’s message, denoted $w_t^{,i\to j} \in {\text{low, mid, high}}$), (b) a trust score $\tau_t^{,i\to j} \in [0,10]$ indicating how credible or relevant agent $j$’s message is according to $i$, and (c) a short self-reflection $\alpha_t^i$ where agent $i$ articulates any revised understanding of its own situation after hearing others (e.g., “others are optimistic about the market, perhaps I should not be too conservative”). These reflection outputs effectively let agents do opponent modeling and belief updates via language. They are fed back into the Think module in the next cycle (closing the reasoning–communication loop) and also incorporated into the policy’s state input for decision-making. In summary, the Speak module enables strategic communication that improves coordination and adaptability: it ensures each agent is not reasoning in isolation, but rather adjusting its policy in light of peers’ stated intentions and perceived credibility.
+
+(3)Decide Module: The Decide stage integrates the numerical and language information to output final actions through a reinforcement learning policy. We use a centralized training, decentralized execution (CTDE) paradigm with an actor–critic algorithm (based on MADDPG). Specifically, during training, a centralized critic $Q_{\phi}(x, a^1,\dots,a^{N_h})$ takes as input the joint state and joint action of all agents, and outputs a Q-value (expected cumulative reward) to critique the action choices. The actors (one per agent $i$ with parameters $\theta_i$) are decentralized policies $a_t^i = \mu_{\theta_i}(o_t^i,, m_ t^i)$ that observe only the agent’s own local state $o_t^i$ (e.g., its asset $a_t^i$, efficiency $e_t^i$, and any private observation like its own income) augmented with its own language-based context $m_t^i$. Here $m_t^i$ is a fixed-size vector representation of textual inputs relevant to agent $i$ at time $t$, including its private reasoning $\psi_t^i$ and its reflection $\alpha_t^i$ (concatenated or pooled). To obtain $m_t^i$, we encode the texts with a pretrained language encoder $E_{\text{text}}$ and project it to a lower dimension $d$ using a trainable linear layer $P(\cdot)$. We also $L_2$-normalize the projected vector to unit length to avoid scale issues when combining with numeric inputs. This way, the language information enters the policy network in a controlled, compact form rather than raw text tokens, which greatly improves learning efficiency. The critic state $x_t$ at time $t$ consists of the global numerical state combined with all agents’ language embeddings:
+\(
+x_t = \bigl( O_t^{g},\,{m}_t^{\,1:\!N_h} \bigr),
+\)
+where $O_t^g$ is the global observation (available to the critic but not to individual actors during execution). The critic uses this state to evaluate joint actions. We train the critic by minimizing the mean squared Bellman error:
+\[
+L_{\text{critic}} =
+  \mathbb{E}_{(\,x_t,a_t,r_t,x_{t+1})\sim\mathcal D}
+  \Bigl[
+    \bigl(Q_{\phi}(x_t,a_t)-y_t\bigr)^2
+  \Bigr]
+\]
+with the target value
+\[
+y_t =
+  r_t + \gamma\,
+  Q_{\phi'}\bigl(x_{t+1},\,a'_{t+1}\bigr),\;
+  a'_{t+1}\sim\mu'_{\theta_j},
+\]
+where \(\phi'\) and \(\mu'_{\theta_j}\) denote target networks updated by Polyak averaging. For agent \(i\), the actor aims to maximize the expected return
+\[
+J(\theta_i) =
+\mathbb{E}_{\mathcal D}\Bigl[
+  Q_{\phi}\bigl(
+    x_t,\,
+    a_{-i},\,
+    \mu_{\theta_i}(o_t^{\,i},{m}_t^{\,i})
+  \bigr)
+\Bigr],
+\]
+yielding the deterministic policy gradient
+\[
+\nabla_{\theta_i} J(\theta_i) =
+\mathbb{E}_{\mathcal D}\Bigl[
+  \nabla_{\theta_i}\mu_{\theta_i}(o_t^{\,i},{m}_t^{\,i})
+  \nabla_{a_i} Q_{\phi}(x_t,a_t)
+\Bigr]_{a_i=\mu_{\theta_i}(o_t^{\,i},{m}_t^{\,i})}.
+\]
+In practice, we minimize the negative-$Q$ actor loss
+\[
+L_{\text{actor}}(\theta_i) =
+- \mathbb{E}_{\mathcal D}\Bigl[
+  Q_{\phi}\bigl(
+    x_t,\,
+    a_{-i},\,
+    \mu_{\theta_i}(o_t^{\,i},{m}_t^{\,i})
+  \bigr)
+\Bigr],
+\]
+so that gradient descent on \(L_{\text{actor}}\) is equivalent to gradient ascent on \(J(\theta_i)\). This setup makes language an explicit, compact control signal via encoder–projection compression, rather than mere raw text concatenation.
+
+
+\subsection{Experimental Setup and Additional Results}\label{app:experience}
+
+\textbf{Environment Scenarios.} We evaluate LAMP and baseline methods in three distinct economic scenarios, all simulated in the TaxAI environment described above. Each scenario corresponds to a different setting of structural parameters to mimic various macroeconomic conditions:
+
+\begin{table*}[t]
+  \centering
+  \small
+  \setlength{\tabcolsep}{6pt}
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Scenario} & \textbf{Depreciation Rate} & \textbf{Consumption Tax Rate} & \textbf{Interest Rate} & \textbf{Gini Weight} \\
+    \midrule
+    S1: Economic Stability
+      & 0.06
+      & 0.065
+      & 0.04
+      & 1 \\
+    S2: Economic Slowdown
+      & 0.12
+      & 0.02
+      & 0.08
+      & 1 \\
+    S3: Crisis Shock
+      & 0.10
+      & 0.10
+      & 0.10
+      & 0.5 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Hyperparameter settings for the three economic scenarios (S1–S3).}
+  \label{tab:scenario_params}
+\end{table*}
+
+
+
+\begin{table}[t]
+  \centering
+  \small
+  \setlength{\tabcolsep}{6pt}
+  \begin{tabular}{lc}
+    \toprule
+    \textbf{Model} & \textbf{Avg. Reward} \\
+    \midrule
+    DeepSeek-v3.1 & 8.64 \\
+    Qwen3-32B     & 8.35 \\
+    Gemini-2.5    & 8.65 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Average reward of LAMP with different LLM backbones.}
+  \label{tab:llm_backbones}
+\end{table}
+
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{combined_plot} % Reduce the figure size so that it is slightly narrower than the column.
+ \vskip -0.1 in 
+\caption{Training curves over the first 80 epochs for seven methods: Economic Years, Actor Loss, Critic Loss, and Household Reward. LAMP (solid line) converges to higher and more stable values, with faster and smoother loss reduction and the highest household rewards, highlighting its advantage over baselines and ablation variants.}
+\label{fig:training_curves}
+ \vskip -0.1 in 
+\end{figure*}
+
+S1: Baseline Economic Stability. This scenario uses standard calibrated parameters intended to reflect a stable, growing economy. For instance, the annual capital depreciation rate is set to 6\%, the consumption tax rate is 6.5\%, and the nominal interest rate is 4\%. The government’s social welfare objective gives full weight to inequality aversion (gini weight = 1). This scenario was used to train the agents and represents normal conditions without major external shocks.
+
+S2: Economic Slowdown. In this scenario, we introduce a moderate supply and demand shift to simulate a slowdown or mild recession. We double the depreciation rate to 12\% (0.12) – meaning capital assets lose value faster, modeling a slump in productivity or faster obsolescence. To counteract weaker demand, the consumption tax rate is lowered to 2\% (down from 6.5\%), representing a fiscal stimulus to encourage spending. Meanwhile, we raise the interest rate to 8\% (0.08), reflecting tighter credit conditions or an anti-inflationary stance by the monetary authority during the slowdown. The inequality weight remains 1, as in the baseline. These changes result in generally tougher conditions for growth: capital accumulation is harder (due to high depreciation and interest), although consumers get a tax break. We expect agents to adapt by, e.g., saving less (since returns are lower) and working a bit more to maintain income.
+
+
+\begin{table}[t]
+  \centering
+  \small
+  \setlength{\tabcolsep}{6pt}
+  \begin{tabular}{lcl}
+    \toprule
+    \textbf{Hyperparameter} & \textbf{Value} & \textbf{Algorithm / Module} \\
+    \midrule
+    $q_{\text{lr}}$           & 3e-4   & MADDPG (critic learning rate) \\
+    $p_{\text{lr}}$           & 3e-4   & MADDPG (actor learning rate)  \\
+    \texttt{buffer\_size}     & 1e6    & MADDPG (replay buffer)        \\
+    $\gamma$                  & 9.75e-1& MADDPG (discount factor)      \\
+    $\tau$                    & 5e-3   & MADDPG (target network update)\\
+    \texttt{embed\_dim}       & 5e0    &  (language embedding size)\\
+    \texttt{threshold}        & 4e-1   &  (shock detection)        \\
+    \bottomrule
+  \end{tabular}
+  \caption{Key hyperparameters and their corresponding algorithm components or modules.}
+  \label{tab:key_hyperparams}
+\end{table}
+
+S3: Crisis Shock. This scenario models a severe economic crisis with coupled shocks. We set a high consumption tax rate of 10\%, both to simulate increased fiscal burden (governments raising taxes in a crisis) and to represent high effective prices dampening consumption. The interest rate is also raised to 10\%, indicating very tight monetary conditions (e.g., a central bank fighting inflation or risk). The depreciation rate is set to 10\%, moderately higher than baseline (though slightly lower than S2’s 12\%, it still represents a significant supply shock where capital wears out quickly). Additionally, the government’s social welfare function in this scenario places less emphasis on inequality (gini weight = 0.5) – this reflects a crisis policy stance where ensuring basic economic stability and growth might take priority over redistribution. In practice, this means the government agent in S3 is somewhat less penalized by inequality outcomes than in S1/S2, focusing more on aggregate output recovery. 
+
+For all scenarios, we simulate up to 300 periods (years) or until the economy “collapses” (e.g., if the environment diverges or a policy leads to an infeasible state).We use identical initial conditions across methods for fairness and run multiple random seeds (8) to account for stochasticity in learning and LLM generation.
+
+
+
+\textbf{Additional Results}
+Tables~\ref{tab:scenario2_results} and~\ref{tab:scenario3_results} report the key metrics—Average Household Reward, Social Welfare, Consumption, and Labor—of LAMP and seven baselines under Scenario S2 (Economic Slowdown) and Scenario S3 (Crisis Shock), respectively. In both settings, LAMP achieves the highest welfare and reward while maintaining competitive consumption and labor levels, demonstrating its robustness to macroeconomic shifts.
+
+Beyond baseline comparisons, we further replace MADDPG with alternative non-language MARL algorithms and report the resulting average household rewards under the same real-data–calibrated economy. For MAPPO, LAMP attains an average reward of 8.67 compared to 8.61 for the numeric baseline. LAMP thus consistently matches or slightly outperforms these stronger numeric baselines, indicating that its gains are not tied to a particular MARL backbone. Table~\ref{tab:llm_backbones} varies the LLM backbone (DeepSeek-v3.1, Qwen3-32B, Gemini-2.5) while keeping the rest of LAMP unchanged. The average rewards remain similar across models, suggesting that LAMP’s benefits are robust to reasonable changes in the underlying language model.
+
+\paragraph{Key Hyperparameters Summary}
+Table~\ref{tab:key_hyperparams} lists the principal hyperparameters from our training configuration, indicating which algorithm or module each pertains to. Hyperparameters such as $q_{\text{lr}}$, $p_{\text{lr}}$, \texttt{buffer\_size}, $\gamma$, and $\tau$ govern the MADDPG training dynamics. The entropy coefficient (\texttt{ent\_coef}) and value-loss coefficient (\texttt{vloss\_coef}) are relevant in soft actor–critic and general actor–critic frameworks. The embedding dimension (\texttt{embed\_dim}) and shock threshold (\texttt{threshold}) are specific to the LAMP architecture’s language processing and Think module.
+
+Except for MADDPG, which was trained for 200 epochs to allow sufficient convergence in the absence of language guidance, all other methods (including LAMP and the LLM-based baselines) were trained for 80 epochs. Empirically, we observed that pure RL methods without LLM involvement require more epochs to reach stable performance.
+
+\textbf{Analysis of Training Curves for LAMP and Baselines}
+As shown in Figure~\ref{fig:training_curves}, the four panels plot key metrics over the first 80 training epochs for seven methods. In the top-left panel, LAMP’s solid line converges to a higher, more stable “Economic Years” value, indicating prolonged system stability. The top-right and bottom-left panels show that its Actor and Critic Loss curves decline more rapidly and with reduced oscillation, reflecting more efficient policy and value learning. Finally, in the bottom-right panel, LAMP achieves the highest and smoothest Household Reward, demonstrating its superior balance of labor and consumption under the same training budget. Overall, these curves underscore the effectiveness of the language-augmented LAMP framework in multi-agent economic simulations.  
+
+
+
+
+\end{document}

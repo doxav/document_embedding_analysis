@@ -1,0 +1,608 @@
+\documentclass[preprint,10pt]{elsarticle} 
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{graphicx}
+% \usepackage[unicode=true, bookmarks=false]{hyperref}
+\usepackage[hidelinks]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{times} 
+\usepackage[verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in]{geometry}
+\usepackage{booktabs} 
+\usepackage{setspace} 
+\singlespacing 
+% \usepackage{lineno}
+% \modulolinenumbers[5]
+% \linenumbers
+
+%% packages
+\usepackage{lipsum} % mock up text
+\usepackage{graphicx} % Required for inserting images
+\usepackage{url} % enable url
+\usepackage{siunitx} % units
+\usepackage{subfiles} % load subfiles
+\usepackage{float}  % fix floating with H for now
+\usepackage{stfloats} % required to enable two column float
+\usepackage{threeparttable} % table foot note
+\usepackage{tablefootnote} % table foot note
+\usepackage{nameref} % section reference via names
+\usepackage{amsmath} % vector notation
+\usepackage{multirow} % table stuff
+\usepackage{multicol}
+\usepackage[table]{xcolor}
+\usepackage{colortbl}
+\usepackage{pdfpages} % add supplement pdf
+\usepackage{comment}
+\usepackage{pifont} % for checkmark and xmark
+\usepackage{tcolorbox}
+\usepackage{subcaption}
+\usepackage{array}
+\usepackage[acronym]{glossaries}
+\glsdisablehyper % Disable all hyperlinking in glossaries
+
+%% commands
+\newcommand{\cmark}{\ding{51}}% checkmark
+\newcommand{\xmark}{\ding{55}}% xmark
+
+% reuse original label and set up counter for manual supplements
+\newcommand{\figsup}[2]{\label{#1}}
+\newcommand{\tabsup}[2]{\label{#1}}
+\newcommand{\secsup}[2]{\label{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% specific LaTeX commands.
+%\usepackage[superscript]{cite} % that will overwrite the citation style and does not compress
+\usepackage{xcolor}
+\usepackage{titlesec}
+\titleformat*{\section}{\large\bfseries\sffamily}
+\titleformat*{\subsection}{\normalsize\bfseries\sffamily}
+\titleformat*{\subsubsection}{\small\bfseries\sffamily}
+\newcommand{\absdiv}[1]{%
+  \par\addvspace{.5\baselineskip}% adjust to suit
+  \noindent\textbf{#1}\quad\ignorespaces}
+\renewenvironment{abstract}{\global\setbox\absbox=\vbox\bgroup
+  \hsize=\textwidth\def\baselinestretch{1}%
+  \noindent\unskip\textbf{\large Abstract}
+  \par\medskip\noindent\unskip\ignorespaces}{\egroup}
+\makeatletter
+\renewcommand\@biblabel[1]{#1} 
+\makeatother
+
+% compressed superscriptions
+\biboptions{sort&compress}
+\biboptions{super}
+
+\journal{Journal}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\providecommand{\tabularnewline}{\\}
+% Remove the section numbering 
+\usepackage{titlesec}
+\titleformat{\section}[block]{\normalfont\Large\bfseries}{}{0em}{}
+\titleformat{\subsection}[block]{\normalfont\large\bfseries}{}{0em}{}
+\titleformat{\subsubsection}[block]{\normalfont\normalsize\bfseries}{}{0em}{}
+
+\makeatletter
+\let\@afterindenttrue\@afterindentfalse
+\def\ps@pprintTitle{%
+  \let\@oddhead\@empty
+  \let\@evenhead\@empty
+  \def\@oddfoot{\footnotesize Under review.\hfill}%
+  \let\@evenfoot\@oddfoot
+}
+\makeatother
+\setlength{\parindent}{1em} 
+
+% Remove indentation globally
+%\setlength{\parindent}{0pt}
+
+%% Abbrevations
+% low-frequent: ATC, \gls{cdss}, ICD-10, EHR
+\newacronym{ai}{AI}{\emph{artificial intelligence}}
+\newacronym{auprc}{AUPRC}{\emph{ area under the precision-recall curve}}
+\newacronym{auroc}{AUROC}{\emph{area under the receiver operating characteristic curve}}
+\newacronym{bs}{BS}{Brier score}
+\newacronym{cap}{CAP}{\emph{cost-aware prediction}}
+\newacronym{cdss}{CDSS}{\emph{clinical decision support system}}
+\newacronym{ci}{CI}{confidence interval}
+\newacronym{cip}{CIP}{\emph{clinical impact projection}}
+\newacronym{dca}{DCA}{\emph{decision curve analysis}}
+\newacronym{lgb}{LGB}{\emph{light gradient boosting machine}}
+\newacronym{llm}{LLM}{\emph{large language model}}
+\newacronym{lr}{LR}{\emph{logistic regression}}
+\newacronym{mct}{MCT}{\emph{misclassification cost term}}
+\newacronym{ml}{ML}{\emph{machine learning}}
+\newacronym{qol}{QoL}{\emph{quality of life}}
+\newacronym{rf}{RF}{\emph{random forest}}
+\newacronym{xgb}{XGB}{\emph{eXtreme gradient boosting}}
+\newacronym{fn}{FN}{\emph{false negative}}
+\newacronym{fp}{FP}{\emph{false positive}}
+\newacronym{tn}{TN}{\emph{true negative}}
+\newacronym{tp}{TP}{\emph{true positive}}
+
+
+\begin{document}
+
+\begin{frontmatter}
+\title{Cost-Aware Prediction (CAP): An LLM-Enhanced Machine Learning Pipeline and Decision Support System for Heart Failure Mortality Prediction}
+
+\author{
+    Yinan Yu\corref{corrauth}\textsuperscript{1}
+}
+\author{
+    Falk Dippel\textsuperscript{2}
+}
+\author{
+    Christina E. Lundberg\textsuperscript{3}\textsuperscript{,}\textsuperscript{5}
+}
+\author{
+    Martin Lindgren\textsuperscript{3}\textsuperscript{,}\textsuperscript{4}
+}
+\author{
+    \\Annika Rosengren\textsuperscript{3}\textsuperscript{,}\textsuperscript{4}
+}
+\author{
+    Martin Adiels\textsuperscript{6}
+}
+\author{
+    Helen Sjöland\textsuperscript{3}\textsuperscript{,}\textsuperscript{4}
+}
+
+
+\address{\textsuperscript{1}Department of Computer Science and Engineering, Chalmers University of Technology and University of Gothenburg, Gothenburg, Sweden}
+\address{\textsuperscript{2}Sahlgrenska University Hospital, Gothenburg, Sweden}
+\address{\textsuperscript{3}Department of Molecular and Clinical Medicine, Sahlgrenska Academy, University of Gothenburg, Gothenburg, Sweden}
+\address{\textsuperscript{4}Department of Medicine, Geriatrics and Emergency Medicine, Sahlgrenska University Hospital, Gothenburg, Sweden}
+\address{\textsuperscript{5}Department of Food and Nutrition, and Sport Science, Faculty of Education, University of Gothenburg, Gothenburg, Sweden}
+\address{\textsuperscript{6}School of Public Health and Community Medicine, Institute of Medicine, University of Gothenburg, Gothenburg, Sweden}
+
+\cortext[corrauth]{Corresponding author: Yinan Yu, \href{mailto:yinan@chalmers.se}{yinan@chalmers.se}}
+
+\begin{abstract}
+  \absdiv{{Objective}}
+    \Gls{ml} predictive models are often developed without considering downstream value trade-offs and clinical interpretability. This paper introduces a \gls{cap} framework that combines cost–benefit analysis assisted by \gls{llm} agents to communicate the trade-offs involved in applying \gls{ml} predictions. 
+
+  \absdiv{{Materials and Methods}}
+    We developed an \gls{ml} model predicting 1-year mortality in patients with heart failure ($N=30,021$, 22$\%$ mortality) to identify those eligible for home care. We then introduced \gls{cip} curves to visualize important cost dimensions – quality of life and healthcare provider expenses, further divided into treatment and error costs, to assess the clinical consequences of predictions. Finally, we used four \gls{llm} agents to generate patient-specific descriptions. The system was evaluated by clinicians for its decision support value. 
+
+  \absdiv{{Results}}
+    The \gls{xgb} model achieved the best performance, with an \gls{auroc} of \mbox{0.804 ($95\%$\;\text{\gls{ci}}\;$0.792\text{--}0.816$)}, \gls{auprc} of \mbox{0.529 ($95\%\;\text{\gls{ci}}\;0.502\text{--}0.558$)} and a Brier score \mbox{of 0.135 ($95\%\;\text{\gls{ci}}\;0.130\text{--}0.140$)}.  
+
+  \absdiv{{Discussion}}
+    The \gls{cip} cost curves provided a \textit{population-level} overview of cost composition across decision thresholds, whereas \gls{llm}-generated cost-benefit analysis at \textit{individual patient-levels}. The system was well received according to the evaluation by clinicians. However, feedback emphasizes the need to strengthen the technical accuracy for speculative tasks. 
+
+  \absdiv{{Conclusion}}
+    \gls{cap} utilizes \gls{llm} agents to integrate \gls{ml} classifier outcomes and cost-benefit analysis for more transparent and interpretable decision support. 
+
+\end{abstract}
+
+\begin{keyword}
+Cost-Benefit Analysis; Clinical Decision Support Systems; Large Language Models; Heart Failure; Predictive Learning Model
+\end{keyword}
+
+\end{frontmatter}
+
+\glsresetall
+
+\section{Introduction}
+
+The use of clinical prediction models based on \gls{ai} holds high promise in medicine, but transition to clinical practice remains challenging. Clinical decision-making seeks to balance available patient information to optimise favourable outcomes and minimise harm. Likewise, \glspl{cdss} typically rest on multi-objective optimisations as clinical information is computationally combined and translated to finding a local minimum of risk based on the variables included. 
+
+Implementation of \gls{cdss} ultimately depends on satisfying regulatory requirements and earning clinicians´ trust by presenting interpretable \gls{ai} outputs, communicating the relation between competing objectives, for example, minimising cost while maximising performance and safety \cite{eu-2024/1689}. 
+
+One method for achieving understandable \gls{ai} is to present the predicted outcome to the clinician using a decision curve to illustrate benefit relative to risk \cite{vickers_decision_2006}. A decision curve will describe the theoretical risk prediction for an undesirable outcome in an individual patient in the presence or absence of an intervention recommended by the \gls{cdss} and at various levels of probability. 
+
+\textit{Heart failure} is a prevalent condition among older individuals \cite{wideqvist_ten_2022}, that drives substantial healthcare costs through recurrent hospitalisations, despite the fact that the condition can often successfully be treated at home \cite{desai_rehospitalization_2012, le_hospital_2022, geng_preferences_2024}. Here, we report the design of a \gls{ml} prediction model for mortality in patients with severe heart failure, aimed at supporting care-level recommendations -- either customised home care as an intervention or hospital readmission as standard care -- during periods of worsening health. Beyond predicting 1-year all-cause mortality, we proceed to address downstream consequences such as patient's \gls{qol} and healthcare resource use through the development of an \emph{interpretable} and \emph{cost-aware} predictive framework, called \gls{cap}. A semi-quantitative measure is employed to estimate patient-centred costs (e.g. patient outcomes and \gls{qol}) and costs for the healthcare provider (e.g. resource allocation and monetary expenses) as examples. The \gls{cap} framework illustrates how outcomes can be optimised under varying conditions by balancing these cost dimensions, while delivering high-accuracy predictions and interpretable decision curves. Finally, we attempt to explain the underlying calculations by user-targeted natural language explanations to facilitate interpretation and to support informed clinical decisions. 
+
+\section{Methods} \label{sec:methods}
+
+We introduce a decision-support framework, \glsentrylong{cap}~(\gls{cap}) that integrates three components into an interpretable system to support informed decision-making in clinical practice. 
+
+\subsection{Dataset and prediction outcome}
+
+This study includes patients $(N=34,139)$, 18 years and older, with a first in-hospital heart failure diagnosis between January 1, 2017 and December 31, 2023. Diagnoses were registered by codes I110, I130, I132, any I42 or any I50 in any position, according to the International Classification of Diseases (10th revision) (ICD-10). Patient data was collected from a comprehensive database of \emph{electronic health records} (EHRs) covering all hospital-admissions at emergency care providers in the \emph{Region Västra Götaland} (VGR) of Sweden between January 1st 2014 and December 31th 2023 to allow for 3 years of prior history. Sweden has universal healthcare providing low-cost hospital care to all residents. After exclusion of patients with missing information $(N=735)$, and patients who died during the initial hospitalisation $(N=3,383)$, the final cohort consisted of $N=30,021$ patients (Fig.~\ref{fig:flow_chart}). 
+
+\begin{figure}[!hbt]
+    \centering
+    \includegraphics[width=0.5\linewidth]{images/main/fig1_flowchart.pdf}
+    \caption{\textbf{Cohort flow chart indicating selection process}}
+    \label{fig:flow_chart}
+\end{figure}
+
+Clinical variables from patient data included: age, sex, body mass index, length of stay, comorbidities along with previous surgeries or interventions within the last 3 years, prescribed drugs within the last year prior to hospitalisation, vital signs and laboratory tests during hospitalisation, and physical mobility extracted from health records within the last 30 days before diagnostic date. For multiple measurements of the same vital sign or laboratory test, the average value was used for the respective hospitalisation. In total, 75 clinical variables were extracted from EHRs with variable-specific information, such as ICD-10 codes used for comorbidities  and Anatomical Therapeutic Chemical (ATC) codes for medications, provided in Supplementary Table~\hyperref[stab:data_collection]{S1}. 
+
+The prediction outcome of the \gls{ml} model was all-cause mortality within 1 year after discharge after receiving a first heart failure diagnosis during hospitalisation. 
+
+\subsubsection[\gls{ml} model]{Component 1: Supervised \gls{ml} model} 
+The first component is a supervised \gls{ml} predictive model that produces a risk score between 0 and 1 for every patient. This score represents the likelihood that an event will occur. To turn this score into a yes-or-no decision, a threshold must be chosen (for example,  a decision may be made that patients with a score above 0.7 will be classified as high risk). 
+
+\subsubsection{Component 2: Visualisation of clinical impact factors}
+\label{sec:cip}
+In \gls{ml}, a classification result can be \gls{tp} (a patient correctly predicted to have a high probability of mortality within one year, and who in fact does die within that time), a \gls{fp} (a patient predicted to have a high probability of mortality within one year, but who actually survives beyond that time), a \gls{tn} (a patient correctly predicted to have a low probability of mortality, and who indeed survives beyond the year), or a \gls{fn} (a patient predicted to have a low probability of mortality, but who dies within the year). 
+It is commonly assumed that improved predictive accuracy automatically translates into greater clinical benefits, often without explicitly accounting for the associated clinical impact. 
+This assumption implicitly categorises \glspl{fp} and \glspl{fn} as universally ``bad'', while treating \glspl{tp} and \glspl{tn} as inherently ``good''. 
+This view overlooks that in clinical practice, risks can arise even from accurate predictions. 
+Such risks may be influenced by clinical actions triggered by the model's outputs. Thus, while predictive accuracy remains critical, understanding the downstream impact of \gls{ml}-based predictions is essential for improving interpretability. 
+
+To address this, we introduce the \gls{cip} curve, where the term \emph{cost} represents the clinical and organisational impact of decisions made based on model predictions. Our design of \gls{cip} considers two clinically relevant dimensions: 
+\begin{itemize}
+\item {\gls{qol} cost:} typically captures the patient's lived experience, including aspects relevant to their well-being during care. Lower values indicate better \gls{qol}, such as when a patient receives care that is appropriate and minimally intrusive in a familiar environment. A negative \gls{qol} cost indicates increased \gls{qol} compared to the baseline. 
+
+\item{Healthcare system cost:} Reflects the impact on healthcare resources, including hospital bed occupancy, staff workload, and financial expenditures. Lower values indicate more efficient resource utilisation and reduced strain on healthcare systems. 
+\end{itemize}
+% Notably, we defined advanced heart failure as a high risk of mortality within 12 months. At such a progressive stage of heart failure, any worsening is expected to negatively impact \gls{qol}, making this dimension highly relevant. In parallel, hospital care is resource-intensive, making healthcare system costs a key consideration. However, the framework design is flexible, and users can define and incorporate additional cost dimensions specific for their context.  
+
+Furthermore, for each dimension, \gls{cip} considers two types of costs: clinical treatment cost and classification error cost, reflecting the clinical consequences and classification impact, respectively. More detailed definition and calculation of \gls{cip} can be found in Supplementary Section~\hyperref[ssec:cip_implementation]{CIP implementation details}.
+Note that users of \gls{cip} can define additional cost dimensions and types specific for their context, and that our application represents an example of prioritised costs.
+
+
+\subsubsection[Component 3: Four \gls{llm} agents]{Component 3: Cost-benefit analysis using large language model}
+\label{sec:component3}
+Clinicians often find \gls{ml} model outputs difficult to interpret, particularly when clinical trade-offs must be considered \cite{sanchez2022machine, mlodzinski2023assessing, hou2025explainable}. Language models can complement \gls{ml} decision support by explaining uncertainty and contextualising risks based on patient data and clinical priorities. 
+To address this, the final component of the framework integrates four \gls{llm} agents to support interpretation of model outputs and associated cost–benefit trade-offs. Each agent addresses a key clinical question. The agents operate in a prompt-only mode, prioritising simplicity and traceability over integration with external tools.
+
+\noindent\textbf{Agent I. How certain is the risk prediction?} Summarises prediction reliability for an individual patient, based on their risk score, decision threshold, and local model performance. 
+
+\noindent\textbf{Agent II. How do I interpret the \gls{cip} cost curves?} Explains key contributors to patient-level cost, using treatment and error costs across \gls{qol} and healthcare system dimensions. 
+
+\noindent\textbf{Agent III. How can prediction uncertainty be reduced?} Suggests actions (e.g. additional tests, record review) that may improve prediction certainty. 
+
+\noindent\textbf{Agent IV. How can future risks be mitigated?} Provides forward-looking guidance based on predicted outcomes and potential care pathways. 
+
+To evaluate the system, we conducted two complementary expert reviews. One clinician, involved in methods development, performed a structured assessment of the outputs for each agent (\emph{clinical development review}), focusing on accuracy and relevance. In addition, two external clinicians (experienced practising specialists in emergency medicine and cardiology, respectively) conducted a \emph{clinical user review}, evaluating interpretability, reliability, and usability of the agents’ outputs through structured questions and open-ended feedback (Supplementary Section~\hyperref[ssec:agent_evaluation]{LLM-agent evaluation details} and Supplementary Table~\hyperref[stab:cap_questionnaire]{S6}-\hyperref[stab:cap_category_feedback]{S8}). 
+
+\subsection[]{Implementation of the \gls{cap} framework}
+\label{sec:pipeline}
+Here, we will illustrate how to implement this pipeline applying our use case of eligibility for home care programs through 1-year mortality prediction.   
+\subsubsection[\gls{cap} Step 1]{Step 1: \gls{ml} classification model development} \label{sec:step1}
+
+The first step is to develop and select the best performing model based on the \gls{ml} metric; area under the precision-recall curve and decision threshold based on the best F1 score (Supplementary Section~\hyperref[ssec:ml_metrics]{Machine learning model metrics} and \hyperref[ssec:ml_implementation]{Machine learning implementation details}). 
+
+\subsubsection[\gls{cap} Step 2]{Step 2: Population-level clinical impact visualisation} \label{sec:step2}
+Before generating the visualisation (i.e., the \gls{cip} cost curves), clinicians must first define the cost structure. % across two dimensions: \gls{qol} and healthcare cost. These costs need to be specified separately for treatment decisions and prediction errors, and are applied to each prediction outcome scenario: \gls{tp}, \gls{fp}, \gls{tn}, and \gls{fn}. 
+Costs need to be specified separately for each type, clinical dimension, and prediction outcome scenario (\gls{tp}, \gls{fp}, \gls{tn}, and \gls{fn}). 
+In our case study, the costs (ranging from $-$1 to 1), were defined based on the following assumptions, which represent a {\emph{clinical example} to illustrate the \gls{cip}/\gls{cap} framework: 
+
+\begin{itemize}
+	\item Treatment costs: When a patient (either \gls{tp} or \gls{fp}) is included in a home care programme, their \gls{qol} is expected to improve due to increased comfort, reduced hospitalisations, and greater autonomy. Thus, a negative \gls{qol} cost of \(-1.0\) is assigned, which indicates maximum benefits. Simultaneously, healthcare costs decrease due to reduced hospital resource usage, represented as \(-0.5\) in this example. For patients who remain in standard care (\gls{tn}, \gls{fn}), both costs are set to 0, as this reflects the default baseline. 
+	\item Errors incur additional burden. In our study, a patient incorrectly classified as at high risk of mortality (\gls{fp}) will receive home care but eventually be rehospitalised, potentially delaying necessary treatment. This results in a moderate \gls{qol} penalty of \(0.5\) and healthcare cost of \(0.25\). In the case of \gls{fn}, a high-risk patient is not assigned to home care, potentially leading to a poor end-of-life experience and avoidable strain on the healthcare system. Hence, this is assigned the highest penalty: \gls{qol} cost of \(1.0\) and healthcare cost of \(1.0\). Correct predictions (\gls{tp}, \gls{tn}) incur no error cost. 
+\end{itemize}
+
+Given this baseline definition, the full cost matrix (determined by the consensus of clinicians involved in this project) is summarised in Table~\ref{tab:cost_matrices}. 
+
+\begin{table}[h]
+\centering
+\caption{\textbf{Assigned quality of life and healthcare costs per outcome scenario}}
+\label{tab:cost_matrices}
+\footnotesize{
+%table-format: align at decimal point and keep right-sided
+\begin{tabular}{@{}ll
+                S[table-format=1.1, table-number-alignment=right]  % Aligns \gls{qol} cost
+                S[table-format=1.2, table-number-alignment=right]@{} % Aligns Healthcare cost
+               }
+\toprule
+\textbf{Type} & \textbf{Scenario} & {\textbf{\gls{qol} cost}} & {\textbf{Healthcare cost}} \\
+\midrule
+Treatment & \gls{tp} & -1.0 & -0.5 \\
+Treatment & \gls{fp} & -1.0 & -0.5 \\
+Treatment & \gls{tn} &  0.0 &  0.0 \\
+Treatment & \gls{fn} &  0.0 &  0.0 \\
+Error     & \gls{tp} &  0.0 &  0.0 \\
+Error     & \gls{fp} &  0.5 &  0.25 \\
+Error     & \gls{tn} &  0.0 &  0.0 \\
+Error     & \gls{fn} &  1.0 &  1.0 \\
+\bottomrule
+\multicolumn{4}{@{}p{7cm}@{}}{FN=\textit{\glsentrylong{fn}}. FP=\textit{\glsentrylong{fp}}. QoL=\textit{\glsentrylong{qol}}. TP=\textit{\glsentrylong{tp}}. TN=\textit{\glsentrylong{tn}}.}
+\end{tabular}
+}
+\end{table}
+
+With the definitions of the cost dimensions in place, we compute expected costs at the population level by combining the model’s prediction outputs (\gls{tp}, \gls{fp}, \gls{tn}, \gls{fn}) across a range of decision thresholds from 0 to 1. The \gls{cip} cost curves are then calculated according to Supplementary Section~\hyperref[ssec:cip_implementation]{CIP implementation details}, which aggregates treatment and error costs across the \gls{qol} and healthcare dimensions. 
+ 
+To visualise these components, we introduce a baseline, referred to as the \textit{zero cost curve}, that separates costs (plotted above the baseline) from benefits (plotted below the baseline). Each cost is presented as distinct, colour-coded stacked areas above and below this reference line, respectively, providing an overview of cost composition. 
+The upper boundary of the stacked areas (the silhouette of the curve) represents the net effect, calculated as total cost minus total benefit at each threshold. 
+
+\subsubsection[\gls{cap} Step 3]{Step 3: Patient-level cost-benefit analysis using four \gls{llm} agents} \label{sec:step3}
+In this step, the system generates a structured clinical cost-benefit analysis tailored to an individual patient.
+The core prompt components are detailed in Table~\ref{tab:quadrants}. Detailed prompts are provided in Supplementary Listing~\hyperref[slist:agents_one]{S1}-~\hyperref[slist:agents_sum]{S5}. We used the state-of-the-art \gls{llm} model  gpt-4.1-2025-04-14 to implement the agent responses for the prompt queries. 
+
+\begin{table*}[tbh!]
+\centering
+\caption{\textbf{Structure of prompts and input dependencies used to construct the four \gls{cap} decision support agents} \newline Each column (I–IV) represents a distinct decision support agent. Rows specify the contextual inputs and response dependencies required for each agent.}
+\label{tab:quadrants}
+\footnotesize{
+\begin{tabular}{|c|p{7cm}|c|c|c|c|}
+\toprule
+ \textbf{Type} &\textbf{Prompt} & \textbf{I}& \textbf{II} & \textbf{III}& \textbf{IV}\\
+\midrule
+Context&Patient clinical profile&   \cmark&\cmark  &\cmark& \cmark\\
+Context&Classifier description&   \cmark& && \\
+Context&Classifier decision threshold $r$  & \cmark& && \\
+Context&Classifier performance summary near $r$  &\cmark & && \\
+Context&Predicted risk score $s$  & \cmark& \cmark&& \\
+Context&Classifier performance summary near $s$  &\cmark & && \\
+Context&\gls{cip} cost description  & &\cmark && \\
+Context&\gls{cip} cost coefficients  & &\cmark && \\
+Context&Composition of \gls{cip} cost curves near $s$&   & \cmark&& \\
+\midrule
+Context&Response from I&    &  \cmark&  \cmark & \\
+Context&Response from II&   &  & &\cmark  \\
+\midrule
+Query& Classification risk analysis&  \cmark & && \\
+Query& Clinical cost-benefit analysis&   & \cmark&& \\
+Query& Classification risk mitigation&   & &\cmark& \\
+Query& Intervention risk prediction and intervention&   & && \cmark\\
+\bottomrule
+\multicolumn{6}{@{}p{12cm}@{}}{CAP=\textit{\glsentrylong{cap}}. CIP=\textit{\glsentrylong{cip}}. I=How certain is the risk prediction? II=How do I interpret the \gls{cip} cost curves? III=How can prediction uncertainty be reduced? IV=How can future risks be mitigated?}
+\end{tabular}
+}
+\end{table*}
+
+\subsection{Ethics} 
+Ethical approval of study was granted by the Swedish Ethical Review Authority, through the Ethics Committee of the Umeå University (EPN Reference: DNR 2021-02786). 
+
+\section{Results} \label{sec:results}
+\subsection{Patient baseline characteristics}
+The cohort had a median age of 79 years, 45$\%$ women and median hospital-admittance 6.1 days at baseline, with a 1-year mortality of 22$\%$. Patients who died were older, more often female and with longer hospital stays (85 years, 48$\%$ women, 7.9 days, as compared with 78 years, 44$\%$ women and 5.8 days in survivors) as presented in Table~\ref{tab:baseline}. Statistical analysis was performed as in 
+Supplementary Section~\hyperref[ssec:stats_testing]{Statistical testing}.
+
+\begin{table*}[tbh!]
+\centering
+\caption{\textbf{Baseline characteristics of heart failure cohort} - Table continues next page.}
+\label{tab:baseline}
+\footnotesize{
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Variable} & \textbf{Total} & \textbf{Survived} & \textbf{Deceased within 1 year} & $p$\textbf{-value} \\ \midrule
+Number of patients & 30021 & 23499 & 6522 & - \\
+\textbf{Age and sex} & & & & \\
+Age (years), median (IQR) & 79 (71, 86) & 78 (69, 85) & 85 (78, 90) & \textless{}0.001 \\
+\textit{Sex} & & & & \\
+Women, n (\%) & 13572 (45) & 10432 (44) & 3140 (48) & \textless{}0.001 \\
+BMI (kg/m$^2$), median (IQR) & 26.5 (23.6, 30.4) & 26.8 (23.9, 30.7) & 24.7 (21.8, 28.6) & \textless{}0.001 \\
+\textbf{Visit information} & & & & \\
+ICU stay, n (\%) & 635 (2.1) & 523 (2.2) & 112 (1.7) & 0.01 \\
+ICU days, median (IQR) & 5.3 (2.1, 12.0) & 5.1 (2.1, 10.4) & 7.0 (2.1, 15.9) & 0.04 \\
+In-hospital days, median (IQR) & 6.1 (3.1, 10.9) & 5.8 (3.0, 10.0) & 7.9 (4.2, 13.7) & \textless{}0.001 \\
+\textbf{Comorbidities, n (\%)} & & & & \\
+CCI, median (IQR) & 3 (2, 4) & 2 (1, 4) & 4 (2, 6) & \textless{}0.001 \\
+Main heart failure diagnosis & 10993 (37) & 8565 (36) & 2428 (37) & 0.25 \\
+Alcohol abuse & 895 (3.0) & 721 (3.1) & 174 (2.7) & 0.1 \\
+Aortic aneurysm & 1022 (3.4) & 795 (3.4) & 227 (3.5) & 0.73 \\
+Aortic stenosis & 2730 (9.1) & 1955 (8.3) & 775 (12) & \textless{}0.001 \\
+Asthma & 2808 (9.3) & 2244 (9.6) & 564 (8.6) & 0.03 \\
+Atrial fibrillation & 15485 (52) & 11982 (51) & 3503 (54) & \textless{}0.001 \\
+Cancer & 6352 (21) & 4349 (19) & 2003 (31) & \textless{}0.001 \\
+Cardiomyopathy & 2346 (7.8) & 2156 (9.2) & 190 (2.9) & \textless{}0.001 \\
+Chronic coronary syndrome & 5955 (20) & 4546 (19) & 1409 (22) & \textless{}0.001 \\
+Chronic kidney disease & 4515 (15) & 3007 (13) & 1508 (23) & \textless{}0.001 \\
+COPD & 4170 (14) & 3016 (13) & 1154 (18) & \textless{}0.001 \\
+Diabetes type 1 & 1097 (3.6) & 861 (3.7) & 236 (3.6) & 0.89 \\
+Diabetes type 2 & 7598 (25) & 5833 (25) & 1765 (27) & \textless{}0.001 \\
+Dyslipidemia & 9666 (32) & 7672 (33) & 1994 (31) & \textless{}0.001 \\
+Gonarthrosis & 2505 (8.3) & 1965 (8.4) & 540 (8.3) & 0.85 \\
+Heart failure ICD-10 code I50 & 28174 (94) & 21870 (93) & 6304 (97) & \textless{}0.001 \\
+Hypertension & 21130 (70) & 16213 (69) & 4917 (75) & \textless{}0.001 \\
+Ischemic stroke & 2128 (7.1) & 1544 (6.6) & 584 (8.9) & \textless{}0.001 \\
+Leg fracture & 2038 (6.8) & 1400 (6.0) & 638 (9.8) & \textless{}0.001 \\
+Myocardial infarction & 4434 (15) & 3572 (15) & 862 (13) & \textless{}0.001 \\
+Obesity & 3465 (12) & 2938 (12) & 527 (8.1) & \textless{}0.001 \\
+Pulmonary embolism & 1140 (3.8) & 850 (3.6) & 290 (4.5) & \textless{}0.001 \\
+Substance abuse & 1938 (6.5) & 1573 (6.7) & 365 (5.6) & \textless{}0.001 \\
+Valvular disease & 2873 (9.6) & 2271 (9.7) & 602 (9.2) & 0.3 \\
+\textbf{Previous surgery or interventions, n (\%)} & & & & \\
+Coronary angioplasty graft & 2371 (7.9) & 1943 (8.3) & 428 (6.6) & \textless{}0.001 \\
+Coronary artery bypass grafting & 1798 (6.0) & 1415 (6.0) & 383 (5.9) & 0.67 \\
+Heart transplant & 27 (0.1) & 22 (0.1) & 5 (0.1) & 0.86 \\
+Pacemaker or defibrillator & 2539 (8.5) & 1949 (8.3) & 590 (9.0) & 0.06 \\
+Valve replacement & 1191 (4.0) & 957 (4.1) & 234 (3.6) & 0.08 \\
+ \multicolumn{5}{@{}p{15cm}@{}}{\textbf{Prescribed drugs prior to diagnostic hospitalisation, n (\%)}} \\
+ACEi & 4875 (16) & 3977 (17) & 898 (14) & \textless{}0.001 \\
+Antiarrhythmics, class III & 789 (2.6) & 707 (3.0) & 82 (1.3) & \textless{}0.001 \\
+Angiotensin receptor blockers & 3207 (11) & 2526 (11) & 681 (10) & 0.49 \\
+ARNI & 330 (1.1) & 298 (1.3) & 32 (0.5) & \textless{}0.001 \\
+Beta blockers & 8947 (30) & 7121 (30) & 1826 (28) & \textless{}0.001 \\
+Cardiac glycosides & 1893 (6.3) & 1486 (6.3) & 407 (6.2) & 0.83 \\
+Cardiac stimulants & 673 (2.2) & 560 (2.4) & 113 (1.7) & \textless{}0.001 \\
+Loop diuretics & 10854 (36) & 8003 (34) & 2851 (44) & \textless{}0.001 \\
+Thiazide diuretics & 713 (2.4) & 547 (2.3) & 166 (2.5) & 0.33 \\
+Diuretics, exclude thiazide & 483 (1.6) & 319 (1.4) & 164 (2.5) & \textless{}0.001 \\
+MRA & 4171 (14) & 3322 (14) & 849 (13) & 0.02 \\
+SGLT2 inhibitors & 363 (1.2) & 311 (1.3) & 52 (0.8) & \textless{}0.001 \\ \bottomrule
+\multicolumn{5}{@{}p{15cm}@{}}{\scriptsize{ACEi=angiotensin-converting enzyme inhibitors. ARNI=angiotensin receptor neprilysin inhibitors. BMI=body mass index. CCI=Charlson comorbidity index. COPD=chronic obstructive pulmonary disease. GFR=glomerular filtration rate. ICU=intensive care unit. IQR=interquartile range. MRA=mineralocorticoid receptor antagonist. NT-proBNP=N-terminal pro b-type natriuretic peptide. SGLT2=sodium-glucose transport protein 2.}}
+\end{tabular}
+}
+\end{table*}
+
+\setcounter{table}{2} % >> NB: We treat the contiuation also as table 3 <<
+\begin{table*}[tbh!]
+\centering
+\caption{\textbf{Baseline characteristics of heart failure cohort} - continued.}
+\label{tab:baseline2}
+\footnotesize{
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Variable} & \textbf{Total} & \textbf{Survived} & \textbf{Deceased within 1 year} & $p$\textbf{-value} \\ \midrule
+\multicolumn{5}{@{}p{15cm}@{}}{\textbf{Vital signs, median (IQR)}}\\
+Diastolic blood pressure (mmHg) & 74 (69, 80) & 75 (69, 81) & 72 (67, 78) & \textless{}0.001 \\
+Systolic blood pressure (mmHg) & 132 (120, 145) & 132 (121, 145) & 129 (117, 142) & \textless{}0.001 \\
+Body temperature (°C) & 36.7 (36.4, 36.9) & 36.7 (36.5, 36.9) & 36.6 (36.4, 36.9) & \textless{}0.001 \\
+Pulse rate (beats/min) & 78 (70, 88) & 78 (69, 88) & 80 (72, 89) & \textless{}0.001 \\
+Respiratory rate (breaths/min) & 19 (17, 22) & 19 (17, 21) & 20 (18, 23) & \textless{}0.001 \\
+Oxygen saturation (\%) & 96 (94, 97) & 96 (94, 97) & 95 (93, 96) & \textless{}0.001 \\
+\multicolumn{5}{@{}p{15cm}@{}}{\textbf{Laboratories, median (IQR)}}\\
+Albumin (34--45 g/L) & 33 (29, 36) & 33 (30, 36) & 31 (27, 34) & \textless{}0.001 \\
+Bilirubin (5--25 µmol/L) & 12 (8, 17) & 12 (8, 17) & 12 (8, 17) & 0.02 \\
+Blood urea nitrogen (F/M 8.7--22/9.8--23 mg/dL) & 21 (16, 26) & 20 (16, 25) & 24 (19, 28) & \textless{}0.001 \\
+C-reactive protein (0--5 mg/L) & 19 (5, 61) & 16 (5, 58) & 30 (10, 71) & \textless{}0.001 \\
+Creatinine (F/M 45--90/60--105 µmol/L) & 88 (72, 107) & 86 (71, 105) & 93 (73, 114) & \textless{}0.001 \\
+Ferritin (F/M 5--105/27--400 µg/L) & 99 (44, 192) & 100 (44, 190) & 94 (46, 199) & 0.92 \\
+Fasting glucose (4--6.9 mmol/L) & 6.1 (5.4, 7.0) & 6.1 (5.4, 7.0) & 6.2 (5.5, 8.0) & 0.1 \\
+Plasma glucose (4--6.3 mmol/L) & 6.8 (6.1, 7.6) & 6.8 (6.1, 7.5) & 6.9 (6.2, 7.6) & \textless{}0.001 \\
+Hemoglobin (F/M 117--153/134--170 g/L) & 124 (109, 138) & 125 (111, 139) & 118 (104, 131) & \textless{}0.001 \\
+Glycated hemoglobin (31--46 mmol/mol) & 39 (35, 45) & 38 (35, 44) & 41 (36, 49) & \textless{}0.001 \\
+NT-proBNP (0--400 ng/L) & 4169 (1870, 8843) & 3634 (1641, 7570) & 6917 (3190, 14400) & \textless{}0.001 \\
+Potassium (3.5--4.6 mmol/L) & 4.0 (3.8, 4.3) & 4.0 (3.8, 4.3) & 4.1 (3.8, 4.4) & 0.27 \\
+Sodium (136--145 mmol/L) & 139 (137, 141) & 139 (137, 141) & 139 (137, 141) & 0.1 \\
+Alanine transaminase (F/M 0.25--0.60/0.25--0.75 µkat/L) & 0.4 (0.3, 0.6) & 0.4 (0.3, 0.6) & 0.3 (0.2, 0.5) & \textless{}0.001 \\
+Aspartate transaminase (F/M 0.25--0.75/0.25--1.1 µkat/L) & 0.4 (0.3, 0.6) & 0.4 (0.3, 0.6) & 0.4 (0.2, 0.6) & \textless{}0.001 \\
+Troponin I (F/M 0--16/0--35 ng/L) & 14 (6, 25) & 13 (6, 25) & 15 (7, 25) & 0.11 \\
+Troponin T (0--14 ng/L) & 15 (11, 18) & 15 (11, 18) & 17 (12, 19) & \textless{}0.001 \\
+Uric acid (F/M 155--400/230--480 µmol/L) & 416 (322, 513) & 413 (320, 510) & 424 (336, 524) & 0.31 \\
+Estimated GFR (mL/min/1.73m$^2$) & 57 (45, 70) & 59 (47, 71) & 50 (40, 63) & \textless{}0.001 \\
+\textbf{Physical mobility} & & & & \\
+Physical status, median (IQR) & 0 (0, 1) & 0 (0, 1) & 0 (0, 2) & \textless{}0.001 \\
+Pressure wounds, n (\%) & 3606 (12) & 2413 (10) & 1193 (18) & \textless{}0.001 \\ \bottomrule
+\multicolumn{5}{@{}p{15cm}@{}}{\scriptsize{ACEi=angiotensin-converting enzyme inhibitors. ARNI=angiotensin receptor neprilysin inhibitors. BMI=body mass index. CCI=Charlson comorbidity index. COPD=chronic obstructive pulmonary disease. GFR=glomerular filtration rate. ICU=intensive care unit. IQR=interquartile range. MRA=mineralocorticoid receptor antagonist. NT-proBNP=N-terminal pro b-type natriuretic peptide. SGLT2=sodium-glucose transport protein 2.}}
+\end{tabular}
+}
+\end{table*}
+
+\subsection{Machine learning performance}
+We developed various candidate models for the \gls{ml} classifier, and implementation details are outlined in Supplementary Section~\hyperref[ssec:ml_implementation]{Machine learning implementation details} and Supplementary Table~\hyperref[stab:hp_optimisation]{S2}. Figure~\ref{fig:ml_curve_anaylsis} visualises the \emph{receiver operating characteristic} (ROC) curve, \emph{precision-recall curve} (PRC) and calibration curve for all model candidates. Table~\ref{tab:ml_curve_metrics} reports the bootstrapped estimates of \gls{auroc}, \gls{auprc} and \gls{bs} for a more robust performance assessment. Boosting machines outperformed simpler models and were well calibrated according to the ideal calibration line. Due to the highest \gls{auprc} out of all candidates, \gls{xgb} was chosen as the final model for clinical application. The discriminatory capability of \gls{xgb} resulted in \mbox{$\mathrm{\gls{auroc}}=0.804\;(95\%\;$\text{\glsentryshort{ci}}$\;0.792\text{--}0.816)$} and \mbox{$\mathrm{\gls{auprc}}= 0.529\;(95\%\;\text{\gls{ci}}\;0.502\text{--}0.558)$} with a calibration of \mbox{$\mathrm{\gls{bs}}=0.135\;(95\%\;\text{\gls{ci}}\;0.130\text{--}0.140)$}. The decision threshold \mbox{$t_\mathrm{d}=0.25$} was identified at the maximal F1 score \mbox{$\mathrm{F}1_{\max}=0.543$} (Supplementary Fig.~\hyperref[sfig:f1_comparison]{S2}). 
+
+\begin{figure*}[!h]
+    \centering
+    \includegraphics[width=6.5in]{images/main/fig2_ml_curve_analysis.pdf}
+    \caption{\textbf{Visual comparison of discriminative and calibration performance of model candidates} \newline Receiver operating characteristic curve (\textbf{A}), precision-recall curve (\textbf{B}) and calibration curve (\textbf{C}) demonstrate highest predictive performance for gradient boosting machines based on the test set. AUPRC=\textit{\glsentrylong{auprc}}. AUROC=\textit{\glsentrylong{auroc}}. BS=\text{\glsentrylong{bs}}. LGB=\textit{\glsentrylong{lgb}}. LR=\textit{\glsentrylong{lr}}. RF=\textit{\glsentrylong{rf}}. XGB=\textit{\glsentrylong{xgb}}.}
+    \label{fig:ml_curve_anaylsis}
+\end{figure*}
+
+\begin{table}[tbh!]
+\centering
+\caption{\textbf{Bootstrapped performance comparison of model candidates} \newline \gls{auroc}, \gls{auprc} and \gls{bs} are reported with 95$\%$ \glspl{ci}. Best performances are highlighted in bold.}
+\label{tab:ml_curve_metrics}
+\footnotesize{
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Model} & \textbf{\gls{auroc}} & \textbf{\gls{auprc}} & \textbf{\gls{bs}} \\ \midrule
+LR & 0.786 & 0.494 & 0.139 \\
+& (0.772-0.799) & (0.466-0.524) & (0.134-0.144) \\
+RF & 0.797 & 0.510 & 0.139  \\
+ & (0.784-0.809) & (0.481-0.539) & (0.135-0.144) \\
+LGB & \textbf{0.806} & 0.525  & \textbf{0.135}  \\
+ &  (0.793-0.818) &  (0.495-0.554) &  (0.130-0.140) \\
+XGB & 0.804  & \textbf{0.529}  & \textbf{0.135} \\
+& (0.792-0.816) & (0.502-0.558) & (0.130-0.140) \\
+\bottomrule
+\multicolumn{4}{@{}p{7cm}@{}}{AUPRC=\textit{\glsentrylong{auprc}}. AUROC=\textit{\glsentrylong{auroc}}. BS=\text{\glsentrylong{bs}}. LGB=\textit{\glsentrylong{lgb}}. LR=\textit{\glsentrylong{lr}}. RF=\textit{\glsentrylong{rf}}. XGB=\textit{\glsentrylong{xgb}}.}
+\end{tabular}
+}
+\end{table}
+
+\subsection{\gls{cip} cost curves}
+Figure~\ref{fig:cip} presents the \gls{cip} cost curves at different thresholds with a shaded (coloured yellow) risk band, illustrating individual risk, here exemplified for synthetic patient 1. The detailed synthesis process is described in Supplementary Section~\hyperref[ssec:sync_details]{Synthetic patient generation for LLM prompts}. The results from the \gls{cip} visualisations provide insights into the clinical impact at the patient-specific predicted risk in comparison to the decision threshold. Moreover, the risk band highlights the relative change in competing costs. 
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.5\columnwidth]{images/main/fig3_cip_cost_curves_core_sid1.pdf}
+    \caption{\textbf{\gls{cip} cost curves visualises different cost contributions} \newline \gls{cip} cost curves combine the cost curves for prediction error and treatment costs at varying decision thresholds taking different cost dimensions, namely patient's \gls{qol} and healthcare system, into account. At the population-level, the stacked cost contributions highlight the clinical impact between potentially competing factors. At the patient-level, \gls{cip} visualises the cost-benefit within a risk band (yellow shade) of the patient-specific risk prediction in relation to the decision threshold. CIP=\textit{\glsentrylong{cip}}. HC=health care. QoL=\textit{\glsentrylong{qol}}.}
+    \label{fig:cip}
+\end{figure}
+
+\subsection{Evaluation by clinicians}
+The outcome was evaluated by three clinicians (one clinician for development review and two for user review as in Supplementary Section~\hyperref[ssec:agent_evaluation]{LLM-agent evaluation details}). The review is conducted on 10 synthetic patients (Supplementary Table~\hyperref[stab:synthetic_patients]{S5}). The clinical development review focused on two key aspects: reliability and clinical accuracy, and it included an inventory of common themes of insatisfactory quality in its outputs with respect to the specific \gls{llm}-agents. A prototype of the \gls{cap} framework used for clinical evaluation can be found in Supplementary Fig.~\hyperref[sfig:capboard_patient1]{S4}. 
+
+The evaluation revealed clear differences in the perceived reliability and accuracy of the four agent outputs (Likert scale, 1–5). Agent I ("How certain is the risk prediction?") received the highest ratings, with a reliability score of 4.70 and accuracy score of 4.20 across all patients. While generally well-received, the reviewer noted occasional inappropriate terminology and the inclusion of unsupported advice. Agent II ("How do I interpret the \gls{cip} cost curves?") was rated as reliable (4.00), but accuracy was lower (2.10), due to speculative statements regarding \gls{qol} and healthcare cost consequences. Agent III ("How can prediction uncertainty be reduced?") achieved moderate ratings (reliability 3.60, accuracy 2.30), with qualitative feedback indicating that the advice was sometimes overconfident and partially unsubstantiated. Agent IV ("How can future risks be mitigated?") received the lowest scores (reliability 2.60, accuracy 1.70), with the reviewer describing the guidance as unrealistic and frequently ungrounded. 
+
+We categorised the identified themes into 11 categories, which were annotated during the development review. The five most common issues were: (1) incorrect or overreaching medical terminology; (2) overly confident and imperative advice (e.g. use of "shall", "must"); (3) unrealistic, unfeasible, or idealistic recommendations; (4) unasked-for or unsolicited advice; and (5) overbearing or overly prescriptive advice concerning minor details. 
+
+The clinical user review was conducted across the same 10 patient cases, with clinicians providing both Likert-scale ratings (1–5) and qualitative comments for each of the \gls{cap} components. For risk estimation, the users reported high confidence when using the classifier’s risk estimate in combination with the tool, with consistent feedback that the tool enhanced their risk assessment process. The generated risk explanations were generally seen as clear and useful, though in some cases they added little beyond what the risk score already conveyed. The \gls{cip} cost curves received mixed feedback. The users found the concept useful for illustrating trade-offs. The tool’s uncertainty handling was appreciated, particularly its suggestions for reducing uncertainty, though these were sometimes too generic or incomplete for very complex cases. Importantly, the tool did not create a false sense of reassurance; the user consistently noted it maintained appropriate caution. 
+
+\section{Discussion}
+
+Our work focuses on the development of \emph{interpretable} predictive models for 1-year all-cause mortality in heart failure, structured around three central questions. Q1: Why does the model make a positive or negative prediction? Q2: What are the consequences of acting on the model’s predictions in clinical care? Q3: How sensitive and robust are these predictions when used in practice? 
+
+\subsection{European Union \gls{ai} legal requirements}
+Importantly, the European Union \gls{ai} act poses legally binding requirements on transparency, safety, accountability and ethics for development of \gls{ai} to be applied in health care (Artificial intelligence act \cite{eu-2024/1689}). In particular, the EU \gls{ai} Act requires clear definition, assessment, and governance of risks arising from the output of \gls{ai} models. \gls{cip} addresses this by categorising risks into patient- and healthcare system–related dimensions, thereby aligning with the Act’s requirements. Each cost dimension reflects a distinct risk, presented within a structured framework where risks are evaluated based on both technical performance and real-world clinical and economic impact. Notably, the risks here should be read as an relevant example of important considerations in heart failure but may be tailored to the user´s needs. Moreover, the evaluation of these costs facilitates effective and transparent communications of risks, as stakeholders can clearly see the trade-offs between different decisions. Thus, the cost evaluation framework will aid in initial risk assessment but also enable the long-term safety, effectiveness, and accountability of the \gls{ai} system. 
+
+\subsection{Clinical feedback on \gls{llm}-agents}
+The cost-aware decision guidance, communicated by the \gls{llm}-agents, was rated positively and was helpful for assessing future risk. However, the integration of patient-level and population-level information had a steep learning curve for the evaluating clinicians. The generated explanations were generally well-received. The users felt the explanations captured key decision factors and expressed confidence about applying them in practice. There was little concern about content falling outside established guidelines or evidence-based practice, though in complex cases, explanations included unnecessary details or became overly lengthy. 
+
+The clinical user review shows that the system was generally well-received for its ability to support risk estimation and explanation, suggesting that the \gls{llm} agents are most effective (accurate and helpful) in descriptive and explanatory tasks. However, speculative or forward-looking guidance was unsatisfactory and requires further development. 
+Overall, the clinical user review results suggest the system’s strengths lie in supporting risk communication and generating structured clinical explanations. 
+
+\subsection{Potential applications for policymakers and healthcare financiers}
+Note that although this paper addresses clinicians as stakeholders, it may also be relevant to hospital administrators and policymakers, and can be adjusted according to the selection of included costs. For example, whereas the correctly classified groups, \gls{tp} and \gls{tn}, are clinically uncomplicated, the \gls{fn} illustrate delivery of care that does not contribute to patient value although a costly choice in our model. For comparable conditions, the framework may be useful for policymakers when planning the distribution of hospital beds versus home care. 
+
+\subsection{Related work}
+Previous research has successfully demonstrated the application of \gls{ml} models for prediction of all-cause mortality within 1 year for hospitalised heart failure patients \cite{
+adler_improving_2020, angraal_machine_2020,
+tohyama_machine_2021, 
+takahama_clinical_2023,
+tian_machine_2023, ketabi_predicting_2024}. \gls{ml} models outperformed conventional heart failure risk score models \cite{adler_improving_2020,
+tohyama_machine_2021, takahama_clinical_2023}.  
+Among the various types of \gls{ai} models, \textit{supervised classification models} are generally the most accurate and reliable for clinical prediction tasks. These \gls{ml} models follow well-established methods for development, validation, and evaluation, which favour trust in their results in clinical settings. 
+Models of increasing complexity, such as neural networks \cite{kwon_artificial_2019, wang_feature_2020, li_deep_2023} and transformer-based architectures \cite{pang2021cehr, antikainen_transformers_2023}, show potential for further gains but typically require larger datasets, may be less robust (high variance), and present greater interpretability challenges. 
+Given the importance of interpretability (Q1) complex model architectures were not prioritised. 
+
+Despite advances in model development, the clinical utility of \gls{ml} models remains limited, and the evaluation of downstream effects of decisions seldom addressed or evaluated (Q2). In clinical practice, risk thresholds for management decisions are rarely well defined but rest on clinical judgement, and the consequences of acting on predictions are often unclear. 
+
+Frameworks such as the \gls{mct} \cite{greiner_principles_2000} and \gls{dca} \cite{vickers_decision_2006} aim to bridge this gap. \gls{mct} quantifies optimal thresholds by balancing sensitivity, specificity, prevalence, and predefined costs of \gls{fp} and \gls{fn}. However, \gls{mct} tightly couples model behaviour to fixed cost terms defined during development, limiting flexibility.  
+\gls{dca} visualises net benefit across thresholds, comparing model-guided decisions to treat-none and treat-all strategies \cite{li_prediction_2021, li_predicting_2022, chen_machine_2023, tian_machine_2023}, yet does not break down the cost structure of individual predictions. In contrast, the \gls{cip} cost curve provides patient-level cost composition and by illustrating how sensitive these costs are to threshold changes (Q3). \glspl{dca} constructed for all model candidates can be found in Supplementary Fig.~~\hyperref[sfig:dca_all]{S3}. 
+ 
+To enhance interpretability, \glspl{llm} have shown promise in clinical decision support \cite{shool2025systematic, vrdoljak2025review, zhang2025revolutionizing, denecke2024potential}, including summarising medical records and assisting with diagnostic reasoning. However, their integration into clinical workflows remains at an early stage. Recent studies have highlighted limitations \cite{LI20251, liu-etal-2024-large}, such as inflexible reasoning, overconfidence in outputs, and susceptibility to errors in complex clinical scenarios. Moreover, \glspl{llm} are not inherently reliable for speculative tasks or generating outcomes beyond grounded evidence, as they are prone to hallucinations \cite{shool2025systematic, vrdoljak2025review, zhang2025revolutionizing, denecke2024potential}. Evaluations indicate that \glspl{llm} may underperform compared with human clinicians, particularly when processing unstructured or nuanced patient data. Findings from our exploratory study are consistent with these observations. Nonetheless, \gls{llm}-based approaches hold considerable potential, and further development with rigorous evaluation is warranted. 
+
+\subsection{Strengths and limitations}
+Our model is built on a large, comprehensive, and representative regional cohort, ensuring reliable risk mapping, \gls{cip}/\gls{cap}, and reflecting real-world expectations for healthcare services. It can also simulate outcomes with cost considerations to support threshold-setting in healthcare planning. However, data drift over time necessitates regular updates and validation on contemporary cohorts in the evolving and changing clinical environments. While \gls{llm}–based explanations were generally well received, their performance in speculative reasoning and complex patient scenarios remains limited. Further refinement is needed to ensure their safe and reliable clinical use. 
+
+\section{Conclusions}
+With \gls{cap} we propose a three-stage framework:
+
+Firstly, we showed that \gls{ml} models can effectively predict all-cause mortality within 1 year in a heart failure cohort with a first in-hospital diagnosis, with \gls{xgb} identified as the best model based on the highest \gls{auprc}. 
+
+Secondly, on population-level we theoretically outlined cost matrices including treatment and prediction error costs for two relevant cost dimensions, related to the patient's \gls{qol} and the healthcare provider. We then conceptualised \gls{cip} to reflect the cost contributions associated with the predictions of the \gls{xgb} classifier across various risk thresholds expanding traditional \gls{ml} metrics by accounting for the clinical impact on patient's \gls{qol} and healthcare costs. 
+
+Thirdly, we integrated \gls{llm} agents into the \gls{cap} framework to communicate four different aspects of output interpretation, for patient-level decision support. 
+
+%\noindent \textbf{Supplementary information}\mbox{}\\
+\section{\normalsize{Supplementary information}}
+Supplementary information is available in the appendix.
+
+\tabsup{stab:data_collection}{1}
+\tabsup{stab:hp_optimisation}{2}
+\tabsup{stab:ml_shap}{3}
+\tabsup{stab:best_clf_set_metrics}{4}
+\tabsup{stab:synthetic_patients}{5}
+\tabsup{stab:cap_questionnaire}{6}
+\tabsup{stab:cap_components}{7}
+\tabsup{stab:cap_category_feedback}{8}
+\figsup{sfig:shap_summary}{1}
+\figsup{sfig:f1_comparison}{2}
+\figsup{sfig:dca_all}{3}
+\figsup{sfig:capboard_patient1}{4}
+\figsup{slist:agents_one}{1}
+\figsup{slist:agents_sum}{5}
+\secsup{ssec:ml_metrics}{}
+\secsup{ssec:ml_implementation}{}
+\secsup{ssec:cip_implementation}{}
+\secsup{ssec:stats_testing}{}
+\secsup{ssec:sync_details}{}
+\secsup{ssec:agent_evaluation}
+
+
+%\noindent \textbf{Contributors}\mbox{}\\
+\section{\normalsize{Contributors}}
+YY: Conceptualization, Data curation, Formal analysis, Funding acquisition, Investigation, Methodology, Project administration, Resources, Software, Supervision, Validation, Visualization, Writing – original draft, Writing – critical review, commentary \& editing.
+FD: Conceptualization, Data curation, Formal analysis, Investigation, Methodology, Project administration, Software, Visualization, Writing – original draft, Writing – critical review, commentary \& editing.
+MA: Conceptualization, Data curation, Formal analysis, Methodology, Software, Writing – critical review, commentary \& editing.
+HS: Conceptualization, Funding acquisition, Methodology, Project administration, Resources, Supervision, Validation, Writing – original draft, Writing – critical review, commentary \& editing.
+CEL: Methodology, Writing – critical review, commentary \& editing.
+ML: Methodology, Writing – critical review, commentary \& editing.
+AR: Resources, Writing – critical review, commentary \& editing.
+
+%\noindent \textbf{Declaration of interests}\mbox{}\\
+\section{\normalsize{Declaration of interests}}
+All authors declare no conflict of interest. 
+
+%\noindent \textbf{Data sharing}\mbox{}\\
+\section{\normalsize{Data sharing}}
+The data and source code are not publicly available but will be made available upon reasonable request after internal review. 
+
+%\noindent \textbf{Acknowledgments}\mbox{}\\
+\section{\normalsize{Acknowledgments}}
+This work was supported by grants from the Swedish state under an agreement concerning research and education of doctors (ALFGBG-991470 [to H.S.], ALFGBG-971608 [to M.L.]), the Swedish Research Council (2023-06421 [to H.S.], 2023-02144 [to A.R.]), the Swedish Heart and Lung Foundation (2024-0678 [to A.R.]), and Vinnova Advanced Digitalization (DNR 2024-01446 [to Y.Y. and H.S.]).  
+
+\bibliographystyle{vancouver}
+\bibliography{references}
+
+\includepdf[pages=-]{supplements_1col.pdf}
+
+\end{document}

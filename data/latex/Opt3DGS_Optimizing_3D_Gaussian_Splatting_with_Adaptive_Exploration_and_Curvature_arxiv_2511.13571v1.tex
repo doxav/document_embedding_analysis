@@ -1,0 +1,1419 @@
+%File: aaai2026-unified-template.tex
+%
+% UNIFIED AAAI 2026 TEMPLATE 
+% To switch between anonymous submission and camera-ready versions,
+% simply change the next line:
+%
+% For ANONYMOUS SUBMISSION: uncomment the next line
+% \def\aaaianonymous{true}
+%
+% For CAMERA-READY VERSION: comment out or delete the next line
+\def\aaaianonymous{false}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[letterpaper]{article} % DO NOT CHANGE THIS
+
+% Conditional package loading based on version
+% \ifdefined\aaaianonymous
+%     \usepackage[submission]{aaai2026}  % Anonymous submission version
+% \else
+%     \usepackage{aaai2026}              % Camera-ready version
+% \fi
+\usepackage{aaai2026}
+\usepackage{times}  % DO NOT CHANGE THIS
+\usepackage{helvet}  % DO NOT CHANGE THIS
+\usepackage{courier}  % DO NOT CHANGE THIS
+\usepackage[hyphens]{url}  % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\urlstyle{rm} % DO NOT CHANGE THIS
+\def\UrlFont{\rm}  % DO NOT CHANGE THIS
+\usepackage{natbib}  % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\usepackage{caption} % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\frenchspacing  % DO NOT CHANGE THIS
+\setlength{\pdfpagewidth}{8.5in} % DO NOT CHANGE THIS
+\setlength{\pdfpageheight}{11in} % DO NOT CHANGE THIS
+
+%
+% These are recommended to typeset algorithms but not required. See the subsubsection on algorithms. Remove them if you don't have algorithms in your paper.
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\usepackage{graphicx} 
+\usepackage{colortbl}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{multirow} 
+\usepackage{xcolor}
+\usepackage{pifont}
+%
+% These are are recommended to typeset listings but not required. See the subsubsection on listing. Remove this block if you don't have listings in your paper.
+\usepackage{newfloat}
+\usepackage{listings}
+\DeclareCaptionStyle{ruled}{labelfont=normalfont,labelsep=colon,strut=off} % DO NOT CHANGE THIS
+\lstset{%
+	basicstyle={\footnotesize\ttfamily},% footnotesize acceptable for monospace
+	numbers=left,numberstyle=\footnotesize,xleftmargin=2em,% show line numbers, remove this entire line if you don't want the numbers.
+	aboveskip=0pt,belowskip=0pt,%
+	showstringspaces=false,tabsize=2,breaklines=true}
+\floatstyle{ruled}
+\newfloat{listing}{tb}{lst}{}
+\floatname{listing}{Listing}
+
+%
+% Keep the \pdfinfo as shown here. There's no need
+% for you to add the /Title and /Author tags.
+\pdfinfo{
+/TemplateVersion (2026.1)
+}
+
+% DISALLOWED PACKAGES
+% \usepackage{authblk} -- This package is specifically forbidden
+% \usepackage{balance} -- This package is specifically forbidden
+% \usepackage{color (if used in text)
+% \usepackage{CJK} -- This package is specifically forbidden
+% \usepackage{float} -- This package is specifically forbidden
+% \usepackage{flushend} -- This package is specifically forbidden
+% \usepackage{fontenc} -- This package is specifically forbidden
+% \usepackage{fullpage} -- This package is specifically forbidden
+% \usepackage{geometry} -- This package is specifically forbidden
+% \usepackage{grffile} -- This package is specifically forbidden
+% \usepackage{hyperref} -- This package is specifically forbidden
+% \usepackage{navigator} -- This package is specifically forbidden
+% (or any other package that embeds links such as navigator or hyperref)
+% \indentfirst} -- This package is specifically forbidden
+% \layout} -- This package is specifically forbidden
+% \multicol} -- This package is specifically forbidden
+% \nameref} -- This package is specifically forbidden
+% \usepackage{savetrees} -- This package is specifically forbidden
+% \usepackage{setspace} -- This package is specifically forbidden
+% \usepackage{stfloats} -- This package is specifically forbidden
+% \usepackage{tabu} -- This package is specifically forbidden
+% \usepackage{titlesec} -- This package is specifically forbidden
+% \usepackage{tocbibind} -- This package is specifically forbidden
+% \usepackage{ulem} -- This package is specifically forbidden
+% \usepackage{wrapfig} -- This package is specifically forbidden
+
+% DISALLOWED COMMANDS
+% \nocopyright -- Your paper will not be published if you use this command
+% \addtolength -- This command may not be used
+% \balance -- This command may not be used
+% \baselinestretch -- Your paper will not be published if you use this command
+% \clearpage -- No page breaks of any kind may be used for the final version of your paper
+% \columnsep -- This command may not be used
+% \newpage -- No page breaks of any kind may be used for the final version of your paper
+% \pagebreak -- No page breaks of any kind may be used for the final version of your paperr
+% \pagestyle -- This command may not be used
+% \tiny -- This is not an acceptable font size.
+% \vspace{- -- No negative value may be used in proximity of a caption, figure, table, section, subsection, subsubsection, or reference
+% \vskip{- -- No negative value may be used to alter spacing above or below a caption, figure, table, section, subsection, subsubsection, or reference
+
+\setcounter{secnumdepth}{0} %May be changed to 1 or 2 if section numbers are desired.
+
+% The file aaai2026.sty is the style file for AAAI Press
+% proceedings, working notes, and technical reports.
+%
+
+% Title - conditionally set based on version
+\ifdefined\aaaianonymous
+    \title{AAAI Press Anonymous Submission\\Instructions for Authors Using \LaTeX{}}
+\else
+    \title{AAAI Press Formatting Instructions \\for Authors Using \LaTeX{} --- A Guide}
+\fi
+
+% Author and affiliation information
+% \author{
+%     %Authors
+%     % All authors must be in the same font size and format.
+%     Written by AAAI Press Staff\textsuperscript{\rm 1}\thanks{With help from the AAAI Publications Committee.}\\
+%     AAAI Style Contributions by Pater Patel Schneider,
+%     Sunil Issar,\\
+%     J. Scott Penberthy,
+%     George Ferguson,
+%     Hans Guesgen,
+%     Francisco Cruz\equalcontrib,
+%     Marc Pujol-Gonzalez\equalcontrib
+% }
+% \affiliations{
+%     %Afiliations
+%     \textsuperscript{\rm 1}Association for the Advancement of Artificial Intelligence\\
+%     % If you have multiple authors and multiple affiliations
+%     % use superscripts in text and roman font to identify them.
+%     % For example,
+
+%     % Sunil Issar\textsuperscript{\rm 2},
+%     % J. Scott Penberthy\textsuperscript{\rm 3},
+%     % George Ferguson\textsuperscript{\rm 4},
+%     % Hans Guesgen\textsuperscript{\rm 5}
+%     % Note that the comma should be placed after the superscript
+
+%     1101 Pennsylvania Ave, NW Suite 300\\
+%     Washington, DC 20004 USA\\
+%     % email address must be in roman text type, not monospace or sans serif
+%     proceedings-questions@aaai.org
+% %
+% % See more examples next
+% }
+
+% %Example, Single Author, ->> remove \iffalse,\fi and place them surrounding AAAI title to use it
+% \iffalse
+% \title{My Publication Title --- Single Author}
+% \author {
+%     Author Name
+% }
+% \affiliations{
+%     Affiliation\\
+%     Affiliation Line 2\\
+%     name@example.com
+% }
+% \fi
+
+% \iffalse
+%Example, Multiple Authors, ->> remove \iffalse,\fi and place them surrounding AAAI title to use it
+\title{Opt3DGS: Optimizing 3D Gaussian Splatting with Adaptive Exploration and Curvature-Aware Exploitation}
+\author {
+    % Authors
+    Ziyang Huang\textsuperscript{\rm 1}, 
+    Jiagang Chen\textsuperscript{\rm 1}, 
+    Jin Liu\textsuperscript{\rm 2}, 
+    Shunping Ji\textsuperscript{\rm 1,\ding{41}}
+}
+\affiliations {
+    % Affiliations
+    \textsuperscript{\rm 1}Wuhan University
+    \textsuperscript{\rm 2}Hangzhou Dianzi University\\
+    \{huangziyang2024, chenjiagang2015, jishunping\}@whu.edu.cn, jinliu@hdu.edu.cn
+}
+% \fi
+
+% REMOVE THIS: bibentry
+% This is only needed to show inline citations in the guidelines document. You should not need it and can safely delete it.
+\usepackage{bibentry}
+% END REMOVE bibentry
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+3D Gaussian Splatting (3DGS) has emerged as a leading framework for novel view synthesis, yet its core optimization challenges remain underexplored. We identify two key issues in 3DGS optimization: entrapment in suboptimal local optima and insufficient convergence quality. To address these, we propose Opt3DGS, a robust framework that enhances 3DGS through a two-stage optimization process of adaptive exploration and curvature-guided exploitation. In the exploration phase, an Adaptive Weighted Stochastic Gradient Langevin Dynamics (SGLD) method enhances global search to escape local optima. In the exploitation phase, a Local Quasi-Newton Direction-guided Adam optimizer leverages curvature information for precise and efficient convergence. Extensive experiments on diverse benchmark datasets demonstrate that Opt3DGS achieves state-of-the-art rendering quality by refining the 3DGS optimization process without modifying its underlying representation.
+\end{abstract}
+
+\section{1 Introduction}
+
+3D Gaussian Splatting~\cite{kerbl20233d} has recently emerged as a dominant method in novel view synthesis, significantly advancing scene modeling through its superior representational capabilities. Unlike implicit predecessors such as Neural Radiance Fields (NeRF)~\cite{mildenhall2021nerf}, 3DGS leverages an explicit approach, modeling the radiance field of scenes using discrete Gaussian primitives. This explicit representation offers considerable advantages in computational efficiency and modeling flexibility, facilitating widespread adoption in diverse applications such as geometric reconstruction~\cite{yu2024gaussian, chen2024pgsr, guedon2024sugar}, simultaneous localization and mapping (SLAM)~\cite{matsuki2024gaussian}, semantic scene understanding~\cite{cen2025segment}, and dynamic scene modeling~\cite{yang2023real}.
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figs/Figure1.pdf}
+    \caption{Exploration and Exploitation. The exploration stage promotes global search across modes using Adaptive Weighted SGLD, while the exploitation stage enables precise, curvature-aware convergence with Local Quasi-Newton direction-guided Adam optimizer.}
+    \label{fig:exploration-exploitation}
+\end{figure}
+
+% Despite the rapid adoption of 3DGS, practitioners often encounter unstable optimization process in complex scenes: Gaussian primitives tend to gather around salient structures (e.g., foreground objects), while background or geometrically intricate regions remain under-reconstructed. This empirical observation suggests that effectively optimizing Gaussian primitives to reconstruct a realistic radiance field remains a challenging non-convex optimization problem.
+
+Despite these advantages, effectively optimizing Gaussian primitives to reconstruct a radiance field remains a challenging non-convex optimization problem. Non-convex optimization inherently faces the risk of convergence to local optima, complicating the attainment of globally optimal scene representations. The original 3DGS method employs heuristic rules within its adaptive density control (ADC) step, using fixed thresholds to guide Gaussian cloning, splitting, and pruning. Yet, these heuristics lack robustness and frequently yield suboptimal outcomes. Recent advancements, such as 3DGSMCMC~\cite{kheradmand20243d}, attempt to address these limitations by modeling 3DGS optimization as a stochastic gradient Langevin dynamics (SGLD) process, incorporating opacity-based probabilistic sampling for Gaussian addition and removal. Although 3DGSMCMC unifies the training procedure, it does not completely resolve the local optima issue. Specifically, 3DGSMCMC introduces an inherent clustering effect, causing excessive Gaussian accumulation in already well-reconstructed regions. Based on Bayesian theorem, such clustering creates sampling bias, prematurely trapping the optimization in local modes and restricting exploration of the global solution space. Furthermore, standard first-order optimizers, like Adam~\cite{kingma2014adam}, commonly used in existing 3DGS methods lack curvature information, hindering precise convergence during later training stages and limiting reconstruction quality. These limitations motivate the pursuit of optimization frameworks with enhanced exploration and precise convergence to tackle the complex non-convex landscape of 3DGS training.
+
+
+In this paper, we propose Opt3DGS, a general and effective optimization framework for 3DGS. As shown in Figure 1, our approach divides the training process into two stages: Exploration and Exploitation. In the Exploration stage, inspired by the flat-histogram principle~\cite{wang2001efficient}, we introduce Adaptive Weighted SGLD (AW-SGLD). AW-SGLD flattens the posterior distribution to reduce energy barriers between modes, enabling the model to escape local traps and explore the solution space more thoroughly. This increases the likelihood of identifying the global optimal mode. In the Exploitation stage, once the model approaches a high-quality solution, we design a Local Quasi-Newton Direction-guided Adam optimizer. This optimizer leverages historical gradient information to estimate curvature-aware update directions, achieving more precise convergence than standard Adam while maintaining its robustness. Unlike full Quasi-Newton methods, it avoids the need for computationally expensive line searches. We evaluate Opt3DGS on public benchmarks, including MipNeRF360, Tanks \& Temples, and DeepBlending, and compare it with state-of-the-art 3DGS methods. Experimental results demonstrate that Opt3DGS achieves superior rendering quality, validating the effectiveness of our optimization-centric approach.
+
+Our contributions are summarized as follows:
+\begin{itemize}
+    \item We analyze the local mode trapping issue in 3DGS from a Bayesian perspective and introduce AW-SGLD to enhance global exploration and improve convergence to the optimal mode.
+    \item We overcome the limitation of first-order optimizers in the exploitation phase by developing a Local Quasi-Newton Direction-guided Adam optimizer, enabling precise convergence and enhanced rendering quality.
+    \item By focusing solely on optimization without altering the Gaussian representation, Opt3DGS achieves state-of-the-art rendering performance.
+\end{itemize}
+
+\section{2 Related Work}
+Neural rendering has recently made remarkable progress in novel view synthesis by learning scene representations directly from images. Among these methods, implicit approaches such as NeRF~\cite{mildenhall2021nerf} and explicit approaches like 3DGS~\cite{kerbl20233d} represent two dominant paradigms.
+
+NeRF~\cite{mildenhall2021nerf} pioneered implicit 3D scene representation by learning a volumetric radiance field with an MLP and using volumetric rendering to synthesize novel views. Subsequent extensions improve different aspects of NeRF: NeRF++~\cite{zhang2020nerf++} models unbounded scenes, Mip-NeRF~\cite{barron2021mip} and Mip-NeRF360~\cite{barron2022mip} address aliasing with conical frustum sampling, D-NeRF~\cite{pumarola2021d} incorporates temporal dynamics, and InstantNGP~\cite{muller2022instant} accelerates training with multi-resolution hash encodings. Despite these advances, implicit methods remain computationally expensive due to the need for dense neural evaluations along rays.
+
+3DGS~\cite{kerbl20233d} represents a scene using explicit 3D Gaussian primitives and renders them via parallel rasterization, thereby avoiding the expensive neural field evaluations required by NeRF-based volume rendering~\cite{mildenhall2021nerf}. 
+%
+This design achieves real-time novel view synthesis with competitive visual quality. Building on this framework, subsequent works have sought to overcome its limitations from different perspectives.
+%
+To improve rendering fidelity, methods such as Mip-Splatting~\cite{yu2024mip} and multi-scale splatting~\cite{yan2024multi} address aliasing.
+%
+To enhance expressiveness of representation, 2DGS~\cite{huang20242d} uses 2D surface-aligned Gaussians for higher geometric fidelity. 3DHGS~\cite{li20253d} refine the primitive model with half-Gaussians to better handle discontinuities. SSS~\cite{zhu20253d} introduce Student's T-distribution to improve expressiveness. BBSplat~\cite{svitov2024billboard} using optimizable textured planar primitives to learn RGB textures and alpha maps achieving accurate representation.
+%
+Other works focus on efficiency, including anchor-based model compression~\cite{lu2024scaffold}, faster training via resource allocation or Newtonian optimization~\cite{chen2025dashgaussian, lan20253dgs, pehlivan2025second}, sort-free rendering for lightweight devices~\cite{hou2024sort}.
+%
+Densification strategies have also been actively explored: AbsGS~\cite{ye2024absgs} and RevisingGS~\cite{rota2024revising} design more principled or error-driven adaptive density control, while  FreGS~\cite{zhang2024fregs} mitigates over-reconstruction caused by densification through frequency-domain regularization. Methods based on Stochastic Gradient Markov Chain Monte Carlo (SGMCMC) unify the update, addition, and removal of Gaussian primitives within a single optimization framework. For instance, 3DGSMCMC~\cite{kheradmand20243d} employ stochastic gradient Langevin dynamics and SSS~\cite{zhu20253d} adopts stochastic gradient Hamiltonian Monte Carlo for enhanced exploration. 
+
+Despite these efforts, stochastic methods still suffer from Gaussian over-clustering and lack mechanisms for precise, curvature-aware convergence, which motivates the optimization framework proposed in this work.
+
+
+\section{3 Background and Limitation}
+This section introduces the basics of 3DGS~\cite{kerbl20233d} and its extension 3DGSMCMC~\cite{kheradmand20243d}, and discusses the key limitations of these methods that motivate our proposed approach.
+
+\subsection{3.1 Preliminary}
+3DGS models a scene as a collection of explicit Gaussian primitives.
+Each primitive is parameterized by a 3D position $\boldsymbol{\mu} \in \mathbb{R}^3$, 
+an opacity scalar $o \in \mathbb{R}$,
+view-dependent spherical harmonic coefficients for appearance modeling,
+and a covariance matrix $\boldsymbol{\Sigma} = \mathbf{R}\mathbf{s}\mathbf{s}^{\top}\mathbf{R}^{\top}$ that determines the spatial extent and orientation of the Gaussian,
+where $\mathbf{s} \in \mathbb{R}^3$ is a scale vector for the axis lengths and 
+$\mathbf{r} \in \mathbb{R}^4$ (represented as a quaternion) for the rotation matrix $\mathbf{R}$.
+During rendering, each 3D Gaussian is projected onto the image plane, and the final pixel color is computed using alpha blending:
+\begin{equation}
+\mathbf{c}(\mathbf{x}) = \sum_{i=1}^N \mathbf{c}_i \cdot o_i \cdot T_i,
+\quad  T_{i+1} = (1 - o_i) \cdot T_i,
+\label{eq:final_color}
+\end{equation}
+where $\mathbf{c}_i$, $o_i$, and $T_i$ denote the color, opacity, and accumulated transmittance of the $i$-th Gaussian, respectively.
+
+The adaptive density control in vanilla 3DGS, while effective, lacks robustness in certain scenarios. To address this limitation, the 3DGSMCMC framework reformulates 3DGS as a Markov Chain Monte Carlo (MCMC) process, treating each Gaussian primitive as a sample drawn from the scene’s posterior distribution. Instead of stochastic gradient descent (SGD), 3DGSMCMC employs Stochastic Gradient Langevin Dynamics (SGLD) for parameter updates:
+\begin{equation}
+\begin{aligned}
+g_k &\leftarrow g_{k-1}
+- \lambda_{lr} \cdot \nabla_g \mathbb{E}_{I \sim \mathcal{I}}
+\big[ \mathcal{L}_{\text{total}}(g_{k-1}; I) \big]
++ \lambda_{\text{noise}} \cdot \epsilon, \\
+\epsilon &= \lambda_{lr} \cdot \sigma(-k(t-o)) \cdot \Sigma \eta,
+\qquad \epsilon = [\epsilon_\mu, 0],
+\end{aligned}
+\label{eq:sgld_update}
+\end{equation}
+where $g_k$ denotes the Gaussian parameters at iteration $k$, 
+$\lambda_{lr}$ the learning rate, 
+$\mathcal{L}_{\text{total}}$ the total loss, 
+and $\lambda_{\text{noise}}$ the coefficient controlling the injected noise. 
+The term $\epsilon$ is parameterized by the sigmoid function $\sigma(\cdot)$ with hyperparameters $k$ and $t$, 
+the Gaussian opacity $o$, the covariance matrix $\Sigma$, 
+and a 3D standard Gaussian random vector $\eta$.
+
+When adding Gaussians, 3DGSMCMC samples the locations of the new Gaussians from the normalized opacity-based probability distribution of the current Gaussian set. For pruning Gaussians, 3DGSMCMC reloates the discarded Gaussians to the location of high-opacity Gaussians through the same opacity-based sampling.
+%
+To maintain the stability of the Markov chain, the parameters of the newly generated Gaussians are computed as:
+\begin{equation}
+\resizebox{\linewidth}{!}{$
+\begin{aligned}
+\boldsymbol{\Sigma}_{1,\dots,N}^{\text{new}} &= \left( o^{\text{old}} \right)^2 
+\left( \sum_{i=1}^{N} \sum_{k=0}^{i-1} 
+\left( \binom{i-1}{k} \frac{(-1)^k (o^{\text{new}})^{k+1}}{\sqrt{k+1}} \right) 
+\right)^{-2} \boldsymbol{\Sigma}^{\text{old}}, \\
+&\mu_{1,\dots,N}^{\text{new}} = \mu^{\text{old}}, \quad 
+o_{1,\dots,N}^{\text{new}} = 1 - \sqrt[N]{1 - o^{\text{old}}}
+\end{aligned}
+$}
+\label{eq:new_covariance}
+\end{equation}
+
+To promote sparsity in opacity and control the scale of the covariance matrices, 3DGSMCMC introduces two additional regularization term in loss function:
+\begin{equation}
+\begin{aligned}
+L_{total} =(1-\lambda_{ssim})\times L_1 + \lambda_{ssim} \times L_{ssim} + \\\lambda_o\times \sum_i|o_i|_1+\lambda_{\Sigma}\times\sum_{ij}\left|\sqrt{\mathrm{eig}_j(\Sigma_i)}\right|_1
+\end{aligned}
+\label{eq:3DGSMCMCLoss}
+\end{equation}
+
+
+\subsection{3.2 Limitation of Existing Framework}
+
+3DGSMCMC formulates 3DGS optimization as a Markov Chain Monte Carlo process and achieves promising results, as the Langevin dynamics component encourages exploration of the posterior distribution. 
+%
+However, reconstructing complex scenes remain challenging.
+%
+The posterior energy landscape is often highly multi-modal, with each mode corresponding to a different Gaussian configuration that explains the scene.
+%
+When the energy barriers between modes are large, the combination of gradient guidance and Langevin noise is often insufficient to push the model out of its current local mode.
+
+This issue is further exacerbated by the opacity-based sampling mechanism used in 3DGSMCMC. When adding or relocating Gaussians, a set of new sample positions is drawn independently and identically distributed (i.i.d.) from a probability distribution $\pi(x)$, which is proportional to the normalized opacities of the current Gaussians:
+\begin{equation}
+x^{(1)},\, x^{(2)},\, \ldots,\, x^{(N)} \overset{\mathrm{i.i.d.}}{\sim} \pi(x)
+\end{equation}
+Here each $x^{(i)}$ corresponds to the spatial position where a new Gaussian will be placed. Although straightforward, this opacity-driven rule induces a clustering effect: new Gaussians tend to accumulate in regions that were discovered early in training. As dominant structures become highly opaque, subsequent sampling becomes more biased toward these well-reconstructed areas, leaving under-explored or geometrically complex regions insufficiently covered. From an MCMC perspective, this bias limits efficient exploration and traps the chain in a single posterior mode.
+
+\section{4 Method}
+To address the prevalent issues of local mode trapping and limited convergence in 3DGS optimization, we propose Opt3DGS, a novel optimization framework that combines two complementary components: 
+an Adaptive Weighted SGLD that promotes global exploration and helps the model escape local minima in exploration stage; A Local Quasi-Newton Direction-guided Adam that refines the solution in exploitation stage with more accurate, curvature-aware updates. The following sections describe these two components in detail.
+
+\subsection{4.1 3DGS with Adaptive Weighted SGLD~\label{sec_awmcmc}}
+Despite the clustering effect of opacity-based sampling (Sec. 3.2), it still offers favorable initializations for new Gaussians. Instead of modifying the sampling mechanism, we enhance the model’s exploration to avoid premature convergence to suboptimal modes.
+%
+A direct way to enhance exploration is to increase the Langevin noise intensity $\lambda_{\text{noise}}$. However, this is not robust: scene complexity varies, and excessive noise can destabilize training and impede convergence.
+
+To address this, we introduce the flat histogram principle and propose an adaptive weighted stochastic gradient langevin dynamics(AW-SGLD) update for 3DGS. Let the configuration of Gaussian primitives for current scene follow a probability distribution $\mathrm{P}(g)$, defined as:
+\begin{equation}
+\mathrm{P}(g) \propto \exp\left(-\frac{\mathcal{L}_{\text{total}}(g)}{\tau}\right), \quad g \in \mathcal{G},
+\label{eq:pi_distribution}
+\end{equation}
+where $g$ denotes the current sample, $\mathcal{G}$ is the sample space, $\mathcal{L}_{\text{total}}$ is the total training loss (the energy function of the target distribution), and $\tau$ is the temperature parameter.
+
+Our objective is to construct a flattened distribution $\rho(g)$ based on $\mathrm{P}(g)$ to facilitate the traversal of the sample space. To achieve this, we divide $\mathcal{G}$ into $m$ disjoint subregions based on the energy levels of $\mathcal{L}_{\text{total}}(g)$:
+\begin{equation}
+\resizebox{\linewidth}{!}{$
+\mathcal{G} = \mathcal{G}_1 \cup \mathcal{G}_2 \cup \dots \cup \mathcal{G}_m,\quad 
+\mathcal{G}_n = \{ g : u_{n-1} < \mathcal{L}_{\text{total}}(g) < u_n \}
+$}
+\label{eq:partition}
+\end{equation}
+where $u_0 = -\infty, \ u_m = +\infty$, while $u_1$ and $u_{m-1}$ are specified by the user. Inspired by~\cite{neal2001annealed}, we define the flattened distribution $\rho(g)$ as:
+\begin{equation}
+\rho(g) \propto \frac{\mathrm{P}(g)}{\Psi^{\zeta}(\Theta, \mathcal{L}_{\text{total}}(g))},
+\label{eq:flattened_distribution}
+\end{equation}
+where $\zeta > 0$ is a flattening hyperparameter controlling the degree of flattening, and $\Psi(\Theta, \mathcal{L}_{\text{total}}(g))$ is a weighting function that takes the energy of current sample $\mathcal{L}_{\text{total}}(g)$, and a weight vector $\Theta$ as inputs, and returns the corresponding flattening weight, where $\Theta$ is defined as:
+\begin{equation}
+\begin{split}
+\Theta =& \bigl\{ (\theta(1), \theta(2), \dots, \theta(m)) \mid \\
+&0 < \theta(1), \theta(2), \dots, \theta(m) < 1, \sum_{i=1}^m \theta(i) = 1 \bigr\},
+\end{split}
+\label{eq:weight_vector}
+\end{equation}
+with $\theta(i) = 1/m$ at the start of training.
+
+To avoid gradient vanishing issues associated with the piecewise constant form of $\Psi$, as met in~\cite{liang2007stochastic}, we construct $\Psi$ using a piecewise exponential interpolation function, following~\cite{deng2020contour}:
+\begin{equation}
+\resizebox{\linewidth}{!}{$
+\begin{split}
+\Psi(\Theta, \mathcal{L}_{\text{total}}(g)) =&\sum_{i=1}^m \mathbf{1}_{\{u_{i-1} \leq \mathcal{L}_{\text{total}}(g) \leq u_i\}} \times\\ 
+& \theta(i-1) 
+\exp\left( (\log \theta(i) - \log \theta(i-1)) \frac{\mathcal{L}_{\text{total}}(g) - u_{i-1}}{\Delta u} \right)
+\end{split}
+$}
+\label{eq:weighting_function}
+\end{equation}
+where $1_A$ is the indicator function, equal to 1 when event $A$ occurs and 0 otherwise. This formulation interpolates the discrete $\theta(i)$ values exponentially based on the energy of the current sample $g$.
+
+To derive the update rule for the flattened distribution $\rho(g)$, we compute the gradient:
+\begin{equation}
+\resizebox{\linewidth}{!}{$
+\nabla_g \log \rho(g) = -\frac{\nabla_g \mathcal{L}_{\text{total}}(g)}{\tau} \times \left[ 1 + \zeta \tau \frac{\partial \log \Psi(\Theta, \mathcal{L}_{\text{total}}(g))}{\partial \mathcal{L}_{\text{total}}(g)} \right] .
+$}
+\label{eq:gradient_varpi}
+\end{equation}
+The format \eqref{eq:gradient_varpi} is expanded to:
+\begin{equation}
+\begin{split}
+\nabla_g &\log \rho(g) = -\frac{\nabla_g \mathcal{L}_{\text{total}}(g)}{\tau} \times  \\ &\biggl[ 1 + \zeta \tau \frac{\log \theta(J(g)) - \log (\theta(J(g) - 1) \vee 1)}{\Delta u} \biggr]
+\end{split}
+\label{eq:simplified_gradient}
+\end{equation}
+where $\Delta u = u_n - u_{n-1}$ for $n \in \{2, \dots, m-1\}$ and $J(g) \in \{1, 2, \dots, m\}$ denotes the index of the subregion containing the current sample $g$:
+\begin{equation}
+J(g) = \sum_{i=1}^m i \, 1_{u_{i-1} < \mathcal{L}_{\text{total}}(g) \leq u_i}.
+\label{eq:subregion_index}
+\end{equation}
+Compared to the gradient under the original distribution, ~\eqref{eq:simplified_gradient} introduces an additional gradient multiplier $\nu$:
+\begin{equation}
+\nu = 1 + \zeta \tau \frac{\log \theta(J(g)) - \log (\theta(J(g) - 1) \vee 1)}{\Delta u}.
+\label{eq:gradient_multiplier}
+\end{equation}
+
+To align the update with the flattened distribution $\rho(g)$, the gradient multiplier is merged into the SGLD update (2):
+\begin{equation}
+\resizebox{\linewidth}{!}{$
+\begin{split}
+g_k \leftarrow g_{k-1} &- \lambda_{\text{lr}}\cdot \nu \cdot \nabla_g \mathbb{E}_{I \sim \mathcal{I}} \left[ \mathcal{L}_{\text{total}}(g_{k-1}; I) \right] + \lambda_{\text{noise}} \cdot \epsilon,
+\end{split}
+$}
+\label{eq:flattened_update}
+\end{equation}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figs/Figure2.pdf}
+    \caption{Original (a) and Flattened (b) posterior distribution. In the original distribution, High energy barriers between modes can trap the model in a single basin. The flattened distribution reduces these barriers, enabling free exploration across modes.}
+    \label{fig:exploration-exploitation}
+\end{figure}
+
+Next, we update the weight vector $\Theta$ to ensure that $\Psi(\Theta, \mathcal{L}_{\text{total}}(g))$ produces appropriate flattening weights as training goes. Following~\cite{deng2020contour}, we employ a stochastic approximation (SA) approach to estimate $\Theta$ during training. The goal of SA is to drive each $\theta(i)$ to converge to the cumulative probability density of the corresponding subregion under the original distribution. At each iteration, before updating the Gaussian primitives, we perform:
+\begin{equation}
+\theta_k(i) = \theta_{k-1}(i) + \lambda_{\theta} \theta_{k-1}^{\zeta}(J(g_k)) \cdot \left( 1_{i = J(g_k)} - \theta_{k-1}(i) \right),
+\label{eq:theta_update}
+\end{equation}
+where $\lambda_{\theta}$ is the learning rate for updating $\theta(i)$. This step increases the weight of the current subregion $J(g_k)$ while decreasing the weights of other subregions.
+
+During exploration stage, we simultaneously update the Gaussian primitives $g$ and the weight vector $\Theta$ using the above rules. Consistent with 3DGSMCMC, we employ the gradients from Adam optimizer in place of raw gradients in \eqref{eq:flattened_update} to enhance optimization stability. By flattening the posterior distribution, AW-SGLD enhances the exploration capability of the model, as illustrated in Figure 2, thereby increasing the likelihood of converging to the deepest mode—the one containing the optimal solution.
+
+
+
+
+
+\begin{table*}[ht!]
+\centering
+\adjustbox{width=\linewidth}{
+\begin{tabular}{lccccccccc}
+\toprule
+\multirow{2}{*}{\textbf{Methods}} & \multicolumn{3}{c}{\textbf{MipNeRF360}} & \multicolumn{3}{c}{\textbf{Tanks \& Temples}} & \multicolumn{3}{c}{\textbf{DeepBlending}} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7} \cmidrule(lr){8-10}
+\multicolumn{1}{c}{} & \textbf{PSNR($\uparrow$)} & \textbf{SSIM($\uparrow$)} & \textbf{LPIPS($\downarrow$)} & \textbf{PSNR($\uparrow$)} & \textbf{SSIM($\uparrow$)} & \textbf{LPIPS($\downarrow$)} & \textbf{PSNR($\uparrow$)} & \textbf{SSIM($\uparrow$)} & \textbf{LPIPS($\downarrow$)} \\
+\midrule
+MipNeRF & 29.23 & 0.844 & 0.207 & 22.22 & 0.759 & 0.257 & 29.40 & 0.901 & 0.245 \\
+3DGS & 28.69 & 0.870 & 0.182 & 23.14 & 0.841 & 0.183 & 29.41 & 0.903 & 0.243 \\
+Scaffold-GS & 28.84 & 0.848 & 0.220 & 23.96 & 0.853 & 0.177 & \textbf{30.21} & 0.906 & 0.254 \\
+FreGS & 27.85 & 0.826 & 0.209 & 23.96 & 0.841 & 0.183 & 29.93 & 0.904 & \underline{0.240} \\
+3DHSGS & 29.56 & 0.873 & 0.178 & 24.49 & 0.857 & 0.169 & 29.76 & 0.905 & 0.242 \\
+3DGSMCMC & 29.89 & \textbf{0.900} & 0.190 & 24.29 & 0.860 & 0.190 & 29.67 & 0.900 & 0.320 \\
+SSS & \underline{29.90} & 0.893 & \underline{0.145} & \textbf{24.87} & \underline{0.873} & \textbf{0.138} & 30.07 & \underline{0.907} & 0.247 \\
+Ours & \textbf{29.96} & \underline{0.897} & \textbf{0.143} & \underline{24.80} & \textbf{0.875} & \underline{0.139} & \underline{30.09} & \textbf{0.911} & \textbf{0.229} \\
+\bottomrule
+\end{tabular}
+}
+\caption{Quantitative comparison between ours and baseline methods. For a fair comparison, we use the same resolution settings and maximum number of Gaussians as in 3DGSMCMC. The \textbf{best} and \underline{second-best} results in each column are highlighted.}
+\label{tab:metrics}
+\end{table*}
+
+\subsection{4.2 Local Quasi-Newton Direction-guided Adam optimizer ~\label{sec_awadam}}
+Although the flattened distribution based on the flat-histogram principle enhances the model’s exploration capability and helps escape from local traps, the ultimate goal of 3DGS remains to find the global optimum that minimizes the loss. Enhanced exploration alone does not guarantee precise convergence to the optimal point within a mode.
+
+To improve convergence quality in the later stages of training, we switch to exploitation from exploration, and design a curvature-aware optimization strategy. While prior works have employed Newton’s method~\cite{lan20253dgs} or the Levenberg–Marquardt (LM)~\cite{hollein20243dgs} algorithm to accelerate optimization, these approaches require complicated calculations of the Hessian matrix or its approximation. Our objective is achieving precise convergence without incurring excessive computational overhead.
+
+We propose a Local Quasi-Newton Direction-guided Adam Optimizer (LQNAdam). Here, ``local'' indicates that each Gaussian primitive is treated independently. We apply the limited-memory Broyden-Fletcher-Goldfarb-Shanno (L-BFGS)~\cite{nocedal2006numerical} algorithm to the positional attributes $\mu$ of each Gaussian primitive and estimate a quasi-Newton direction based on the past $K$ steps. Following \cite{liu1989limited}, the value of $K$ is chosen between $3$ and $7$ to balance computational cost and performance. This is motivated by the observation in 3DGS\textsuperscript{2}~\cite{lan20253dgs} that positional attributes significantly influence rendering quality and that Gaussians are weakly coupled, enabling parallel estimation of local quasi-Newton directions. Details of the L-BFGS algorithm are provided in the Supplementary Material.
+
+To ensure stable convergence, L-BFGS typically uses a line search to determine the step size. However, performing line search for each Gaussian primitive is impractical in our context. Instead, we treat the Quasi-Newton direction from L-BFGS as a pseudo-gradient and feed it into the Adam optimizer, computing the final update direction. This approach leverages Adam’s robustness while incorporating curvature-aware directions, yielding more accurate updates as the model approaches a solution. Notably, L-BFGS does not require computation of the Hessian matrix, making our optimizer compatible with various loss functions.
+
+Let $\mathbb{D}$ denote the quasi-Newton direction estimated by L-BFGS for a Gaussian’s positional attributes $\mu$. The final update direction is computed as $\textit{Adam}(\mathbb{D})$. Within the Markov Chain Monte Carlo framework, the update rule for our Local Quasi-Newton Direction-guided Adam Optimizer is:
+\begin{equation}
+\mu_{t+1} = \mu_t - \lambda_{\text{lr}} \cdot \textit{Adam}(\mathbb{D}) + \lambda_{\text{noise}} \cdot \epsilon_\mu.
+\label{eq:quasi_newton_update}
+\end{equation}
+
+In the later stages of training, we switch to the exploitation. In this stage, the L1 loss is replaced by L2 loss, and LQNAdam is adopted. We also disable the gradient multiplier $\nu$, allowing model updates to follow the original distribution, thereby focusing on enhancing convergence quality.
+
+
+ \section{5 Experiments}
+
+
+
+\begin{figure*}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figs/opt3DGS_qualitative.pdf}
+    \caption{Visualization comparison. Our method achieves higher fidelity in challenging regions like distant and fine details.}
+    \label{fig:viz_com}
+\end{figure*}
+
+
+\subsubsection*{Implementation Details}
+
+All experiments with Opt3DGS are performed on a NVIDIA RTX 4090 GPU, with a total of 30{,}000 optimization iterations. 
+The growth rate of Gaussian primitives is fixed at 5\%, following the setting in 3DGSMCMC. 
+%
+In the Adaptive Weighted SGLD module, the posterior energy range is discretized into 200 uniform bins. 
+For all scenes the energy interval is set to $[0.0, 0.2]$, except for the \textit{train} scene in the Tanks \& Temples dataset, where a wider range of $[0.0, 0.3]$ is used. 
+A warm-up of 2{,}500 iterations is applied to stabilize energy estimates before adaptive weighting, and the flattening coefficient is fixed to $\zeta = 0.75$ for all experiments. 
+%
+For the quasi-Newton updates, we employ an L-BFGS history size $K$ of 5, and compute quasi-Newton directions for Gaussian positions in parallel on CUDA. 
+The training process switches from the exploration phase to the exploitation phase at iteration 29{,}000, and the final 1{,}000 iterations are used for exploitation for fine convergence.
+
+
+
+
+\subsubsection*{Baseline Methods}
+
+We compare Opt3DGS with vanilla 3DGS~\cite{kerbl20233d} and several representative variants that aim to improve the optimization or representation of 3DGS: 3DHGS~\cite{li20253d}, FreGS~\cite{zhang2024fregs}, Scaffold-GS~\cite{lu2024scaffold}, 3DGSMCMC~\cite{kheradmand20243d}, and SSS~\cite{zhu20253d}, as well as MipNeRF~\cite{barron2022mip} as a representative NeRF-based method. 
+%
+Among these baselines, 3DHGS and SSS improve the expressiveness of Gaussian primitives; Scaffold-GS introduces an MLP component to accelerate training and enhance quality; 3DGSMCMC employs a stochastic optimization framework based on MCMC; and FreGS applies frequency regularization to boost both convergence speed and rendering fidelity.
+%
+All reported baseline results are taken from their original publications.
+
+\subsubsection*{Datasets and Metrics}
+
+Following prior work on 3DGS, we evaluate the proposed Opt3DGS on three widely used real-world datasets: 
+\textbf{MipNeRF360}~\cite{barron2022mip}, which contains 3 outdoor scenes (\textit{garden}, \textit{bicycle}, \textit{stump}) and 4 indoor scenes (\textit{kitchen}, \textit{bonsai}, \textit{room}, \textit{counter}); 
+\textbf{DeepBlending}~\cite{hedman2018deep}, consisting of 2 indoor scenes (\textit{drjohnson} and \textit{playroom}); 
+and \textbf{Tanks \& Temples}~\cite{knapitsch2017tanks}, with 2 outdoor scenes (\textit{train} and \textit{truck}). 
+%
+For quantitative evaluation, we adopt three widely used visual quality metrics~\cite{zhang2018unreasonable}: PSNR, SSIM, and LPIPS, computed on the test images.
+
+\begin{table*}[ht!]
+\centering
+\adjustbox{width=\linewidth}{
+\begin{tabular}{lccccccccc}
+\toprule
+\multirow{2}{*}{\textbf{Methods}}  & \multicolumn{3}{c}{\textbf{MipNeRF360}} & \multicolumn{3}{c}{\textbf{Tanks \& Temples}} & \multicolumn{3}{c}{\textbf{DeepBlending}} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7} \cmidrule(lr){8-10}
+& \textbf{PSNR($\uparrow$)} & \textbf{SSIM($\uparrow$)} & \textbf{LPIPS($\downarrow$)} & \textbf{PSNR($\uparrow$)} & \textbf{SSIM($\uparrow$)} & \textbf{LPIPS($\downarrow$)} & \textbf{PSNR($\uparrow$)} & \textbf{SSIM($\uparrow$)} & \textbf{LPIPS($\downarrow$)} \\
+\toprule
+3DGS & 27.89 & 0.840 & 0.260 & 21.93 & 0.800 & 0.270 & 29.55 & 0.900 & 0.330 \\
+3DGSMCMC & 29.72 & 0.890 & 0.190 & 24.21 & 0.860 & 0.190 & 29.71 & 0.900 & 0.320 \\
+Ours &  \textbf{29.78} & \textbf{0.893} & \textbf{0.149} & \textbf{24.39} & \textbf{0.865} & \textbf{0.151} & \textbf{29.90} & \textbf{0.905} & \textbf{0.236} \\
+\bottomrule
+\end{tabular}
+}
+\caption{Quantitative comparison between our method and baselines with random initialization. Although random initialization leads to a poor starting state and makes optimization challenging, our method achieves superior results across all metrics.}
+\label{tab:metrics}
+\end{table*}
+
+
+
+
+\subsection{5.1 Benchmark Results}
+
+
+The quantitative comparison with various baselines across three benchmark datasets is summarized in Table 1. Our Opt3DGS achieves the best performance on 5 out of 9 metrics and ranks second on the remaining 4. 
+Compared to 3DGSMCMC, which shares the same Gaussian representation but differs solely in the optimization strategy, Opt3DGS achieves consistent performance gains across all metrics except for the SSIM on the MipNeRF360 dataset. On the Tanks \& Temples dataset, we achieve PSNR/SSIM/LPIPS scores of 24.80 / 0.875 / 0.139, compared to 24.29 / 0.860 / 0.190 for 3DGSMCMC, representing improvements of 2.09$\%$, 1.74$\%$, and 26.84$\%$ respectively. Compared to the previous state-of-the-art SSS, which improves both the 3DGS representation and the training optimization, we achieve comparable or better results. On the DeepBlending dataset, we achieve 30.09 / 0.911 / 0.229, compared to 30.07 / 0.907 / 0.247 for SSS, representing improvements of 0.06$\%$, 0.4$\%$, and 7.2$\%$ respectively. These results confirm that better posterior exploration and convergence, rather than architectural modifications, can yield substantive performance improvements.
+We present qualitative comparisons of the novel view synthesis in Figure 3. We compare our method with several baselines: 3DGSMCMC, SSS, 3DHGS, and 3DGS. For a fair comparison, our method adopts the same configuration as 3DGSMCMC, and the other methods use their default settings. We show results on four novel views, where our method demonstrates superior rendering fidelity, particularly in distant background regions, fine geometric details, and subtle scene structures that are difficult to capture.
+
+\begin{table*}[ht!]
+\centering
+\adjustbox{width=\linewidth}{
+\begin{tabular}{lcccccccc}
+\toprule
+\multirow{2}{*}{\textbf{Methods}} & \multicolumn{4}{c}{\textbf{Train}} & \multicolumn{4}{c}{\textbf{Truck}} \\
+\cmidrule(lr){2-5} \cmidrule(lr){6-9}
+\multicolumn{1}{c}{\textbf{}} & \textbf{PSNR($\uparrow$)} & \textbf{SSIM($\uparrow$)} & \textbf{LPIPS($\downarrow$)} & \textbf{Time} & \textbf{PSNR($\uparrow$)} & \textbf{SSIM($\uparrow$)} & \textbf{LPIPS($\downarrow$)} & \textbf{Time} \\
+\midrule
+Baseline (3DGSMCMC) & 22.47 & 0.830 & 0.240 & \textbf{11} & 26.11 & 0.890 & 0.140 & \textbf{22} \\
+Baseline + AW-SGLD & 22.74 & 0.841 & 0.180 & 12 & 26.49 & 0.901 & 0.104 & 22 \\
+Baseline + AW-SGLD + LQNAdam & \textbf{23.01} & \textbf{0.846} & \textbf{0.176} & 12 & \textbf{26.61} & \textbf{0.903} & \textbf{0.102} & 23 \\
+\bottomrule
+\end{tabular}
+}
+\caption{Ablation study on the Tanks \& Temples dataset. AW-SGLD refers to the Adaptive Weighted SGLD component and LQNAdam denotes the Local Quasi-Newton Direction-guided Adam optimizer. Time is reported in minutes.}
+\label{tab:metrics}
+\end{table*}
+
+
+
+\subsection{5.2 Performance in Challenging Conditions}
+We further evaluate the performance of our optimization framework Opt3DGS under various challenging conditions.
+
+\subsubsection*{Random Initialization}
+
+By leveraging the exploration capability of stochastic noise, 3DGSMCMC achieves good rendering quality even without using Structure-from-Motion (SfM) initialization, instead relying on random initialization. For 3DGS task, random initialization means the model starts far from high-quality solutions, thereby significantly increasing the difficulty of finding a good solution.
+We report quantitative results under random initialization on all datasets in Table 2, comparing Opt3DGS with 3DGSMCMC and 3DGS. For fairness, our method uses the same random initialization scheme, training image resolution, and maximum number of Gaussians as 3DGSMCMC. Our method outperforms all baselines across all 9 metrics on the 3 datasets, showing Opt3DGS is more effective at guiding the model toward high-quality solutions even when starting from poor initial states.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figs/psnr_diffNum_diffRes.pdf}
+    \caption{PSNR results on the MipNeRF dataset with different image resolutions(red) and the maximum number of Gaussians(blue).}
+    \label{fig:PSNR_diffNum_and_diffRes}
+\end{figure}
+
+
+\subsubsection*{Higher Image Resolution}
+
+Higher input image resolution increases the difficulty of scene fitting, as finer details and higher-frequency signals demand more accurate geometry and appearance reconstruction. This makes the posterior distribution landscape more complex and raises the risk of converging to suboptimal local modes. In Figure 4, we report PSNR comparisons between 3DGSMCMC and our method at different resolutions, on the MipNeRF360 dataset. Our method consistently outperforms the base model across all three resolution settings, demonstrating its superior robustness and effectiveness under more challenging reconstruction conditions.
+
+
+\subsubsection*{Limited Number of Gaussians}
+
+When the number of available Gaussians is reduced, the model’s representational capacity decreases. We evaluate performance under various Gaussian budget constraints on the MipNeRF360 dataset as shown in Figure 4. Our method consistently outperforms the base model, 3DGSMCMC, across all settings. This demonstrates that even with limited representational capacity, our optimization framework remains effective at guiding the model to higher-quality convergence.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{figs/psnr_dual_axis_line_plot.pdf}
+    \caption{Ablation Study about flattening coefficient $\zeta$ on the Tanks \& Temples Dataset.}
+    \label{fig:ablation_study}
+\end{figure}
+
+\subsection{5.3 Ablation Studies}
+
+We conduct ablation experiments on the Tanks \& Temples dataset in Table 3.
+%
+All experimental settings (including image resolution and the number of Gaussians) are kept identical to those in 3DGSMCMC.
+%
+The results show that incorporating AW-SGLD alone improves rendering quality by encouraging better exploration and reducing the risk of local entrapment, while the subsequent use of LQNAdam further refines the solution and leads to higher-quality convergence through curvature-aware updates.
+
+% \begin{table}[ht!]
+% \centering
+% \begin{tabular}{lcccccc}
+% \toprule
+% \multicolumn{1}{c}{\textbf{$\zeta$}} & \multicolumn{3}{c}{\textbf{Train}} & \multicolumn{3}{c}{\textbf{Truck}} \\
+% \cmidrule(lr){2-4} \cmidrule(lr){5-7}
+% \multicolumn{1}{c}{} & \textbf{PSNR} & \textbf{SSIM} & \textbf{LPIPS} & \textbf{PSNR} & \textbf{SSIM} & \textbf{LPIPS} \\
+% \midrule
+% 0.1 & 22.96 & 0.846 & 0.176 & 26.50 & 0.902 & 0.105 \\
+% 0.2 & 22.99 & 0.847 & 0.175 & 26.51 & 0.902 & 0.103 \\
+% 0.3 & 22.96 & 0.846 & 0.176 & 26.60 & 0.903 & 0.103 \\
+% 0.4 & 22.87 & 0.844 & 0.178 & 26.59 & 0.903 & 0.103 \\
+% 0.5 & 22.78 & 0.845 & 0.177 & 26.56 & 0.903 & 0.104 \\
+% 0.6 & 22.71 & 0.843 & 0.178 & 26.54 & 0.903 & 0.104 \\
+% 0.7 & 22.95 & 0.846 & 0.176 & 26.57 & 0.903 & 0.104 \\
+% 0.8 & 23.01 & 0.846 & 0.176 & 26.60 & 0.903 & 0.102 \\
+% 0.9 & 22.69 & 0.844 & 0.178 & 26.55 & 0.903 & 0.104 \\
+% \bottomrule
+% \end{tabular}
+% \caption{Ablation Study about flattening coefficient $\zeta$ on the Tanks \& Temples Dataset.}
+% \label{tab:metrics}
+% \end{table}
+
+
+
+ The flattening coefficient $\zeta$ is a key hyperparameter in our optimization framework, with larger values producing flatter posterior distributions. The ablation study on $\zeta$ is presented in Figure 5. We observe that Opt3DGS performs best on the Tanks \& Temples dataset when $\zeta$ values is near 0.8. This setting generalizes well across all evaluated datasets.
+
+\section{6 Conclusion}
+In this paper, we present Opt3DGS, a novel and effective optimization framework for 3DGS.
+%
+We decompose the training process into two stages—exploration and exploitation—and provide an analysis of the limitations of existing optimization strategies.
+%
+In the exploration stage, we introduce Adaptive Weighted SGLD, which enables the model to escape local minima and increases the likelihood of reaching globally optimal solutions.
+%
+In the exploitation stage, we design a Local Quasi-Newton Direction-guided Adam optimizer to achieve more accurate convergence.
+%
+Our approach improves the performance of 3DGS purely through optimization enhancements, without modifying the Gaussian representation, introducing auxiliary networks, or incurring significant additional computational costs, yet it still achieves state-of-the-art rendering quality. Looking forward, the modular nature of Opt3DGS, independent of representation or architecture, makes it a promising replacement for the optimization component in various 3DGS-based systems. Its foundation in posterior distribution reshaping and curvature-aware updates also enables the extension of optimization-centric techniques to other areas of explicit differentiable rendering.
+%
+
+
+\section*{Acknowledgements}
+This research was funded by the National Natural Science Foundation of China, Grant No. 42571412.
+
+\bibliography{aaai2026}
+
+\end{document}
+
+% Links section - only shown in camera-ready version
+\ifdefined\aaaianonymous
+% Uncomment the following to link to your code, datasets, an extended version or similar.
+% You must keep this block between (not within) the abstract and the main body of the paper.
+% NOTE: For anonymous submissions, do not include links that could reveal your identity
+% \begin{links}
+%     \link{Code}{https://aaai.org/example/code}
+%     \link{Datasets}{https://aaai.org/example/datasets}
+%     \link{Extended version}{https://aaai.org/example/extended-version}
+% \end{links}
+\else
+% Uncomment the following to link to your code, datasets, an extended version or similar.
+% You must keep this block between (not within) the abstract and the main body of the paper.
+% \begin{links}
+%     \link{Code}{https://aaai.org/example/code}
+%     \link{Datasets}{https://aaai.org/example/datasets}
+%     \link{Extended version}{https://aaai.org/example/extended-version}
+% \end{links}
+\fi
+
+% Version-specific content
+\ifdefined\aaaianonymous
+\section{Preparing an Anonymous Submission}
+
+This document details the formatting requirements for anonymous submissions. The requirements are the same as for camera ready papers but with a few notable differences:
+
+\begin{itemize}
+    \item Anonymous submissions must not include the author names and affiliations. Write ``Anonymous Submission'' as the ``sole author'' and leave the affiliations empty.
+    \item The PDF document's metadata should be cleared with a metadata-cleaning tool before submitting it. This is to prevent leaked information from revealing your identity.
+    \item References must be anonymized whenever the reader can infer that they are to the authors' previous work.
+    \item AAAI's copyright notice should not be included as a footer in the first page.
+    \item Only the PDF version is required at this stage. No source versions will be requested, nor any copyright transfer form.
+\end{itemize}
+
+You can remove the copyright notice and ensure that your names aren't shown by including \texttt{submission} option when loading the \texttt{aaai2026} package:
+
+\begin{quote}\begin{scriptsize}\begin{verbatim}
+\documentclass[letterpaper]{article}
+\usepackage[submission]{aaai2026}
+\end{verbatim}\end{scriptsize}\end{quote}
+
+The remainder of this document are the original camera-ready instructions. Any contradiction of the above points ought to be ignored while preparing anonymous submissions.
+
+\section{Camera-Ready Guidelines}
+\else
+\section{Introduction}
+\fi
+
+Congratulations on having a paper selected for inclusion in an AAAI Press proceedings or technical report! This document details the requirements necessary to get your accepted paper published using PDF\LaTeX{}. If you are using Microsoft Word, instructions are provided in a different document. AAAI Press does not support any other formatting software.
+
+The instructions herein are provided as a general guide for experienced \LaTeX{} users. If you do not know how to use \LaTeX{}, please obtain assistance locally. AAAI cannot provide you with support and the accompanying style files are \textbf{not} guaranteed to work. If the results you obtain are not in accordance with the specifications you received, you must correct your source file to achieve the correct result.
+
+These instructions are generic. Consequently, they do not include specific dates, page charges, and so forth. Please consult your specific written conference instructions for details regarding your submission. Please review the entire document for specific instructions that might apply to your particular situation. All authors must comply with the following:
+
+\begin{itemize}
+\item You must use the 2026 AAAI Press \LaTeX{} style file and the aaai2026.bst bibliography style files, which are located in the 2026 AAAI Author Kit (aaai2026.sty, aaai2026.bst).
+\item You must complete, sign, and return by the deadline the AAAI copyright form (unless directed by AAAI Press to use the AAAI Distribution License instead).
+\item You must read and format your paper source and PDF according to the formatting instructions for authors.
+\item You must submit your electronic files and abstract using our electronic submission form \textbf{on time.}
+\item You must pay any required page or formatting charges to AAAI Press so that they are received by the deadline.
+\item You must check your paper before submitting it, ensuring that it compiles without error, and complies with the guidelines found in the AAAI Author Kit.
+\end{itemize}
+
+\ifdefined\aaaianonymous
+\else
+\section{Copyright}
+All papers submitted for publication by AAAI Press must be accompanied by a valid signed copyright form. They must also contain the AAAI copyright notice at the bottom of the first page of the paper. There are no exceptions to these requirements. If you fail to provide us with a signed copyright form or disable the copyright notice, we will be unable to publish your paper. There are \textbf{no exceptions} to this policy. You will find a PDF version of the AAAI copyright form in the AAAI AuthorKit. Please see the specific instructions for your conference for submission details.
+\fi
+
+\section{Formatting Requirements in Brief}
+We need source and PDF files that can be used in a variety of ways and can be output on a variety of devices. The design and appearance of the paper is \ifdefined\aaaianonymous governed by the aaai2026.sty file (aaai2026.bst for the bibliography style).\else strictly governed by the aaai style file (aaai2026.sty).\fi
+\ifdefined\aaaianonymous
+\begin{itemize}
+\item You must not modify the aaai2026.sty file or change the TeX commands.
+\item You must not use any commands that alter the layout or formatting of your document (i.e., you cannot change the default margins, line spacing, etc.).
+\item You may include other font size changes, color changes, or other formatting commands in your own source, but the paper has to be able to compile, and the styling commands are ignored.
+\end{itemize}
+\else
+\textbf{You must not make any changes to the aaai style file, nor use any commands, packages, style files, or macros within your own paper that alter that design, including, but not limited to spacing, floats, margins, fonts, font size, and appearance.} AAAI imposes requirements on your source and PDF files that must be followed. Most of these requirements are based on our efforts to standardize conference manuscript properties and layout. All papers submitted to AAAI for publication will be recompiled for standardization purposes. Consequently, every paper submission must comply with the following requirements:
+
+\begin{itemize}
+\item Your .tex file must compile in PDF\LaTeX{} --- (you may not include .ps or .eps figure files.)
+\item All fonts must be embedded in the PDF file --- including your figures.
+\item Modifications to the style file, whether directly or via commands in your document may not ever be made, most especially when made in an effort to avoid extra page charges or make your paper fit in a specific number of pages.
+\item No type 3 fonts may be used (even in illustrations).
+\item You may not alter the spacing above and below captions, figures, headings, and subheadings.
+\item You may not alter the font sizes of text elements, footnotes, heading elements, captions, or title information (for references and mathematics, please see the limited exceptions provided herein).
+\item You may not alter the line spacing of text.
+\item Your title must follow Title Case capitalization rules (not sentence case).
+\item \LaTeX{} documents must use the Times or Nimbus font package (you may not use Computer Modern for the text of your paper).
+\item No \LaTeX{} 209 documents may be used or submitted.
+\item Your source must not require use of fonts for non-Roman alphabets within the text itself. If your paper includes symbols in other languages (such as, but not limited to, Arabic, Chinese, Hebrew, Japanese, Thai, Russian and other Cyrillic languages), you must restrict their use to bit-mapped figures. Fonts that require non-English language support (CID and Identity-H) must be converted to outlines or 300 dpi bitmap or removed from the document (even if they are in a graphics file embedded in the document).
+\item Two-column format in AAAI style is required for all papers.
+\item The paper size for final submission must be US letter without exception.
+\item The source file must exactly match the PDF.
+\item The document margins may not be exceeded (no overfull boxes).
+\item The number of pages and the file size must be as specified for your event.
+\item No document may be password protected.
+\item Neither the PDFs nor the source may contain any embedded links or bookmarks (no hyperref or navigator packages).
+\item Your source and PDF must not have any page numbers, footers, or headers (no pagestyle commands).
+\item Your PDF must be compatible with Acrobat 5 or higher.
+\item Your \LaTeX{} source file (excluding references) must consist of a \textbf{single} file (use of the ``input" command is not allowed.
+\item Your graphics must be sized appropriately outside of \LaTeX{} (do not use the ``clip" or ``trim'' command) .
+\end{itemize}
+
+If you do not follow these requirements, your paper will be returned to you to correct the deficiencies.
+\fi
+
+\section{What Files to Submit}
+You must submit the following items to ensure that your paper is published:
+\begin{itemize}
+\item A fully-compliant PDF file.
+\item Your \LaTeX{} source file submitted as a \textbf{single} .tex file (do not use the ``input" command to include sections of your paper --- every section must be in the single source file). (The only allowable exception is .bib file, which should be included separately).
+\item The bibliography (.bib) file(s).
+\item Your source must compile on our system, which includes only standard \LaTeX{} 2020 TeXLive support files.
+\item Only the graphics files used in compiling paper.
+\item The \LaTeX{}-generated files (e.g. .aux,  .bbl file, PDF, etc.).
+\end{itemize}
+
+Your \LaTeX{} source will be reviewed and recompiled on our system (if it does not compile, your paper will be returned to you. \textbf{Do not submit your source in multiple text files.} Your single \LaTeX{} source file must include all your text, your bibliography (formatted using aaai2026.bst), and any custom macros.
+
+Your files should work without any supporting files (other than the program itself) on any computer with a standard \LaTeX{} distribution.
+
+\textbf{Do not send files that are not actually used in the paper.} Avoid including any files not needed for compiling your paper, including, for example, this instructions file, unused graphics files, style files, additional material sent for the purpose of the paper review, intermediate build files and so forth.
+
+\textbf{Obsolete style files.} The commands for some common packages (such as some used for algorithms), may have changed. Please be certain that you are not compiling your paper using old or obsolete style files.
+
+\textbf{Final Archive.} Place your source files in a single archive which should be compressed using .zip. The final file size may not exceed 10 MB.
+Name your source file with the last (family) name of the first author, even if that is not you.
+
+\section{Using \LaTeX{} to Format Your Paper}
+
+The latest version of the AAAI style file is available on AAAI's website. Download this file and place it in the \TeX\ search path. Placing it in the same directory as the paper should also work. You must download the latest version of the complete AAAI Author Kit so that you will have the latest instruction set and style file.
+
+\subsection{Document Preamble}
+
+In the \LaTeX{} source for your paper, you \textbf{must} place the following lines as shown in the example in this subsection. This command set-up is for three authors. Add or subtract author and address lines as necessary, and uncomment the portions that apply to you. In most instances, this is all you need to do to format your paper in the Times font. The helvet package will cause Helvetica to be used for sans serif. These files are part of the PSNFSS2e package, which is freely available from many Internet sites (and is often part of a standard installation).
+
+Leave the setcounter for section number depth commented out and set at 0 unless you want to add section numbers to your paper. If you do add section numbers, you must uncomment this line and change the number to 1 (for section numbers), or 2 (for section and subsection numbers). The style file will not work properly with numbering of subsubsections, so do not use a number higher than 2.
+
+\subsubsection{The Following Must Appear in Your Preamble}
+\ifdefined\aaaianonymous
+\begin{quote}
+\begin{scriptsize}\begin{verbatim}
+\documentclass[letterpaper]{article}
+% DO NOT CHANGE THIS
+\usepackage[submission]{aaai2026} % DO NOT CHANGE THIS
+\usepackage{times} % DO NOT CHANGE THIS
+\usepackage{helvet} % DO NOT CHANGE THIS
+\usepackage{courier} % DO NOT CHANGE THIS
+\usepackage[hyphens]{url} % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\urlstyle{rm} % DO NOT CHANGE THIS
+\def\UrlFont{\rm} % DO NOT CHANGE THIS
+\usepackage{graphicx}  % DO NOT CHANGE THIS
+\usepackage{natbib}  % DO NOT CHANGE THIS
+\usepackage{caption}  % DO NOT CHANGE THIS
+\frenchspacing % DO NOT CHANGE THIS
+\setlength{\pdfpagewidth}{8.5in} % DO NOT CHANGE THIS
+\setlength{\pdfpageheight}{11in} % DO NOT CHANGE THIS
+%
+% Keep the \pdfinfo as shown here. There's no need
+% for you to add the /Title and /Author tags.
+\pdfinfo{
+/TemplateVersion (2026.1)
+}
+\end{verbatim}\end{scriptsize}
+\end{quote}
+\else
+\begin{quote}
+\begin{scriptsize}\begin{verbatim}
+\documentclass[letterpaper]{article}
+% DO NOT CHANGE THIS
+\usepackage{aaai2026} % DO NOT CHANGE THIS
+\usepackage{times} % DO NOT CHANGE THIS
+\usepackage{helvet} % DO NOT CHANGE THIS
+\usepackage{courier} % DO NOT CHANGE THIS
+\usepackage[hyphens]{url} % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\urlstyle{rm} % DO NOT CHANGE THIS
+\def\UrlFont{\rm} % DO NOT CHANGE THIS
+\usepackage{graphicx}  % DO NOT CHANGE THIS
+\usepackage{natbib}  % DO NOT CHANGE THIS
+\usepackage{caption}  % DO NOT CHANGE THIS
+\frenchspacing % DO NOT CHANGE THIS
+\setlength{\pdfpagewidth}{8.5in} % DO NOT CHANGE THIS
+\setlength{\pdfpageheight}{11in} % DO NOT CHANGE THIS
+%
+% Keep the \pdfinfo as shown here. There's no need
+% for you to add the /Title and /Author tags.
+\pdfinfo{
+/TemplateVersion (2026.1)
+}
+\end{verbatim}\end{scriptsize}
+\end{quote}
+\fi
+
+\subsection{Preparing Your Paper}
+
+After the preamble above, you should prepare your paper as follows:
+\begin{quote}
+\begin{scriptsize}\begin{verbatim}
+\begin{document}
+\maketitle
+\begin{abstract}
+%...
+\end{abstract}\end{verbatim}\end{scriptsize}
+\end{quote}
+
+\noindent If you want to add links to the paper's code, dataset(s), and extended version or similar this is the place to add them, within a \emph{links} environment:
+\begin{quote}%
+\begin{scriptsize}\begin{verbatim}
+\begin{links}
+  \link{Code}{https://aaai.org/example/guidelines}
+  \link{Datasets}{https://aaai.org/example/datasets}
+  \link{Extended version}{https://aaai.org/example}
+\end{links}\end{verbatim}\end{scriptsize}
+\end{quote}
+\ifdefined\aaaianonymous
+\noindent Make sure that you do not de-anonymize yourself with these links.
+\fi
+
+\noindent You should then continue with the body of your paper. Your paper must conclude with the references, which should be inserted as follows:
+\begin{quote}
+\begin{scriptsize}\begin{verbatim}
+% References and End of Paper
+% These lines must be placed at the end of your paper
+\bibliography{Bibliography-File}
+\end{document}
+\end{verbatim}\end{scriptsize}
+\end{quote}
+
+\begin{quote}
+\begin{scriptsize}\begin{verbatim}
+\begin{document}\\
+\maketitle\\
+...\\
+\bibliography{Bibliography-File}\\
+\end{document}\\
+\end{verbatim}\end{scriptsize}
+\end{quote}
+
+\subsection{Commands and Packages That May Not Be Used}
+\begin{table*}[t]
+\centering
+\begin{tabular}{l|l|l|l}
+\textbackslash abovecaption &
+\textbackslash abovedisplay &
+\textbackslash addevensidemargin &
+\textbackslash addsidemargin \\
+\textbackslash addtolength &
+\textbackslash baselinestretch &
+\textbackslash belowcaption &
+\textbackslash belowdisplay \\
+\textbackslash break &
+\textbackslash clearpage &
+\textbackslash clip &
+\textbackslash columnsep \\
+\textbackslash float &
+\textbackslash input &
+\textbackslash input &
+\textbackslash linespread \\
+\textbackslash newpage &
+\textbackslash pagebreak &
+\textbackslash renewcommand &
+\textbackslash setlength \\
+\textbackslash text height &
+\textbackslash tiny &
+\textbackslash top margin &
+\textbackslash trim \\
+\textbackslash vskip\{- &
+\textbackslash vspace\{- \\
+\end{tabular}
+\caption{Commands that must not be used}
+\label{table1}
+\end{table*}
+
+\begin{table}[t]
+\centering
+\begin{tabular}{l|l|l|l}
+    authblk & babel & cjk & dvips \\
+    epsf & epsfig & euler & float \\
+    fullpage & geometry & graphics & hyperref \\
+    layout & linespread & lmodern & maltepaper \\
+    navigator & pdfcomment & pgfplots & psfig \\
+    pstricks & t1enc & titlesec & tocbind \\
+    ulem
+\end{tabular}
+\caption{LaTeX style packages that must not be used.}
+\label{table2}
+\end{table}
+
+There are a number of packages, commands, scripts, and macros that are incompatable with aaai2026.sty. The common ones are listed in tables \ref{table1} and \ref{table2}. Generally, if a command, package, script, or macro alters floats, margins, fonts, sizing, linespacing, or the presentation of the references and citations, it is unacceptable. Note that negative vskip and vspace may not be used except in certain rare occurances, and may never be used around tables, figures, captions, sections, subsections, subsubsections, or references.
+
+\subsection{Page Breaks}
+For your final camera ready copy, you must not use any page break commands. References must flow directly after the text without breaks. Note that some conferences require references to be on a separate page during the review process. AAAI Press, however, does not require this condition for the final paper.
+
+\subsection{Paper Size, Margins, and Column Width}
+Papers must be formatted to print in two-column format on 8.5 x 11 inch US letter-sized paper. The margins must be exactly as follows:
+\begin{itemize}
+\ifdefined\aaaianonymous
+\item Top margin: 1.25 inches (first page), .75 inches (others)
+\else
+\item Top margin: .75 inches
+\fi
+\item Left margin: .75 inches
+\item Right margin: .75 inches
+\item Bottom margin: 1.25 inches
+\end{itemize}
+
+The default paper size in most installations of \LaTeX{} is A4. However, because we require that your electronic paper be formatted in US letter size, the preamble we have provided includes commands that alter the default to US letter size. Please note that using any other package to alter page size (such as, but not limited to the Geometry package) will result in your final paper being returned to you for correction.
+
+\subsubsection{Column Width and Margins.}
+To ensure maximum readability, your paper must include two columns. Each column should be 3.3 inches wide (slightly more than 3.25 inches), with a .375 inch (.952 cm) gutter of white space between the two columns. The aaai2026.sty file will automatically create these columns for you.
+
+\subsection{Overlength Papers}
+If your paper is too long and you resort to formatting tricks to make it fit, it is quite likely that it will be returned to you. The best way to retain readability if the paper is overlength is to cut text, figures, or tables. There are a few acceptable ways to reduce paper size that don't affect readability. First, turn on \textbackslash frenchspacing, which will reduce the space after periods. Next, move all your figures and tables to the top of the page. Consider removing less important portions of a figure. If you use \textbackslash centering instead of \textbackslash begin\{center\} in your figure environment, you can also buy some space. For mathematical environments, you may reduce fontsize {\bf but not below 6.5 point}.
+
+Commands that alter page layout are forbidden. These include \textbackslash columnsep,  \textbackslash float, \textbackslash topmargin, \textbackslash topskip, \textbackslash textheight, \textbackslash textwidth, \textbackslash oddsidemargin, and \textbackslash evensizemargin (this list is not exhaustive). If you alter page layout, you will be required to pay the page fee. Other commands that are questionable and may cause your paper to be rejected include \textbackslash parindent, and \textbackslash parskip. Commands that alter the space between sections are forbidden. The title sec package is not allowed. Regardless of the above, if your paper is obviously ``squeezed" it is not going to to be accepted. Options for reducing the length of a paper include reducing the size of your graphics, cutting text, or paying the extra page charge (if it is offered).
+
+\subsection{Type Font and Size}
+Your paper must be formatted in Times Roman or Nimbus. We will not accept papers formatted using Computer Modern or Palatino or some other font as the text or heading typeface. Sans serif, when used, should be Courier. Use Symbol or Lucida or Computer Modern for \textit{mathematics only. }
+
+Do not use type 3 fonts for any portion of your paper, including graphics. Type 3 bitmapped fonts are designed for fixed resolution printers. Most print at 300 dpi even if the printer resolution is 1200 dpi or higher. They also often cause high resolution imagesetter devices to crash. Consequently, AAAI will not accept electronic files containing obsolete type 3 fonts. Files containing those fonts (even in graphics) will be rejected. (Authors using blackboard symbols must avoid packages that use type 3 fonts.)
+
+Fortunately, there are effective workarounds that will prevent your file from embedding type 3 bitmapped fonts. The easiest workaround is to use the required times, helvet, and courier packages with \LaTeX{}2e. (Note that papers formatted in this way will still use Computer Modern for the mathematics. To make the math look good, you'll either have to use Symbol or Lucida, or you will need to install type 1 Computer Modern fonts --- for more on these fonts, see the section ``Obtaining Type 1 Computer Modern.")
+
+If you are unsure if your paper contains type 3 fonts, view the PDF in Acrobat Reader. The Properties/Fonts window will display the font name, font type, and encoding properties of all the fonts in the document. If you are unsure if your graphics contain type 3 fonts (and they are PostScript or encapsulated PostScript documents), create PDF versions of them, and consult the properties window in Acrobat Reader.
+
+The default size for your type must be ten-point with twelve-point leading (line spacing). Start all pages (except the first) directly under the top margin. (See the next section for instructions on formatting the title page.) Indent ten points when beginning a new paragraph, unless the paragraph begins directly below a heading or subheading.
+
+\subsubsection{Obtaining Type 1 Computer Modern for \LaTeX{}.}
+If you use Computer Modern for the mathematics in your paper (you cannot use it for the text) you may need to download type 1 Computer fonts. They are available without charge from the American Mathematical Society:
+http://www.ams.org/tex/type1-fonts.html.
+
+\subsubsection{Nonroman Fonts.}
+If your paper includes symbols in other languages (such as, but not limited to, Arabic, Chinese, Hebrew, Japanese, Thai, Russian and other Cyrillic languages), you must restrict their use to bit-mapped figures.
+
+\subsection{Title and Authors}
+Your title must appear centered over both text columns in sixteen-point bold type (twenty-four point leading). The title must be written in Title Case capitalization rules (not sentence case). The rules are a bit involved, but in general verbs (including short verbs like be, is, using, and go), nouns, adverbs, adjectives, and pronouns should be capitalized, (including both words in hyphenated terms), while articles, conjunctions, and prepositions are lower case unless they directly follow a colon or long dash. You can use the online tool \url{https://titlecaseconverter.com/} to double-check the proper capitalization (select the "Chicago" style and mark the "Show explanations" checkbox).
+
+Author's names should appear below the title of the paper, centered in twelve-point type (with fifteen point leading), along with affiliation(s) and complete address(es) (including electronic mail address if available) in nine-point roman type (the twelve point leading). You should begin the two-column format when you come to the abstract.
+
+\subsubsection{Formatting Author Information.}
+Author information has to be set according to the following specification depending if you have one or more than one affiliation. You may not use a table nor may you employ the \textbackslash authorblk.sty package. For one or several authors from the same institution, please separate them with commas and write all affiliation directly below (one affiliation per line) using the macros \textbackslash author and \textbackslash affiliations:
+
+\begin{quote}\begin{scriptsize}\begin{verbatim}
+\author{
+    Author 1, ..., Author n\\
+}
+\affiliations {
+    Address line\\
+    ... \\
+    Address line\\
+}
+\end{verbatim}\end{scriptsize}\end{quote}
+
+\noindent For authors from different institutions, use \textbackslash textsuperscript \{\textbackslash rm x \} to match authors and affiliations. Notice that there should not be any spaces between the author name (or comma following it) and the superscript.
+
+\begin{quote}\begin{scriptsize}\begin{verbatim}
+\author{
+    AuthorOne\equalcontrib\textsuperscript{\rm 1,\rm 2},
+    AuthorTwo\equalcontrib\textsuperscript{\rm 2},
+    AuthorThree\textsuperscript{\rm 3},\\
+    AuthorFour\textsuperscript{\rm 4},
+    AuthorFive \textsuperscript{\rm 5}}
+}
+\affiliations {
+    \textsuperscript{\rm 1}AffiliationOne,\\
+    \textsuperscript{\rm 2}AffiliationTwo,\\
+    \textsuperscript{\rm 3}AffiliationThree,\\
+    \textsuperscript{\rm 4}AffiliationFour,\\
+    \textsuperscript{\rm 5}AffiliationFive\\
+    \{email, email\}@affiliation.com,
+    email@affiliation.com,
+    email@affiliation.com,
+    email@affiliation.com
+}
+\end{verbatim}\end{scriptsize}\end{quote}
+
+You can indicate that some authors contributed equally using the \textbackslash equalcontrib command. This will add a marker after the author names and a footnote on the first page.
+
+Note that you may want to  break the author list for better visualization. You can achieve this using a simple line break (\textbackslash  \textbackslash).
+
+\subsection{\LaTeX{} Copyright Notice}
+The copyright notice automatically appears if you use aaai2026.sty. It has been hardcoded and may not be disabled.
+
+\subsection{Credits}
+Any credits to a sponsoring agency should appear in the acknowledgments section, unless the agency requires different placement. If it is necessary to include this information on the front page, use
+\textbackslash thanks in either the \textbackslash author or \textbackslash title commands.
+For example:
+\begin{quote}
+\begin{small}
+\textbackslash title\{Very Important Results in AI\textbackslash thanks\{This work is
+ supported by everybody.\}\}
+\end{small}
+\end{quote}
+Multiple \textbackslash thanks commands can be given. Each will result in a separate footnote indication in the author or title with the corresponding text at the botton of the first column of the document. Note that the \textbackslash thanks command is fragile. You will need to use \textbackslash protect.
+
+Please do not include \textbackslash pubnote commands in your document.
+
+\subsection{Abstract}
+Follow the example commands in this document for creation of your abstract. The command \textbackslash begin\{abstract\} will automatically indent the text block. Please do not indent it further. {Do not include references in your abstract!}
+
+\subsection{Page Numbers}
+Do not print any page numbers on your paper. The use of \textbackslash pagestyle is forbidden.
+
+\subsection{Text}
+The main body of the paper must be formatted in black, ten-point Times Roman with twelve-point leading (line spacing). You may not reduce font size or the linespacing. Commands that alter font size or line spacing (including, but not limited to baselinestretch, baselineshift, linespread, and others) are expressly forbidden. In addition, you may not use color in the text.
+
+\subsection{Citations}
+Citations within the text should include the author's last name and year, for example (Newell 1980). Append lower-case letters to the year in cases of ambiguity. Multiple authors should be treated as follows: (Feigenbaum and Engelmore 1988) or (Ford, Hayes, and Glymour 1992). In the case of four or more authors, list only the first author, followed by et al. (Ford et al. 1997).
+
+\subsection{Extracts}
+Long quotations and extracts should be indented ten points from the left and right margins.
+
+\begin{quote}
+This is an example of an extract or quotation. Note the indent on both sides. Quotation marks are not necessary if you offset the text in a block like this, and properly identify and cite the quotation in the text.
+\end{quote}
+
+\subsection{Footnotes}
+Use footnotes judiciously, taking into account that they interrupt the reading of the text. When required, they should be consecutively numbered throughout with superscript Arabic numbers. Footnotes should appear at the bottom of the page, separated from the text by a blank line space and a thin, half-point rule.
+
+\subsection{Headings and Sections}
+When necessary, headings should be used to separate major sections of your paper. Remember, you are writing a short paper, not a lengthy book! An overabundance of headings will tend to make your paper look more like an outline than a paper. The aaai2026.sty package will create headings for you. Do not alter their size nor their spacing above or below.
+
+\subsubsection{Section Numbers.}
+The use of section numbers in AAAI Press papers is optional. To use section numbers in \LaTeX{}, uncomment the setcounter line in your document preamble and change the 0 to a 1. Section numbers should not be used in short poster papers and/or extended abstracts.
+
+\subsubsection{Section Headings.}
+Sections should be arranged and headed as follows:
+\begin{enumerate}
+\item Main content sections
+\item Appendices (optional)
+\item Ethical Statement (optional, unnumbered)
+\item Acknowledgements (optional, unnumbered)
+\item References (unnumbered)
+\end{enumerate}
+
+\subsubsection{Appendices.}
+Any appendices must appear after the main content. If your main sections are numbered, appendix sections must use letters instead of arabic numerals. In \LaTeX{} you can use the \texttt{\textbackslash appendix} command to achieve this effect and then use \texttt{\textbackslash section\{Heading\}} normally for your appendix sections.
+
+\subsubsection{Ethical Statement.}
+You can write a statement about the potential ethical impact of your work, including its broad societal implications, both positive and negative. If included, such statement must be written in an unnumbered section titled \emph{Ethical Statement}.
+
+\subsubsection{Acknowledgments.}
+The acknowledgments section, if included, appears right before the references and is headed ``Acknowledgments". It must not be numbered even if other sections are (use \texttt{\textbackslash section*\{Acknowledgements\}} in \LaTeX{}). This section includes acknowledgments of help from associates and colleagues, credits to sponsoring agencies, financial support, and permission to publish. Please acknowledge other contributors, grant support, and so forth, in this section. Do not put acknowledgments in a footnote on the first page. If your grant agency requires acknowledgment of the grant on page 1, limit the footnote to the required statement, and put the remaining acknowledgments at the back. Please try to limit acknowledgments to no more than three sentences.
+
+\subsubsection{References.}
+The references section should be labeled ``References" and must appear at the very end of the paper (don't end the paper with references, and then put a figure by itself on the last page). A sample list of references is given later on in these instructions. Please use a consistent format for references. Poorly prepared or sloppy references reflect badly on the quality of your paper and your research. Please prepare complete and accurate citations.
+
+\subsection{Illustrations and  Figures}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\columnwidth]{figure1} % Reduce the figure size so that it is slightly narrower than the column. Don't use precise values for figure width.This setup will avoid overfull boxes.
+\caption{Using the trim and clip commands produces fragile layers that can result in disasters (like this one from an actual paper) when the color space is corrected or the PDF combined with others for the final proceedings. Crop your figures properly in a graphics program -- not in LaTeX.}
+\label{fig1}
+\end{figure}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.8\textwidth]{figure2} % Reduce the figure size so that it is slightly narrower than the column.
+\caption{Adjusting the bounding box instead of actually removing the unwanted data resulted multiple layers in this paper. It also needlessly increased the PDF size. In this case, the size of the unwanted layer doubled the paper's size, and produced the following surprising results in final production. Crop your figures properly in a graphics program. Don't just alter the bounding box.}
+\label{fig2}
+\end{figure*}
+
+Your paper must compile in PDF\LaTeX{}. Consequently, all your figures must be .jpg, .png, or .pdf. You may not use the .gif (the resolution is too low), .ps, or .eps file format for your figures.
+
+Figures, drawings, tables, and photographs should be placed throughout the paper on the page (or the subsequent page) where they are first discussed. Do not group them together at the end of the paper. If placed at the top of the paper, illustrations may run across both columns. Figures must not invade the top, bottom, or side margin areas. Figures must be inserted using the \textbackslash usepackage\{graphicx\}. Number figures sequentially, for example, figure 1, and so on. Do not use minipage to group figures.
+
+If you normally create your figures using pgfplots, please create the figures first, and then import them as pdfs with proper bounding boxes, as the bounding and trim boxes created by pfgplots are fragile and not valid.
+
+When you include your figures, you must crop them \textbf{outside} of \LaTeX{}. The command \textbackslash includegraphics*[clip=true, viewport 0 0 10 10]{...} might result in a PDF that looks great, but the image is \textbf{not really cropped.} The full image can reappear (and obscure whatever it is overlapping) when page numbers are applied or color space is standardized. Figures \ref{fig1}, and \ref{fig2} display some unwanted results that often occur.
+
+If your paper includes illustrations that are not compatible with PDF\TeX{} (such as .eps or .ps documents), you will need to convert them. The epstopdf package will usually work for eps files. You will need to convert your ps files to PDF in either case.
+
+\subsubsection {Figure Captions.}The illustration number and caption must appear \textit{under} the illustration. Labels and other text with the actual illustration must be at least nine-point type. However, the font and size of figure captions must be 10 point roman. Do not make them smaller, bold, or italic. (Individual words may be italicized if the context requires differentiation.)
+
+\subsection{Tables}
+Tables should be presented in 10 point roman type. If necessary, they may be altered to 9 point type. You must not use \texttt{\textbackslash resizebox} or other commands that resize the entire table to make it smaller, because you can't control the final font size this way.
+If your table is too large you can use \texttt{\textbackslash setlength\{\textbackslash tabcolsep\}\{1mm\}} to compress the columns a bit or you can adapt the content (e.g.: reduce the decimal precision when presenting numbers, use shortened column titles, make some column duble-line to get it narrower).
+
+Tables that do not fit in a single column must be placed across double columns. If your table won't fit within the margins even when spanning both columns and using the above techniques, you must split it in two separate tables.
+
+\subsubsection {Table Captions.} The number and caption for your table must appear \textit{under} (not above) the table.  Additionally, the font and size of table captions must be 10 point roman and must be placed beneath the figure. Do not make them smaller, bold, or italic. (Individual words may be italicized if the context requires differentiation.)
+
+\subsubsection{Low-Resolution Bitmaps.}
+You may not use low-resolution (such as 72 dpi) screen-dumps and GIF files---these files contain so few pixels that they are always blurry, and illegible when printed. If they are color, they will become an indecipherable mess when converted to black and white. This is always the case with gif files, which should never be used. The resolution of screen dumps can be increased by reducing the print size of the original file while retaining the same number of pixels. You can also enlarge files by manipulating them in software such as PhotoShop. Your figures should be 300 dpi when incorporated into your document.
+
+\subsubsection{\LaTeX{} Overflow.}
+\LaTeX{} users please beware: \LaTeX{} will sometimes put portions of the figure or table or an equation in the margin. If this happens, you need to make the figure or table span both columns. If absolutely necessary, you may reduce the figure, or reformat the equation, or reconfigure the table.{ \bf Check your log file!} You must fix any overflow into the margin (that means no overfull boxes in \LaTeX{}). \textbf{Nothing is permitted to intrude into the margin or gutter.}
+
+\subsubsection{Using Color.}
+Use of color is restricted to figures only. It must be WACG 2.0 compliant. (That is, the contrast ratio must be greater than 4.5:1 no matter the font size.) It must be CMYK, NOT RGB. It may never be used for any portion of the text of your paper. The archival version of your paper will be printed in black and white and grayscale. The web version must be readable by persons with disabilities. Consequently, because conversion to grayscale can cause undesirable effects (red changes to black, yellow can disappear, and so forth), we strongly suggest you avoid placing color figures in your document. If you do include color figures, you must (1) use the CMYK (not RGB) colorspace and (2) be mindful of readers who may happen to have trouble distinguishing colors. Your paper must be decipherable without using color for distinction.
+
+\subsubsection{Drawings.}
+We suggest you use computer drawing software (such as Adobe Illustrator or, (if unavoidable), the drawing tools in Microsoft Word) to create your illustrations. Do not use Microsoft Publisher. These illustrations will look best if all line widths are uniform (half- to two-point in size), and you do not create labels over shaded areas. Shading should be 133 lines per inch if possible. Use Times Roman or Helvetica for all figure call-outs. \textbf{Do not use hairline width lines} --- be sure that the stroke width of all lines is at least .5 pt. Zero point lines will print on a laser printer, but will completely disappear on the high-resolution devices used by our printers.
+
+\subsubsection{Photographs and Images.}
+Photographs and other images should be in grayscale (color photographs will not reproduce well; for example, red tones will reproduce as black, yellow may turn to white, and so forth) and set to a minimum of 300 dpi. Do not prescreen images.
+
+\subsubsection{Resizing Graphics.}
+Resize your graphics \textbf{before} you include them with LaTeX. You may \textbf{not} use trim or clip options as part of your \textbackslash includegraphics command. Resize the media box of your PDF using a graphics program instead.
+
+\subsubsection{Fonts in Your Illustrations.}
+You must embed all fonts in your graphics before including them in your LaTeX document.
+
+\subsubsection{Algorithms.}
+Algorithms and/or programs are a special kind of figures. Like all illustrations, they should appear floated to the top (preferably) or bottom of the page. However, their caption should appear in the header, left-justified and enclosed between horizontal lines, as shown in Algorithm~\ref{alg:algorithm}. The algorithm body should be terminated with another horizontal line. It is up to the authors to decide whether to show line numbers or not, how to format comments, etc.
+
+In \LaTeX{} algorithms may be typeset using the {\tt algorithm} and {\tt algorithmic} packages, but you can also use one of the many other packages for the task.
+
+\begin{algorithm}[tb]
+\caption{Example algorithm}
+\label{alg:algorithm}
+\textbf{Input}: Your algorithm's input\\
+\textbf{Parameter}: Optional list of parameters\\
+\textbf{Output}: Your algorithm's output
+\begin{algorithmic}[1] %[1] enables line numbers
+\STATE Let $t=0$.
+\WHILE{condition}
+\STATE Do some action.
+\IF {conditional}
+\STATE Perform task A.
+\ELSE
+\STATE Perform task B.
+\ENDIF
+\ENDWHILE
+\STATE \textbf{return} solution
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Listings.}
+Listings are much like algorithms and programs. They should also appear floated to the top (preferably) or bottom of the page. Listing captions should appear in the header, left-justified and enclosed between horizontal lines as shown in Listing~\ref{lst:listing}. Terminate the body with another horizontal line and avoid any background color. Line numbers, if included, must appear within the text column.
+
+\begin{listing}[tb]%
+\caption{Example listing {\tt quicksort.hs}}%
+\label{lst:listing}%
+\begin{lstlisting}[language=Haskell]
+quicksort :: Ord a => [a] -> [a]
+quicksort []     = []
+quicksort (p:xs) = (quicksort lesser) ++ [p] ++ (quicksort greater)
+	where
+		lesser  = filter (< p) xs
+		greater = filter (>= p) xs
+\end{lstlisting}
+\end{listing}
+
+\subsection{References}
+The AAAI style includes a set of definitions for use in formatting references with BibTeX. These definitions make the bibliography style fairly close to the ones  specified in the Reference Examples appendix below. To use these definitions, you also need the BibTeX style file ``aaai2026.bst," available in the AAAI Author Kit on the AAAI web site. Then, at the end of your paper but before \textbackslash end{document}, you need to put the following lines:
+
+\begin{quote}
+\begin{small}
+\textbackslash bibliography\{bibfile1,bibfile2,...\}
+\end{small}
+\end{quote}
+
+Please note that the aaai2026.sty class already sets the bibliographystyle for you, so you do not have to place any \textbackslash bibliographystyle command in the document yourselves. The aaai2026.sty file is incompatible with the hyperref and navigator packages. If you use either, your references will be garbled and your paper will be returned to you.
+
+References may be the same size as surrounding text.
+However, in this section (only), you may reduce the size to {\em \textbackslash small} (9pt) if your paper exceeds the allowable number of pages. Making it any smaller than 9 point with 10 point linespacing, however, is not allowed.
+
+The list of files in the \textbackslash bibliography command should be the names of your BibTeX source files (that is, the .bib files referenced in your paper).
+
+The following commands are available for your use in citing references:
+\begin{quote}
+{\em \textbackslash cite:} Cites the given reference(s) with a full citation. This appears as ``(Author Year)'' for one reference, or ``(Author Year; Author Year)'' for multiple references.\smallskip\\
+{\em \textbackslash shortcite:} Cites the given reference(s) with just the year. This appears as ``(Year)'' for one reference, or ``(Year; Year)'' for multiple references.\smallskip\\
+{\em \textbackslash citeauthor:} Cites the given reference(s) with just the author name(s) and no parentheses.\smallskip\\
+{\em \textbackslash citeyear:} Cites the given reference(s) with just the date(s) and no parentheses.
+\end{quote}
+You may also use any of the \emph{natbib} citation commands.
+
+\section{Proofreading Your PDF}
+Please check all the pages of your PDF file. The most commonly forgotten element is the acknowledgements --- especially the correct grant number. Authors also commonly forget to add the metadata to the source, use the wrong reference style file, or don't follow the capitalization rules or comma placement for their author-title information properly. A final common problem is text (expecially equations) that runs into the margin. You will need to fix these common errors before submitting your file.
+
+\section{Improperly Formatted Files }
+In the past, AAAI has corrected improperly formatted files submitted by the authors. Unfortunately, this has become an increasingly burdensome expense that we can no longer absorb). Consequently, if your file is improperly formatted, it will be returned to you for correction.
+
+\section{Naming Your Electronic File}
+We require that you name your \LaTeX{} source file with the last name (family name) of the first author so that it can easily be differentiated from other submissions. Complete file-naming instructions will be provided to you in the submission instructions.
+
+\section{Submitting Your Electronic Files to AAAI}
+Instructions on paper submittal will be provided to you in your acceptance letter.
+
+\section{Inquiries}
+If you have any questions about the preparation or submission of your paper as instructed in this document, please contact AAAI Press at the address given below. If you have technical questions about implementation of the aaai style file, please contact an expert at your site. We do not provide technical support for \LaTeX{} or any other software package. To avoid problems, please keep your paper simple, and do not incorporate complicated macros and style files.
+
+\begin{quote}
+\noindent AAAI Press\\
+1101 Pennsylvania Ave, NW Suite 300\\
+Washington, DC 20004 USA\\
+\textit{Telephone:} 1-202-360-4062\\
+\textit{E-mail:} See the submission instructions for your particular conference or event.
+\end{quote}
+
+\section{Additional Resources}
+\LaTeX{} is a difficult program to master. If you've used that software, and this document didn't help or some items were not explained clearly, we recommend you read Michael Shell's excellent document (testflow doc.txt V1.0a 2002/08/13) about obtaining correct PS/PDF output on \LaTeX{} systems. (It was written for another purpose, but it has general application as well). It is available at www.ctan.org in the tex-archive.
+
+\appendix
+\section{Reference Examples}
+\label{sec:reference_examples}
+
+\nobibliography*
+Formatted bibliographies should look like the following examples. You should use BibTeX to generate the references. Missing fields are unacceptable when compiling references, and usually indicate that you are using the wrong type of entry (BibTeX class).
+
+\paragraph{Book with multiple authors~\nocite{em:86}} Use the \texttt{@book} class.\\[.2em]
+\bibentry{em:86}.
+
+\paragraph{Journal and magazine articles~\nocite{r:80, hcr:83}} Use the \texttt{@article} class.\\[.2em]
+\bibentry{r:80}.\\[.2em]
+\bibentry{hcr:83}.
+
+\paragraph{Proceedings paper published by a society, press or publisher~\nocite{c:83, c:84}} Use the \texttt{@inproceedings} class. You may abbreviate the \emph{booktitle} field, but make sure that the conference edition is clear.\\[.2em]
+\bibentry{c:84}.\\[.2em]
+\bibentry{c:83}.
+
+\paragraph{University technical report~\nocite{r:86}} Use the \texttt{@techreport} class.\\[.2em]
+\bibentry{r:86}.
+
+\paragraph{Dissertation or thesis~\nocite{c:79}} Use the \texttt{@phdthesis} class.\\[.2em]
+\bibentry{c:79}.
+
+\paragraph{Forthcoming publication~\nocite{c:21}} Use the \texttt{@misc} class with a \texttt{note="Forthcoming"} annotation.
+\begin{quote}
+\begin{footnotesize}
+\begin{verbatim}
+@misc(key,
+  [...]
+  note="Forthcoming",
+)
+\end{verbatim}
+\end{footnotesize}
+\end{quote}
+\bibentry{c:21}.
+
+\paragraph{ArXiv paper~\nocite{c:22}} Fetch the BibTeX entry from the "Export Bibtex Citation" link in the arXiv website. Notice it uses the \texttt{@misc} class instead of the \texttt{@article} one, and that it includes the \texttt{eprint} and \texttt{archivePrefix} keys.
+\begin{quote}
+\begin{footnotesize}
+\begin{verbatim}
+@misc(key,
+  [...]
+  eprint="xxxx.yyyy",
+  archivePrefix="arXiv",
+)
+\end{verbatim}
+\end{footnotesize}
+\end{quote}
+\bibentry{c:22}.
+
+\paragraph{Website or online resource~\nocite{c:23}} Use the \texttt{@misc} class. Add the url in the \texttt{howpublished} field and the date of access in the \texttt{note} field:
+\begin{quote}
+\begin{footnotesize}
+\begin{verbatim}
+@misc(key,
+  [...]
+  howpublished="\url{http://...}",
+  note="Accessed: YYYY-mm-dd",
+)
+\end{verbatim}
+\end{footnotesize}
+\end{quote}
+\bibentry{c:23}.
+
+\vspace{.2em}
+For the most up to date version of the AAAI reference style, please consult the \textit{AI Magazine} Author Guidelines at \url{https://aaai.org/ojs/index.php/aimagazine/about/submissions#authorGuidelines}
+
+\section{Acknowledgments}
+
+% Anonymous submission version - shorter acknowledgments
+AAAI is especially grateful to Peter Patel Schneider for his work in implementing the aaai2026.sty file, liberally using the ideas of other style hackers, including Barbara Beeton. We also acknowledge with thanks the work of George Ferguson for his guide to using the style and BibTeX files --- which has been incorporated into this document --- and Hans Guesgen, who provided several timely modifications, as well as the many others who have, from time to time, sent in suggestions on improvements to the AAAI style. We are especially grateful to Francisco Cruz, Marc Pujol-Gonzalez, and Mico Loretan for the improvements to the Bib\TeX{} and \LaTeX{} files made in 2020.
+
+The preparation of the \LaTeX{} and Bib\TeX{} files that implement these instructions was supported by Schlumberger Palo Alto Research, AT\&T Bell Laboratories, Morgan Kaufmann Publishers, The Live Oak Press, LLC, and AAAI Press. Bibliography style changes were added by Sunil Issar. \verb+\+pubnote was added by J. Scott Penberthy. George Ferguson added support for printing the AAAI copyright slug. Additional changes to aaai2026.sty and aaai2026.bst have been made by Francisco Cruz and Marc Pujol-Gonzalez.
+
+\bigskip
+\noindent Thank you for reading these instructions carefully. We look forward to receiving your electronic files!
+
+
+
+% Note: \bibliographystyle{aaai2026} is automatically set by aaai2026.sty
+% Do not add \bibliographystyle{aaai2026} here as it will cause "Illegal, another \bibstyle command" error
+\bibliography{aaai2026}
+
+\section{Reproducibility Checklist}
+
+Unless specified otherwise, please answer ``yes'' to each question if the relevant information is described either in the paper itself or in a technical appendix with an explicit reference from the main paper. If you wish to explain an answer further, please do so in a section titled ``Reproducibility Checklist'' at the end of the technical appendix.
+
+This paper:
+
+Includes a conceptual outline and/or pseudocode description of AI methods introduced (yes/partial/no/NA)
+
+Clearly delineates statements that are opinions, hypothesis, and speculation from objective facts and results (yes/no)
+
+Provides well marked pedagogical references for less-familiare readers to gain background necessary to replicate the paper (yes/no)
+
+Does this paper make theoretical contributions? (yes/no)
+
+If yes, please complete the list below.
+
+All assumptions and restrictions are stated clearly and formally. (yes/partial/no)
+
+All novel claims are stated formally (e.g., in theorem statements). (yes/partial/no)
+
+Proofs of all novel claims are included. (yes/partial/no)
+
+Proof sketches or intuitions are given for complex and/or novel results. (yes/partial/no)
+
+Appropriate citations to theoretical tools used are given. (yes/partial/no)
+
+All theoretical claims are demonstrated empirically to hold. (yes/partial/no/NA)
+
+All experimental code used to eliminate or disprove claims is included. (yes/no/NA)
+
+Does this paper rely on one or more datasets? (yes/no)
+
+If yes, please complete the list below.
+
+A motivation is given for why the experiments are conducted on the selected datasets (yes/partial/no/NA)
+
+All novel datasets introduced in this paper are included in a data appendix. (yes/partial/no/NA)
+
+All novel datasets introduced in this paper will be made publicly available upon publication of the paper with a license that allows free usage for research purposes. (yes/partial/no/NA)
+
+All datasets drawn from the existing literature (potentially including authors' own previously published work) are accompanied by appropriate citations. (yes/no/NA)
+
+All datasets drawn from the existing literature (potentially including authors' own previously published work) are publicly available. (yes/partial/no/NA)
+
+All datasets that are not publicly available are described in detail, with explanation why publicly available alternatives are not scientifically satisficing. (yes/partial/no/NA)
+
+Does this paper include computational experiments? (yes/no)
+
+If yes, please complete the list below.
+
+This paper states the number and range of values tried per (hyper-) parameter during development of the paper, along with the criterion used for selecting the final parameter setting. (yes/partial/no/NA)
+
+Any code required for pre-processing data is included in the appendix. (yes/partial/no).
+
+All source code required for conducting and analyzing the experiments is included in a code appendix. (yes/partial/no)
+
+All source code required for conducting and analyzing the experiments will be made publicly available upon publication of the paper with a license that allows free usage for research purposes. (yes/partial/no)
+
+All source code implementing new methods have comments detailing the implementation, with references to the paper where each step comes from (yes/partial/no)
+
+If an algorithm depends on randomness, then the method used for setting seeds is described in a way sufficient to allow replication of results. (yes/partial/no/NA)
+
+This paper specifies the computing infrastructure used for running experiments (hardware and software), including GPU/CPU models; amount of memory; operating system; names and versions of relevant software libraries and frameworks. (yes/partial/no)
+
+This paper formally describes evaluation metrics used and explains the motivation for choosing these metrics. (yes/partial/no)
+
+This paper states the number of algorithm runs used to compute each reported result. (yes/no)
+
+Analysis of experiments goes beyond single-dimensional summaries of performance (e.g., average; median) to include measures of variation, confidence, or other distributional information. (yes/no)
+
+The significance of any improvement or decrease in performance is judged using appropriate statistical tests (e.g., Wilcoxon signed-rank). (yes/partial/no)
+
+This paper lists all final (hyper-)parameters used for each model/algorithm in the paper's experiments. (yes/partial/no/NA).
+
+\end{document} 

@@ -1,0 +1,930 @@
+
+% Journals
+
+% First the Full Name is given, then the abbreviation used in the AMS Math
+% Reviews, with an indication if it could not be found there.
+% Note the 2nd overwrites the 1st, so swap them if you want the full name.
+
+ %{AMS}
+ @String{AMSTrans = "American Mathematical Society Translations" }
+ @String{AMSTrans = "Amer. Math. Soc. Transl." }
+ @String{BullAMS = "Bulletin of the American Mathematical Society" }
+ @String{BullAMS = "Bull. Amer. Math. Soc." }
+ @String{ProcAMS = "Proceedings of the American Mathematical Society" }
+ @String{ProcAMS = "Proc. Amer. Math. Soc." }
+ @String{TransAMS = "Transactions of the American Mathematical Society" }
+ @String{TransAMS = "Trans. Amer. Math. Soc." }
+
+ %ACM
+ @String{CACM = "Communications of the {ACM}" }
+ @String{CACM = "Commun. {ACM}" }
+ @String{CompServ = "Comput. Surveys" }
+ @String{JACM = "J. ACM" }
+ @String{ACMMathSoft = "{ACM} Transactions on Mathematical Software" }
+ @String{ACMMathSoft = "{ACM} Trans. Math. Software" }
+ @String{SIGNUM = "{ACM} {SIGNUM} Newsletter" }
+ @String{SIGNUM = "{ACM} {SIGNUM} Newslett." }
+
+ @String{AmerSocio = "American Journal of Sociology" }
+ @String{AmerStatAssoc = "Journal of the American Statistical Association" }
+ @String{AmerStatAssoc = "J. Amer. Statist. Assoc." }
+ @String{ApplMathComp = "Applied Mathematics and Computation" }
+ @String{ApplMathComp = "Appl. Math. Comput." }
+ @String{AmerMathMonthly = "American Mathematical Monthly" }
+ @String{AmerMathMonthly = "Amer. Math. Monthly" }
+ @String{BIT = "{BIT}" }
+ @String{BritStatPsych = "British Journal of Mathematical and Statistical
+          Psychology" }
+ @String{BritStatPsych = "Brit. J. Math. Statist. Psych." }
+ @String{CanMathBull = "Canadian Mathematical Bulletin" }
+ @String{CanMathBull = "Canad. Math. Bull." }
+ @String{CompApplMath = "Journal of Computational and Applied Mathematics" }
+ @String{CompApplMath = "J. Comput. Appl. Math." }
+ @String{CompPhys = "Journal of Computational Physics" }
+ @String{CompPhys = "J. Comput. Phys." }
+ @String{CompStruct = "Computers and Structures" }
+ @String{CompStruct = "Comput. \& Structures" }
+ @String{CompJour = "The Computer Journal" }
+ @String{CompJour = "Comput. J." }
+ @String{CompSysSci = "Journal of Computer and System Sciences" }
+ @String{CompSysSci = "J. Comput. System Sci." }
+ @String{Computing = "Computing" }
+ @String{ContempMath = "Contemporary Mathematics" }
+ @String{ContempMath = "Contemp. Math." }
+ @String{Crelle = "Crelle's Journal" }
+ @String{GiornaleMath = "Giornale di Mathematiche" }
+ @String{GiornaleMath = "Giorn. Mat." } % didn't find in AMS MR., ibid.
+
+ %IEEE
+ @String{Computer = "{IEEE} Computer" }
+ @String{IEEETransComp = "{IEEE} Transactions on Computers" }
+ @String{IEEETransComp = "{IEEE} Trans. Comput." }
+ @String{IEEETransAC = "{IEEE} Transactions on Automatic Control" }
+ @String{IEEETransAC = "{IEEE} Trans. Automat. Control" }
+ @String{IEEESpec = "{IEEE} Spectrum" } % didn't find in AMS MR
+ @String{ProcIEEE = "Proceedings of the {IEEE}" }
+ @String{ProcIEEE = "Proc. {IEEE}" } % didn't find in AMS MR
+ @String{IEEETransAeroElec = "{IEEE} Transactions on Aerospace and Electronic
+     Systems" }
+ @String{IEEETransAeroElec = "{IEEE} Trans. Aerospace Electron. Systems" }
+
+ @String{IMANumerAna = "{IMA} Journal of Numerical Analysis" }
+ @String{IMANumerAna = "{IMA} J. Numer. Anal." }
+ @String{InfProcLet = "Information Processing Letters" }
+ @String{InfProcLet = "Inform. Process. Lett." }
+ @String{InstMathApp = "Journal of the Institute of Mathematics and
+     its Applications" }
+ @String{InstMathApp = "J. Inst. Math. Appl." }
+ @String{IntControl = "International Journal of Control" }
+ @String{IntControl = "Internat. J. Control" }
+ @String{IntNumerEng = "International Journal for Numerical Methods in
+     Engineering" }
+ @String{IntNumerEng = "Internat. J. Numer. Methods Engrg." }
+ @String{IntSuper = "International Journal of Supercomputing Applications" }
+ @String{IntSuper = "Internat. J. Supercomputing Applic." } % didn't find
+%% in AMS MR
+ @String{Kibernetika = "Kibernetika" }
+ @String{JResNatBurStand = "Journal of Research of the National Bureau
+     of Standards" }
+ @String{JResNatBurStand = "J. Res. Nat. Bur. Standards" }
+ @String{LinAlgApp = "Linear Algebra and its Applications" }
+ @String{LinAlgApp = "Linear Algebra Appl." }
+ @String{MathAnaAppl = "Journal of Mathematical Analysis and Applications" }
+ @String{MathAnaAppl = "J. Math. Anal. Appl." }
+ @String{MathAnnalen = "Mathematische Annalen" }
+ @String{MathAnnalen = "Math. Ann." }
+ @String{MathPhys = "Journal of Mathematical Physics" }
+ @String{MathPhys = "J. Math. Phys." }
+ @String{MathComp = "Mathematics of Computation" }
+ @String{MathComp = "Math. Comp." }
+ @String{MathScand = "Mathematica Scandinavica" }
+ @String{MathScand = "Math. Scand." }
+ @String{TablesAidsComp = "Mathematical Tables and Other Aids to Computation" }
+ @String{TablesAidsComp = "Math. Tables Aids Comput." }
+ @String{NumerMath = "Numerische Mathematik" }
+ @String{NumerMath = "Numer. Math." }
+ @String{PacificMath = "Pacific Journal of Mathematics" }
+ @String{PacificMath = "Pacific J. Math." }
+ @String{ParDistComp = "Journal of Parallel and Distributed Computing" }
+ @String{ParDistComp = "J. Parallel and Distrib. Comput." } % didn't find
+%% in AMS MR
+ @String{ParComputing = "Parallel Computing" }
+ @String{ParComputing = "Parallel Comput." }
+ @String{PhilMag = "Philosophical Magazine" }
+ @String{PhilMag = "Philos. Mag." }
+ @String{ProcNAS = "Proceedings of the National Academy of Sciences
+                    of the USA" }
+ @String{ProcNAS = "Proc. Nat. Acad. Sci. U. S. A." }
+ @String{Psychometrika = "Psychometrika" }
+ @String{QuartMath = "Quarterly Journal of Mathematics, Oxford, Series (2)" }
+ @String{QuartMath = "Quart. J. Math. Oxford Ser. (2)" }
+ @String{QuartApplMath = "Quarterly of Applied Mathematics" }
+ @String{QuartApplMath = "Quart. Appl. Math." }
+ @String{RevueInstStat = "Review of the International Statisical Institute" }
+ @String{RevueInstStat = "Rev. Inst. Internat. Statist." }
+
+ %SIAM
+ @String{JSIAM = "Journal of the Society for Industrial and Applied
+     Mathematics" }
+ @String{JSIAM = "J. Soc. Indust. Appl. Math." }
+ @String{JSIAMB = "Journal of the Society for Industrial and Applied
+     Mathematics, Series B, Numerical Analysis" }
+ @String{JSIAMB = "J. Soc. Indust. Appl. Math. Ser. B Numer. Anal." }
+ @String{SIAMAlgMeth = "{SIAM} Journal on Algebraic and Discrete Methods" }
+ @String{SIAMAlgMeth = "{SIAM} J. Algebraic Discrete Methods" }
+ @String{SIAMAppMath = "{SIAM} Journal on Applied Mathematics" }
+ @String{SIAMAppMath = "{SIAM} J. Appl. Math." }
+ @String{SIAMComp = "{SIAM} Journal on Computing" }
+ @String{SIAMComp = "{SIAM} J. Comput." }
+ @String{SIAMMatrix = "{SIAM} Journal on Matrix Analysis and Applications" }
+ @String{SIAMMatrix = "{SIAM} J. Matrix Anal. Appl." }
+ @String{SIAMNumAnal = "{SIAM} Journal on Numerical Analysis" }
+ @String{SIAMNumAnal = "{SIAM} J. Numer. Anal." }
+ @String{SIAMReview = "{SIAM} Review" }
+ @String{SIAMReview = "{SIAM} Rev." }
+ @String{SIAMSciStat = "{SIAM} Journal on Scientific and Statistical
+     Computing" }
+ @String{SIAMSciStat = "{SIAM} J. Sci. Statist. Comput." }
+
+ @String{SoftPracExp = "Software Practice and Experience" }
+ @String{SoftPracExp = "Software Prac. Experience" } % didn't find in AMS MR
+ @String{StatScience = "Statistical Science" }
+ @String{StatScience = "Statist. Sci." }
+ @String{Techno = "Technometrics" }
+ @String{USSRCompMathPhys = "{USSR} Computational Mathematics and Mathematical
+     Physics" }
+ @String{USSRCompMathPhys = "{U. S. S. R.} Comput. Math. and Math. Phys." }
+ @String{VLSICompSys = "Journal of {VLSI} and Computer Systems" }
+ @String{VLSICompSys = "J. {VLSI} Comput. Syst." }
+ @String{ZAngewMathMech = "Zeitschrift fur Angewandte Mathematik und
+     Mechanik" }
+ @String{ZAngewMathMech = "Z. Angew. Math. Mech." }
+ @String{ZAngewMathPhys = "Zeitschrift fur Angewandte Mathematik und Physik" }
+ @String{ZAngewMathPhys = "Z. Angew. Math. Phys." }
+
+% Publishers % ================================================= |
+
+ @String{Academic = "Academic Press" }
+ @String{ACMPress = "{ACM} Press" }
+ @String{AdamHilger = "Adam Hilger" }
+ @String{AddisonWesley = "Addison-Wesley" }
+ @String{AllynBacon = "Allyn and Bacon" }
+ @String{AMS = "American Mathematical Society" }
+ @String{Birkhauser = "Birkha{\"u}ser" }
+ @String{CambridgePress = "Cambridge University Press" }
+ @String{Chelsea = "Chelsea" }
+ @String{ClaredonPress = "Claredon Press" }
+ @String{DoverPub = "Dover Publications" }
+ @String{Eyolles = "Eyolles" }
+ @String{HoltRinehartWinston = "Holt, Rinehart and Winston" }
+ @String{Interscience = "Interscience" }
+ @String{JohnsHopkinsPress = "The Johns Hopkins University Press" }
+ @String{JohnWileySons = "John Wiley and Sons" }
+ @String{Macmillan = "Macmillan" }
+ @String{MathWorks = "The Math Works Inc." }
+ @String{McGrawHill = "McGraw-Hill" }
+ @String{NatBurStd = "National Bureau of Standards" }
+ @String{NorthHolland = "North-Holland" }
+ @String{OxfordPress = "Oxford University Press" }  %address Oxford or London?
+ @String{PergamonPress = "Pergamon Press" }
+ @String{PlenumPress = "Plenum Press" }
+ @String{PrenticeHall = "Prentice-Hall" }
+ @String{SIAMPub = "{SIAM} Publications" }
+ @String{Springer = "Springer-Verlag" }
+ @String{TexasPress = "University of Texas Press" }
+ @String{VanNostrand = "Van Nostrand" }
+ @String{WHFreeman = "W. H. Freeman and Co." }
+
+%%Entries
+
+@book{wei2018multivariate,
+  title={Multivariate time series analysis and applications},
+  author={Wei, William WS},
+  year={2018},
+  publisher={John Wiley \& Sons}
+}
+
+@article{ismail2019deep,
+  title={Deep learning for time series classification: a review},
+  author={Ismail Fawaz, Hassan and Forestier, Germain and Weber, Jonathan and Idoumghar, Lhassane and Muller, Pierre-Alain},
+  journal={Data mining and knowledge discovery},
+  volume={33},
+  number={4},
+  pages={917--963},
+  year={2019},
+  publisher={Springer}
+}
+
+@article{ruiz2021great,
+  title={The great multivariate time series classification bake off: a review and experimental evaluation of recent algorithmic advances},
+  author={Ruiz, Alejandro Pasos and Flynn, Michael and Large, James and Middlehurst, Matthew and Bagnall, Anthony},
+  journal={Data Mining and Knowledge Discovery},
+  volume={35},
+  number={2},
+  pages={401--449},
+  year={2021},
+  publisher={Springer}
+}
+
+@article{theissler2022explainable,
+  title={Explainable AI for time series classification: a review, taxonomy and research directions},
+  author={Theissler, Andreas and Spinnato, Francesco and Schlegel, Udo and Guidotti, Riccardo},
+  journal={IEEE Access},
+  volume={10},
+  pages={100700--100724},
+  year={2022},
+  publisher={IEEE}
+}
+
+@article{adadi2018peeking,
+  title={Peeking inside the black-box: a survey on explainable artificial intelligence (XAI)},
+  author={Adadi, Amina and Berrada, Mohammed},
+  journal={IEEE access},
+  volume={6},
+  pages={52138--52160},
+  year={2018},
+  publisher={IEEE}
+}
+
+@inproceedings{spinnato2022explaining,
+  title={Explaining crash predictions on multivariate time series data},
+  author={Spinnato, Francesco and Guidotti, Riccardo and Nanni, Mirco and Maccagnola, Daniele and Paciello, Giulia and Farina, Antonio Bencini},
+  booktitle={International Conference on Discovery Science},
+  pages={556--566},
+  year={2022},
+  organization={Springer}
+}
+
+@INPROCEEDINGS{8386483,
+  author={Wu, Junfeng and Yao, Li and Liu, Bin},
+  booktitle={2018 IEEE 3rd International Conference on Cloud Computing and Big Data Analysis (ICCCBDA)}, 
+  title={An overview on feature-based classification algorithms for multivariate time series}, 
+  year={2018},
+  volume={},
+  number={},
+  pages={32-38},
+  keywords={Feature extraction;Time series analysis;Classification algorithms;Hidden Markov models;Time measurement;Matrix decomposition;Correlation;hand-crafted features;learnt features;multivariate time series},
+  doi={10.1109/ICCCBDA.2018.8386483}}
+
+@inproceedings{dandl2020multi,
+  title={Multi-objective counterfactual explanations},
+  author={Dandl, Susanne and Molnar, Christoph and Binder, Martin and Bischl, Bernd},
+  booktitle={International Conference on Parallel Problem Solving from Nature},
+  pages={448--469},
+  year={2020},
+  organization={Springer}
+}
+
+@inproceedings{keane2020good,
+  title={Good counterfactuals and where to find them: A case-based technique for generating counterfactuals for explainable AI (XAI)},
+  author={Keane, Mark T and Smyth, Barry},
+  booktitle={Case-Based Reasoning Research and Development: 28th International Conference, ICCBR 2020, Salamanca, Spain, June 8--12, 2020, Proceedings 28},
+  pages={163--178},
+  year={2020},
+  organization={Springer}
+}
+
+@inproceedings{ates2021counterfactual,
+  title={Counterfactual explanations for multivariate time series},
+  author={Ates, Emre and Aksar, Burak and Leung, Vitus J and Coskun, Ayse K},
+  booktitle={2021 international conference on applied artificial intelligence (ICAPAI)},
+  pages={1--8},
+  year={2021},
+  organization={IEEE}
+}
+
+@article{bahri2022shapelet,
+  title={Shapelet-based counterfactual explanations for multivariate time series},
+  author={Bahri, Omar and Boubrahimi, Soukaina Filali and Hamdi, Shah Muhammad},
+  journal={arXiv preprint arXiv:2208.10462},
+  year={2022}
+}
+
+@article{spinnato2023understanding,
+  title={Understanding Any Time Series Classifier with a Subsequence-based Explainer},
+  author={Spinnato, Francesco and Guidotti, Riccardo and Monreale, Anna and Nanni, Mirco and Pedreschi, Dino and Giannotti, Fosca},
+  journal={ACM Transactions on Knowledge Discovery from Data},
+  volume={18},
+  number={2},
+  pages={1--34},
+  year={2023},
+  publisher={ACM New York, NY}
+}
+
+@inproceedings{li2023attention,
+  title={Attention-based counterfactual explanation for multivariate time series},
+  author={Li, Peiyu and Bahri, Omar and Boubrahimi, Souka{\"\i}na Filali and Hamdi, Shah Muhammad},
+  booktitle={International Conference on Big Data Analytics and Knowledge Discovery},
+  pages={287--293},
+  year={2023},
+  organization={Springer}
+}
+
+@inproceedings{lang2023generating,
+  title={Generating sparse counterfactual explanations for multivariate time series},
+  author={Lang, Jana and Giese, Martin A and Ilg, Winfried and Otte, Sebastian},
+  booktitle={International Conference on Artificial Neural Networks},
+  pages={180--193},
+  year={2023},
+  organization={Springer}
+}
+
+@article{bagnall2017great,
+  title={The great time series classification bake off: a review and experimental evaluation of recent algorithmic advances},
+  author={Bagnall, Anthony and Lines, Jason and Bostrom, Aaron and Large, James and Keogh, Eamonn},
+  journal={Data mining and knowledge discovery},
+  volume={31},
+  pages={606--660},
+  year={2017},
+  publisher={Springer}
+}
+
+@inproceedings{korikov2023objective,
+  title={Objective-Based Counterfactual Explanations for Linear Discrete Optimization},
+  author={Korikov, Anton and Beck, J Christopher},
+  booktitle={International Conference on Integration of Constraint Programming, Artificial Intelligence, and Operations Research},
+  pages={18--34},
+  year={2023},
+  organization={Springer}
+}
+
+
+
+@inproceedings{wang2017time,
+  title={Time series classification from scratch with deep neural networks: A strong baseline},
+  author={Wang, Zhiguang and Yan, Weizhong and Oates, Tim},
+  booktitle={2017 International joint conference on neural networks (IJCNN)},
+  pages={1578--1585},
+  year={2017},
+  organization={IEEE}
+}
+
+@misc{bagnall2018uea,
+      title={The UEA multivariate time series classification archive, 2018}, 
+      author={Anthony Bagnall and Hoang Anh Dau and Jason Lines and Michael Flynn and James Large and Aaron Bostrom and Paul Southam and Eamonn Keogh},
+      year={2018},
+      eprint={1811.00075},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+
+@misc{delaney2021instancebased,
+      title={Instance-based Counterfactual Explanations for Time Series Classification}, 
+      author={Eoin Delaney and Derek Greene and Mark T. Keane},
+      year={2021},
+      eprint={2009.13211},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+
+@ARTICLE{pymoo,
+    author={J. {Blank} and K. {Deb}},
+    journal={IEEE Access},
+    title={pymoo: Multi-Objective Optimization in Python},
+    year={2020},
+    volume={8},
+    number={},
+    pages={89497-89509},
+}
+
+@article{das1998normal,
+  title={Normal-boundary intersection: A new method for generating the Pareto surface in nonlinear multicriteria optimization problems},
+  author={Das, Indraneel and Dennis, John E},
+  journal={SIAM journal on optimization},
+  volume={8},
+  number={3},
+  pages={631--657},
+  year={1998},
+  publisher={SIAM}
+}
+
+@article{phillips2023improving,
+  title={Improving the reporting of primary care research: consensus reporting items for studies in primary care—the CRISP statement},
+  author={Phillips, William R and Sturgiss, Elizabeth and Glasziou, Paul and olde Hartman, Tim C and Orkin, Aaron M and Prathivadi, Pallavi and Reeve, Joanne and Russell, Grant M and van Weel, Chris},
+  journal={The Annals of Family Medicine},
+  volume={21},
+  number={6},
+  pages={549--555},
+  year={2023},
+  publisher={Annals Family Med}
+}
+
+
+@INPROCEEDINGS{7966039,
+  author={Wang, Zhiguang and Yan, Weizhong and Oates, Tim},
+  booktitle={2017 International Joint Conference on Neural Networks (IJCNN)}, 
+  title={Time series classification from scratch with deep neural networks: A strong baseline}, 
+  year={2017},
+  volume={},
+  number={},
+  pages={1578-1585},
+  keywords={Time series analysis;Feature extraction;Neural networks;Training;Convolution;Benchmark testing;Standards},
+  doi={10.1109/IJCNN.2017.7966039}}
+
+@misc{schäfer2018multivariatetimeseriesclassification,
+      title={Multivariate Time Series Classification with WEASEL+MUSE}, 
+      author={Patrick Schäfer and Ulf Leser},
+      year={2018},
+      eprint={1711.11343},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/1711.11343}, 
+}
+
+@article{khan2023end,
+  title={End-to-end multivariate time series classification via hybrid deep learning architectures},
+  author={Khan, Mehak and Wang, Hongzhi and Ngueilbaye, Alladoumbaye and Elfatyany, Aya},
+  journal={Personal and Ubiquitous Computing},
+  volume={27},
+  number={2},
+  pages={177--191},
+  year={2023},
+  publisher={Springer}
+}
+
+
+@article{liu2020dstp,
+  title={DSTP-RNN: A dual-stage two-phase attention-based recurrent neural network for long-term and multivariate time series prediction},
+  author={Liu, Yeqi and Gong, Chuanyang and Yang, Ling and Chen, Yingyi},
+  journal={Expert Systems with Applications},
+  volume={143},
+  pages={113082},
+  year={2020},
+  publisher={Elsevier}
+}
+
+@article{del2024generating,
+  title={On generating trustworthy counterfactual explanations},
+  author={Del Ser, Javier and Barredo-Arrieta, Alejandro and D{\'\i}az-Rodr{\'\i}guez, Natalia and Herrera, Francisco and Saranti, Anna and Holzinger, Andreas},
+  journal={Information Sciences},
+  volume={655},
+  pages={119898},
+  year={2024},
+  publisher={Elsevier}
+}
+
+@article{ismail2020inceptiontime,
+  title={Inceptiontime: Finding alexnet for time series classification},
+  author={Ismail Fawaz, Hassan and Lucas, Benjamin and Forestier, Germain and Pelletier, Charlotte and Schmidt, Daniel F and Weber, Jonathan and Webb, Geoffrey I and Idoumghar, Lhassane and Muller, Pierre-Alain and Petitjean, Fran{\c{c}}ois},
+  journal={Data Mining and Knowledge Discovery},
+  volume={34},
+  number={6},
+  pages={1936--1962},
+  year={2020},
+  publisher={Springer}
+}
+
+
+@misc{szegedy2016inceptionv4,
+      title={Inception-v4, Inception-ResNet and the Impact of Residual Connections on Learning}, 
+      author={Christian Szegedy and Sergey Ioffe and Vincent Vanhoucke and Alex Alemi},
+      year={2016},
+      eprint={1602.07261},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
+
+@inproceedings{caruana2015intelligible,
+  title={Intelligible models for healthcare: Predicting pneumonia risk and hospital 30-day readmission},
+  author={Caruana, Rich and Lou, Yin and Gehrke, Johannes and Koch, Paul and Sturm, Marc and Elhadad, Noemie},
+  booktitle={Proceedings of the 21th ACM SIGKDD international conference on knowledge discovery and data mining},
+  pages={1721--1730},
+  year={2015}
+}
+
+@inproceedings{ribeiro2016should,
+  title={"Why should i trust you?" Explaining the predictions of any classifier},
+  author={Ribeiro, Marco Tulio and Singh, Sameer and Guestrin, Carlos},
+  booktitle={Proceedings of the 22nd ACM SIGKDD international conference on knowledge discovery and data mining},
+  pages={1135--1144},
+  year={2016}
+}
+
+@article{lundberg2017unified,
+  title={A unified approach to interpreting model predictions},
+  author={Lundberg, Scott M and Lee, Su-In},
+  journal={Advances in neural information processing systems},
+  volume={30},
+  year={2017}
+}
+
+@article{xu2024succintx,
+  title={Succint Interaction-Aware Explanations},
+  author={Xu, Sascha and C{\"u}ppers, Joscha and Vreeken, Jilles},
+  journal={arXiv preprint arXiv:2402.05566},
+  year={2024}
+}
+
+@inproceedings{meng2023initial,
+  title={An Initial Step Towards Stable Explanations for Multivariate Time Series Classifiers with LIME},
+  author={Meng, Han and Wagner, Christian and Triguero, Isaac},
+  booktitle={2023 IEEE International Conference on Fuzzy Systems (FUZZ)},
+  pages={1--6},
+  year={2023},
+  organization={IEEE}
+}
+
+@inproceedings{zhou2016learning,
+  title={Learning deep features for discriminative localization},
+  author={Zhou, Bolei and Khosla, Aditya and Lapedriza, Agata and Oliva, Aude and Torralba, Antonio},
+  booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
+  pages={2921--2929},
+  year={2016}
+}
+
+@inproceedings{boniol2022dcam,
+  title={dcam: Dimension-wise class activation map for explaining multivariate data series classification},
+  author={Boniol, Paul and Meftah, Mohammed and Remy, Emmanuel and Palpanas, Themis},
+  booktitle={Proceedings of the 2022 International Conference on Management of Data},
+  pages={1175--1189},
+  year={2022}
+}
+@inproceedings{doddaiah2022class,
+  title={Class-specific explainability for deep time series classifiers},
+  author={Doddaiah, Ramesh and Parvatharaju, Prathyush and Rundensteiner, Elke and Hartvigsen, Thomas},
+  booktitle={2022 IEEE International conference on data mining (ICDM)},
+  pages={101--110},
+  year={2022},
+  organization={IEEE}
+}
+
+@article{taslim2024comparative,
+  title={Comparative analysis of ARIMA and LSTM for predicting fluctuating time series data},
+  author={Taslim, Deddy Gunawan and Murwantara, I Made},
+  journal={Bulletin of Electrical Engineering and Informatics},
+  volume={13},
+  number={3},
+  pages={1943--1951},
+  year={2024}
+}
+
+@book{hyndman2018forecasting,
+  title={Forecasting: principles and practice},
+  author={Hyndman, RJ},
+  year={2018},
+  publisher={OTexts}
+}
+
+@book{box2015time,
+  title={Time series analysis: forecasting and control},
+  author={Box, George EP and Jenkins, Gwilym M and Reinsel, Gregory C and Ljung, Greta M},
+  year={2015},
+  publisher={John Wiley \& Sons}
+}
+
+@book{goodfellow2016deep,
+  title={Deep learning},
+  author={Goodfellow, Ian},
+  volume={196},
+  year={2016},
+  publisher={MIT press}
+}
+
+@article{rumelhart1986learning,
+  title={Learning representations by back-propagating errors},
+  author={Rumelhart, David E and Hinton, Geoffrey E and Williams, Ronald J},
+  journal={nature},
+  volume={323},
+  number={6088},
+  pages={533--536},
+  year={1986},
+  publisher={Nature Publishing Group UK London}
+}
+
+@article{bengio1994learning,
+  title={Learning long-term dependencies with gradient descent is difficult},
+  author={Bengio, Yoshua and Simard, Patrice and Frasconi, Paolo},
+  journal={IEEE transactions on neural networks},
+  volume={5},
+  number={2},
+  pages={157--166},
+  year={1994},
+  publisher={IEEE}
+}
+
+@article{hochreiter1997long,
+  title={Long Short-term Memory},
+  author={Hochreiter, S},
+  journal={Neural Computation MIT-Press},
+  year={1997}
+}
+
+@article{cho2014learning,
+  title={Learning phrase representations using RNN encoder-decoder for statistical machine translation},
+  author={Cho, Kyunghyun},
+  journal={arXiv preprint arXiv:1406.1078},
+  year={2014}
+}
+
+@article{lecun1998gradient,
+  title={Gradient-based learning applied to document recognition},
+  author={LeCun, Yann and Bottou, L{\'e}on and Bengio, Yoshua and Haffner, Patrick},
+  journal={Proceedings of the IEEE},
+  volume={86},
+  number={11},
+  pages={2278--2324},
+  year={1998},
+  publisher={Ieee}
+}
+
+@article{bahdanau2014neural,
+  title={Neural machine translation by jointly learning to align and translate},
+  author={Bahdanau, Dzmitry},
+  journal={arXiv preprint arXiv:1409.0473},
+  year={2014}
+}
+
+@article{simonyan2013deep,
+  title={Deep inside convolutional networks: Visualising image classification models and saliency maps},
+  author={Simonyan, Karen and Vedaldi, Andrea and Zisserman, Andrew},
+  journal={arXiv preprint arXiv:1312.6034},
+  year={2013}
+}
+
+@inproceedings{selvaraju2017grad,
+  title={Grad-cam: Visual explanations from deep networks via gradient-based localization},
+  author={Selvaraju, Ramprasaath R and Cogswell, Michael and Das, Abhishek and Vedantam, Ramakrishna and Parikh, Devi and Batra, Dhruv},
+  booktitle={Proceedings of the IEEE international conference on computer vision},
+  pages={618--626},
+  year={2017}
+}
+
+@inproceedings{cho2021interpreting,
+  title={Interpreting internal activation patterns in deep temporal neural networks by finding prototypes},
+  author={Cho, Sohee and Chang, Wonjoon and Lee, Ginkyeng and Choi, Jaesik},
+  booktitle={Proceedings of the 27th ACM SIGKDD Conference on Knowledge Discovery \& Data Mining},
+  pages={158--166},
+  year={2021}
+}
+
+@inproceedings{ye2009time,
+  title={Time series shapelets: a new primitive for data mining},
+  author={Ye, Lexiang and Keogh, Eamonn},
+  booktitle={Proceedings of the 15th ACM SIGKDD international conference on Knowledge discovery and data mining},
+  pages={947--956},
+  year={2009}
+}
+
+
+@inproceedings{mercier2021patchx,
+  title={PatchX: explaining deep models by intelligible pattern patches for time-series classification},
+  author={Mercier, Dominique and Dengel, Andreas and Ahmed, Sheraz},
+  booktitle={2021 International Joint Conference on Neural Networks (IJCNN)},
+  pages={1--8},
+  year={2021},
+  organization={IEEE}
+}
+
+@inproceedings{li2021shapenet,
+  title={Shapenet: A shapelet-neural network approach for multivariate time series classification},
+  author={Li, Guozhong and Choi, Byron and Xu, Jianliang and Bhowmick, Sourav S and Chun, Kwok-Pan and Wong, Grace Lai-Hung},
+  booktitle={Proceedings of the AAAI conference on artificial intelligence},
+  volume={35},
+  number={9},
+  pages={8375--8383},
+  year={2021}
+}
+
+@inproceedings{wang2020adversarial,
+  title={Adversarial regularization for explainable-by-design time series classification},
+  author={Wang, Yichang and Emonet, R{\'e}mi and Fromont, Elisa and Malinowski, Simon and Tavenard, Romain},
+  booktitle={2020 IEEE 32nd International Conference on Tools with Artificial Intelligence (ICTAI)},
+  pages={1079--1087},
+  year={2020},
+  organization={IEEE}
+}
+
+@inproceedings{ma2020adversarial,
+  title={Adversarial dynamic shapelet networks},
+  author={Ma, Qianli and Zhuang, Wanqing and Li, Sen and Huang, Desen and Cottrell, Garrison},
+  booktitle={Proceedings of the AAAI conference on artificial intelligence},
+  volume={34},
+  number={04},
+  pages={5069--5076},
+  year={2020}
+}
+
+@inproceedings{gee2019explaining,
+  title={Explaining deep classification of time-series data with learned prototypes},
+  author={Gee, Alan H and Garcia-Olano, Diego and Ghosh, Joydeep and Paydarfar, David},
+  booktitle={CEUR workshop proceedings},
+  volume={2429},
+  pages={15},
+  year={2019},
+  organization={NIH Public Access}
+}
+
+@inproceedings{das2020interpreting,
+  title={Interpreting deep neural networks through prototype factorization},
+  author={Das, Subhajit and Xu, Panpan and Dai, Zeng and Endert, Alex and Ren, Liu},
+  booktitle={2020 International Conference on Data Mining Workshops (ICDMW)},
+  pages={448--457},
+  year={2020},
+  organization={IEEE}
+}
+
+@article{miller2019explanation,
+  title={Explanation in artificial intelligence: Insights from the social sciences},
+  author={Miller, Tim},
+  journal={Artificial intelligence},
+  volume={267},
+  pages={1--38},
+  year={2019},
+  publisher={Elsevier}
+}
+
+@inproceedings{mothilal2020explaining,
+  title={Explaining machine learning classifiers through diverse counterfactual explanations},
+  author={Mothilal, Ramaravind K and Sharma, Amit and Tan, Chenhao},
+  booktitle={Proceedings of the 2020 conference on fairness, accountability, and transparency},
+  pages={607--617},
+  year={2020}
+}
+
+@article{navas2021optimal,
+  title={Optimal counterfactual explanations for scorecard modelling},
+  author={Navas-Palencia, Guillermo},
+  journal={arXiv preprint arXiv:2104.08619},
+  year={2021}
+}
+
+@misc{chollet2015keras,
+  title={Keras},
+  author={Chollet, Fran\c{c}ois and others},
+  year={2015},
+  howpublished={\url{https://keras.io}},
+} 
+
+@article{loning2019unified,
+  title={A unified interface for machine learning with time series},
+  author={L{\"o}ning, M and Bagnall, A and Ganesh, S and Kazakov, V and Lines, J and Kir{\'a}ly, FJ},
+  journal={arXiv preprint arXiv:1909.07872},
+  year={2019}
+}
+
+@article{goodfellow2014explaining,
+  title={Explaining and harnessing adversarial examples},
+  author={Goodfellow, Ian J and Shlens, Jonathon and Szegedy, Christian},
+  journal={arXiv preprint arXiv:1412.6572},
+  year={2014}
+}
+
+@article{deb2013evolutionary,
+  title={An evolutionary many-objective optimization algorithm using reference-point-based nondominated sorting approach, part I: solving problems with box constraints},
+  author={Deb, Kalyanmoy and Jain, Himanshu},
+  journal={IEEE transactions on evolutionary computation},
+  volume={18},
+  number={4},
+  pages={577--601},
+  year={2013},
+  publisher={IEEE}
+}
+
+@article{jain2013evolutionary,
+  title={An evolutionary many-objective optimization algorithm using reference-point based nondominated sorting approach, part II: Handling constraints and extending to an adaptive approach},
+  author={Jain, Himanshu and Deb, Kalyanmoy},
+  journal={IEEE Transactions on evolutionary computation},
+  volume={18},
+  number={4},
+  pages={602--622},
+  year={2013},
+  publisher={IEEE}
+}
+
+@article{nugent2009gaining,
+  title={Gaining insight through case-based explanation},
+  author={Nugent, Conor and Doyle, D{\'o}nal and Cunningham, P{\'a}draig},
+  journal={Journal of Intelligent Information Systems},
+  volume={32},
+  pages={267--295},
+  year={2009},
+  publisher={Springer}
+}
+
+@inproceedings{hollig2022tsevo,
+  title={Tsevo: Evolutionary counterfactual explanations for time series classification},
+  author={H{\"o}llig, Jacqueline and Kulbach, Cedric and Thoma, Steffen},
+  booktitle={2022 21st IEEE International Conference on Machine Learning and Applications (ICMLA)},
+  pages={29--36},
+  year={2022},
+  organization={IEEE}
+}
+
+@article{deb2002fast,
+  title={A fast and elitist multiobjective genetic algorithm: NSGA-II},
+  author={Deb, Kalyanmoy and Pratap, Amrit and Agarwal, Sameer and Meyarivan, TAMT},
+  journal={IEEE transactions on evolutionary computation},
+  volume={6},
+  number={2},
+  pages={182--197},
+  year={2002},
+  publisher={Ieee}
+}
+
+@article{guidotti2024counterfactual,
+  title = {Counterfactual Explanations and How to Find Them: Literature Review and Benchmarking},
+  shorttitle = {Counterfactual Explanations and How to Find Them},
+  author = {Guidotti, Riccardo},
+  year = 2024,
+  journal = {Data Mining and Knowledge Discovery},
+  shortjournal = {Data Min Knowl Disc},
+  volume = {38},
+  number = {5},
+  pages = {2770--2824},
+  publisher = {Springer US},
+  issn = {1573-756X},
+  doi = {10.1007/s10618-022-00831-6},
+  url = {https://link.springer.com/article/10.1007/s10618-022-00831-6},
+  urldate = {2025-02-13},
+  abstract = {Interpretable machine learning aims at unveiling the reasons behind predictions returned by uninterpretable classifiers. One of the most valuable types of explanation consists of counterfactuals. A counterfactual explanation reveals what should have been different in an instance to observe a diverse outcome. For instance, a bank customer asks for a loan that is rejected. The counterfactual explanation consists of what should have been different for the customer in order to have the loan accepted. Recently, there has been an explosion of proposals for counterfactual explainers. The aim of this work is to survey the most recent explainers returning counterfactual explanations. We categorize explainers based on the approach adopted to return the counterfactuals, and we label them according to characteristics of the method and properties of the counterfactuals returned. In addition, we visually compare the explanations, and we report quantitative benchmarking assessing minimality, actionability, stability, diversity, discriminative power, and running time. The results make evident that the current state of the art does not provide a counterfactual explainer able to guarantee all these properties simultaneously.},
+  issue = {5},
+  langid = {english},
+  keywords = {A* Conference,Metrics,Survey},
+  file = {/Users/alan.paredes/Zotero/storage/5G2QQB3T/Guidotti - 2024 - Counterfactual explanations and how to find them literature review and benchmarking.pdf}
+}
+
+@article{pawelczyk2021carla,
+  title={Carla: a python library to benchmark algorithmic recourse and counterfactual explanation algorithms},
+  author={Pawelczyk, Martin and Bielawski, Sascha and Heuvel, Johannes van den and Richter, Tobias and Kasneci, Gjergji},
+  journal={arXiv preprint arXiv:2108.00783},
+  year={2021}
+}
+
+
+@ARTICLE{hamming1950distance,
+  author={Hamming, R. W.},
+  journal={The Bell System Technical Journal}, 
+  title={Error detecting and error correcting codes}, 
+  year={1950},
+  volume={29},
+  number={2},
+  pages={147-160},
+  keywords={},
+  doi={10.1002/j.1538-7305.1950.tb00463.x}}
+
+@incollection{wilcoxon1992individual,
+  title={Individual comparisons by ranking methods},
+  author={Wilcoxon, Frank},
+  booktitle={Breakthroughs in statistics: Methodology and distribution},
+  pages={196--202},
+  year={1992},
+  publisher={Springer}
+}
+
+@misc{techreport,
+  title        = {Supplementary Technical Appendix},
+  author       = {Anonymous},
+  year         = {2025},
+  note         = {Available as supplementary material}
+}
+@article{friedman1937use,
+  title={The use of ranks to avoid the assumption of normality implicit in the analysis of variance},
+  author={Friedman, Milton},
+  journal={Journal of the american statistical association},
+  volume={32},
+  number={200},
+  pages={675--701},
+  year={1937},
+  publisher={Taylor \& Francis}
+}
+
+@book{nemenyi1963distribution,
+  title={Distribution-free multiple comparisons.},
+  author={Nemenyi, Peter Bjorn},
+  year={1963},
+  publisher={Princeton University}
+}
+
+@article{zhou2009canonical,
+  title={Canonical time warping for alignment of human behavior},
+  author={Zhou, Feng and Torre, Fernando},
+  journal={Advances in neural information processing systems},
+  volume={22},
+  year={2009}
+}
+
+
+@article{sakoe2003dynamic,
+  title={Dynamic programming algorithm optimization for spoken word recognition},
+  author={Sakoe, Hiroaki and Chiba, Seibi},
+  journal={IEEE transactions on acoustics, speech, and signal processing},
+  volume={26},
+  number={1},
+  pages={43--49},
+  year={2003},
+  publisher={IEEE}
+}
+
+@inproceedings{cuturi2017soft,
+  title={Soft-dtw: a differentiable loss function for time-series},
+  author={Cuturi, Marco and Blondel, Mathieu},
+  booktitle={International conference on machine learning},
+  pages={894--903},
+  year={2017},
+  organization={PMLR}
+}
+
+
+
+
+

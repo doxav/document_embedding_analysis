@@ -1,0 +1,946 @@
+
+% Journals
+
+% First the Full Name is given, then the abbreviation used in the AMS Math
+% Reviews, with an indication if it could not be found there.
+% Note the 2nd overwrites the 1st, so swap them if you want the full name.
+
+ %{AMS}
+ @String{AMSTrans = "American Mathematical Society Translations" }
+ @String{AMSTrans = "Amer. Math. Soc. Transl." }
+ @String{BullAMS = "Bulletin of the American Mathematical Society" }
+ @String{BullAMS = "Bull. Amer. Math. Soc." }
+ @String{ProcAMS = "Proceedings of the American Mathematical Society" }
+ @String{ProcAMS = "Proc. Amer. Math. Soc." }
+ @String{TransAMS = "Transactions of the American Mathematical Society" }
+ @String{TransAMS = "Trans. Amer. Math. Soc." }
+
+ %ACM
+ @String{CACM = "Communications of the {ACM}" }
+ @String{CACM = "Commun. {ACM}" }
+ @String{CompServ = "Comput. Surveys" }
+ @String{JACM = "J. ACM" }
+ @String{ACMMathSoft = "{ACM} Transactions on Mathematical Software" }
+ @String{ACMMathSoft = "{ACM} Trans. Math. Software" }
+ @String{SIGNUM = "{ACM} {SIGNUM} Newsletter" }
+ @String{SIGNUM = "{ACM} {SIGNUM} Newslett." }
+
+ @String{AmerSocio = "American Journal of Sociology" }
+ @String{AmerStatAssoc = "Journal of the American Statistical Association" }
+ @String{AmerStatAssoc = "J. Amer. Statist. Assoc." }
+ @String{ApplMathComp = "Applied Mathematics and Computation" }
+ @String{ApplMathComp = "Appl. Math. Comput." }
+ @String{AmerMathMonthly = "American Mathematical Monthly" }
+ @String{AmerMathMonthly = "Amer. Math. Monthly" }
+ @String{BIT = "{BIT}" }
+ @String{BritStatPsych = "British Journal of Mathematical and Statistical
+          Psychology" }
+ @String{BritStatPsych = "Brit. J. Math. Statist. Psych." }
+ @String{CanMathBull = "Canadian Mathematical Bulletin" }
+ @String{CanMathBull = "Canad. Math. Bull." }
+ @String{CompApplMath = "Journal of Computational and Applied Mathematics" }
+ @String{CompApplMath = "J. Comput. Appl. Math." }
+ @String{CompPhys = "Journal of Computational Physics" }
+ @String{CompPhys = "J. Comput. Phys." }
+ @String{CompStruct = "Computers and Structures" }
+ @String{CompStruct = "Comput. \& Structures" }
+ @String{CompJour = "The Computer Journal" }
+ @String{CompJour = "Comput. J." }
+ @String{CompSysSci = "Journal of Computer and System Sciences" }
+ @String{CompSysSci = "J. Comput. System Sci." }
+ @String{Computing = "Computing" }
+ @String{ContempMath = "Contemporary Mathematics" }
+ @String{ContempMath = "Contemp. Math." }
+ @String{Crelle = "Crelle's Journal" }
+ @String{GiornaleMath = "Giornale di Mathematiche" }
+ @String{GiornaleMath = "Giorn. Mat." } % didn't find in AMS MR., ibid.
+
+ %IEEE
+ @String{Computer = "{IEEE} Computer" }
+ @String{IEEETransComp = "{IEEE} Transactions on Computers" }
+ @String{IEEETransComp = "{IEEE} Trans. Comput." }
+ @String{IEEETransAC = "{IEEE} Transactions on Automatic Control" }
+ @String{IEEETransAC = "{IEEE} Trans. Automat. Control" }
+ @String{IEEESpec = "{IEEE} Spectrum" } % didn't find in AMS MR
+ @String{ProcIEEE = "Proceedings of the {IEEE}" }
+ @String{ProcIEEE = "Proc. {IEEE}" } % didn't find in AMS MR
+ @String{IEEETransAeroElec = "{IEEE} Transactions on Aerospace and Electronic
+     Systems" }
+ @String{IEEETransAeroElec = "{IEEE} Trans. Aerospace Electron. Systems" }
+
+ @String{IMANumerAna = "{IMA} Journal of Numerical Analysis" }
+ @String{IMANumerAna = "{IMA} J. Numer. Anal." }
+ @String{InfProcLet = "Information Processing Letters" }
+ @String{InfProcLet = "Inform. Process. Lett." }
+ @String{InstMathApp = "Journal of the Institute of Mathematics and
+     its Applications" }
+ @String{InstMathApp = "J. Inst. Math. Appl." }
+ @String{IntControl = "International Journal of Control" }
+ @String{IntControl = "Internat. J. Control" }
+ @String{IntNumerEng = "International Journal for Numerical Methods in
+     Engineering" }
+ @String{IntNumerEng = "Internat. J. Numer. Methods Engrg." }
+ @String{IntSuper = "International Journal of Supercomputing Applications" }
+ @String{IntSuper = "Internat. J. Supercomputing Applic." } % didn't find
+%% in AMS MR
+ @String{Kibernetika = "Kibernetika" }
+ @String{JResNatBurStand = "Journal of Research of the National Bureau
+     of Standards" }
+ @String{JResNatBurStand = "J. Res. Nat. Bur. Standards" }
+ @String{LinAlgApp = "Linear Algebra and its Applications" }
+ @String{LinAlgApp = "Linear Algebra Appl." }
+ @String{MathAnaAppl = "Journal of Mathematical Analysis and Applications" }
+ @String{MathAnaAppl = "J. Math. Anal. Appl." }
+ @String{MathAnnalen = "Mathematische Annalen" }
+ @String{MathAnnalen = "Math. Ann." }
+ @String{MathPhys = "Journal of Mathematical Physics" }
+ @String{MathPhys = "J. Math. Phys." }
+ @String{MathComp = "Mathematics of Computation" }
+ @String{MathComp = "Math. Comp." }
+ @String{MathScand = "Mathematica Scandinavica" }
+ @String{MathScand = "Math. Scand." }
+ @String{TablesAidsComp = "Mathematical Tables and Other Aids to Computation" }
+ @String{TablesAidsComp = "Math. Tables Aids Comput." }
+ @String{NumerMath = "Numerische Mathematik" }
+ @String{NumerMath = "Numer. Math." }
+ @String{PacificMath = "Pacific Journal of Mathematics" }
+ @String{PacificMath = "Pacific J. Math." }
+ @String{ParDistComp = "Journal of Parallel and Distributed Computing" }
+ @String{ParDistComp = "J. Parallel and Distrib. Comput." } % didn't find
+%% in AMS MR
+ @String{ParComputing = "Parallel Computing" }
+ @String{ParComputing = "Parallel Comput." }
+ @String{PhilMag = "Philosophical Magazine" }
+ @String{PhilMag = "Philos. Mag." }
+ @String{ProcNAS = "Proceedings of the National Academy of Sciences
+                    of the USA" }
+ @String{ProcNAS = "Proc. Nat. Acad. Sci. U. S. A." }
+ @String{Psychometrika = "Psychometrika" }
+ @String{QuartMath = "Quarterly Journal of Mathematics, Oxford, Series (2)" }
+ @String{QuartMath = "Quart. J. Math. Oxford Ser. (2)" }
+ @String{QuartApplMath = "Quarterly of Applied Mathematics" }
+ @String{QuartApplMath = "Quart. Appl. Math." }
+ @String{RevueInstStat = "Review of the International Statisical Institute" }
+ @String{RevueInstStat = "Rev. Inst. Internat. Statist." }
+
+ %SIAM
+ @String{JSIAM = "Journal of the Society for Industrial and Applied
+     Mathematics" }
+ @String{JSIAM = "J. Soc. Indust. Appl. Math." }
+ @String{JSIAMB = "Journal of the Society for Industrial and Applied
+     Mathematics, Series B, Numerical Analysis" }
+ @String{JSIAMB = "J. Soc. Indust. Appl. Math. Ser. B Numer. Anal." }
+ @String{SIAMAlgMeth = "{SIAM} Journal on Algebraic and Discrete Methods" }
+ @String{SIAMAlgMeth = "{SIAM} J. Algebraic Discrete Methods" }
+ @String{SIAMAppMath = "{SIAM} Journal on Applied Mathematics" }
+ @String{SIAMAppMath = "{SIAM} J. Appl. Math." }
+ @String{SIAMComp = "{SIAM} Journal on Computing" }
+ @String{SIAMComp = "{SIAM} J. Comput." }
+ @String{SIAMMatrix = "{SIAM} Journal on Matrix Analysis and Applications" }
+ @String{SIAMMatrix = "{SIAM} J. Matrix Anal. Appl." }
+ @String{SIAMNumAnal = "{SIAM} Journal on Numerical Analysis" }
+ @String{SIAMNumAnal = "{SIAM} J. Numer. Anal." }
+ @String{SIAMReview = "{SIAM} Review" }
+ @String{SIAMReview = "{SIAM} Rev." }
+ @String{SIAMSciStat = "{SIAM} Journal on Scientific and Statistical
+     Computing" }
+ @String{SIAMSciStat = "{SIAM} J. Sci. Statist. Comput." }
+
+ @String{SoftPracExp = "Software Practice and Experience" }
+ @String{SoftPracExp = "Software Prac. Experience" } % didn't find in AMS MR
+ @String{StatScience = "Statistical Science" }
+ @String{StatScience = "Statist. Sci." }
+ @String{Techno = "Technometrics" }
+ @String{USSRCompMathPhys = "{USSR} Computational Mathematics and Mathematical
+     Physics" }
+ @String{USSRCompMathPhys = "{U. S. S. R.} Comput. Math. and Math. Phys." }
+ @String{VLSICompSys = "Journal of {VLSI} and Computer Systems" }
+ @String{VLSICompSys = "J. {VLSI} Comput. Syst." }
+ @String{ZAngewMathMech = "Zeitschrift fur Angewandte Mathematik und
+     Mechanik" }
+ @String{ZAngewMathMech = "Z. Angew. Math. Mech." }
+ @String{ZAngewMathPhys = "Zeitschrift fur Angewandte Mathematik und Physik" }
+ @String{ZAngewMathPhys = "Z. Angew. Math. Phys." }
+
+% Publishers % ================================================= |
+
+ @String{Academic = "Academic Press" }
+ @String{ACMPress = "{ACM} Press" }
+ @String{AdamHilger = "Adam Hilger" }
+ @String{AddisonWesley = "Addison-Wesley" }
+ @String{AllynBacon = "Allyn and Bacon" }
+ @String{AMS = "American Mathematical Society" }
+ @String{Birkhauser = "Birkh{\"a}user" }
+ @String{CambridgePress = "Cambridge University Press" }
+ @String{Chelsea = "Chelsea" }
+ @String{ClaredonPress = "Claredon Press" }
+ @String{DoverPub = "Dover Publications" }
+ @String{Eyolles = "Eyolles" }
+ @String{HoltRinehartWinston = "Holt, Rinehart and Winston" }
+ @String{Interscience = "Interscience" }
+ @String{JohnsHopkinsPress = "The Johns Hopkins University Press" }
+ @String{JohnWileySons = "John Wiley and Sons" }
+ @String{Macmillan = "Macmillan" }
+ @String{MathWorks = "The Math Works Inc." }
+ @String{McGrawHill = "McGraw-Hill" }
+ @String{NatBurStd = "National Bureau of Standards" }
+ @String{NorthHolland = "North-Holland" }
+ @String{OxfordPress = "Oxford University Press" }  %address Oxford or London?
+ @String{PergamonPress = "Pergamon Press" }
+ @String{PlenumPress = "Plenum Press" }
+ @String{PrenticeHall = "Prentice-Hall" }
+ @String{SIAMPub = "{SIAM} Publications" }
+ @String{Springer = "Springer-Verlag" }
+ @String{TexasPress = "University of Texas Press" }
+ @String{VanNostrand = "Van Nostrand" }
+ @String{WHFreeman = "W. H. Freeman and Co." }
+
+%Entries
+@misc{google_scholar_hindex,
+  title = {Top Publications - Computer Science},
+  author = {{Google Scholar}},
+  year = {2025},
+  url = {https://scholar.google.com/citations?view_op=top_venues&hl=en},
+  note = {Accessed: 2025-03-19}
+}
+
+@article{page2021prisma,
+  title={The PRISMA 2020 statement: an updated guideline for reporting systematic reviews},
+  author={Page, Matthew J and McKenzie, Joanne E and Bossuyt, Patrick M and Boutron, Isabelle and Hoffmann, Tammy C and Mulrow, Cynthia D and Shamseer, Larissa and Tetzlaff, Jennifer M and Akl, Elie A and Brennan, Sue E and others},
+  journal={bmj},
+  volume={372},
+  year={2021},
+  publisher={British Medical Journal Publishing Group}
+}
+
+@misc{harzing2007pop,
+  author       = {Harzing, Anne-Wil},
+  title        = {Publish or Perish},
+  howpublished = {\url{https://harzing.com/resources/publish-or-perish}},
+  year         = {2007},
+  note         = {Accessed 2025-03-19}
+}
+
+@article{yang2010ranking,
+  title={Ranking-based emotion recognition for music organization and retrieval},
+  author={Yang, Yi-Hsuan and Chen, Homer H},
+  journal={IEEE Transactions on audio, speech, and language processing},
+  volume={19},
+  number={4},
+  pages={762--774},
+  year={2010},
+  publisher={IEEE}
+}
+
+@inproceedings{cao2012combining,
+  title={Combining Ranking and Classification to Improve Emotion Recognition in Spontaneous Speech.},
+  author={Cao, Houwei and Verma, Ragini and Nenkova, Ani},
+  booktitle={Interspeech},
+  pages={358--361},
+  year={2012}
+}
+
+@article{cao2015speaker,
+  title={Speaker-sensitive emotion recognition via ranking: Studies on acted and spontaneous speech},
+  author={Cao, Houwei and Verma, Ragini and Nenkova, Ani},
+  journal={Computer speech \& language},
+  volume={29},
+  number={1},
+  pages={186--202},
+  year={2015},
+  publisher={Elsevier}
+}
+
+@inproceedings{lotfian2016practical,
+  title={Practical considerations on the use of preference learning for ranking emotional speech},
+  author={Lotfian, Reza and Busso, Carlos},
+  booktitle={2016 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+  pages={5205--5209},
+  year={2016},
+  organization={IEEE}
+}
+
+@inproceedings{lotfian2016retrieving,
+  title={Retrieving Categorical Emotions Using a Probabilistic Framework to Define Preference Learning Samples.},
+  author={Lotfian, Reza and Busso, Carlos},
+  booktitle={Interspeech},
+  pages={490--494},
+  year={2016}
+}
+
+@article{parthasarathy2016using,
+  title={Using agreement on direction of change to build rank-based emotion classifiers},
+  author={Parthasarathy, Srinivas and Cowie, Roddy and Busso, Carlos},
+  journal={IEEE/ACM Transactions on Audio, Speech, and Language Processing},
+  volume={24},
+  number={11},
+  pages={2108--2121},
+  year={2016},
+  publisher={IEEE}
+}
+
+@inproceedings{parthasarathy2017ranking,
+  title={Ranking emotional attributes with deep neural networks},
+  author={Parthasarathy, Srinivas and Lotfian, Reza and Busso, Carlos},
+  booktitle={2017 IEEE international conference on acoustics, speech and signal processing (ICASSP)},
+  pages={4995--4999},
+  year={2017},
+  organization={IEEE}
+}
+
+@article{parthasarathy2018preference,
+  title={Preference-learning with qualitative agreement for sentence level emotional annotations},
+  author={Parthasarathy, Srinivas and Busso, Carlos},
+  journal={Interspeech 2018},
+  year={2018}
+}
+
+@article{lopes2017modelling,
+  title={Modelling affect for horror soundscapes},
+  author={Lopes, Phil and Liapis, Antonios and Yannakakis, Georgios N},
+  journal={IEEE Transactions on Affective Computing},
+  volume={10},
+  number={2},
+  pages={209--222},
+  year={2017},
+  publisher={IEEE}
+}
+
+@inproceedings{han2020ordinal,
+  title={Ordinal learning for emotion recognition in customer service calls},
+  author={Han, Wenjing and Jiang, Tao and Li, Yan and Schuller, Bj{\"o}rn and Ruan, Huabin},
+  booktitle={ICASSP 2020-2020 IEEE international conference on acoustics, speech and signal processing (ICASSP)},
+  pages={6494--6498},
+  year={2020},
+  organization={IEEE}
+}
+
+@inproceedings{chumbalov2020scalable,
+  title={Scalable and efficient comparison-based search without features},
+  author={Chumbalov, Daniyar and Maystre, Lucas and Grossglauser, Matthias},
+  booktitle={International Conference on Machine Learning},
+  pages={1995--2005},
+  year={2020},
+  organization={PMLR}
+}
+
+@inproceedings{jayawardena2020ordinal,
+  title={How Ordinal Are Your Data?},
+  author={Jayawardena, Sadari and Epps, Julien and Huang, Zhaocheng},
+  booktitle={INTERSPEECH},
+  pages={1853--1857},
+  year={2020}
+}
+
+@article{dong2020pyramid,
+  title={A pyramid recurrent network for predicting crowdsourced speech-quality ratings of real-world signals},
+  author={Dong, Xuan and Williamson, Donald S},
+  journal={arXiv preprint arXiv:2007.15797},
+  year={2020}
+}
+
+@inproceedings{zhou2021interactive,
+  title={Interactive exploration-exploitation balancing for generative melody composition},
+  author={Zhou, Yijun and Koyama, Yuki and Goto, Masataka and Igarashi, Takeo},
+  booktitle={Proceedings of the 26th International Conference on Intelligent User Interfaces},
+  pages={43--47},
+  year={2021}
+}
+
+@article{liu2021reinforcement,
+  title={Reinforcement learning for emotional text-to-speech synthesis with improved emotion discriminability},
+  author={Liu, Rui and Sisman, Berrak and Li, Haizhou},
+  journal={arXiv preprint arXiv:2104.01408},
+  year={2021}
+}
+
+@article{lei2023audio,
+  title={Audio-visual emotion recognition with preference learning based on intended and multi-modal perceived labels},
+  author={Lei, Yuanyuan and Cao, Houwei},
+  journal={IEEE Transactions on Affective Computing},
+  volume={14},
+  number={4},
+  pages={2954--2969},
+  year={2023},
+  publisher={IEEE}
+}
+
+@inproceedings{naini2023unsupervised,
+  title={Unsupervised domain adaptation for preference learning based speech emotion recognition},
+  author={Naini, Abinay Reddy and Kohler, Mary A and Busso, Carlos},
+  booktitle={ICASSP 2023-2023 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+  pages={1--5},
+  year={2023},
+  organization={IEEE}
+}
+
+@article{naini2023preference,
+  title={Preference learning labels by anchoring on consecutive annotations},
+  author={Naini, Abinay Reddy and Salman, Ali N and Busso, Carlos},
+  journal={Interspeech 2023},
+  year={2023}
+}
+
+@inproceedings{wu2023interval,
+  title={From Interval to Ordinal: A HMM based Approach for Emotion Label Conversion},
+  author={Wu, Jingyao and Dang, Ting and Sethu, Vidhyasaharan and Ambikairajah, Eliathamby},
+  booktitle={Proc. Interspeech 2023},
+  pages={1843--1847},
+  year={2023}
+}
+
+@article{liao2024baton,
+  title={Baton: Aligning text-to-audio model with human preference feedback},
+  author={Liao, Huan and Han, Haonan and Yang, Kai and Du, Tianjiao and Yang, Rui and Xu, Zunnan and Xu, Qinmei and Liu, Jingquan and Lu, Jiasheng and Li, Xiu},
+  journal={arXiv preprint arXiv:2402.00744},
+  year={2024}
+}
+
+@article{cideron2024musicrl,
+  title={Musicrl: Aligning music generation to human preferences},
+  author={Cideron, Geoffrey and Girgin, Sertan and Verzetti, Mauro and Vincent, Damien and Kastelic, Matej and Borsos, Zal{\'a}n and McWilliams, Brian and Ungureanu, Victor and Bachem, Olivier and Pietquin, Olivier and others},
+  journal={arXiv preprint arXiv:2402.04229},
+  year={2024}
+}
+
+@article{anastassiou2024seed,
+  title={Seed-tts: A family of high-quality versatile speech generation models},
+  author={Anastassiou, Philip and Chen, Jiawei and Chen, Jitong and Chen, Yuanzhe and Chen, Zhuo and Chen, Ziyi and Cong, Jian and Deng, Lelai and Ding, Chuang and Gao, Lu and others},
+  journal={arXiv preprint arXiv:2406.02430},
+  year={2024}
+}
+
+@article{chu2024qwen2,
+  title={Qwen2-audio technical report},
+  author={Chu, Yunfei and Xu, Jin and Yang, Qian and Wei, Haojie and Wei, Xipin and Guo, Zhifang and Leng, Yichong and Lv, Yuanjun and He, Jinzheng and Lin, Junyang and others},
+  journal={arXiv preprint arXiv:2407.10759},
+  year={2024}
+}
+
+@article{zhang2024speechalign,
+  title={Speechalign: Aligning speech generation to human preferences},
+  author={Zhang, Dong and Li, Zhaowei and Li, Shimin and Zhang, Xin and Wang, Pengyu and Zhou, Yaqian and Qiu, Xipeng},
+  journal={Advances in Neural Information Processing Systems},
+  volume={37},
+  pages={50343--50360},
+  year={2024}
+}
+
+@article{wu2025adaptive,
+  title={Adaptive accompaniment with ReaLchords},
+  author={Wu, Yusong and Cooijmans, Tim and Kastner, Kyle and Roberts, Adam and Simon, Ian and Scarlatos, Alexander and Donahue, Chris and Tarakajian, Cassie and Omidshafiei, Shayegan and Courville, Aaron and others},
+  journal={arXiv preprint arXiv:2506.14723},
+  year={2025}
+}
+
+@inproceedings{kumar2025using,
+  title={Using RLHF to align speech enhancement approaches to mean-opinion quality scores},
+  author={Kumar, Anurag and Perrault, Andrew and Williamson, Donald S},
+  booktitle={ICASSP 2025-2025 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+  pages={1--5},
+  year={2025},
+  organization={IEEE}
+}
+
+@article{huang2025step,
+  title={Step-audio: Unified understanding and generation in intelligent speech interaction},
+  author={Huang, Ailin and Wu, Boyong and Wang, Bruce and Yan, Chao and Hu, Chen and Feng, Chengli and Tian, Fei and Shen, Feiyu and Li, Jingbei and Chen, Mingrui and others},
+  journal={arXiv preprint arXiv:2502.11946},
+  year={2025}
+}
+
+@article{luo2025openomni,
+  title={Openomni: Large language models pivot zero-shot omnimodal alignment across language with real-time self-aware emotional speech synthesis},
+  author={Luo, Run and Lin, Ting-En and Zhang, Haonan and Wu, Yuchuan and Liu, Xiong and Yang, Min and Li, Yongbin and Chen, Longze and Li, Jiaming and Zhang, Lei and others},
+  journal={arXiv e-prints},
+  pages={arXiv--2501},
+  year={2025}
+}
+
+@inproceedings{nagpal2025speech,
+  title={Speech recognition with LLMs adapted to disordered speech using reinforcement learning},
+  author={Nagpal, Chirag and Venugopalan, Subhashini and Tobin, Jimmy and Ladewig, Marilyn and Heller, Katherine and Tomanek, Katrin},
+  booktitle={ICASSP 2025-2025 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+  pages={1--5},
+  year={2025},
+  organization={IEEE}
+}
+
+@inproceedings{gao2025emo,
+  title={Emo-dpo: Controllable emotional speech synthesis through direct preference optimization},
+  author={Gao, Xiaoxue and Zhang, Chen and Chen, Yiming and Zhang, Huayun and Chen, Nancy F},
+  booktitle={ICASSP 2025-2025 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+  pages={1--5},
+  year={2025},
+  organization={IEEE}
+}
+
+@article{ouyang2022training,
+  title={Training language models to follow instructions with human feedback},
+  author={Ouyang, Long and Wu, Jeffrey and Jiang, Xu and Almeida, Diogo and Wainwright, Carroll and Mishkin, Pamela and Zhang, Chong and Agarwal, Sandhini and Slama, Katarina and Ray, Alex and others},
+  journal={Advances in neural information processing systems},
+  volume={35},
+  pages={27730--27744},
+  year={2022}
+}
+
+@article{mckeown2011semaine,
+  title={The semaine database: Annotated multimodal records of emotionally colored conversations between a person and a limited agent},
+  author={McKeown, Gary and Valstar, Michel and Cowie, Roddy and Pantic, Maja and Schroder, Marc},
+  journal={IEEE transactions on affective computing},
+  volume={3},
+  number={1},
+  pages={5--17},
+  year={2011},
+  publisher={IEEE}
+}
+
+@article{lotfian2017building,
+  title={Building naturalistic emotionally balanced speech corpus by retrieving emotional speech from existing podcast recordings},
+  author={Lotfian, Reza and Busso, Carlos},
+  journal={IEEE Transactions on Affective Computing},
+  volume={10},
+  number={4},
+  pages={471--483},
+  year={2017},
+  publisher={IEEE}
+}
+
+@article{busso2016msp,
+  title={MSP-IMPROV: An acted corpus of dyadic interactions to study emotion perception},
+  author={Busso, Carlos and Parthasarathy, Srinivas and Burmania, Alec and AbdelWahab, Mohammed and Sadoughi, Najmeh and Provost, Emily Mower},
+  journal={IEEE Transactions on Affective Computing},
+  volume={8},
+  number={1},
+  pages={67--80},
+  year={2016},
+  publisher={IEEE}
+}
+
+@inproceedings{zhou2014predicting,
+  title={Predicting the geographical origin of music},
+  author={Zhou, Fang and Claire, Q and King, Ross D},
+  booktitle={2014 IEEE International Conference on Data Mining},
+  pages={1115--1120},
+  year={2014},
+  organization={IEEE}
+}
+
+@inproceedings{lopes2015sonancia,
+  title={Sonancia: Sonification of procedurally generated game levels},
+  author={Lopes, Phil and Liapis, Antonios and Yannakakis, Georgios N},
+  year={2015},
+  organization={ICCC}
+}
+
+@article{donahue2022melody,
+  title={Melody transcription via generative pre-training},
+  author={Donahue, Chris and Thickstun, John and Liang, Percy},
+  journal={arXiv preprint arXiv:2212.01884},
+  year={2022}
+}
+
+@article{ouyang2022training,
+  title={Training language models to follow instructions with human feedback},
+  author={Ouyang, Long and Wu, Jeffrey and Jiang, Xu and Almeida, Diogo and Wainwright, Carroll and Mishkin, Pamela and Zhang, Chong and Agarwal, Sandhini and Slama, Katarina and Ray, Alex and others},
+  journal={Advances in neural information processing systems},
+  volume={35},
+  pages={27730--27744},
+  year={2022}
+}
+
+@article{reiter2018structured,
+  title={A structured review of the validity of BLEU},
+  author={Reiter, Ehud},
+  journal={Computational Linguistics},
+  volume={44},
+  number={3},
+  pages={393--401},
+  year={2018},
+  publisher={MIT Press One Rogers Street, Cambridge, MA 02142-1209, USA journals-info~…}
+}
+
+@inproceedings{lin2004rouge,
+  title={Rouge: A package for automatic evaluation of summaries},
+  author={Lin, Chin-Yew},
+  booktitle={Text summarization branches out},
+  pages={74--81},
+  year={2004}
+}
+
+@inproceedings{papineni2002bleu,
+  title={Bleu: a method for automatic evaluation of machine translation},
+  author={Papineni, Kishore and Roukos, Salim and Ward, Todd and Zhu, Wei-Jing},
+  booktitle={Proceedings of the 40th annual meeting of the Association for Computational Linguistics},
+  pages={311--318},
+  year={2002}
+}
+
+@article{zhang2019bertscore,
+  title={Bertscore: Evaluating text generation with bert},
+  author={Zhang, Tianyi and Kishore, Varsha and Wu, Felix and Weinberger, Kilian Q and Artzi, Yoav},
+  journal={arXiv preprint arXiv:1904.09675},
+  year={2019}
+}
+
+@inproceedings{schluter2017limits,
+  title={The limits of automatic summarisation according to rouge},
+  author={Schluter, Natalie},
+  booktitle={Proceedings of the 15th Conference of the European Chapter of the Association for Computational Linguistics},
+  pages={41--45},
+  year={2017},
+  organization={Association for Computational Linguistics}
+}
+
+@inproceedings{chakrabarty2024art,
+  title={Art or artifice? large language models and the false promise of creativity},
+  author={Chakrabarty, Tuhin and Laban, Philippe and Agarwal, Divyansh and Muresan, Smaranda and Wu, Chien-Sheng},
+  booktitle={Proceedings of the 2024 CHI Conference on Human Factors in Computing Systems},
+  pages={1--34},
+  year={2024}
+}
+
+@article{zheng2023judging,
+  title={Judging llm-as-a-judge with mt-bench and chatbot arena},
+  author={Zheng, Lianmin and Chiang, Wei-Lin and Sheng, Ying and Zhuang, Siyuan and Wu, Zhanghao and Zhuang, Yonghao and Lin, Zi and Li, Zhuohan and Li, Dacheng and Xing, Eric and others},
+  journal={Advances in neural information processing systems},
+  volume={36},
+  pages={46595--46623},
+  year={2023}
+}
+
+@inproceedings{carterette2008here,
+  title={Here or there: Preference judgments for relevance},
+  author={Carterette, Ben and Bennett, Paul N and Chickering, David Maxwell and Dumais, Susan T},
+  booktitle={European Conference on Information Retrieval},
+  pages={16--27},
+  year={2008},
+  organization={Springer}
+}
+
+@inproceedings{wester2015we,
+  title={Are we using enough listeners? No! An empirically-supported critique of Interspeech 2014 TTS evaluations},
+  author={Wester, Mirjam and Valentini-Botinhao, Cassia and Henter, Gustav Eje},
+  booktitle={Interspeech 2015},
+  pages={3476--3480},
+  year={2015},
+  organization={International Speech Communication Association}
+}
+
+@inproceedings{rix2001perceptual,
+  title={Perceptual evaluation of speech quality (PESQ)-a new method for speech quality assessment of telephone networks and codecs},
+  author={Rix, Antony W and Beerends, John G and Hollier, Michael P and Hekstra, Andries P},
+  booktitle={2001 IEEE international conference on acoustics, speech, and signal processing. Proceedings (Cat. No. 01CH37221)},
+  volume={2},
+  pages={749--752},
+  year={2001},
+  organization={IEEE}
+}
+
+@inproceedings{morris2004and,
+  title={From WER and RIL to MER and WIL: improved evaluation measures for connected speech recognition.},
+  author={Morris, Andrew Cameron and Maier, Viktoria and Green, Phil D},
+  booktitle={Interspeech},
+  pages={2765--2768},
+  year={2004}
+}
+
+@article{huang2022mulan,
+  title={Mulan: A joint embedding of music audio and natural language},
+  author={Huang, Qingqing and Jansen, Aren and Lee, Joonseok and Ganti, Ravi and Li, Judith Yue and Ellis, Daniel PW},
+  journal={arXiv preprint arXiv:2208.12415},
+  year={2022}
+}
+
+@article{manocha2020differentiable,
+  title={A differentiable perceptual audio metric learned from just noticeable differences},
+  author={Manocha, Pranay and Finkelstein, Adam and Zhang, Richard and Bryan, Nicholas J and Mysore, Gautham J and Jin, Zeyu},
+  journal={arXiv preprint arXiv:2001.04460},
+  year={2020}
+}
+
+@article{stiennon2020learning,
+  title={Learning to summarize with human feedback},
+  author={Stiennon, Nisan and Ouyang, Long and Wu, Jeffrey and Ziegler, Daniel and Lowe, Ryan and Voss, Chelsea and Radford, Alec and Amodei, Dario and Christiano, Paul F},
+  journal={Advances in neural information processing systems},
+  volume={33},
+  pages={3008--3021},
+  year={2020}
+}
+
+@inproceedings{metallinou2013annotation,
+  title={Annotation and processing of continuous emotional attributes: Challenges and opportunities},
+  author={Metallinou, Angeliki and Narayanan, Shrikanth},
+  booktitle={2013 10th IEEE international conference and workshops on automatic face and gesture recognition (FG)},
+  pages={1--8},
+  year={2013},
+  organization={IEEE}
+}
+
+@article{christiano2017deep,
+  title={Deep reinforcement learning from human preferences},
+  author={Christiano, Paul F and Leike, Jan and Brown, Tom and Martic, Miljan and Legg, Shane and Amodei, Dario},
+  journal={Advances in neural information processing systems},
+  volume={30},
+  year={2017}
+}
+
+@article{liu2024lipo,
+  title={Lipo: Listwise preference optimization through learning-to-rank},
+  author={Liu, Tianqi and Qin, Zhen and Wu, Junru and Shen, Jiaming and Khalman, Misha and Joshi, Rishabh and Zhao, Yao and Saleh, Mohammad and Baumgartner, Simon and Liu, Jialu and others},
+  journal={arXiv preprint arXiv:2402.01878},
+  year={2024}
+}
+
+@inproceedings{cao2007learning,
+  title={Learning to rank: from pairwise approach to listwise approach},
+  author={Cao, Zhe and Qin, Tao and Liu, Tie-Yan and Tsai, Ming-Feng and Li, Hang},
+  booktitle={Proceedings of the 24th international conference on Machine learning},
+  pages={129--136},
+  year={2007}
+}
+
+@article{rafailov2023direct,
+  title={Direct preference optimization: Your language model is secretly a reward model},
+  author={Rafailov, Rafael and Sharma, Archit and Mitchell, Eric and Manning, Christopher D and Ermon, Stefano and Finn, Chelsea},
+  journal={Advances in neural information processing systems},
+  volume={36},
+  pages={53728--53741},
+  year={2023}
+}
+
+@inproceedings{zhang2021sample,
+  title={Sample efficient reinforcement learning with REINFORCE},
+  author={Zhang, Junzi and Kim, Jongho and O'Donoghue, Brendan and Boyd, Stephen},
+  booktitle={Proceedings of the AAAI conference on artificial intelligence},
+  volume={35},
+  number={12},
+  pages={10887--10895},
+  year={2021}
+}
+
+@article{schulman2017proximal,
+  title={Proximal policy optimization algorithms},
+  author={Schulman, John and Wolski, Filip and Dhariwal, Prafulla and Radford, Alec and Klimov, Oleg},
+  journal={arXiv preprint arXiv:1707.06347},
+  year={2017}
+}
+
+@article{casper2023open,
+  title={Open problems and fundamental limitations of reinforcement learning from human feedback},
+  author={Casper, Stephen and Davies, Xander and Shi, Claudia and Gilbert, Thomas Krendl and Scheurer, J{\'e}r{\'e}my and Rando, Javier and Freedman, Rachel and Korbak, Tomasz and Lindner, David and Freire, Pedro and others},
+  journal={arXiv preprint arXiv:2307.15217},
+  year={2023}
+}
+
+@article{ziegler2019fine,
+  title={Fine-tuning language models from human preferences},
+  author={Ziegler, Daniel M and Stiennon, Nisan and Wu, Jeffrey and Brown, Tom B and Radford, Alec and Amodei, Dario and Christiano, Paul and Irving, Geoffrey},
+  journal={arXiv preprint arXiv:1909.08593},
+  year={2019}
+}
+
+@article{shao2024deepseekmath,
+  title={Deepseekmath: Pushing the limits of mathematical reasoning in open language models},
+  author={Shao, Zhihong and Wang, Peiyi and Zhu, Qihao and Xu, Runxin and Song, Junxiao and Bi, Xiao and Zhang, Haowei and Zhang, Mingchuan and Li, YK and Wu, Yang and others},
+  journal={arXiv preprint arXiv:2402.03300},
+  year={2024}
+}
+
+@inproceedings{gao2023scaling,
+  title={Scaling laws for reward model overoptimization},
+  author={Gao, Leo and Schulman, John and Hilton, Jacob},
+  booktitle={International Conference on Machine Learning},
+  pages={10835--10866},
+  year={2023},
+  organization={PMLR}
+}
+
+@misc{mantisnlp2023rlhf,
+  author = {{MantisNLP}},
+  title = {Fine-Tuning LLMs with Reinforcement Learning from Human Feedback (RLHF) - Part 3},
+  howpublished = {\url{https://argilla.io/blog/mantisnlp-rlhf-part-3/}},
+  year = {2023},
+  month = {April},
+  note = {Accessed: 2025-01-15}
+}
+
+@article{kilgour2018fr,
+  title={Fr$\backslash$'echet audio distance: A metric for evaluating music enhancement algorithms},
+  author={Kilgour, Kevin and Zuluaga, Mauricio and Roblek, Dominik and Sharifi, Matthew},
+  journal={arXiv preprint arXiv:1812.08466},
+  year={2018}
+}
+
+@article{mittag2021nisqa,
+  title={NISQA: A deep CNN-self-attention model for multidimensional speech quality prediction with crowdsourced datasets},
+  author={Mittag, Gabriel and Naderi, Babak and Chehadi, Assmaa and M{\"o}ller, Sebastian},
+  journal={arXiv preprint arXiv:2104.09494},
+  year={2021}
+}
+
+@article{itu20031534,
+  title={1534-1, method for the subjective assessment of intermediate quality levels of coding systems (mushra),”,”},
+  author={ITU-R, RB},
+  journal={International Telecommunication Union},
+  year={2003}
+}
+
+@article{singhal2023long,
+  title={A long way to go: Investigating length correlations in rlhf},
+  author={Singhal, Prasann and Goyal, Tanya and Xu, Jiacheng and Durrett, Greg},
+  journal={arXiv preprint arXiv:2310.03716},
+  year={2023}
+}
+
+@article{al2023speech,
+  title={Speech emotion recognition: a comprehensive survey},
+  author={Al-Dujaili, Mohammed Jawad and Ebrahimi-Moghadam, Abbas},
+  journal={Wireless Personal Communications},
+  volume={129},
+  number={4},
+  pages={2525--2561},
+  year={2023},
+  publisher={Springer}
+}
+
+@article{zhou2023beyond,
+  title={Beyond one-preference-fits-all alignment: Multi-objective direct preference optimization},
+  author={Zhou, Zhanhui and Liu, Jie and Shao, Jing and Yue, Xiangyu and Yang, Chao and Ouyang, Wanli and Qiao, Yu},
+  journal={arXiv preprint arXiv:2310.03708},
+  year={2023}
+}
+
+@article{li2024omnibench,
+  title={Omnibench: Towards the future of universal omni-language models},
+  author={Li, Yizhi and Zhang, Ge and Ma, Yinghao and Yuan, Ruibin and Zhu, Kang and Guo, Hangyu and Liang, Yiming and Liu, Jiaheng and Wang, Zekun and Yang, Jian and others},
+  journal={arXiv preprint arXiv:2409.15272},
+  year={2024}
+}
+
+
+added by Jenny:
+
+@article{bradley1952rank,
+  title={Rank analysis of incomplete block designs: I. the method of paired comparisons},
+  author={Bradley, Ralph Allan and Terry, Milton E},
+  journal={Biometrika},
+  volume={39},
+  number={3/4},
+  pages={324--345},
+  year={1952},
+  publisher={JSTOR}
+}
+
+@article{plackett1975analysis,
+  title={The analysis of permutations},
+  author={Plackett, Robin L},
+  journal={Journal of the Royal Statistical Society Series C: Applied Statistics},
+  volume={24},
+  number={2},
+  pages={193--202},
+  year={1975},
+  publisher={Oxford University Press}
+}
+
+@book{luce1959individual,
+  title={Individual choice behavior},
+  author={Luce, R Duncan and others},
+  volume={4},
+  year={1959},
+  publisher={Wiley New York}
+}
+
+@article{pan2022effects,
+  title={The effects of reward misspecification: Mapping and mitigating misaligned models},
+  author={Pan, Alexander and Bhatia, Kush and Steinhardt, Jacob},
+  journal={arXiv preprint arXiv:2201.03544},
+  year={2022}
+}
+
+@article{chaudhari2025rlhf,
+  title={Rlhf deciphered: A critical analysis of reinforcement learning from human feedback for llms},
+  author={Chaudhari, Shreyas and Aggarwal, Pranjal and Murahari, Vishvak and Rajpurohit, Tanmay and Kalyan, Ashwin and Narasimhan, Karthik and Deshpande, Ameet and Castro da Silva, Bruno},
+  journal={ACM Computing Surveys},
+  volume={58},
+  number={2},
+  pages={1--37},
+  year={2025},
+  publisher={ACM New York, NY}
+}
+
+@article{kaufmann2024survey,
+  title={A survey of reinforcement learning from human feedback},
+  author={Kaufmann, Timo and Weng, Paul and Bengs, Viktor and H{\"u}llermeier, Eyke},
+  year={2024}
+}
+
+@article{latif2101survey,
+  title={A survey on deep reinforcement learning for audio-based applications. arXiv 2021},
+  author={Latif, S and Cuay{\'a}huitl, H and Pervez, F and Shamshad, F and Ali, HS and Cambria, E},
+  journal={arXiv preprint arXiv:2101.00240}
+}
+
+@article{zhu2021deep,
+  title={Deep audio-visual learning: A survey},
+  author={Zhu, Hao and Luo, Man-Di and Wang, Rui and Zheng, Ai-Hua and He, Ran},
+  journal={International Journal of Automation and Computing},
+  volume={18},
+  number={3},
+  pages={351--376},
+  year={2021},
+  publisher={Springer}
+}
+
+@article{liang2022holistic,
+  title={Holistic evaluation of language models},
+  author={Liang, Percy and Bommasani, Rishi and Lee, Tony and Tsipras, Dimitris and Soylu, Dilara and Yasunaga, Michihiro and Zhang, Yian and Narayanan, Deepak and Wu, Yuhuai and Kumar, Ananya and others},
+  journal={arXiv preprint arXiv:2211.09110},
+  year={2022}
+}
+
+@article{yang2021superb,
+  title={Superb: Speech processing universal performance benchmark},
+  author={Yang, Shu-wen and Chi, Po-Han and Chuang, Yung-Sung and Lai, Cheng-I Jeff and Lakhotia, Kushal and Lin, Yist Y and Liu, Andy T and Shi, Jiatong and Chang, Xuankai and Lin, Guan-Ting and others},
+  journal={arXiv preprint arXiv:2105.01051},
+  year={2021}
+}
+
+@article{xu2025qwen2,
+  title={Qwen2. 5-omni technical report},
+  author={Xu, Jin and Guo, Zhifang and He, Jinzheng and Hu, Hangrui and He, Ting and Bai, Shuai and Chen, Keqin and Wang, Jialin and Fan, Yang and Dang, Kai and others},
+  journal={arXiv preprint arXiv:2503.20215},
+  year={2025}
+}
+
+@article{hurst2024gpt,
+  title={Gpt-4o system card},
+  author={Hurst, Aaron and Lerer, Adam and Goucher, Adam P and Perelman, Adam and Ramesh, Aditya and Clark, Aidan and Ostrow, AJ and Welihinda, Akila and Hayes, Alan and Radford, Alec and others},
+  journal={arXiv preprint arXiv:2410.21276},
+  year={2024}
+}
+
+@article{team2024gemini,
+  title={Gemini 1.5: Unlocking multimodal understanding across millions of tokens of context},
+  author={Team, Gemini and Georgiev, Petko and Lei, Ving Ian and Burnell, Ryan and Bai, Libin and Gulati, Anmol and Tanzer, Garrett and Vincent, Damien and Pan, Zhufeng and Wang, Shibo and others},
+  journal={arXiv preprint arXiv:2403.05530},
+  year={2024}
+}
+
+@article{ginsparg2021lessons,
+  title={Lessons from arXiv’s 30 years of information sharing},
+  author={Ginsparg, Paul},
+  journal={Nature Reviews Physics},
+  volume={3},
+  number={9},
+  pages={602--603},
+  year={2021},
+  publisher={Nature Publishing Group UK London}
+}
+
+@article{sutton2017popularity,
+  title={Popularity of arxiv. org within computer science},
+  author={Sutton, Charles and Gong, Linan},
+  journal={arXiv preprint arXiv:1710.05225},
+  year={2017}
+}
