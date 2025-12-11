@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "document_embedding_analysis"
+version = "0.1.0"
+description = "Semantic comparison of scientific documents using dual embedding models."
+requires-python = ">=3.8"
+dependencies = [
+    "torch",
+    "python-dotenv",
+    "langchain-community",
+    "openai",
+    "tiktoken",
+    "pdfminer.six",
+    "beautifulsoup4",
+    "requests",
+    "evaluate",
+    "loguru",
+    "scipy",
+    "scikit-learn",
+    "sentence-transformers"
+]
+
+[tool.setuptools]
+# Map 'document_embedding_analysis' to root and 'common' to common
+package-dir = { "document_embedding_analysis" = ".", "common" = "common" }
+
+# Explicitly list the packages (no auto-discovery needed)
+packages = ["document_embedding_analysis", "common"]
