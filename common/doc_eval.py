@@ -32,8 +32,8 @@ import sys
 import logging
 
 
-from common.env.env import EnvironmentManager
-from common.config import (
+from .env.env import EnvironmentManager
+from .config import (
     HUGGINGFACE_EMBEDDING_MODEL_NAME,
     HUGGINGFACE_EMBEDDING_PATH,
     HUGGINGFACE_EMBEDDING_PREFIX,
@@ -41,7 +41,7 @@ from common.config import (
 )
 
 # ─── text metrics (skim-fast heuristics if lib missing) ───────────────
-from common.metrics import compute_rouge_scores, article_entity_recall
+from .metrics import compute_rouge_scores, article_entity_recall
 
 from sentence_transformers import SentenceTransformer
 embedding_function = SentenceTransformer('paraphrase-MiniLM-L6-v2')
@@ -51,10 +51,15 @@ os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 try:
     from config import HF_TOKEN
-
-    _HF_API_TASK = "text2text-generation"
 except ImportError:
-    HF_TOKEN = None
+    try:
+        from .config import HF_TOKEN
+    except ImportError:
+        HF_TOKEN = None
+
+try:
+    _HF_API_TASK = "text2text-generation"
+except NameError:
     _HF_API_TASK = None
 
 
@@ -322,7 +327,8 @@ class PrometheusEvaluator:
                     )
                 except Exception as exc:  # pragma: no cover
                     logging.warning("Prometheus v2 HF API unavailable – %s", exc)
-            else:
+            # Only load local model if no other backend is available (OpenAI or shared LM)
+            elif self.openai_model is None and self.lm is None:
                 try:
                     from transformers import pipeline  # type: ignore
 
@@ -1063,6 +1069,14 @@ def temporary_transform_dea_into_markdown(dea_content: str) -> str:
         markdown_content += "\n"
     return markdown_content
 
+def count_citations(text: str) -> int:
+    """Count citations in text (supports [n] and \cite{...})."""
+    # Match [1], [12], etc.
+    numeric_citations = len(re.findall(r"\[\d+\]", text))
+    # Match \cite{...}
+    latex_citations = len(re.findall(r"\\cite\{[^}]+\}", text))
+    return numeric_citations + latex_citations
+
 def evaluate_document(
     document_content: str,
     turns: List | None = None,
@@ -1075,6 +1089,7 @@ def evaluate_document(
     prometheus_version: str = "v2.0",
     dea_embedding_backend: str | None = None,
     dea_embedding_model: str | None = None,
+    golden_entities: List[str] | None = None,
 ):
     """
     Evaluate a document using various metrics from costorm_eval.
@@ -1082,6 +1097,7 @@ def evaluate_document(
     Args:
         document_path: Path to the document to evaluate
         reference_path: Optional path to a reference document for comparison
+        golden_entities: Optional pre-computed list of entities from the reference document
     """
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
@@ -1110,10 +1126,6 @@ def evaluate_document(
             openai_model=openai_model,
             lm=None,
         )
-        if openai_model:
-            # Avoid slow HF model/pipeline initialization when using OpenAI
-            prometheus_eval._hf_api = None
-            prometheus_eval._hf_pipe = None
 
         logger.info("Getting Prometheus scores...")
         try:
@@ -1173,9 +1185,24 @@ def evaluate_document(
 
             rouge_scores = scorer.score(reference_content, document_content)
 
+            # Calculate entity recall
+            # We remove the try-except block as requested, but ensure inputs are valid
+            if reference_content and document_content:
+                entity_recall = article_entity_recall(
+                    golden_article=reference_content,
+                    predicted_article=document_content,
+                    golden_entities=golden_entities
+                )
+            else:
+                entity_recall = 0.0
+
+            # Count citations
+            citation_count = count_citations(document_content)
+
             # Convert to the expected format
             article_metrics = {
-                # "entity_recall": 0.0,  # Keep the original entity recall
+                "entity_recall": entity_recall,
+                "citation_count": citation_count,
                 "rouge_scores": {
                     "rouge-1": {
                         "p": rouge_scores["rouge1"].precision,
@@ -1218,6 +1245,7 @@ def evaluate_document(
 
     print("\nArticle Quality Metrics:")
     print(f"Entity Recall (0-1 scale): {article_metrics.get('entity_recall', 0):.2f}")
+    print(f"Citation Count: {article_metrics.get('citation_count', 0)}")
     print("\nROUGE Scores (precision, recall, F1):")
     for metric, scores in article_metrics.get("rouge_scores", {}).items():
         print(f"{metric}:")

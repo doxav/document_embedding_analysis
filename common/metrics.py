@@ -42,11 +42,17 @@ def heading_soft_recall(golden_headings: List[str], predicted_headings: List[str
 
 def extract_entities_from_list(l):
     entities = []
-    for sent in l:
-        if len(sent) == 0:
-            continue
-        sent = Sentence(sent)
-        tagger.predict(sent)
+    # Filter empty strings and create Sentence objects
+    sentences = [Sentence(s) for s in l if len(s.strip()) > 0]
+    
+    if not sentences:
+        return []
+
+    # Predict in batches to speed up processing
+    # mini_batch_size=32 is a reasonable default for CPU
+    tagger.predict(sentences, mini_batch_size=32, verbose=True)
+
+    for sent in sentences:
         entities.extend([e.text for e in sent.get_spans('ner')])
 
     entities = list(set([e.lower() for e in entities]))
@@ -104,6 +110,14 @@ def article_entity_recall(golden_entities: Optional[List[str]] = None,
         return 1
     else:
         return len(g.intersection(p)) / len(g)
+
+
+def get_entities_from_article(article: str) -> List[str]:
+    """
+    Extract entities from an article string.
+    """
+    sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', article)
+    return extract_entities_from_list(sentences)
 
 
 def compute_rouge_scores(golden_answer: str, predicted_answer: str):

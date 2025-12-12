@@ -11,7 +11,10 @@ from typing import List, SupportsFloat, Any, Tuple, Dict
 from dataclasses import asdict
 from langchain_core.messages import SystemMessage, HumanMessage
 
-from config import *
+try:
+    from config import *
+except ImportError:
+    from ...config import *
 
 # from attr import dataclass, field
 # import PyPDF2
@@ -24,7 +27,7 @@ import traceback
 import json
 import requests
 
-from common.env.env import Environment
+from ..env import Environment
 
 # import a function from langchain which could embed a text into a vector using OpenAI ada-002 or HuggingFace
 import langchain

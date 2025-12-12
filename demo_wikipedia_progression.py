@@ -8,6 +8,10 @@ import numpy as np
 # Helper to print scores nicely
 def print_scores(stage_name, scores):
     dea = scores.get("dea_evaluation_scores") or {}
+    prom = scores.get("prometheus_scores") or {}
+    wh = scores.get("writehere_scores") or {}
+    art = scores.get("article_metrics") or {}
+
     print(f"\n=== {stage_name} ===")
     metrics = {
         "Plan Similarity": dea.get("plan_embedding_similarity"),
@@ -26,7 +30,29 @@ def print_scores(stage_name, scores):
         else:
             print(f"  {k:<20}: {val}")
 
+    if prom:
+        print("\n  [Prometheus]")
+        for k, v in prom.items():
+            print(f"  {k:<20}: {v:.4f}")
+
+    if wh:
+        print("\n  [WriteHere]")
+        for k, v in wh.items():
+            print(f"  {k:<20}: {v:.4f}")
+
+    if art:
+        print("\n  [Article Quality]")
+        if "entity_recall" in art:
+            print(f"  {'Entity Recall':<20}: {art['entity_recall']:.4f}")
+        if "citation_count" in art:
+            print(f"  {'Citation Count':<20}: {art['citation_count']}")
+        if "rouge_scores" in art:
+            print(f"  {'ROUGE-L F1':<20}: {art['rouge_scores']['rouge-l']['f']:.4f}")
+
 def main():
+    # Configuration
+    USE_ENHANCED_METRICS = True
+
     # Load solution
     solution_path = Path('output/wikipedia/Transformer (machine learning model).json')
     if not solution_path.exists():
@@ -132,6 +158,15 @@ def main():
         ("Stage 5: Full (Content + Plan + Many Bib)", stage5_content),
     ]
 
+    # Pre-compute golden entities to speed up evaluation
+    from common.metrics import get_entities_from_article
+    from common.doc_eval import temporary_transform_dea_into_markdown
+    
+    print("Pre-computing golden entities (this runs NER once)...")
+    reference_content = temporary_transform_dea_into_markdown(solution)
+    golden_entities = get_entities_from_article(reference_content)
+    print(f"Found {len(golden_entities)} entities in reference.")
+
     import os
     backends = ["hf"]
     if os.getenv("OPENAI_API_KEY"):
@@ -154,8 +189,10 @@ def main():
                     solution=solution,
                     content_type="latex",
                     skip_dea=False,
-                    use_enhanced_metrics=False,
+                    use_enhanced_metrics=USE_ENHANCED_METRICS,
                     dea_embedding_backend=backend,
+                    openai_model="gpt-4o" if os.getenv("OPENAI_API_KEY") else None,
+                    golden_entities=golden_entities
                 )
                 print_scores(name, scores)
             except Exception as e:
