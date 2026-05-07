@@ -1,96 +1,255 @@
 # 📄 Document Embedding Analysis
-*Semantic comparison of scientific documents using dual embedding models and advanced text similarity metrics.*
 
-## Install
+Semantic comparison and feedback signals for long-form scientific and technical document generation.
 
-```
+This project builds structured target documents from papers, patents, and Wikipedia-like sources, then compares generated documents against those targets at multiple levels: outline/plan, section content, references, citation coverage, and general text quality. It is intended both for offline benchmarking and for use as a reward/feedback component during generative optimization.
+
+---
+
+## Table of Contents
+
+1. [Scientific Purpose](#scientific-purpose)
+2. [What the Project Measures](#what-the-project-measures)
+3. [Installation](#installation)
+4. [Environment Configuration](#environment-configuration)
+5. [Supported Document Types](#supported-document-types)
+6. [Dataset Generation Pipeline](#dataset-generation-pipeline)
+7. [Output JSON Schema](#output-json-schema)
+8. [How to Generate Target Datasets](#how-to-generate-target-datasets)
+9. [How to Compare a Generated Document with a Target](#how-to-compare-a-generated-document-with-a-target)
+10. [Using Scores as Feedback for Generative Optimization](#using-scores-as-feedback-for-generative-optimization)
+11. [Low-Level DEA Comparison Helpers](#low-level-dea-comparison-helpers)
+12. [Configuration Parameters](#configuration-parameters)
+13. [Adding New Scientific Documents](#adding-new-scientific-documents)
+14. [Adding a New Document Type](#adding-a-new-document-type)
+15. [Utility Scripts](#utility-scripts)
+16. [Testing](#testing)
+17. [Troubleshooting](#troubleshooting)
+18. [Recommended Workflows](#recommended-workflows)
+
+---
+
+## Scientific Purpose
+
+Large language models can generate long documents from short prompts, titles, abstracts, or research goals. The central question addressed here is:
+
+> Given only a document title, abstract, topic, or intent, how well can a model reconstruct the document’s structure, section-level content, and bibliography?
+
+The project supports this by converting reference documents into a structured **DEA target JSON**. A generated document can then be compared with the target not only through generic text metrics such as ROUGE or MAUVE, but also through document-aware criteria:
+
+* Does the generated outline resemble the reference outline?
+* Are section headings semantically aligned?
+* Is the generated content close to the target content?
+* Are references and bibliographic resources covered?
+* Are citations placed in the right sections?
+* Is the generated document useful as a scientific or technical reconstruction?
+
+The intended uses are:
+
+* benchmarking long-document generation systems;
+* evaluating semantic structure preservation;
+* measuring citation and bibliography coverage;
+* producing scalar or multi-objective feedback for optimization loops;
+* comparing different prompting, planning, or retrieval strategies.
+
+---
+
+## What the Project Measures
+
+The project distinguishes between **DEA document-aware evaluation** and generic text similarity metrics.
+
+### DEA evaluation dimensions
+
+| Dimension                   | What it evaluates                                           | Typical signal                                    |
+| --------------------------- | ----------------------------------------------------------- | ------------------------------------------------- |
+| Plan / outline              | Similarity between target and generated section structure   | Plan embedding similarity, heading similarity     |
+| Sections                    | Alignment of generated headings with target headings        | Section-level embedding similarity                |
+| Content                     | Similarity of generated section bodies to reference content | Content embedding similarity                      |
+| References / bibliography   | Whether the generated resources match target resources      | Resource embedding similarity, Hungarian matching |
+| Citation coverage           | Whether resources are cited and used in relevant sections   | Citation/resource coverage scores                 |
+| Length and structure ratios | Whether the generated document has comparable granularity   | Section-count and content-length ratios           |
+
+These dimensions are more informative for long-form generation than a single lexical overlap score. A generated article can have low ROUGE but good semantic structure, or high lexical overlap but poor bibliography coverage.
+
+### Generic text metrics
+
+The project may also compute:
+
+| Metric                              | Role                                                               | Limitation                                                           |
+| ----------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| ROUGE / ROUGE-L                     | Lexical overlap and longest common subsequence similarity          | Sensitive to wording; weak for semantic paraphrase                   |
+| MAUVE                               | Distribution-level divergence between generated and reference text | Useful for global text quality, less interpretable per document part |
+| Cosine similarity                   | Semantic similarity in embedding space                             | Depends on embedding model and chunking strategy                     |
+| Prometheus / WriteHere-style scores | Optional rubric-based article-quality scores                       | Usually requires an LLM or heuristic fallback                        |
+
+The README intentionally treats ROUGE and MAUVE as supplementary metrics. The main value of this repository is the DEA structured comparison: plan, sections, content, references, and citations.
+
+---
+
+## Installation
+
+The project supports a lightweight base install and optional feature groups.
+
+```bash
 pip install -e .                    # lightweight base
 pip install -e '.[comparison]'       # MAUVE / ROUGE comparison helpers
-pip install -e '.[local-embeddings]' # HF local embeddings
-pip install -e '.[pandoc]'           # Markdown -> LaTeX conversion
+pip install -e '.[local-embeddings]' # local HuggingFace / Torch embeddings
+pip install -e '.[pandoc]'           # Markdown -> LaTeX conversion via pypandoc
 pip install -e '.[full]'             # everything
 ```
 
-## 🎯 Scientific Purpose
+For older environments that do not use optional dependencies, the legacy installation path is:
 
-This project addresses a challenge in evaluating large language models: **Given only a document's title and abstract, how well can an LLM reconstruct the document's structure, content and bibliography?**
+```bash
+pip install -r requirements.txt
+```
 
-The system extracts structured content from diverse scientific and technical documents, generates dual embeddings (OpenAI + HuggingFace), and performs comprehensive semantic comparison using:
-
-- **ROUGE-L**: Measures lexical overlap and longest common subsequence similarity
-- **MAUVE**: Quantifies text distribution divergence between generated and reference content
-- **Cosine Similarity**: Computes semantic similarity in embedding space
-- **Hungarian Algorithm**: Optimally matches bibliographic references across documents
-
-This dataset enables researchers to benchmark LLM content generation capabilities, evaluate semantic structure preservation, and analyze citation coverage in generated scientific text.
-
-## 📚 Supported Document Types
-
-The system processes five scientific document formats through specialized extractors:
-
-**Current Dataset:** 99 LaTeX papers, 10 arXiv PDFs, 10 Wikipedia URLs, 25 Patents, 0 FreshWiki dumps
-
-| Type | Identifier | Description | Input Format | Key Features |
-|------|------------|-------------|--------------|--------------|
-| **LaTeX** | `l` | Academic papers with BibTeX | `.tex` + `.bib` files | Hierarchical section numbering (1, 1.1, 1.1.1), `\cite{}` extraction |
-| **arXiv** | `a` | PDF research papers | PDF files | Regex-based abstract/reference extraction, citation pattern `[N]` |
-| **Wikipedia** | `w` | Wiki articles (live) | URLs | BeautifulSoup scraping, hierarchical headings (`h2 Title - Subtitle`) |
-| **FreshWiki** | `f` | Wiki articles (JSON dumps) | `.json` files | Pre-formatted Wikipedia content from dumps |
-| **Patents** | `p` | Patent documents | Tab-delimited `.txt` | Multi-claim parsing, international patent number extraction (US/EP/WO/JP/CN/DE) |
-
-### Document Processing Pipeline
-
-1. **Extraction**: Type-specific parser extracts title, abstract, sections, content, and references
-2. **Chunking**: Sections >512 tokens are split using `RecursiveCharacterTextSplitter`
-3. **Title Generation**: GPT-4o-mini auto-generates 7-word max titles for split sections (except references)
-4. **Dual Embedding**: Both OpenAI (`text-embedding-ada-002`) and HuggingFace (`nomic-embed-text-v1`) models generate embeddings
-5. **Reference Tracking**: Citations mapped to bibliography with resource IDs and embeddings
-6. **JSON Export**: Structured output with plan/content embeddings saved to `output/{type}/`
-
-## 💻 How to Run the Code
-
-### 1. Installation
+Recommended development setup:
 
 ```bash
 git clone https://github.com/doxav/document_embedding_analysis.git
 cd document_embedding_analysis
-pip install -r requirements.txt
+python -m venv .venv
+source .venv/bin/activate
+pip install -e '.[comparison]'
 ```
 
-### 2. Environment Configuration
+Install `.[local-embeddings]` only when you need to generate HuggingFace embeddings locally.
 
-**Required**: OpenAI API key for embeddings and title generation
+---
+
+## Environment Configuration
+
+Create a `.env` file when using OpenAI embeddings or LLM-based title generation.
 
 ```bash
-# Copy template
 cp .env_template .env
+```
 
-# Edit .env and add your key:
+Then set:
+
+```bash
 OPENAI_API_KEY=sk-your-key-here
 ```
 
-The system uses:
-- **OpenAI API**: `text-embedding-ada-002` embeddings + GPT-4o-mini for title generation
-- **HuggingFace**: `nomic-ai/nomic-embed-text-v1` (local inference, auto-detects CUDA)
+The project can use:
 
-### 3. Running the Extraction
+* OpenAI embeddings, usually `text-embedding-ada-002`;
+* HuggingFace embeddings, usually `nomic-ai/nomic-embed-text-v1`;
+* GPT-based title generation for splitting long sections, depending on the configured extraction path.
+
+Local HuggingFace embedding generation may require Torch and a CUDA-compatible environment for reasonable speed.
+
+---
+
+## Supported Document Types
+
+The system processes five scientific or technical document formats through specialized extractors.
+
+**Documented dataset snapshot:** 99 LaTeX papers, 10 arXiv PDFs, 10 Wikipedia URLs, 25 patents, 0 FreshWiki dumps.
+
+| Type      | Identifier | Description                   | Input Format          | Key Features                                          |
+| --------- | ---------: | ----------------------------- | --------------------- | ----------------------------------------------------- |
+| LaTeX     |        `l` | Academic papers with BibTeX   | `.tex` + `.bib` files | Hierarchical section numbering, `\cite{}` extraction  |
+| arXiv     |        `a` | PDF research papers           | PDF files             | Abstract/reference extraction, citation pattern `[N]` |
+| Wikipedia |        `w` | Live Wikipedia articles       | URLs                  | BeautifulSoup scraping, hierarchical headings         |
+| FreshWiki |        `f` | Wikipedia-style JSON articles | `.json` files         | Preformatted article content from dumps               |
+| Patents   |        `p` | Patent documents              | Tab-delimited `.txt`  | Title, description, claims, patent-number extraction  |
+
+---
+
+## Dataset Generation Pipeline
+
+The extraction pipeline converts heterogeneous source documents into a common DEA JSON format.
+
+1. **Extraction**
+   Type-specific parsers extract title, abstract/context, headings, section content, and references.
+
+2. **Chunking**
+   Sections longer than `MAX_EMBEDDING_TOKEN_LENGTH` are split into smaller chunks.
+
+3. **Heading repair / title generation**
+   Split sections receive generated or suffixed headings. Reference sections keep the original heading with numeric suffixes.
+
+4. **Reference tracking**
+   Citations are mapped to `resource_id` values where possible.
+
+5. **Dual embedding generation**
+   The system can generate both OpenAI and HuggingFace embeddings for headings, section content, and resources.
+
+6. **JSON export**
+   Structured target files are written to `output/{type}/`.
+
+---
+
+## Output JSON Schema
+
+Each generated target is a DEA JSON object. The exact fields may vary by document type, but the expected structure is:
+
+```json
+{
+  "id": "uuid-or-source-id",
+  "title": "Document title",
+  "abstract": "Document abstract or context",
+  "plan": [
+    {
+      "section_id": 1,
+      "section": "Introduction",
+      "content": "Section text...",
+      "section_embedding_1": [0.1, 0.2],
+      "section_embedding_2": [0.1, 0.2],
+      "content_embedding_1": [0.1, 0.2],
+      "content_embedding_2": [0.1, 0.2],
+      "resources_used": [1, 3]
+    }
+  ],
+  "resources": [
+    {
+      "resource_id": 1,
+      "resource_description": "Reference or citation text",
+      "resource_embedding_1": [0.1, 0.2],
+      "resource_embedding_2": [0.1, 0.2]
+    }
+  ],
+  "plan_embedding_1": [0.1, 0.2],
+  "plan_embedding_2": [0.1, 0.2],
+  "embedding1_model": "text-embedding-ada-002",
+  "embedding2_model": "nomic-embed-text-v1",
+  "success": true
+}
+```
+
+The two embedding families are conventionally named:
+
+* `_embedding_1`: OpenAI embedding;
+* `_embedding_2`: HuggingFace embedding.
+
+---
+
+## How to Generate Target Datasets
+
+Run the interactive extraction script:
 
 ```bash
 python main.py
 ```
 
-**Interactive Prompt Options**:
-- `Enter` (empty): Process all document types (LaTeX, arXiv, Wikipedia, Patents, FreshWiki)
-- `1`: Process one example of each type, then stop
-- `l`: Process only LaTeX documents
-- `a`: Process only arXiv PDFs
-- `w`: Process only Wikipedia URLs
-- `p`: Process only Patent files
-- `f`: Process only FreshWiki JSON dumps
+Prompt options:
 
-**Example Session**:
+```text
+Enter  -> process all document types
+1      -> process one example of each type
+l      -> process LaTeX documents
+a      -> process arXiv PDFs
+w      -> process Wikipedia URLs
+p      -> process patent files
+f      -> process FreshWiki JSON dumps
 ```
-Generate for all (Enter), 1 for each type (1), or just an example of a given type 
+
+Example:
+
+```text
+Generate for all (Enter), 1 for each type (1), or just an example of a given type
 (Latex: L, Arxiv: A, Wikipedia: W, Patent: P, FreshWiki: F): w
 
 [INFO] Title: Large language model
@@ -98,238 +257,480 @@ Generate for all (Enter), 1 for each type (1), or just an example of a given typ
 [INFO] 1/15 - created section + content embeddings for h2 Definitions
 [INFO] Successfully extracted plan and content
 [INFO] Written to file: output/wikipedia/Large language model.json
-[INFO] Time taken: 2mins 34.5s
 ```
 
-### 4. Running Comparison Tests
+Outputs are written to:
 
-```bash
-python tests.py
+```text
+output/
+├── latex/
+├── arxiv/
+├── wikipedia/
+├── freshwiki/
+└── patent/
 ```
 
-Tests compare identical and different documents using all similarity metrics. Requires existing JSON outputs in `output/` directories.
+### Generating a target for optimization
 
-## ⚙️ Configuration Parameters
+A typical feedback loop needs:
 
-### Embedding Settings (`common/config.py`)
+1. a target DEA JSON generated from a reference document;
+2. a candidate document generated by an LLM or agent;
+3. an evaluator call that returns structured similarity scores;
+4. a scalar or multi-objective score used by the optimizer.
+
+For example, the target can be generated once from a Wikipedia article, paper, or patent, then reused across many candidate generations.
+
+---
+
+## How to Compare a Generated Document with a Target
+
+Use `evaluate_document` when your candidate is raw Markdown or LaTeX and your target is a DEA JSON object.
 
 ```python
-# Token limit for single embedding (hard constraint)
+import json
+from common.doc_eval import evaluate_document
+
+with open("output/wikipedia/Large language model.json", encoding="utf-8") as f:
+    solution = json.load(f)
+
+candidate_markdown = """
+# Large language model
+
+## Introduction
+A large language model is a neural language model trained on large text corpora.
+
+## Architecture
+Most modern LLMs use transformer architectures.
+
+## Applications
+They are used for question answering, summarization, coding, and writing.
+"""
+
+scores = evaluate_document(
+    document_content=candidate_markdown,
+    solution=solution,
+    content_type="markdown",
+    skip_dea=False,
+    use_enhanced_metrics=False,
+    dea_embedding_backend="hf",   # or "openai"
+)
+
+print(scores["dea_evaluation_scores"])
+print(scores["article_metrics"])
+```
+
+Use `content_type="latex"` for a LaTeX candidate:
+
+```python
+scores = evaluate_document(
+    document_content=latex_source,
+    solution=solution,
+    content_type="latex",
+    skip_dea=False,
+)
+```
+
+### Key `evaluate_document` parameters
+
+| Parameter               | Meaning                                                 |
+| ----------------------- | ------------------------------------------------------- |
+| `document_content`      | Candidate document text                                 |
+| `solution`              | DEA target JSON dictionary                              |
+| `content_type`          | Usually `"markdown"` or `"latex"`                       |
+| `skip_dea`              | If `True`, skip target-distance evaluation              |
+| `use_enhanced_metrics`  | If `True`, attempt Prometheus / WriteHere-style scoring |
+| `openai_model`          | Optional model for LLM-based enhanced scoring           |
+| `dea_embedding_backend` | `"hf"`, `"openai"`, or auto-detect                      |
+| `dea_embedding_model`   | Optional override for the embedding model               |
+| `skip_entity_recall`    | Avoid entity recall extraction when not needed          |
+| `golden_entities`       | Optional precomputed target entities                    |
+
+`evaluate_document` is the recommended high-level API for feedback during generation because it can return DEA target-distance scores and general article metrics from a single call.
+
+---
+
+## Using Scores as Feedback for Generative Optimization
+
+DEA scores can be used directly as reward signals or optimization feedback.
+
+A common pattern is to compute all available metrics, then define a task-specific scalar objective.
+
+```python
+def score_candidate(candidate_markdown: str, solution: dict) -> float:
+    scores = evaluate_document(
+        document_content=candidate_markdown,
+        solution=solution,
+        content_type="markdown",
+        skip_dea=False,
+        use_enhanced_metrics=False,
+        dea_embedding_backend="hf",
+        skip_entity_recall=True,
+    )
+
+    dea = scores.get("dea_evaluation_scores", {})
+    article = scores.get("article_metrics", {})
+
+    plan = (
+        dea.get("plan_embedding_similarity")
+        or dea.get("section_total_similarity")
+        or dea.get("global_plan_embedding_similarity")
+        or 0.0
+    )
+    content = (
+        dea.get("plan_contents_embedding_similarity")
+        or dea.get("content_total_similarity")
+        or dea.get("global_plan_contents_embedding_similarity")
+        or 0.0
+    )
+    references = (
+        dea.get("plan_resources_embedding_similarity")
+        or dea.get("resources_citation_coverage_score")
+        or dea.get("bibliography_coverage1")
+        or 0.0
+    )
+    rouge_l = (
+        article.get("rouge_scores", {})
+        .get("rouge-l", {})
+        .get("f", 0.0)
+    )
+
+    return (
+        0.30 * plan
+        + 0.45 * content
+        + 0.15 * references
+        + 0.10 * rouge_l
+    )
+```
+
+Suggested optimization objectives:
+
+| Objective                         | Suggested weighting                                                     |
+| --------------------------------- | ----------------------------------------------------------------------- |
+| Outline reconstruction            | High plan / section-heading weight                                      |
+| Scientific article reconstruction | High content + reference weight                                         |
+| Citation-aware generation         | High bibliography and citation-coverage weight                          |
+| Retrieval-augmented generation    | High reference coverage + content similarity                            |
+| General writing quality           | ROUGE / entity recall / enhanced rubric scores as supplementary metrics |
+
+For multi-objective optimization, keep the dimensions separate instead of reducing them to a scalar:
+
+```python
+def score_candidate_multiobjective(candidate_markdown: str, solution: dict) -> dict:
+    scores = evaluate_document(
+        candidate_markdown,
+        solution=solution,
+        content_type="markdown",
+        skip_dea=False,
+        use_enhanced_metrics=False,
+    )
+    dea = scores.get("dea_evaluation_scores", {})
+    article = scores.get("article_metrics", {})
+    return {
+        "dea": dea,
+        "article": article,
+    }
+```
+
+---
+
+## Low-Level DEA Comparison Helpers
+
+Use low-level helpers when both the target and candidate are already DEA JSON documents with embeddings.
+
+```python
+import json
+from common.test_utils import compare_documents_sections, compare_documents_content
+
+with open("output/wikipedia/target.json", encoding="utf-8") as f:
+    target = json.load(f)
+
+with open("output/wikipedia/candidate.json", encoding="utf-8") as f:
+    candidate = json.load(f)
+
+plan_scores = compare_documents_sections(target, candidate)
+content_scores = compare_documents_content(target, candidate)
+
+print(plan_scores)
+print(content_scores)
+```
+
+These functions are lower-level than `evaluate_document`:
+
+* `compare_documents_sections(...)` compares section headings / plan structure;
+* `compare_documents_content(...)` compares section body content;
+* both include embedding similarities and bibliography coverage where available.
+
+Use these helpers for debugging DEA JSON extraction or comparing two already-embedded document representations.
+
+---
+
+## Configuration Parameters
+
+Important settings live in `common/config.py`.
+
+```python
 MAX_EMBEDDING_TOKEN_LENGTH = 512
-
-# Enable parallel batch embedding (recommended: True)
-# Falls back to sequential if HuggingFace OOM occurs
 ALLOW_parallel_gen_embed_section_content = True
-
-# Embedding models (change if needed)
 OPENAI_EMBEDDING_MODEL_NAME = "text-embedding-ada-002"
 HUGGINGFACE_EMBEDDING_PATH = "nomic-ai/nomic-embed-text-v1"
+HUGGINGFACE_EMBEDDING_MODEL_NAME = "nomic-embed-text-v1"
 ```
 
-### Processing Behavior
+### Processing behavior
 
-- **Minimum Sections**: Documents must have ≥3 sections after chunking (validation enforced)
-- **Token Counting**: Uses `tiktoken` with `gpt-4o-mini` encoding
-- **Parallel Batching**: Automatically splits batches exponentially (n *= 2) on OOM errors
-- **Reference Sections**: Split sections append ` 1`, ` 2` suffixes (preserves original heading)
-- **Other Sections**: Use GPT-4o-mini to generate concise titles (max 7 words)
+* Documents must contain enough sections after extraction and chunking to be meaningful.
+* Sections above the embedding token limit are split recursively.
+* Reference sections are split with numeric suffixes.
+* Non-reference split sections may receive generated concise headings.
+* Parallel embedding generation can speed up extraction but may require memory tuning.
 
-### Output Structure
+---
 
-```
-output/
-├── latex/          # .tex processed files
-├── arxiv/          # PDF processed files  
-├── wikipedia/      # Live Wikipedia scrapes
-├── freshwiki/      # JSON Wikipedia dumps
-└── patent/         # Patent document outputs
-```
+## Adding New Scientific Documents
 
-Each JSON contains: `id`, `title`, `abstract`, `plan[]`, `resources[]`, `plan_embedding_1/2`, embedding model metadata, and `success` status.
+### LaTeX papers
 
-## ➕ Adding New Scientific Documents
+Place `.tex` and `.bib` pairs in `data/latex/`:
 
-### Quick Add to Existing Types
-
-**LaTeX Papers**: Place `.tex` + `.bib` pairs in `data/latex/` (manually) or use automated downloader:
 ```bash
-# Manual addition
 cp your_paper.tex data/latex/
 cp your_paper.bib data/latex/
-python main.py  # Select 'l'
+python main.py   # select l
+```
 
-# Or download from arXiv automatically
+Or use the downloader:
+
+```bash
 python scripts/select_arxiv_latex.py --max-papers 10
 ```
 
-**arXiv PDFs**: Place PDFs in `data/arxiv/`
+### arXiv PDFs
+
+Place PDFs in `data/arxiv/`:
+
 ```bash
 cp paper.pdf data/arxiv/
-python main.py  # Select 'a'
+python main.py   # select a
 ```
 
-**Wikipedia Articles**: Edit `data/wiki_urls.txt` (one URL per line)
+### Wikipedia articles
+
+Add one URL per line to `data/wiki_urls.txt`:
+
 ```bash
 echo "https://en.wikipedia.org/wiki/Your_Topic" >> data/wiki_urls.txt
-python main.py  # Select 'w'
+python main.py   # select w
 ```
 
-**Patents**: Split EPO extract files or place tab-delimited `.txt` files in `data/patents/`
+### Patents
+
+Place tab-delimited patent text files in `data/patents/`, or split an EPO extract:
+
 ```bash
-# Split EPO extract into individual patents
 python scripts/split_epo_extract.py data/extract.txt data/patents
-
-# Format: \tLANG\tSECTION_TYPE\tCONTENT
-# Required sections: TITLE, DESCR, CLAIM
 ```
 
-### Creating a New Document Type
+Expected patent sections include:
 
-To add support for a new scientific format (e.g., PubMed XML, journal articles):
-
-1. **Define Document Type** in `common/utils.py`:
-```python
-class DocType(Enum):
-    # ... existing types
-    PUBMED = "pubmed"
+```text
+TITLE
+DESCR
+CLAIM
 ```
 
-2. **Create Document Processor** as `common/doc_pubmed.py`:
+---
+
+## Adding a New Document Type
+
+To add a new format such as PubMed XML or journal HTML:
+
+1. Add a new enum entry in `common/utils.py`.
+2. Create a new processor in `common/doc_newtype.py`.
+3. Implement `extract_paper_data()`.
+4. Register the new type in `main.py`.
+5. Add tests with a small fixture.
+
+Example skeleton:
+
 ```python
 from common.doc_base import Document
 from common.utils import DocType
 
+
 class DocPubmed(Document):
     def __init__(self, source: str, logger, output_dir=None):
         super().__init__(source, DocType.PUBMED, logger, output_dir)
-    
+
     def extract_paper_data(self):
-        # Return dict with keys: title, abstract, sections (dict), references (list)
-        # sections dict format: {"Section Heading": "content text", ...}
-        # references list format: [{"resource_id": 1, "resource_description": "..."}, ...]
-        
         paper_dict = {
             "title": "...",
             "abstract": "...",
-            "Section 1": "content...",
-            # ... more sections
+            "Introduction": "...",
+            "Methods": "...",
+            "Results": "...",
         }
-        
-        refs = [{"resource_id": i, "resource_description": "..."} for i in ...]
+        refs = [
+            {"resource_id": 1, "resource_description": "..."},
+        ]
         self.setReferences(refs)
-        
         return paper_dict
-    
+
     def extract_plan_and_content(self, skip_if_exists=False):
         super().generateOutputFile()
         paper_data = self.extract_paper_data()
-        paper_data = self.divide_into_chunks(paper_data)  # Auto-handles >512 token sections
-        
-        # Validate minimum sections
+        paper_data = self.divide_into_chunks(paper_data)
+
         if len(paper_data.keys()) < 3:
-            self.getLogger().error("Document too small (need ≥3 sections)")
-            return
-        
+            self.getLogger().error("Document too small; need at least 3 sections")
+            return None
+
         plan_json = self.generate_embeddings_plan_and_section_content(paper_data)
         self.writeOuputJson(plan_json)
         return plan_json
 ```
 
-3. **Register in `main.py`**:
-```python
-from common.doc_pubmed import DocPubmed
+Document extraction guidelines:
 
-def process_files(file_type: str, files: List, output_preference: str):
-    # ... existing if statements
-    elif file_type == "m":  # PubMed
-        doc = DocPubmed(file, logging)
+* Preserve hierarchical headings where possible.
+* Normalize references to sequential `resource_id` values.
+* Track citations into `resources_used` for each section.
+* Provide fallbacks for missing abstracts or references.
+* Remove markup while preserving scientific content and section boundaries.
 
-# In main():
-processing_map = {
-    # ... existing mappings
-    "m": Path("data/pubmed").glob("*.xml"),
-}
+---
 
-types_to_process = (
-    ["l", "a", "w", "p", "f", "m"]  # Add new type
-    if output_preference in ["", "1"]
-    else [output_preference]
-)
-```
+## Utility Scripts
 
-4. **Test Your Processor**:
+### ArXiv LaTeX downloader
+
 ```bash
-mkdir -p data/pubmed
-cp sample.xml data/pubmed/
-python main.py  # Select 'm'
-```
-
-### Document Extraction Guidelines
-
-- **Extract hierarchical structure**: Preserve heading levels where applicable
-- **Normalize references**: Use sequential `resource_id` (1, 2, 3...)
-- **Track citations**: Populate `resources_used` in sections with cited reference IDs
-- **Handle missing data**: Provide defaults (`"no abstract"` if abstract missing)
-- **Clean content**: Remove markup/formatting but preserve text structure
-
-## 🛠️ Utility Scripts
-
-### ArXiv LaTeX Downloader (`scripts/select_arxiv_latex.py`)
-
-Automatically download high-quality arXiv papers with LaTeX source code.
-
-**Features:**
-- Queries arXiv API for recent cs.AI, cs.LG, cs.CL, cs.CV, cs.IR, stat.ML papers
-- Filters for surveys (title/abstract keywords) OR top-conference papers (NeurIPS, ICML, ICLR, ACL, EMNLP, CVPR, ECCV, ICCV, KDD, AAAI, WWW, SIGIR)
-- Downloads LaTeX source tarballs from `https://arxiv.org/e-print/<id>`
-- Validates: keeps only papers with exactly **1 .tex + 1 .bib** file
-- Conservative filtering (~29% acceptance rate ensures quality)
-
-**Usage:**
-```bash
-# Download 5 papers (default)
 python scripts/select_arxiv_latex.py
-
-# Download 50 papers to custom directory
 python scripts/select_arxiv_latex.py --max-papers 50 --out-dir data/latex
-
-# Preview candidates without downloading
 python scripts/select_arxiv_latex.py --max-papers 20 --dry-run
 ```
 
-**Parameters:**
-- `--out-dir DIR`: Output directory (default: `data/latex`)
-- `--max-papers N`: Maximum papers to download (default: `5`)
-- `--dry-run`: Preview candidates without downloading
+Features:
 
-**Output Format:** `<Title>_arxiv_<ID>.tex` and `<Title>_arxiv_<ID>.bib`
-- Example: `CODE-II_A_large-scale_dataset_for_artificial_intelligence_in_ECG_analysis_arxiv_2511.15632v1.tex`
+* queries arXiv for relevant papers;
+* filters for surveys or major-conference-style papers;
+* downloads LaTeX source tarballs;
+* keeps papers with exactly one `.tex` and one `.bib` file;
+* writes files using a title and arXiv ID naming pattern.
 
-### EPO Patent Splitter (`scripts/split_epo_extract.py`)
+### EPO patent splitter
 
-Split multi-patent EPO weekly extract files into individual patent documents.
-
-**Usage:**
 ```bash
 python scripts/split_epo_extract.py <input_extract.txt> <output_directory>
+```
 
-# Example
+Example:
+
+```bash
 python scripts/split_epo_extract.py \
     data/2022week30_EP0600000_extract.txt \
     data/patents
 ```
 
-**Input Format:** EPO tab-delimited extract with columns:
-- Country, Document number, Kind code, Publication date, Language, Section type, Section number, Content
-- Section types: `TITLE`, `DESCR` (description), `CLAIM`, `PDFEP`
+The splitter:
 
-**Output:** Individual `.txt` files named `<Title>_<PatentID>.txt`
-- Example: `APPARATUS_FOR_THE_MEASUREMENT_OF_ATRIAL_PRESSURE_EP0615422B1.txt`
-- Contains only English language sections
-- Filters for patents with required sections: `TITLE`, `DESCR`, `CLAIM`
-- Skips existing files (no overwrite)
+* extracts individual English-language patent records;
+* keeps documents with required `TITLE`, `DESCR`, and `CLAIM` sections;
+* sanitizes filenames;
+* skips existing files.
 
-**Notes:**
-- See `scripts/README.md` for detailed documentation
-- Compatible with `DocPatent` without modifications
-- Title sanitization: LaTeX commands removed, special chars → underscores, 80 char max
+---
+
+## Testing
+
+Run the test suite:
+
+```bash
+python -m pytest -q
+```
+
+Run collection only:
+
+```bash
+python -m pytest --collect-only -q
+```
+
+Run legacy comparison script if you have generated JSON outputs:
+
+```bash
+python tests.py
+```
+
+The pytest suite should be able to import the package without requiring heavyweight optional dependencies unless tests explicitly exercise those features.
+
+---
+
+## Troubleshooting
+
+### Importing `common.doc_eval` requires a missing package
+
+The package is designed so heavyweight dependencies should be loaded lazily. If importing `common.doc_eval` requires Torch, Flair, pypandoc, or sentence-transformers, check for accidental top-level imports.
+
+### `pypandoc` is missing
+
+Install Pandoc support only when Markdown-to-LaTeX conversion is needed:
+
+```bash
+pip install -e '.[pandoc]'
+```
+
+### Local HuggingFace embeddings are missing dependencies
+
+Install:
+
+```bash
+pip install -e '.[local-embeddings]'
+```
+
+### MAUVE or ROUGE comparison helpers are missing
+
+Install:
+
+```bash
+pip install -e '.[comparison]'
+```
+
+### Pytest collects archival files
+
+If an `old/` directory contains historical scripts, exclude it in `pyproject.toml`:
+
+```toml
+[tool.pytest.ini_options]
+norecursedirs = ["old"]
+```
+
+---
+
+## Recommended Workflows
+
+### Workflow A: Build a target dataset
+
+```bash
+pip install -e '.[local-embeddings]'
+python main.py
+```
+
+Use this when you want to create DEA JSON targets from papers, PDFs, patents, or Wikipedia articles.
+
+### Workflow B: Evaluate generated documents
+
+```bash
+pip install -e '.[comparison]'
+```
+
+Then call `evaluate_document(...)` from Python to compare Markdown or LaTeX candidates to a DEA target.
+
+### Workflow C: Use DEA as an optimization reward
+
+1. Generate or load a DEA target JSON.
+2. Generate a candidate document from your model or agent.
+3. Call `evaluate_document(...)`.
+4. Extract plan/content/reference metrics.
+5. Feed the resulting scalar or vector back into your optimizer.
+
+This is the preferred path for training-time or search-time feedback because it preserves interpretable sub-scores rather than reducing the document comparison to a single generic overlap metric.
