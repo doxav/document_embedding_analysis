@@ -1,7 +1,6 @@
 import pytest
 import json
 import numpy as np
-from evaluate import load
 from time import time
 from pathlib import Path
 from loguru import logger
@@ -97,6 +96,14 @@ def _compare_documents(
         f"\n\t\t{doc1_name}"
         f"\n\t\t{doc2_name}"
     )
+
+    try:
+        from evaluate import load
+    except ImportError as exc:
+        raise RuntimeError(
+            "`evaluate` is required for MAUVE/ROUGE document comparison. "
+            "Install it with `pip install evaluate` only if running these comparison helpers."
+        ) from exc
 
     mauve = load("mauve")
     rouge = load("rouge")

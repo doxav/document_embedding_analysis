@@ -29,3 +29,6 @@ package-dir = { "document_embedding_analysis" = ".", "common" = "common" }
 
 # Explicitly list the packages (no auto-discovery needed)
 packages = ["document_embedding_analysis", "common"]
+
+[tool.pytest.ini_options]
+norecursedirs = ["old"]

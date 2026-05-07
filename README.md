@@ -1,6 +1,16 @@
 # 📄 Document Embedding Analysis
 *Semantic comparison of scientific documents using dual embedding models and advanced text similarity metrics.*
 
+## Install
+
+```
+pip install -e .                    # lightweight base
+pip install -e '.[comparison]'       # MAUVE / ROUGE comparison helpers
+pip install -e '.[local-embeddings]' # HF local embeddings
+pip install -e '.[pandoc]'           # Markdown -> LaTeX conversion
+pip install -e '.[full]'             # everything
+```
+
 ## 🎯 Scientific Purpose
 
 This project addresses a challenge in evaluating large language models: **Given only a document's title and abstract, how well can an LLM reconstruct the document's structure, content and bibliography?**

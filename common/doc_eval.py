@@ -11,7 +11,10 @@ try:
     import wikipedia
 except ImportError:  # Optional dependency
     wikipedia = None
-import pypandoc
+try:
+    import pypandoc
+except ImportError:  # Optional dependency; only needed by convert_markdown_to_latex.
+    pypandoc = None
 import tempfile
 from regex import F
 
@@ -43,8 +46,30 @@ from .config import (
 # ─── text metrics (skim-fast heuristics if lib missing) ───────────────
 from .metrics import compute_rouge_scores, article_entity_recall
 
-from sentence_transformers import SentenceTransformer
-embedding_function = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+_embedding_function = None
+
+
+def get_embedding_function():
+    """Load the sentence-transformers model only if a caller actually needs it."""
+    global _embedding_function
+    if _embedding_function is None:
+        try:
+            from sentence_transformers import SentenceTransformer
+        except ImportError as exc:
+            raise RuntimeError(
+                "`sentence-transformers` is required for this embedding function. "
+                "Install it only if this local embedding path is needed."
+            ) from exc
+        _embedding_function = SentenceTransformer("paraphrase-MiniLM-L6-v2")
+    return _embedding_function
+
+
+class _LazySentenceTransformer:
+    def encode(self, *args, **kwargs):
+        return get_embedding_function().encode(*args, **kwargs)
+
+
+embedding_function = _LazySentenceTransformer()
 
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
@@ -896,6 +921,12 @@ def evaluate_document_content(
 
 
 def convert_markdown_to_latex(markdown_text: str) -> str | None:
+    if pypandoc is None:
+        raise RuntimeError(
+            "`pypandoc` is required for Markdown-to-LaTeX conversion. "
+            "Install it with `pip install pypandoc` only if this conversion is needed."
+        )
+
     try:
         latex_output = pypandoc.convert_text(
             markdown_text, to="latex", format="markdown", extra_args=["-s"]
@@ -1090,6 +1121,7 @@ def evaluate_document(
     dea_embedding_backend: str | None = None,
     dea_embedding_model: str | None = None,
     golden_entities: List[str] | None = None,
+    skip_entity_recall: bool = True,
 ):
     """
     Evaluate a document using various metrics from costorm_eval.
@@ -1187,14 +1219,14 @@ def evaluate_document(
 
             # Calculate entity recall
             # We remove the try-except block as requested, but ensure inputs are valid
-            if reference_content and document_content:
+            if not skip_entity_recall and reference_content and document_content:
                 entity_recall = article_entity_recall(
                     golden_article=reference_content,
                     predicted_article=document_content,
                     golden_entities=golden_entities
                 )
             else:
-                entity_recall = 0.0
+                entity_recall = None
 
             # Count citations
             citation_count = count_citations(document_content)
@@ -1244,7 +1276,11 @@ def evaluate_document(
         print(f"{aspect}: {score:.2f}")
 
     print("\nArticle Quality Metrics:")
-    print(f"Entity Recall (0-1 scale): {article_metrics.get('entity_recall', 0):.2f}")
+    er_val = article_metrics.get('entity_recall')
+    if er_val is not None:
+        print(f"Entity Recall (0-1 scale): {er_val:.2f}")
+    else:
+        print("Entity Recall (0-1 scale): N/A")
     print(f"Citation Count: {article_metrics.get('citation_count', 0)}")
     print("\nROUGE Scores (precision, recall, F1):")
     for metric, scores in article_metrics.get("rouge_scores", {}).items():
