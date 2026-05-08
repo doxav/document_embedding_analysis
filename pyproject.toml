@@ -32,3 +32,6 @@ packages = ["document_embedding_analysis", "common"]
 
 [tool.pytest.ini_options]
 norecursedirs = ["old"]
+markers = [
+    "performance: performance budget checks",
+]

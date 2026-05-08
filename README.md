@@ -345,8 +345,33 @@ scores = evaluate_document(
 | `dea_embedding_model`   | Optional override for the embedding model               |
 | `skip_entity_recall`    | Avoid entity recall extraction when not needed          |
 | `golden_entities`       | Optional precomputed target entities                    |
+| `use_dea_judge`         | If `True`, run the optional DEA-aware qualitative judge when a model/client/lm is available |
+| `dea_judge_model`       | Optional LLM name for the judge, for example `gpt-5-nano` or an OpenRouter model id |
+| `dea_judge_client`      | Optional OpenAI-compatible client for the judge, including OpenRouter clients |
+| `dea_judge_lm`          | Optional callable fake/local judge used instead of an API client |
 
 `evaluate_document` is the recommended high-level API for feedback during generation because it can return DEA target-distance scores and general article metrics from a single call.
+
+### Optional DEA-aware qualitative judge
+
+`evaluate_document(...)` can also return a compact `dea_judge` object. The judge is comparative: it receives DEA scores, article metrics, gold plan/bibliography excerpts, candidate plan/bibliography excerpts, and selected weak-looking candidate sections, then returns only observations for the optimizer to interpret.
+
+```python
+scores = evaluate_document(
+    document_content=candidate_markdown,
+    solution=solution,
+    content_type="markdown",
+    skip_dea=True,              # keep demos fast; set False for full DEA scoring
+    use_dea_judge=True,
+    dea_judge_model="gpt-5-nano",
+)
+
+print(scores["dea_judge"]["status"])
+print(scores["dea_judge"]["qualitative_assessment"])
+print(scores["dea_judge"]["problems"])
+```
+
+If no judge model, client, or callable is provided, the field is returned with `status="skipped"`. Invalid JSON or LLM errors return `status="error"` without interrupting the rest of the evaluation. A step-by-step notebook demo is available at `scripts/step_by_step_demo.ipynb`.
 
 ---
 

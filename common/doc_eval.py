@@ -45,6 +45,10 @@ from .config import (
 
 # ─── text metrics (skim-fast heuristics if lib missing) ───────────────
 from .metrics import compute_rouge_scores, article_entity_recall
+try:
+    from common.dea_judge import run_dea_judge
+except ImportError:
+    from .dea_judge import run_dea_judge
 
 _embedding_function = None
 
@@ -1101,7 +1105,7 @@ def temporary_transform_dea_into_markdown(dea_content: str) -> str:
     return markdown_content
 
 def count_citations(text: str) -> int:
-    """Count citations in text (supports [n] and \cite{...})."""
+    r"""Count citations in text (supports [n] and \cite{...})."""
     # Match [1], [12], etc.
     numeric_citations = len(re.findall(r"\[\d+\]", text))
     # Match \cite{...}
@@ -1122,6 +1126,11 @@ def evaluate_document(
     dea_embedding_model: str | None = None,
     golden_entities: List[str] | None = None,
     skip_entity_recall: bool = True,
+    use_dea_judge: bool = True,
+    dea_judge_model: str | None = None,
+    dea_judge_client=None,
+    dea_judge_lm=None,
+    dea_judge_max_prompt_chars: int = 20000,
 ):
     """
     Evaluate a document using various metrics from costorm_eval.
@@ -1288,10 +1297,44 @@ def evaluate_document(
         for score_type, value in scores.items():
             print(f"  {score_type}: {value:.2f}")
 
+    dea_judge = {
+        "status": "skipped",
+        "reason": "use_dea_judge=False",
+        "qualitative_assessment": "",
+        "keep": [],
+        "problems": [],
+        "uncertainties": [],
+    }
+    if use_dea_judge:
+        try:
+            dea_judge = run_dea_judge(
+                document_content=document_content,
+                solution=solution,
+                content_type=content_type,
+                dea_scores=dea_evaluation_scores or {},
+                article_metrics=article_metrics or {},
+                prometheus_scores=prometheus_scores or {},
+                writehere_scores=writehere_scores or {},
+                model=dea_judge_model or openai_model,
+                client=dea_judge_client,
+                lm=dea_judge_lm,
+                max_prompt_chars=dea_judge_max_prompt_chars,
+            )
+        except Exception as e:
+            dea_judge = {
+                "status": "error",
+                "error": str(e),
+                "qualitative_assessment": "",
+                "keep": [],
+                "problems": [],
+                "uncertainties": [],
+            }
+
     return {
         "prometheus_scores": prometheus_scores,
         "writehere_scores": writehere_scores,
         "article_metrics": article_metrics,
         "dea_evaluation_scores": dea_evaluation_scores,
+        "dea_judge": dea_judge,
     }
 
