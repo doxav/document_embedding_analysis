@@ -45,6 +45,10 @@ from .config import (
 
 # ─── text metrics (skim-fast heuristics if lib missing) ───────────────
 from .metrics import compute_rouge_scores, article_entity_recall
+try:
+    from common.dea_judge import run_dea_judge
+except ImportError:
+    from .dea_judge import run_dea_judge
 
 _embedding_function = None
 
@@ -936,6 +940,19 @@ def convert_markdown_to_latex(markdown_text: str) -> str | None:
         print("Failed to convert Markdown text to LaTeX:", e)
         return None
 
+
+def _split_dea_scores_and_status(raw_scores: dict | None, default_status: str) -> tuple[dict, dict]:
+    if not raw_scores:
+        return {}, {"status": default_status}
+
+    scores = dict(raw_scores)
+    status = {"status": str(scores.pop("status", default_status))}
+    for key in ("reason", "error"):
+        if key in scores:
+            status[key] = scores.pop(key)
+    return scores, status
+
+
 def DEA_evaluation(
     content: str,
     solution: dict | None = None,
@@ -992,8 +1009,8 @@ def DEA_evaluation(
         }
 
     embed_cfg = _select_embedding_backend()
-    # Normalize HF nomic short name to repo id so the embedding loader resolves correctly.
-    if embed_cfg["embed_id"] == "2" and embed_cfg.get("model") and "nomic-embed-text-v1" in embed_cfg["model"]:
+    # Normalize the legacy Nomic short name to the full repo id.
+    if embed_cfg["embed_id"] == "2" and embed_cfg.get("model") == "nomic-embed-text-v1":
         embed_cfg["model"] = HUGGINGFACE_EMBEDDING_PATH
 
     target_file_path = solution.get("target_file_path")
@@ -1037,7 +1054,11 @@ def DEA_evaluation(
             raise ValueError(f"Unsupported content type '{content_type}'. Use 'markdown' or 'latex' or SOON :-) 'JSON dea'.")
     except Exception as e:
         print(f"Error processing '{content_type}' content: {e}")
-        return
+        return {
+            "status": "error",
+            "reason": "content_processing_failed",
+            "error": str(e),
+        }
 
     # try:
     #     detailed_score = env.synthesis_manager.get_distance_to_targetJSON()
@@ -1077,8 +1098,7 @@ def DEA_evaluation(
     if scores:
         return scores
 
-    # If environment scoring failed, return deterministic fallback so callers still get structure-aware signals
-    return _dea_fallback_scores(content, solution)
+    return {"status": "empty", "reason": "env_scoring_failed"}
 
 # TODO: move it to a proper place
 def temporary_transform_dea_into_markdown(dea_content: str) -> str:
@@ -1101,7 +1121,7 @@ def temporary_transform_dea_into_markdown(dea_content: str) -> str:
     return markdown_content
 
 def count_citations(text: str) -> int:
-    """Count citations in text (supports [n] and \cite{...})."""
+    r"""Count citations in text (supports [n] and \cite{...})."""
     # Match [1], [12], etc.
     numeric_citations = len(re.findall(r"\[\d+\]", text))
     # Match \cite{...}
@@ -1122,6 +1142,11 @@ def evaluate_document(
     dea_embedding_model: str | None = None,
     golden_entities: List[str] | None = None,
     skip_entity_recall: bool = True,
+    use_dea_judge: bool = True,
+    dea_judge_model: str | None = None,
+    dea_judge_client=None,
+    dea_judge_lm=None,
+    dea_judge_max_prompt_chars: int = 20000,
 ):
     """
     Evaluate a document using various metrics from costorm_eval.
@@ -1134,19 +1159,28 @@ def evaluate_document(
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
 
-    try:
-        dea_evaluation_scores = DEA_evaluation(
-            document_content,
-            solution,
-            content_type=content_type,
-            llm=None,
-            skip_env=skip_dea,
-            embedding_backend=dea_embedding_backend,
-            embedding_model_name=dea_embedding_model,
-        )
-    except Exception as e:
-        logger.error(f"Error during DEA evaluation: {e}")
+    if skip_dea:
         dea_evaluation_scores = {}
+        dea_evaluation_status = {"status": "skipped", "reason": "skip_dea=True"}
+    else:
+        try:
+            raw_dea_scores = DEA_evaluation(
+                document_content,
+                solution,
+                content_type=content_type,
+                llm=None,
+                skip_env=False,
+                embedding_backend=dea_embedding_backend,
+                embedding_model_name=dea_embedding_model,
+            )
+            dea_evaluation_scores, dea_evaluation_status = _split_dea_scores_and_status(
+                raw_dea_scores,
+                "computed" if raw_dea_scores else "empty",
+            )
+        except Exception as e:
+            logger.error(f"Error during DEA evaluation: {e}")
+            dea_evaluation_scores = {}
+            dea_evaluation_status = {"status": "error", "error": str(e)}
 
     logger.info("Initializing evaluators...")
     prometheus_scores, writehere_scores = {}, {}
@@ -1288,10 +1322,45 @@ def evaluate_document(
         for score_type, value in scores.items():
             print(f"  {score_type}: {value:.2f}")
 
+    dea_judge = {
+        "status": "skipped",
+        "reason": "use_dea_judge=False",
+        "qualitative_assessment": "",
+        "keep": [],
+        "problems": [],
+        "uncertainties": [],
+    }
+    if use_dea_judge:
+        try:
+            dea_judge = run_dea_judge(
+                document_content=document_content,
+                solution=solution,
+                content_type=content_type,
+                dea_scores=dea_evaluation_scores or {},
+                article_metrics=article_metrics or {},
+                prometheus_scores=prometheus_scores or {},
+                writehere_scores=writehere_scores or {},
+                dea_status=dea_evaluation_status,
+                model=dea_judge_model or openai_model,
+                client=dea_judge_client,
+                lm=dea_judge_lm,
+                max_prompt_chars=dea_judge_max_prompt_chars,
+            )
+        except Exception as e:
+            dea_judge = {
+                "status": "error",
+                "error": str(e),
+                "qualitative_assessment": "",
+                "keep": [],
+                "problems": [],
+                "uncertainties": [],
+            }
+
     return {
         "prometheus_scores": prometheus_scores,
         "writehere_scores": writehere_scores,
         "article_metrics": article_metrics,
         "dea_evaluation_scores": dea_evaluation_scores,
+        "dea_evaluation_status": dea_evaluation_status,
+        "dea_judge": dea_judge,
     }
-

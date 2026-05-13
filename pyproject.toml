@@ -11,6 +11,8 @@ dependencies = [
     "torch",
     "python-dotenv",
     "langchain-community",
+    "langchain-openai",
+    "langchain-text-splitters",
     "openai",
     "tiktoken",
     "pdfminer.six",
@@ -20,7 +22,8 @@ dependencies = [
     "loguru",
     "scipy",
     "scikit-learn",
-    "sentence-transformers"
+    "sentence-transformers",
+    "einops"
 ]
 
 [tool.setuptools]
@@ -32,3 +35,6 @@ packages = ["document_embedding_analysis", "common"]
 
 [tool.pytest.ini_options]
 norecursedirs = ["old"]
+markers = [
+    "performance: performance budget checks",
+]

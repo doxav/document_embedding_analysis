@@ -16,7 +16,7 @@ from common.config import (
     embed_HF,
     ALLOW_parallel_gen_embed_section_content,
 )
-from langchain.text_splitter import (
+from langchain_text_splitters import (
     RecursiveCharacterTextSplitter,
 )
 from openai import OpenAI
