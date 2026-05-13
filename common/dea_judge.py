@@ -47,6 +47,26 @@ REQUIRED_UNCERTAINTY_KEYS = {
 
 _BIBLIOGRAPHY_HEADINGS = {"references", "bibliography", "external links"}
 
+_MAIN_IMPACT_CANON = {
+    "plan": "plan",
+    "section content": "sections content",
+    "sections content": "sections content",
+    "content": "sections content",
+    "citations": "citations",
+    "citation": "citations",
+    "bibliography": "bibliography",
+    "references": "bibliography",
+    "reference": "bibliography",
+    "format": "format",
+}
+
+_PRIORITY_CANON = {
+    "p0": "P0 blocker",
+    "p1": "P1 wrong",
+    "p2": "P2 minor",
+    "p3": "P3 polish",
+}
+
 
 def _empty_payload(status: str, reason: str | None = None, error: str | None = None, raw_response: str | None = None) -> dict:
     payload = {
@@ -78,6 +98,16 @@ def _format_value(value: Any) -> str:
     if isinstance(value, float):
         return f"{value:.2f}"
     return str(value)
+
+
+def _normalize_heading_title(title: Any) -> str:
+    text = str(title or "").strip().lower().rstrip(":")
+    return re.sub(r"^h[1-6]\s+", "", text).strip()
+
+
+def _is_bibliography_heading(title: Any) -> bool:
+    text = _normalize_heading_title(title)
+    return any(heading in text for heading in _BIBLIOGRAPHY_HEADINGS)
 
 
 def _interpret_metric(name: str, value: Any) -> tuple[str, str]:
@@ -126,8 +156,14 @@ def _format_score_context(
     article_metrics: dict | None,
     prometheus_scores: dict | None,
     writehere_scores: dict | None,
+    dea_status: dict | None = None,
 ) -> str:
     lines = ["DEA scores:"]
+    if dea_status:
+        status = dea_status.get("status", "unknown")
+        reason = dea_status.get("reason")
+        suffix = f" ({reason})" if reason else ""
+        lines.append(f"- status: {status}{suffix}")
     if dea_scores:
         for name, value in dea_scores.items():
             range_text, interpretation = _interpret_metric(name, value)
@@ -212,13 +248,18 @@ def _extract_gold_context(
     return "\n".join(lines)
 
 
-def _parse_candidate_sections(document_content: str, content_type: str) -> list[dict[str, Any]]:
+def _parse_candidate_sections(
+    document_content: str,
+    content_type: str,
+    include_h1: bool = False,
+) -> list[dict[str, Any]]:
     text = document_content or ""
     if content_type == "latex":
         matches = list(re.finditer(r"\\(?:section|subsection|subsubsection)\*?\{([^}]+)\}", text))
         return _sections_from_matches(text, matches, lambda m: m.group(1).strip())
 
-    matches = list(re.finditer(r"^(#{1,6})\s+(.+)$", text, flags=re.MULTILINE))
+    pattern = r"^(#{1,6})\s+(.+)$" if include_h1 else r"^(#{2,6})\s+(.+)$"
+    matches = list(re.finditer(pattern, text, flags=re.MULTILINE))
     return _sections_from_matches(text, matches, lambda m: m.group(2).strip())
 
 
@@ -261,10 +302,7 @@ def _extract_candidate_bibliography(document_content: str, content_type: str) ->
     sections = _parse_candidate_sections(document_content, content_type)
     bib_sections = [
         section for section in sections
-        if any(
-            heading in section["title"].strip().lower().rstrip(":")
-            for heading in _BIBLIOGRAPHY_HEADINGS
-        )
+        if _is_bibliography_heading(section["title"])
     ]
     if not bib_sections:
         return "Candidate bibliography extract:\n- none detected"
@@ -299,8 +337,18 @@ def _gold_titles(solution: dict | None) -> set[str]:
             title = section.get("section") or section.get("title") or f"Section {idx}"
         else:
             title = str(section)
-        titles.add(title.strip().lower())
+        titles.add(_normalize_heading_title(title))
     return titles
+
+
+def _gold_content_lengths(solution: dict | None) -> dict[str, int]:
+    lengths = {}
+    for idx, section in enumerate((solution or {}).get("plan") or [], 1):
+        if not isinstance(section, dict):
+            continue
+        title = section.get("section") or section.get("title") or f"Section {idx}"
+        lengths[_normalize_heading_title(title)] = len(str(section.get("content") or section.get("text") or ""))
+    return lengths
 
 
 def _select_weak_section_extracts(
@@ -311,11 +359,15 @@ def _select_weak_section_extracts(
     max_worst_sections: int = 4,
     max_worst_section_chars: int = 800,
 ) -> str:
-    sections = _parse_candidate_sections(document_content, content_type)
+    sections = [
+        section for section in _parse_candidate_sections(document_content, content_type)
+        if not _is_bibliography_heading(section["title"])
+    ]
     if not sections:
         return "Weak-looking candidate section extracts:\n- no sections detected"
 
     gold_titles = _gold_titles(solution)
+    gold_lengths = _gold_content_lengths(solution)
     citation_count = (article_metrics or {}).get("citation_count", 0)
     selected: list[tuple[str, dict[str, Any]]] = []
     seen: set[int] = set()
@@ -329,14 +381,16 @@ def _select_weak_section_extracts(
             seen.add(marker)
 
     for section in sorted(sections, key=lambda s: len(s["content"])):
-        if len(section["content"].strip()) < 120:
+        content_len = len(section["content"].strip())
+        gold_len = gold_lengths.get(_normalize_heading_title(section["title"]))
+        if content_len < 120 and (gold_len is None or gold_len >= 120):
             add("very short content", section)
     if not citation_count:
         for section in sections:
             if not re.search(r"\[\d+\]|\\cite\{[^}]+\}", section["content"]):
                 add("no citations while citation score/count is weak", section)
     for section in sections:
-        if gold_titles and section["title"].strip().lower() not in gold_titles:
+        if gold_titles and _normalize_heading_title(section["title"]) not in gold_titles:
             add("title not present in gold plan", section)
     for section in sections:
         add("first non-empty candidate section fallback", section)
@@ -403,6 +457,9 @@ For problems:
 - Provide at most 3 problems about citations/bibliography.
 - Include priority, impact, confidence, and evidence.
 - Do not provide recommended fixes.
+- Treat "...[truncated]" as an excerpt marker, not as a candidate defect.
+- Before calling a section too short, compare it with the matching gold section.
+- Prefer recurring mechanism-level patterns with concrete examples over one-off factual corrections.
 """
 
 
@@ -415,6 +472,7 @@ def _build_judge_prompt(
     article_metrics: dict,
     prometheus_scores: dict,
     writehere_scores: dict,
+    dea_status: dict | None = None,
     max_prompt_chars: int = 20000,
 ) -> str:
     instructions = _instructions_text()
@@ -422,7 +480,7 @@ def _build_judge_prompt(
     fixed_len = len(instructions) + len(schema) + 4
     context_budget = max(0, max_prompt_chars - fixed_len)
     context_parts = [
-        _format_score_context(dea_scores, article_metrics, prometheus_scores, writehere_scores),
+        _format_score_context(dea_scores, article_metrics, prometheus_scores, writehere_scores, dea_status),
         _extract_gold_context(solution),
         _extract_candidate_context(document_content, content_type),
         _extract_bibliography_context(solution, document_content, content_type),
@@ -486,6 +544,46 @@ def _validate_judge_output(parsed: Any) -> bool:
     return True
 
 
+def _canonical_main_impact(value: Any) -> str:
+    lowered = str(value or "").strip().lower()
+    parts = [part.strip() for part in re.split(r"\s*(?:[|/,;]|\band\b)\s*", lowered) if part.strip()]
+    for part in parts or [lowered]:
+        if part in _MAIN_IMPACT_CANON:
+            return _MAIN_IMPACT_CANON[part]
+    for needle, canonical in _MAIN_IMPACT_CANON.items():
+        if needle in lowered:
+            return canonical
+    return "format"
+
+
+def _canonical_priority(value: Any) -> str:
+    lowered = str(value or "").strip().lower()
+    match = re.search(r"\bp([0-3])\b", lowered)
+    if match:
+        return _PRIORITY_CANON[f"p{match.group(1)}"]
+    return _PRIORITY_CANON.get(lowered, "P2 minor")
+
+
+def _normalize_problem(problem: dict) -> dict:
+    normalized = dict(problem)
+    normalized["main_impact"] = _canonical_main_impact(normalized.get("main_impact"))
+    normalized["priority"] = _canonical_priority(normalized.get("priority"))
+    confidence = str(normalized.get("confidence", "")).strip().lower()
+    normalized["confidence"] = confidence if confidence in {"low", "medium", "high"} else "medium"
+    normalized["evidence"] = _truncate(normalized.get("evidence", ""), 800)
+    return normalized
+
+
+def _problem_impact_counts_are_valid(problems: list[dict]) -> bool:
+    counts: dict[str, int] = {}
+    for problem in problems:
+        impact = str(problem.get("main_impact", "")).strip().lower()
+        counts[impact] = counts.get(impact, 0) + 1
+        if counts[impact] > 3:
+            return False
+    return True
+
+
 def _parse_judge_response(raw: str) -> dict:
     try:
         parsed = json.loads(_extract_json_text(raw))
@@ -493,11 +591,14 @@ def _parse_judge_response(raw: str) -> dict:
         return _empty_payload("error", error=f"invalid_judge_json: {exc}", raw_response=raw)
     if not _validate_judge_output(parsed):
         return _empty_payload("error", error="invalid_judge_json", raw_response=raw)
+    problems = [_normalize_problem(problem) for problem in parsed["problems"]]
+    if not _problem_impact_counts_are_valid(problems):
+        return _empty_payload("error", error="invalid_judge_json", raw_response=raw)
     return {
         "status": "ok",
         "qualitative_assessment": parsed["qualitative_assessment"],
         "keep": parsed["keep"],
-        "problems": parsed["problems"],
+        "problems": problems,
         "uncertainties": parsed["uncertainties"],
         "raw_response": raw,
     }
@@ -556,6 +657,7 @@ def run_dea_judge(
     article_metrics: dict,
     prometheus_scores: dict,
     writehere_scores: dict,
+    dea_status: dict | None = None,
     model: str | None = None,
     client=None,
     lm=None,
@@ -572,6 +674,7 @@ def run_dea_judge(
         article_metrics=article_metrics or {},
         prometheus_scores=prometheus_scores or {},
         writehere_scores=writehere_scores or {},
+        dea_status=dea_status,
         max_prompt_chars=max_prompt_chars,
     )
     try:

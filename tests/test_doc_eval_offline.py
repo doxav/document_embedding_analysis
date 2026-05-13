@@ -47,6 +47,46 @@ def test_evaluate_document_runs_without_dea():
     assert isinstance(result["dea_evaluation_scores"], dict)
 
 
+def test_evaluate_document_skip_dea_marks_status_and_does_not_call_dea(monkeypatch):
+    def fail_dea(*args, **kwargs):
+        raise AssertionError("DEA_evaluation should not run when skip_dea=True")
+
+    monkeypatch.setattr("common.doc_eval.DEA_evaluation", fail_dea)
+
+    result = evaluate_document(
+        document_content="Short candidate text.",
+        solution=_sample_solution(),
+        skip_dea=True,
+        use_enhanced_metrics=False,
+        use_dea_judge=False,
+    )
+
+    assert result["dea_evaluation_scores"] == {}
+    assert result["dea_evaluation_status"] == {
+        "status": "skipped",
+        "reason": "skip_dea=True",
+    }
+
+
+def test_evaluate_document_dea_error_is_explicit_without_fallback_scores(monkeypatch):
+    def fail_dea(*args, **kwargs):
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr("common.doc_eval.DEA_evaluation", fail_dea)
+
+    result = evaluate_document(
+        document_content="Short candidate text.",
+        solution=_sample_solution(),
+        skip_dea=False,
+        use_enhanced_metrics=False,
+        use_dea_judge=False,
+    )
+
+    assert result["dea_evaluation_scores"] == {}
+    assert result["dea_evaluation_status"]["status"] == "error"
+    assert "boom" in result["dea_evaluation_status"]["error"]
+
+
 def test_evaluate_document_similarity_ranks_better_candidate_higher():
     reference = "Artificial intelligence focuses on machine learning methods."
     better = "Artificial intelligence and machine learning methods are central topics."

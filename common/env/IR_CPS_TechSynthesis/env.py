@@ -29,8 +29,6 @@ import requests
 
 from ..env import Environment
 
-# import a function from langchain which could embed a text into a vector using OpenAI ada-002 or HuggingFace
-import langchain
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_openai import OpenAIEmbeddings
 
@@ -183,8 +181,8 @@ class DocumentStructure:
             context = abstract if context is None else context + "\n" + abstract
         self.abstract = abstract
         self.embedding_model_query_prefix = embedding_model_query_prefix
-        # Normalize HF short name (or prefixed variants) to full repo id so sentence_transformers can resolve it.
-        if embedding_model_name and HUGGINGFACE_EMBEDDING_MODEL_NAME in embedding_model_name:
+        # Normalize the legacy Nomic short name to the full repo id so sentence_transformers can resolve it.
+        if embedding_model_name == HUGGINGFACE_EMBEDDING_MODEL_NAME:
             resolved_model_name = HUGGINGFACE_EMBEDDING_PATH
         else:
             resolved_model_name = embedding_model_name
@@ -905,7 +903,7 @@ class SynthesisManager:
         Returns:
         If chaining is True, returns the current object. Otherwise, returns the IDs of the stored documents.
         """
-        from langchain.document_loaders import WebBaseLoader
+        from langchain_community.document_loaders import WebBaseLoader
 
         if link is None:
             raise ValueError("Please provide a link to download the document from")
@@ -914,7 +912,7 @@ class SynthesisManager:
         if parent_id is not None:
             for doc in data:
                 doc.metadata.extend([{"parent_id": parent_id}])
-        from langchain.text_splitter import RecursiveCharacterTextSplitter
+        from langchain_text_splitters import RecursiveCharacterTextSplitter
 
         splitter = RecursiveCharacterTextSplitter()
         all_splits = splitter.split_documents(data)

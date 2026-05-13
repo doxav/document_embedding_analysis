@@ -8,6 +8,7 @@ from common.dea_judge import (
     _extract_bibliography_context,
     _extract_candidate_context,
     _extract_gold_context,
+    _select_weak_section_extracts,
     _format_score_context,
     _parse_judge_response,
     run_dea_judge,
@@ -101,6 +102,20 @@ Methods content.
     assert "References" in out
 
 
+def test_extract_candidate_context_ignores_markdown_title_as_empty_section():
+    md = """
+# Candidate Title
+
+## Intro
+Intro content.
+"""
+
+    out = _extract_candidate_context(md, content_type="markdown")
+
+    assert "1. Intro" in out
+    assert "Candidate Title" not in out
+
+
 def test_extract_candidate_without_headings():
     out = _extract_candidate_context(
         "Plain document without headings.",
@@ -132,6 +147,37 @@ def test_extract_candidate_bibliography_with_substring_heading():
 """
     out = _extract_bibliography_context(None, candidate, content_type="markdown")
     assert "Selected bibliography" in out
+
+
+def test_weak_section_extracts_ignore_references_and_gold_short_sections():
+    solution = {
+        "plan": [
+            {"section": "Intro", "content": "Gold intro content " * 20},
+            {"section": "Mechanism", "content": "Short."},
+        ],
+    }
+    candidate = """
+# Candidate
+
+## Intro
+Candidate intro content with enough detail to avoid the short-section rule.
+
+## Mechanism
+Short.
+
+## References
+1. Example reference
+"""
+
+    out = _select_weak_section_extracts(
+        candidate,
+        solution,
+        content_type="markdown",
+        article_metrics={"citation_count": 1},
+    )
+
+    assert "References" not in out
+    assert "Mechanism (very short content)" not in out
 
 
 def test_build_prompt_contains_required_schema():
@@ -285,6 +331,33 @@ def test_parse_rejects_too_many_uncertainties():
     assert result["status"] == "error"
 
 
+def test_parse_normalizes_problem_fields_for_optimizer_stability():
+    raw = json.dumps({
+        "qualitative_assessment": "Partial.",
+        "keep": [],
+        "problems": [
+            {
+                "issue": "Weak support.",
+                "main_impact": "references",
+                "priority": "[P1] P1 wrong",
+                "impact": "Hard to verify claims.",
+                "confidence": "uncertain",
+                "evidence": "x" * 2000,
+            }
+        ],
+        "uncertainties": [],
+    })
+
+    result = _parse_judge_response(raw)
+
+    assert result["status"] == "ok"
+    problem = result["problems"][0]
+    assert problem["main_impact"] == "bibliography"
+    assert problem["priority"] == "P1 wrong"
+    assert problem["confidence"] == "medium"
+    assert len(problem["evidence"]) <= 800
+
+
 def test_run_dea_judge_calls_llm_once():
     response = json.dumps({
         "qualitative_assessment": "The document has a useful plan but weak content.",
@@ -414,6 +487,32 @@ def test_evaluate_document_judge_enabled_fake_client():
     assert result["dea_judge"]["status"] == "ok"
     assert len(client.calls) == 1
     assert result["dea_judge"]["problems"][0]["main_impact"] == "bibliography"
+
+
+def test_evaluate_document_judge_prompt_marks_skipped_dea():
+    seen = {}
+
+    def fake_lm(messages, temperature=0):
+        seen["prompt"] = messages[0]["content"]
+        return json.dumps({
+            "qualitative_assessment": "Article metrics only.",
+            "keep": [],
+            "problems": [],
+            "uncertainties": [],
+        })
+
+    result = evaluate_document(
+        document_content="# Candidate\n\n## Intro\nText",
+        solution={"title": "Gold", "context": "ctx", "plan": []},
+        skip_dea=True,
+        use_enhanced_metrics=False,
+        use_dea_judge=True,
+        dea_judge_lm=fake_lm,
+    )
+
+    assert result["dea_evaluation_scores"] == {}
+    assert result["dea_evaluation_status"]["status"] == "skipped"
+    assert "status: skipped (skip_dea=True)" in seen["prompt"]
 
 
 @pytest.mark.performance

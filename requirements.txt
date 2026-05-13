@@ -1,6 +1,8 @@
 pip
 openai
-langchain
+langchain-community
+langchain-openai
+langchain-text-splitters
 python-dotenv
 beautifulsoup4
 requests
