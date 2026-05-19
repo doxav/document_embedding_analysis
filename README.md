@@ -144,17 +144,24 @@ Local HuggingFace embedding generation may require Torch and a CUDA-compatible e
 
 ## Supported Document Types
 
-The system processes five scientific or technical document formats through specialized extractors.
+The project supports two related benchmark styles:
 
-**Documented dataset snapshot:** 99 LaTeX papers, 10 arXiv PDFs, 10 Wikipedia URLs, 25 patents, 0 FreshWiki dumps.
+* **Native DEA / open retrieval:** the model starts from the target title, abstract, topic, and bibliography-style references. Source documents are not bundled; a system must retrieve them or reason from open references.
+* **Source-provided summarization:** the model is given source documents or source abstracts and must synthesize the target output.
 
-| Type      | Identifier | Description                   | Input Format          | Key Features                                          |
-| --------- | ---------: | ----------------------------- | --------------------- | ----------------------------------------------------- |
-| LaTeX     |        `l` | Academic papers with BibTeX   | `.tex` + `.bib` files | Hierarchical section numbering, `\cite{}` extraction  |
-| arXiv     |        `a` | PDF research papers           | PDF files             | Abstract/reference extraction, citation pattern `[N]` |
-| Wikipedia |        `w` | Live Wikipedia articles       | URLs                  | BeautifulSoup scraping, hierarchical headings         |
-| FreshWiki |        `f` | Wikipedia-style JSON articles | `.json` files         | Preformatted article content from dumps               |
-| Patents   |        `p` | Patent documents              | Tab-delimited `.txt`  | Title, description, claims, patent-number extraction  |
+**Documented local snapshot:** 100 LaTeX `.tex`/`.bib` pairs, 10 arXiv PDFs, 10 configured Wikipedia URLs, 25 patent text files, 0 FreshWiki dumps. Existing generated outputs currently contain 10 LaTeX, 10 arXiv, 12 Wikipedia, and 24 patent DEA JSON files.
+
+| Dataset / Type | Entry point | Input | Target output | Source-document availability | Notes |
+| --- | --- | --- | --- | --- | --- |
+| BigSurvey `split` archive | `scripts/import_bigsurvey.py --archive split` | Google Drive archive / local archive | Survey sections | **Provided** as cited-paper abstracts | Real Drive import tested; groups by `paper_id`; sample test split items had 17-112 source abstracts. |
+| BigSurvey `original` archive | `scripts/import_bigsurvey.py --archive original` | Google Drive archive / local archive | Survey sections | **Provided** as cited-paper abstracts | Real Drive import tested; archive lacks `paper_id`, so importer groups by title. |
+| MultiLexSum | `scripts/import_multilexsum.py` | Official release download or local JSON files | Long legal summary | **Provided** as legal case documents | Default mode fetches official `sources.json` plus `{train,dev,test}.json` split files; local `--records-json`/`--sources-json` mode is available for offline runs. |
+| LaTeX | `main.py` option `l` | `.tex` + `.bib` | Paper reconstruction DEA | **Partial retrieval locators only** | BibTeX may contain DOI/URL fields; these are open-retrieval locators, not bundled source documents. |
+| arXiv PDF | `main.py` option `a` | PDF files | Paper reconstruction DEA | **Not provided** | Parsed references are bibliographic text only; use open retrieval. |
+| Wikipedia | `main.py` option `w` | Wikipedia URLs | Article reconstruction DEA | **Not document-provided** | New extraction preserves external citation URLs as retrieval hints where Wikipedia exposes them, but coverage is incomplete and should be treated as open retrieval. |
+| Patents | `main.py` option `p` | EPO-style patent text | Patent reconstruction DEA | **Not provided** | Extracted references are patent-number strings only; use open retrieval. |
+| FreshWiki | `main.py` option `f` | FreshWiki JSON dumps | Article reconstruction DEA | Unknown locally | No local FreshWiki data is present in this checkout. |
+| Enriched DEA second pass | `scripts/enrich_dea_sources.py` | Existing DEA JSON | File-backed promptfoo rows | Depends on resource fields | Works only when resources contain real local paths, source URLs, or DOI/URL locators; otherwise rows are marked `reference_only_open_retrieval`. |
 
 ---
 
@@ -759,3 +766,52 @@ Then call `evaluate_document(...)` from Python to compare Markdown or LaTeX cand
 5. Feed the resulting scalar or vector back into your optimizer.
 
 This is the preferred path for training-time or search-time feedback because it preserves interpretable sub-scores rather than reducing the document comparison to a single generic overlap metric.
+
+## Source-Provided MDS/QFS and RAS-Stage Benchmarks
+
+This repo now supports both native DEA reconstruction targets and source-provided summarization-stage tasks.
+
+- **Open-search/native DEA**: the model starts from title/abstract/topic intent and retrieves/searches to reconstruct the gold target.
+- **Source-provided**: the model is given source documents and must synthesize the target long-form output (MDS/QFS/RAS stage).
+
+### Source Availability Matrix
+
+| Dataset | Source-provided benchmark? | Open retrieval needed? | Current behavior |
+| --- | --- | --- | --- |
+| BigSurvey `split` | Yes | No, for cited abstracts | Downloads from Drive alias `split`; writes promptfoo rows with source abstract files. |
+| BigSurvey `original` | Yes | No, for cited abstracts | Downloads from Drive alias `original`; writes promptfoo rows with source abstract files, grouped by title. |
+| MultiLexSum | Yes | No | Official mode downloads `sources.json` and `{split}.json`; local mode reads `--records-json` and `--sources-json`. |
+| LaTeX DEA outputs | No, not as bundled documents | Yes | BibTeX DOI/URL fields become best-effort retrieval locators; manifests use `source_locator_best_effort` when locators exist. |
+| arXiv DEA outputs | No | Yes | Existing parsed PDF references contain citation text only; manifests use `reference_only_open_retrieval` or `no_resources`. |
+| Wikipedia DEA outputs | No | Yes | External citation URLs are retrieval hints only; older checked-in outputs are citation-text only. |
+| Patent DEA outputs | No | Yes | References are extracted patent identifiers only; manifests use `reference_only_open_retrieval` or `no_resources`. |
+| FreshWiki | Unknown locally | Unknown | No local dumps are present. |
+| Generic enriched DEA | Conditional | Conditional | Only source-backed when resources contain local paths, HTTP URLs, or DOI/URL locators. |
+
+### Example CLIs
+- `python scripts/import_bigsurvey.py --archive split --n 10 --split test --output-dir benchmark/source_provided/bigsurvey_split --skip-embeddings`
+- `python scripts/import_bigsurvey.py --archive original --n 10 --split test --output-dir benchmark/source_provided/bigsurvey_original --skip-embeddings`
+- `python scripts/import_multilexsum.py --n 20 --split test --output-dir benchmark/source_provided/multilexsum --skip-embeddings`
+- `python scripts/import_multilexsum.py --source local --records-json data/multilexsum/test.json --sources-json data/multilexsum/sources.json --n 20 --output-dir benchmark/source_provided/multilexsum_local --skip-embeddings`
+- `python scripts/enrich_dea_sources.py --dea-root output/latex --output-dir benchmark/open_retrieval/latex --fetch-remote --continue-on-error`
+- `python scripts/enrich_dea_sources.py --dea-root output/arxiv --output-dir benchmark/open_retrieval/arxiv --continue-on-error`
+
+### Source resolver behavior and limits
+- Resolver flags: `--fetch-remote`, `--copy-local`, `--no-copy-local`, `--continue-on-error`, `--overwrite`.
+- Importer flag: `--skip-embeddings` is accepted for compatibility with dataset-building scripts.
+- Source mode is recorded in `dataset_manifest.json`, item `metadata.json`, and `dea_solution.json` as `source_document_mode`.
+- `reference_only_open_retrieval` means the dataset has citation text but no source document path or URL.
+- `source_locator_best_effort` means DOI/URL/path fields exist, but they are retrieval locators rather than guaranteed bundled source documents.
+- `no_resources` means no bibliography/resource entries were extracted.
+- BigSurvey sources are cited-paper abstracts (not full PDFs).
+- Multi-LexSum sources are dataset-exposed legal source texts. Official mode caches the large upstream `sources.json` under `.cache/multilexsum` and stream-selects only needed documents for output.
+
+### Adding a new dataset
+1. Create `TaskBundle` records.
+2. Write with `write_dataset(...)` for canonical layout + `promptfoo_dataset.jsonl`.
+3. Optionally convert/export DEA-compatible `dea_solution.json`.
+
+
+### Generation-time enrichment status
+- Generation-time wrapper is currently disabled because `main.py` is interactive-only.
+- Use second-pass enrichment via `scripts/enrich_dea_sources.py`.
