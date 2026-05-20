@@ -1,0 +1,842 @@
+[
+  {
+    "source_id": "1055111",
+    "path": "sources/source_0001_show_attend_and_tell_neural_image_caption_generation_with_visual_attention.md",
+    "file": "sources/source_0001_show_attend_and_tell_neural_image_caption_generation_with_visual_attention.md",
+    "title": "Show, Attend and Tell: Neural Image Caption Generation with Visual Attention"
+  },
+  {
+    "source_id": "11045175",
+    "path": "sources/source_0002_semantic_compositional_networks_for_visual_captioning.md",
+    "file": "sources/source_0002_semantic_compositional_networks_for_visual_captioning.md",
+    "title": "Semantic Compositional Networks for Visual Captioning"
+  },
+  {
+    "source_id": "1169492",
+    "path": "sources/source_0003_show_and_tell_a_neural_image_caption_generator.md",
+    "file": "sources/source_0003_show_and_tell_a_neural_image_caption_generator.md",
+    "title": "Show and tell: A neural image caption generator"
+  },
+  {
+    "source_id": "1189091",
+    "path": "sources/source_0004_dense_captioning_with_joint_inference_and_visual_context.md",
+    "file": "sources/source_0004_dense_captioning_with_joint_inference_and_visual_context.md",
+    "title": "Dense Captioning with Joint Inference and Visual Context"
+  },
+  {
+    "source_id": "12365096",
+    "path": "sources/source_0005_multimodal_neural_language_models.md",
+    "file": "sources/source_0005_multimodal_neural_language_models.md",
+    "title": "Multimodal Neural Language Models"
+  },
+  {
+    "source_id": "13903325",
+    "path": "sources/source_0006_seeing_with_humans_gaze_assisted_neural_image_captioning.md",
+    "file": "sources/source_0006_seeing_with_humans_gaze_assisted_neural_image_captioning.md",
+    "title": "Seeing with Humans: Gaze-Assisted Neural Image Captioning"
+  },
+  {
+    "source_id": "13960547",
+    "path": "sources/source_0007_rich_image_captioning_in_the_wild.md",
+    "file": "sources/source_0007_rich_image_captioning_in_the_wild.md",
+    "title": "Rich Image Captioning in the Wild"
+  },
+  {
+    "source_id": "14223891",
+    "path": "sources/source_0008_attention_correctness_in_neural_image_captioning.md",
+    "file": "sources/source_0008_attention_correctness_in_neural_image_captioning.md",
+    "title": "Attention Correctness in Neural Image Captioning"
+  },
+  {
+    "source_id": "14521054",
+    "path": "sources/source_0009_densecap_fully_convolutional_localization_networks_for_dense_captioning.md",
+    "file": "sources/source_0009_densecap_fully_convolutional_localization_networks_for_dense_captioning.md",
+    "title": "DenseCap: Fully Convolutional Localization Networks for Dense Captioning"
+  },
+  {
+    "source_id": "15143565",
+    "path": "sources/source_0010_areas_of_attention_for_image_captioning.md",
+    "file": "sources/source_0010_areas_of_attention_for_image_captioning.md",
+    "title": "Areas of Attention for Image Captioning"
+  },
+  {
+    "source_id": "17326626",
+    "path": "sources/source_0011_aligning_where_to_see_and_what_to_tell_image_caption_with_region_based_attention_and_scene_factorization.md",
+    "file": "sources/source_0011_aligning_where_to_see_and_what_to_tell_image_caption_with_region_based_attention_and_scene_factorization.md",
+    "title": "Aligning where to see and what to tell: image caption with region-based attention and scene factorization"
+  },
+  {
+    "source_id": "17618504",
+    "path": "sources/source_0012_attend_to_you_personalized_image_captioning_with_context_sequence_memory_networks.md",
+    "file": "sources/source_0012_attend_to_you_personalized_image_captioning_with_context_sequence_memory_networks.md",
+    "title": "Attend to You: Personalized Image Captioning with Context Sequence Memory Networks"
+  },
+  {
+    "source_id": "18347865",
+    "path": "sources/source_0013_knowing_when_to_look_adaptive_attention_via_a_visual_sentinel_for_image_captioning.md",
+    "file": "sources/source_0013_knowing_when_to_look_adaptive_attention_via_a_visual_sentinel_for_image_captioning.md",
+    "title": "Knowing When to Look: Adaptive Attention via a Visual Sentinel for Image Captioning"
+  },
+  {
+    "source_id": "18548166",
+    "path": "sources/source_0014_image_captioning_and_visual_question_answering_based_on_attributes_and_external_knowledge.md",
+    "file": "sources/source_0014_image_captioning_and_visual_question_answering_based_on_attributes_and_external_knowledge.md",
+    "title": "Image Captioning and Visual Question Answering Based on Attributes and External Knowledge"
+  },
+  {
+    "source_id": "1868294",
+    "path": "sources/source_0015_boosting_image_captioning_with_attributes.md",
+    "file": "sources/source_0015_boosting_image_captioning_with_attributes.md",
+    "title": "Boosting Image Captioning with Attributes"
+  },
+  {
+    "source_id": "19158922",
+    "path": "sources/source_0016_paying_attention_to_descriptions_generated_by_image_captioning_models.md",
+    "file": "sources/source_0016_paying_attention_to_descriptions_generated_by_image_captioning_models.md",
+    "title": "Paying Attention to Descriptions Generated by Image Captioning Models"
+  },
+  {
+    "source_id": "206596371",
+    "path": "sources/source_0017_sca_cnn_spatial_and_channel_wise_attention_in_convolutional_networks_for_image_captioning.md",
+    "file": "sources/source_0017_sca_cnn_spatial_and_channel_wise_attention_in_convolutional_networks_for_image_captioning.md",
+    "title": "SCA-CNN: Spatial and Channel-Wise Attention in Convolutional Networks for Image Captioning"
+  },
+  {
+    "source_id": "206814904",
+    "path": "sources/source_0018_a_parallel_fusion_rnn_lstm_architecture_for_image_caption_generation.md",
+    "file": "sources/source_0018_a_parallel_fusion_rnn_lstm_architecture_for_image_caption_generation.md",
+    "title": "A parallel-fusion RNN-LSTM architecture for image caption generation"
+  },
+  {
+    "source_id": "207763512",
+    "path": "sources/source_0019_imagenet_classification_with_deep_convolutional_neural_networks.md",
+    "file": "sources/source_0019_imagenet_classification_with_deep_convolutional_neural_networks.md",
+    "title": "ImageNet classification with deep convolutional neural networks"
+  },
+  {
+    "source_id": "2315434",
+    "path": "sources/source_0020_deep_fragment_embeddings_for_bidirectional_image_sentence_mapping.md",
+    "file": "sources/source_0020_deep_fragment_embeddings_for_bidirectional_image_sentence_mapping.md",
+    "title": "Deep Fragment Embeddings for Bidirectional Image Sentence Mapping"
+  },
+  {
+    "source_id": "2317858",
+    "path": "sources/source_0021_grounded_compositional_semantics_for_finding_and_describing_images_with_sentences.md",
+    "file": "sources/source_0021_grounded_compositional_semantics_for_finding_and_describing_images_with_sentences.md",
+    "title": "Grounded Compositional Semantics for Finding and Describing Images with Sentences"
+  },
+  {
+    "source_id": "23414983",
+    "path": "sources/source_0022_stylenet_generating_attractive_visual_captions_with_styles.md",
+    "file": "sources/source_0022_stylenet_generating_attractive_visual_captions_with_styles.md",
+    "title": "StyleNet: Generating Attractive Visual Captions with Styles"
+  },
+  {
+    "source_id": "260422",
+    "path": "sources/source_0023_exploring_the_limits_of_language_modeling.md",
+    "file": "sources/source_0023_exploring_the_limits_of_language_modeling.md",
+    "title": "Exploring the Limits of Language Modeling"
+  },
+  {
+    "source_id": "261138",
+    "path": "sources/source_0024_devise_a_deep_visual_semantic_embedding_model.md",
+    "file": "sources/source_0024_devise_a_deep_visual_semantic_embedding_model.md",
+    "title": "DeViSE: A Deep Visual-Semantic Embedding Model"
+  },
+  {
+    "source_id": "2875390",
+    "path": "sources/source_0025_senticap_generating_image_descriptions_with_sentiments.md",
+    "file": "sources/source_0025_senticap_generating_image_descriptions_with_sentiments.md",
+    "title": "SentiCap: Generating Image Descriptions with Sentiments"
+  },
+  {
+    "source_id": "2899486",
+    "path": "sources/source_0026_deep_reinforcement_learning_based_image_captioning_with_embedding_reward.md",
+    "file": "sources/source_0026_deep_reinforcement_learning_based_image_captioning_with_embedding_reward.md",
+    "title": "Deep Reinforcement Learning-Based Image Captioning with Embedding Reward"
+  },
+  {
+    "source_id": "3102322",
+    "path": "sources/source_0027_generating_typed_dependency_parses_from_phrase_structure_parses.md",
+    "file": "sources/source_0027_generating_typed_dependency_parses_from_phrase_structure_parses.md",
+    "title": "Generating Typed Dependency Parses from Phrase Structure Parses"
+  },
+  {
+    "source_id": "3120635",
+    "path": "sources/source_0028_image_captioning_with_semantic_attention.md",
+    "file": "sources/source_0028_image_captioning_with_semantic_attention.md",
+    "title": "Image Captioning with Semantic Attention"
+  },
+  {
+    "source_id": "3509328",
+    "path": "sources/source_0029_deep_captioning_with_multimodal_recurrent_neural_networks_m_rnn.md",
+    "file": "sources/source_0029_deep_captioning_with_multimodal_recurrent_neural_networks_m_rnn.md",
+    "title": "Deep Captioning with Multimodal Recurrent Neural Networks (m-RNN)"
+  },
+  {
+    "source_id": "3527896",
+    "path": "sources/source_0030_explain_images_with_multimodal_recurrent_neural_networks.md",
+    "file": "sources/source_0030_explain_images_with_multimodal_recurrent_neural_networks.md",
+    "title": "Explain Images with Multimodal Recurrent Neural Networks"
+  },
+  {
+    "source_id": "35543299",
+    "path": "sources/source_0031_convolutional_image_captioning.md",
+    "file": "sources/source_0031_convolutional_image_captioning.md",
+    "title": "Convolutional Image Captioning"
+  },
+  {
+    "source_id": "3873857",
+    "path": "sources/source_0032_improved_image_captioning_via_policy_gradient_optimization_of_spider.md",
+    "file": "sources/source_0032_improved_image_captioning_via_policy_gradient_optimization_of_spider.md",
+    "title": "Improved Image Captioning via Policy Gradient optimization of SPIDEr"
+  },
+  {
+    "source_id": "43944157",
+    "path": "sources/source_0033_cnn_cnn_convolutional_decoders_for_image_captioning.md",
+    "file": "sources/source_0033_cnn_cnn_convolutional_decoders_for_image_captioning.md",
+    "title": "CNN+CNN: Convolutional Decoders for Image Captioning"
+  },
+  {
+    "source_id": "5223711",
+    "path": "sources/source_0034_generating_image_descriptions_using_dependency_relational_patterns.md",
+    "file": "sources/source_0034_generating_image_descriptions_using_dependency_relational_patterns.md",
+    "title": "Generating Image Descriptions Using Dependency Relational Patterns"
+  },
+  {
+    "source_id": "577005",
+    "path": "sources/source_0035_three_new_graphical_models_for_statistical_language_modelling.md",
+    "file": "sources/source_0035_three_new_graphical_models_for_statistical_language_modelling.md",
+    "title": "Three new graphical models for statistical language modelling"
+  },
+  {
+    "source_id": "59606130",
+    "path": "sources/source_0036_deep_visual_semantic_alignments_for_generating_image_descriptions.md",
+    "file": "sources/source_0036_deep_visual_semantic_alignments_for_generating_image_descriptions.md",
+    "title": "Deep visual-semantic alignments for generating image descriptions"
+  },
+  {
+    "source_id": "6093112",
+    "path": "sources/source_0037_speaking_the_same_language_matching_machine_to_human_captions_by_adversarial_training.md",
+    "file": "sources/source_0037_speaking_the_same_language_matching_machine_to_human_captions_by_adversarial_training.md",
+    "title": "Speaking the Same Language: Matching Machine to Human Captions by Adversarial Training"
+  },
+  {
+    "source_id": "665667",
+    "path": "sources/source_0038_towards_diverse_and_natural_image_descriptions_via_a_conditional_gan.md",
+    "file": "sources/source_0038_towards_diverse_and_natural_image_descriptions_via_a_conditional_gan.md",
+    "title": "Towards Diverse and Natural Image Descriptions via a Conditional GAN"
+  },
+  {
+    "source_id": "6785090",
+    "path": "sources/source_0039_mind_s_eye_a_recurrent_visual_representation_for_image_caption_generation.md",
+    "file": "sources/source_0039_mind_s_eye_a_recurrent_visual_representation_for_image_caption_generation.md",
+    "title": "Mind's eye: A recurrent visual representation for image caption generation"
+  },
+  {
+    "source_id": "6918332",
+    "path": "sources/source_0040_deep_compositional_captioning_describing_novel_object_categories_without_paired_training_data.md",
+    "file": "sources/source_0040_deep_compositional_captioning_describing_novel_object_categories_without_paired_training_data.md",
+    "title": "Deep Compositional Captioning: Describing Novel Object Categories without Paired Training Data"
+  },
+  {
+    "source_id": "7502269",
+    "path": "sources/source_0041_guiding_the_long_short_term_memory_model_for_image_caption_generation.md",
+    "file": "sources/source_0041_guiding_the_long_short_term_memory_model_for_image_caption_generation.md",
+    "title": "Guiding the Long-Short Term Memory Model for Image Caption Generation"
+  },
+  {
+    "source_id": "764110",
+    "path": "sources/source_0042_skeleton_key_image_captioning_by_skeleton_attribute_decomposition.md",
+    "file": "sources/source_0042_skeleton_key_image_captioning_by_skeleton_attribute_decomposition.md",
+    "title": "Skeleton Key: Image Captioning by Skeleton-Attribute Decomposition"
+  },
+  {
+    "source_id": "7732372",
+    "path": "sources/source_0043_unifying_visual_semantic_embeddings_with_multimodal_neural_language_models.md",
+    "file": "sources/source_0043_unifying_visual_semantic_embeddings_with_multimodal_neural_language_models.md",
+    "title": "Unifying Visual-Semantic Embeddings with Multimodal Neural Language Models"
+  },
+  {
+    "source_id": "8457705",
+    "path": "sources/source_0044_captioning_images_with_diverse_objects.md",
+    "file": "sources/source_0044_captioning_images_with_diverse_objects.md",
+    "title": "Captioning Images with Diverse Objects"
+  },
+  {
+    "source_id": "8745888",
+    "path": "sources/source_0045_generation_and_comprehension_of_unambiguous_object_descriptions.md",
+    "file": "sources/source_0045_generation_and_comprehension_of_unambiguous_object_descriptions.md",
+    "title": "Generation and Comprehension of Unambiguous Object Descriptions"
+  },
+  {
+    "source_id": "8810688",
+    "path": "sources/source_0046_describing_images_by_feeding_lstm_with_structural_words.md",
+    "file": "sources/source_0046_describing_images_by_feeding_lstm_with_structural_words.md",
+    "title": "Describing images by feeding LSTM with structural words"
+  },
+  {
+    "source_id": "91460",
+    "path": "sources/source_0047_image_captioning_with_deep_bidirectional_lstms.md",
+    "file": "sources/source_0047_image_captioning_with_deep_bidirectional_lstms.md",
+    "title": "Image Captioning with Deep Bidirectional LSTMs"
+  },
+  {
+    "source_id": "9254582",
+    "path": "sources/source_0048_from_captions_to_visual_concepts_and_back.md",
+    "file": "sources/source_0048_from_captions_to_visual_concepts_and_back.md",
+    "title": "From captions to visual concepts and back"
+  },
+  {
+    "source_id": "9256367",
+    "path": "sources/source_0049_encode_review_and_decode_reviewer_module_for_caption_generation.md",
+    "file": "sources/source_0049_encode_review_and_decode_reviewer_module_for_caption_generation.md",
+    "title": "Encode, Review, and Decode: Reviewer Module for Caption Generation"
+  },
+  {
+    "source_id": "928608",
+    "path": "sources/source_0050_framing_image_description_as_a_ranking_task_data_models_and_evaluation_metrics.md",
+    "file": "sources/source_0050_framing_image_description_as_a_ranking_task_data_models_and_evaluation_metrics.md",
+    "title": "Framing Image Description as a Ranking Task: Data, Models and Evaluation Metrics"
+  },
+  {
+    "source_id": "1033682",
+    "path": "sources/source_0051_generative_adversarial_nets.md",
+    "file": "sources/source_0051_generative_adversarial_nets.md",
+    "title": "Generative Adversarial Nets"
+  },
+  {
+    "source_id": "10328909",
+    "path": "sources/source_0052_faster_r_cnn_towards_real_time_object_detection_with_region_proposal_networks.md",
+    "file": "sources/source_0052_faster_r_cnn_towards_real_time_object_detection_with_region_proposal_networks.md",
+    "title": "Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks"
+  },
+  {
+    "source_id": "1241368",
+    "path": "sources/source_0053_rich_feature_hierarchies_for_accurate_object_detection_and_semantic_segmentation.md",
+    "file": "sources/source_0053_rich_feature_hierarchies_for_accurate_object_detection_and_semantic_segmentation.md",
+    "title": "Rich Feature Hierarchies for Accurate Object Detection and Semantic Segmentation"
+  },
+  {
+    "source_id": "14124313",
+    "path": "sources/source_0054_very_deep_convolutional_networks_for_large_scale_image_recognition.md",
+    "file": "sources/source_0054_very_deep_convolutional_networks_for_large_scale_image_recognition.md",
+    "title": "Very Deep Convolutional Networks for Large-Scale Image Recognition"
+  },
+  {
+    "source_id": "206592484",
+    "path": "sources/source_0055_going_deeper_with_convolutions.md",
+    "file": "sources/source_0055_going_deeper_with_convolutions.md",
+    "title": "Going deeper with convolutions"
+  },
+  {
+    "source_id": "206594692",
+    "path": "sources/source_0056_deep_residual_learning_for_image_recognition.md",
+    "file": "sources/source_0056_deep_residual_learning_for_image_recognition.md",
+    "title": "Deep Residual Learning for Image Recognition"
+  },
+  {
+    "source_id": "206770307",
+    "path": "sources/source_0057_fast_r_cnn.md",
+    "file": "sources/source_0057_fast_r_cnn.md",
+    "title": "Fast R-CNN"
+  },
+  {
+    "source_id": "2472547",
+    "path": "sources/source_0058_learning_attributes_equals_multi_source_domain_generalization.md",
+    "file": "sources/source_0058_learning_attributes_equals_multi_source_domain_generalization.md",
+    "title": "Learning Attributes Equals Multi-Source Domain Generalization"
+  },
+  {
+    "source_id": "1211821",
+    "path": "sources/source_0059_policy_gradient_methods_for_reinforcement_learning_with_function_approximation.md",
+    "file": "sources/source_0059_policy_gradient_methods_for_reinforcement_learning_with_function_approximation.md",
+    "title": "Policy Gradient Methods for Reinforcement Learning with Function Approximation"
+  },
+  {
+    "source_id": "14307651",
+    "path": "sources/source_0060_the_concrete_distribution_a_continuous_relaxation_of_discrete_random_variables.md",
+    "file": "sources/source_0060_the_concrete_distribution_a_continuous_relaxation_of_discrete_random_variables.md",
+    "title": "The Concrete Distribution: A Continuous Relaxation of Discrete Random Variables"
+  },
+  {
+    "source_id": "1563370",
+    "path": "sources/source_0061_generative_adversarial_text_to_image_synthesis.md",
+    "file": "sources/source_0061_generative_adversarial_text_to_image_synthesis.md",
+    "title": "Generative Adversarial Text to Image Synthesis"
+  },
+  {
+    "source_id": "1820089",
+    "path": "sources/source_0062_scheduled_sampling_for_sequence_prediction_with_recurrent_neural_networks.md",
+    "file": "sources/source_0062_scheduled_sampling_for_sequence_prediction_with_recurrent_neural_networks.md",
+    "title": "Scheduled Sampling for Sequence Prediction with Recurrent Neural Networks"
+  },
+  {
+    "source_id": "206594923",
+    "path": "sources/source_0063_self_critical_sequence_training_for_image_captioning.md",
+    "file": "sources/source_0063_self_critical_sequence_training_for_image_captioning.md",
+    "title": "Self-Critical Sequence Training for Image Captioning"
+  },
+  {
+    "source_id": "207079270",
+    "path": "sources/source_0064_actor_critic_algorithms.md",
+    "file": "sources/source_0064_actor_critic_algorithms.md",
+    "title": "Actor-critic algorithms"
+  },
+  {
+    "source_id": "2428314",
+    "path": "sources/source_0065_categorical_reparameterization_with_gumbel_softmax.md",
+    "file": "sources/source_0065_categorical_reparameterization_with_gumbel_softmax.md",
+    "title": "Categorical Reparameterization with Gumbel-Softmax"
+  },
+  {
+    "source_id": "24786700",
+    "path": "sources/source_0066_text_to_image_synthesis_using_generative_adversarial_networks.md",
+    "file": "sources/source_0066_text_to_image_synthesis_using_generative_adversarial_networks.md",
+    "title": "Text to Image Synthesis Using Generative Adversarial Networks"
+  },
+  {
+    "source_id": "3439214",
+    "path": "sources/source_0067_seqgan_sequence_generative_adversarial_nets_with_policy_gradient.md",
+    "file": "sources/source_0067_seqgan_sequence_generative_adversarial_nets_with_policy_gradient.md",
+    "title": "SeqGAN: Sequence Generative Adversarial Nets with Policy Gradient"
+  },
+  {
+    "source_id": "3655946",
+    "path": "sources/source_0068_maskgan_better_text_generation_via_filling_in_the.md",
+    "file": "sources/source_0068_maskgan_better_text_generation_via_filling_in_the.md",
+    "title": "MaskGAN: Better Text Generation via Filling in the ______"
+  },
+  {
+    "source_id": "39956959",
+    "path": "sources/source_0069_text_generation_based_on_generative_adversarial_nets_with_latent_variable.md",
+    "file": "sources/source_0069_text_generation_based_on_generative_adversarial_nets_with_latent_variable.md",
+    "title": "Text Generation Based on Generative Adversarial Nets with Latent Variable"
+  },
+  {
+    "source_id": "52269605",
+    "path": "sources/source_0070_multi_instance_visual_semantic_embedding.md",
+    "file": "sources/source_0070_multi_instance_visual_semantic_embedding.md",
+    "title": "Multi-Instance Visual-Semantic Embedding"
+  },
+  {
+    "source_id": "6200260",
+    "path": "sources/source_0071_image_to_image_translation_with_conditional_adversarial_networks.md",
+    "file": "sources/source_0071_image_to_image_translation_with_conditional_adversarial_networks.md",
+    "title": "Image-to-Image Translation with Conditional Adversarial Networks"
+  },
+  {
+    "source_id": "6631177",
+    "path": "sources/source_0072_joint_image_text_representation_by_gaussian_visual_semantic_embedding.md",
+    "file": "sources/source_0072_joint_image_text_representation_by_gaussian_visual_semantic_embedding.md",
+    "title": "Joint Image-Text Representation by Gaussian Visual-Semantic Embedding"
+  },
+  {
+    "source_id": "7147309",
+    "path": "sources/source_0073_sequence_level_training_with_recurrent_neural_networks.md",
+    "file": "sources/source_0073_sequence_level_training_with_recurrent_neural_networks.md",
+    "title": "Sequence Level Training with Recurrent Neural Networks"
+  },
+  {
+    "source_id": "1915014",
+    "path": "sources/source_0074_long_short_term_memory.md",
+    "file": "sources/source_0074_long_short_term_memory.md",
+    "title": "Long Short-Term Memory"
+  },
+  {
+    "source_id": "1930231",
+    "path": "sources/source_0075_draw_a_recurrent_neural_network_for_image_generation.md",
+    "file": "sources/source_0075_draw_a_recurrent_neural_network_for_image_generation.md",
+    "title": "DRAW: A Recurrent Neural Network For Image Generation"
+  },
+  {
+    "source_id": "6099034",
+    "path": "sources/source_0076_spatial_transformer_networks.md",
+    "file": "sources/source_0076_spatial_transformer_networks.md",
+    "title": "Spatial Transformer Networks"
+  },
+  {
+    "source_id": "11212020",
+    "path": "sources/source_0077_neural_machine_translation_by_jointly_learning_to_align_and_translate.md",
+    "file": "sources/source_0077_neural_machine_translation_by_jointly_learning_to_align_and_translate.md",
+    "title": "Neural Machine Translation by Jointly Learning to Align and Translate"
+  },
+  {
+    "source_id": "1847966",
+    "path": "sources/source_0078_building_a_semantically_transparent_corpus_for_the_generation_of_referring_expressions.md",
+    "file": "sources/source_0078_building_a_semantically_transparent_corpus_for_the_generation_of_referring_expressions.md",
+    "title": "Building A Semantically Transparent Corpus For The Generation Of Referring Expressions"
+  },
+  {
+    "source_id": "6034383",
+    "path": "sources/source_0079_generating_expressions_that_refer_to_visible_objects.md",
+    "file": "sources/source_0079_generating_expressions_that_refer_to_visible_objects.md",
+    "title": "Generating Expressions that Refer to Visible Objects"
+  },
+  {
+    "source_id": "6308361",
+    "path": "sources/source_0080_referitgame_referring_to_objects_in_photographs_of_natural_scenes.md",
+    "file": "sources/source_0080_referitgame_referring_to_objects_in_photographs_of_natural_scenes.md",
+    "title": "ReferItGame: Referring to Objects in Photographs of Natural Scenes"
+  },
+  {
+    "source_id": "7198177",
+    "path": "sources/source_0081_natural_reference_to_objects_in_a_visual_domain.md",
+    "file": "sources/source_0081_natural_reference_to_objects_in_a_visual_domain.md",
+    "title": "Natural Reference to Objects in a Visual Domain"
+  },
+  {
+    "source_id": "7961699",
+    "path": "sources/source_0082_sequence_to_sequence_learning_with_neural_networks.md",
+    "file": "sources/source_0082_sequence_to_sequence_learning_with_neural_networks.md",
+    "title": "Sequence to Sequence Learning with Neural Networks"
+  },
+  {
+    "source_id": "9460079",
+    "path": "sources/source_0083_the_use_of_spatial_relations_in_referring_expression_generation.md",
+    "file": "sources/source_0083_the_use_of_spatial_relations_in_referring_expression_generation.md",
+    "title": "The Use of Spatial Relations in Referring Expression Generation"
+  },
+  {
+    "source_id": "9497011",
+    "path": "sources/source_0084_a_game_theoretic_approach_to_generating_spatial_descriptions.md",
+    "file": "sources/source_0084_a_game_theoretic_approach_to_generating_spatial_descriptions.md",
+    "title": "A Game-Theoretic Approach to Generating Spatial Descriptions"
+  },
+  {
+    "source_id": "9682853",
+    "path": "sources/source_0085_learning_distributions_over_logical_forms_for_referring_expression_generation.md",
+    "file": "sources/source_0085_learning_distributions_over_logical_forms_for_referring_expression_generation.md",
+    "title": "Learning Distributions over Logical Forms for Referring Expression Generation"
+  },
+  {
+    "source_id": "1085832",
+    "path": "sources/source_0086_a_maximum_entropy_approach_to_natural_language_processing.md",
+    "file": "sources/source_0086_a_maximum_entropy_approach_to_natural_language_processing.md",
+    "title": "A Maximum Entropy Approach To Natural Language Processing"
+  },
+  {
+    "source_id": "11080756",
+    "path": "sources/source_0087_bleu_a_method_for_automatic_evaluation_of_machine_translation.md",
+    "file": "sources/source_0087_bleu_a_method_for_automatic_evaluation_of_machine_translation.md",
+    "title": "Bleu: A Method For Automatic Evaluation Of Machine Translation"
+  },
+  {
+    "source_id": "11262796",
+    "path": "sources/source_0088_describing_images_with_hierarchical_concepts_and_object_class_localization.md",
+    "file": "sources/source_0088_describing_images_with_hierarchical_concepts_and_object_class_localization.md",
+    "title": "Describing Images with Hierarchical Concepts and Object Class Localization"
+  },
+  {
+    "source_id": "195597810",
+    "path": "sources/source_0089_learning_photographic_global_tonal_adjustment_with_a_database_of_input_output_image_pairs.md",
+    "file": "sources/source_0089_learning_photographic_global_tonal_adjustment_with_a_database_of_input_output_image_pairs.md",
+    "title": "Learning photographic global tonal adjustment with a database of input / output image pairs"
+  },
+  {
+    "source_id": "207167677",
+    "path": "sources/source_0090_freebase_a_collaboratively_created_graph_database_for_structuring_human_knowledge.md",
+    "file": "sources/source_0090_freebase_a_collaboratively_created_graph_database_for_structuring_human_knowledge.md",
+    "title": "Freebase: a collaboratively created graph database for structuring human knowledge"
+  },
+  {
+    "source_id": "5474833",
+    "path": "sources/source_0091_minimum_error_rate_training_in_statistical_machine_translation.md",
+    "file": "sources/source_0091_minimum_error_rate_training_in_statistical_machine_translation.md",
+    "title": "Minimum Error Rate Training In Statistical Machine Translation"
+  },
+  {
+    "source_id": "7647892",
+    "path": "sources/source_0092_re_evaluation_the_role_of_bleu_in_machine_translation_research.md",
+    "file": "sources/source_0092_re_evaluation_the_role_of_bleu_in_machine_translation_research.md",
+    "title": "Re-Evaluation The Role Of Bleu In Machine Translation Research"
+  },
+  {
+    "source_id": "7988167",
+    "path": "sources/source_0093_language_models_for_image_captioning_the_quirks_and_what_works.md",
+    "file": "sources/source_0093_language_models_for_image_captioning_the_quirks_and_what_works.md",
+    "title": "Language Models for Image Captioning: The Quirks and What Works"
+  },
+  {
+    "source_id": "8516600",
+    "path": "sources/source_0094_a_framework_for_multiple_instance_learning.md",
+    "file": "sources/source_0094_a_framework_for_multiple_instance_learning.md",
+    "title": "A Framework for Multiple-Instance Learning"
+  },
+  {
+    "source_id": "870211",
+    "path": "sources/source_0095_meteor_m_bleu_and_m_ter_evaluation_metrics_for_high_correlation_with_human_rankings_of_machine_translation_output.md",
+    "file": "sources/source_0095_meteor_m_bleu_and_m_ter_evaluation_metrics_for_high_correlation_with_human_rankings_of_machine_translation_output.md",
+    "title": "Meteor, M-BLEU and M-TER: Evaluation Metrics for High-Correlation with Human Rankings of Machine Translation Output"
+  },
+  {
+    "source_id": "9026666",
+    "path": "sources/source_0096_cider_consensus_based_image_description_evaluation.md",
+    "file": "sources/source_0096_cider_consensus_based_image_description_evaluation.md",
+    "title": "CIDEr: Consensus-based image description evaluation"
+  },
+  {
+    "source_id": "1128810",
+    "path": "sources/source_0097_exploring_the_role_of_gaze_behavior_and_object_detection_in_scene_understanding.md",
+    "file": "sources/source_0097_exploring_the_role_of_gaze_behavior_and_object_detection_in_scene_understanding.md",
+    "title": "Exploring the role of gaze behavior and object detection in scene understanding"
+  },
+  {
+    "source_id": "11949986",
+    "path": "sources/source_0098_learning_to_recognize_daily_actions_using_gaze.md",
+    "file": "sources/source_0098_learning_to_recognize_daily_actions_using_gaze.md",
+    "title": "Learning to Recognize Daily Actions using Gaze"
+  },
+  {
+    "source_id": "12428344",
+    "path": "sources/source_0099_understanding_scene_understanding.md",
+    "file": "sources/source_0099_understanding_scene_understanding.md",
+    "title": "Understanding scene understanding"
+  },
+  {
+    "source_id": "14113767",
+    "path": "sources/source_0100_microsoft_coco_common_objects_in_context.md",
+    "file": "sources/source_0100_microsoft_coco_common_objects_in_context.md",
+    "title": "Microsoft COCO: Common Objects in Context"
+  },
+  {
+    "source_id": "14119147",
+    "path": "sources/source_0101_training_object_class_detectors_from_eye_tracking_data.md",
+    "file": "sources/source_0101_training_object_class_detectors_from_eye_tracking_data.md",
+    "title": "Training Object Class Detectors from Eye Tracking Data"
+  },
+  {
+    "source_id": "14371147",
+    "path": "sources/source_0102_prediction_of_search_targets_from_fixations_in_open_world_settings.md",
+    "file": "sources/source_0102_prediction_of_search_targets_from_fixations_in_open_world_settings.md",
+    "title": "Prediction of Search Targets From Fixations in Open-World Settings"
+  },
+  {
+    "source_id": "1921738",
+    "path": "sources/source_0103_eye_movement_analysis_for_activity_recognition_using_electrooculography.md",
+    "file": "sources/source_0103_eye_movement_analysis_for_activity_recognition_using_electrooculography.md",
+    "title": "Eye Movement Analysis for Activity Recognition Using Electrooculography"
+  },
+  {
+    "source_id": "3177797",
+    "path": "sources/source_0104_latent_dirichlet_allocation.md",
+    "file": "sources/source_0104_latent_dirichlet_allocation.md",
+    "title": "Latent Dirichlet Allocation"
+  },
+  {
+    "source_id": "3960646",
+    "path": "sources/source_0105_visualizing_and_understanding_convolutional_networks.md",
+    "file": "sources/source_0105_visualizing_and_understanding_convolutional_networks.md",
+    "title": "Visualizing and Understanding Convolutional Networks"
+  },
+  {
+    "source_id": "52852191",
+    "path": "sources/source_0106_flickr30k_entities_collecting_region_to_phrase_correspondences_for_richer_image_to_sentence_models.md",
+    "file": "sources/source_0106_flickr30k_entities_collecting_region_to_phrase_correspondences_for_richer_image_to_sentence_models.md",
+    "title": "Flickr30k Entities: Collecting Region-to-Phrase Correspondences for Richer Image-to-Sentence Models"
+  },
+  {
+    "source_id": "5864146",
+    "path": "sources/source_0107_salicon_saliency_in_context.md",
+    "file": "sources/source_0107_salicon_saliency_in_context.md",
+    "title": "SALICON: Saliency in Context"
+  },
+  {
+    "source_id": "8636060",
+    "path": "sources/source_0108_from_where_and_how_to_what_we_see.md",
+    "file": "sources/source_0108_from_where_and_how_to_what_we_see.md",
+    "title": "From Where and How to What We See"
+  },
+  {
+    "source_id": "8815045",
+    "path": "sources/source_0109_eye_tracking_assisted_extraction_of_attentionally_important_objects_from_videos.md",
+    "file": "sources/source_0109_eye_tracking_assisted_extraction_of_attentionally_important_objects_from_videos.md",
+    "title": "Eye tracking assisted extraction of attentionally important objects from videos"
+  },
+  {
+    "source_id": "10282227",
+    "path": "sources/source_0110_image_description_using_visual_dependency_representations.md",
+    "file": "sources/source_0110_image_description_using_visual_dependency_representations.md",
+    "title": "Image Description using Visual Dependency Representations"
+  },
+  {
+    "source_id": "10315654",
+    "path": "sources/source_0111_collective_generation_of_natural_image_descriptions.md",
+    "file": "sources/source_0111_collective_generation_of_natural_image_descriptions.md",
+    "title": "Collective Generation of Natural Image Descriptions"
+  },
+  {
+    "source_id": "10702193",
+    "path": "sources/source_0112_composing_simple_image_descriptions_using_web_scale_n_grams.md",
+    "file": "sources/source_0112_composing_simple_image_descriptions_using_web_scale_n_grams.md",
+    "title": "Composing Simple Image Descriptions using Web-scale N-grams"
+  },
+  {
+    "source_id": "13272863",
+    "path": "sources/source_0113_every_picture_tells_a_story_generating_sentences_from_images.md",
+    "file": "sources/source_0113_every_picture_tells_a_story_generating_sentences_from_images.md",
+    "title": "Every picture tells a story: generating sentences from images"
+  },
+  {
+    "source_id": "3511040",
+    "path": "sources/source_0114_learning_like_a_child_fast_novel_visual_concept_learning_from_sentence_descriptions_of_images.md",
+    "file": "sources/source_0114_learning_like_a_child_fast_novel_visual_concept_learning_from_sentence_descriptions_of_images.md",
+    "title": "Learning Like a Child: Fast Novel Visual Concept Learning from Sentence Descriptions of Images"
+  },
+  {
+    "source_id": "56507745",
+    "path": "sources/source_0115_fully_convolutional_networks_for_semantic_segmentation.md",
+    "file": "sources/source_0115_fully_convolutional_networks_for_semantic_segmentation.md",
+    "title": "Fully convolutional networks for semantic segmentation"
+  },
+  {
+    "source_id": "59605920",
+    "path": "sources/source_0116_long_term_recurrent_convolutional_networks_for_visual_recognition_and_description.md",
+    "file": "sources/source_0116_long_term_recurrent_convolutional_networks_for_visual_recognition_and_description.md",
+    "title": "Long-term recurrent convolutional networks for visual recognition and description"
+  },
+  {
+    "source_id": "6108541",
+    "path": "sources/source_0117_simple_image_description_generator_via_a_linear_phrase_based_approach.md",
+    "file": "sources/source_0117_simple_image_description_generator_via_a_linear_phrase_based_approach.md",
+    "title": "Simple Image Description Generator via a Linear Phrase-Based Approach"
+  },
+  {
+    "source_id": "6153535",
+    "path": "sources/source_0118_incorporating_copying_mechanism_in_image_captioning_for_learning_novel_objects.md",
+    "file": "sources/source_0118_incorporating_copying_mechanism_in_image_captioning_for_learning_novel_objects.md",
+    "title": "Incorporating Copying Mechanism in Image Captioning for Learning Novel Objects"
+  },
+  {
+    "source_id": "6954272",
+    "path": "sources/source_0119_multi_task_sequence_to_sequence_learning.md",
+    "file": "sources/source_0119_multi_task_sequence_to_sequence_learning.md",
+    "title": "Multi-task Sequence to Sequence Learning"
+  },
+  {
+    "source_id": "13756489",
+    "path": "sources/source_0120_attention_is_all_you_need.md",
+    "file": "sources/source_0120_attention_is_all_you_need.md",
+    "title": "Attention Is All You Need"
+  },
+  {
+    "source_id": "14989939",
+    "path": "sources/source_0121_conditional_image_generation_with_pixelcnn_decoders.md",
+    "file": "sources/source_0121_conditional_image_generation_with_pixelcnn_decoders.md",
+    "title": "Conditional Image Generation with PixelCNN Decoders"
+  },
+  {
+    "source_id": "17048224",
+    "path": "sources/source_0122_recurrent_neural_network_based_language_model.md",
+    "file": "sources/source_0122_recurrent_neural_network_based_language_model.md",
+    "title": "Recurrent neural network based language model"
+  },
+  {
+    "source_id": "2852525",
+    "path": "sources/source_0123_a_neural_probabilistic_language_model.md",
+    "file": "sources/source_0123_a_neural_probabilistic_language_model.md",
+    "title": "A Neural Probabilistic Language Model"
+  },
+  {
+    "source_id": "3648736",
+    "path": "sources/source_0124_convolutional_sequence_to_sequence_learning.md",
+    "file": "sources/source_0124_convolutional_sequence_to_sequence_learning.md",
+    "title": "Convolutional Sequence to Sequence Learning"
+  },
+  {
+    "source_id": "3928398",
+    "path": "sources/source_0125_an_empirical_study_of_language_cnn_for_image_captioning.md",
+    "file": "sources/source_0125_an_empirical_study_of_language_cnn_for_image_captioning.md",
+    "title": "An Empirical Study of Language CNN for Image Captioning"
+  },
+  {
+    "source_id": "5201925",
+    "path": "sources/source_0126_empirical_evaluation_of_gated_recurrent_neural_networks_on_sequence_modeling.md",
+    "file": "sources/source_0126_empirical_evaluation_of_gated_recurrent_neural_networks_on_sequence_modeling.md",
+    "title": "Empirical Evaluation of Gated Recurrent Neural Networks on Sequence Modeling"
+  },
+  {
+    "source_id": "5959482",
+    "path": "sources/source_0127_efficient_estimation_of_word_representations_in_vector_space.md",
+    "file": "sources/source_0127_efficient_estimation_of_word_representations_in_vector_space.md",
+    "title": "Efficient Estimation of Word Representations in Vector Space"
+  },
+  {
+    "source_id": "6728280",
+    "path": "sources/source_0128_a_convolutional_encoder_model_for_neural_machine_translation.md",
+    "file": "sources/source_0128_a_convolutional_encoder_model_for_neural_machine_translation.md",
+    "title": "A Convolutional Encoder Model for Neural Machine Translation"
+  },
+  {
+    "source_id": "6530643",
+    "path": "sources/source_0129_image_captioning_with_an_intermediate_attributes_layer.md",
+    "file": "sources/source_0129_image_captioning_with_an_intermediate_attributes_layer.md",
+    "title": "Image Captioning with an Intermediate Attributes Layer."
+  },
+  {
+    "source_id": "10319651",
+    "path": "sources/source_0130_show_adapt_and_tell_adversarial_training_of_cross_domain_image_captioner.md",
+    "file": "sources/source_0130_show_adapt_and_tell_adversarial_training_of_cross_domain_image_captioner.md",
+    "title": "Show, Adapt and Tell: Adversarial Training of Cross-Domain Image Captioner"
+  },
+  {
+    "source_id": "18883184",
+    "path": "sources/source_0131_the_iapr_tc_12_benchmark_a_new_evaluation_resource_for_visual_information_systems.md",
+    "file": "sources/source_0131_the_iapr_tc_12_benchmark_a_new_evaluation_resource_for_visual_information_systems.md",
+    "title": "The IAPR TC-12 benchmark -- a new evaluation resource for visual information systems"
+  },
+  {
+    "source_id": "11933981",
+    "path": "sources/source_0132_spice_semantic_propositional_image_caption_evaluation.md",
+    "file": "sources/source_0132_spice_semantic_propositional_image_caption_evaluation.md",
+    "title": "SPICE: Semantic Propositional Image Caption Evaluation"
+  },
+  {
+    "source_id": "13937253",
+    "path": "sources/source_0133_generating_semantically_precise_scene_graphs_from_textual_descriptions_for_improved_image_retrieval.md",
+    "file": "sources/source_0133_generating_semantically_precise_scene_graphs_from_textual_descriptions_for_improved_image_retrieval.md",
+    "title": "Generating Semantically Precise Scene Graphs from Textual Descriptions for Improved Image Retrieval"
+  },
+  {
+    "source_id": "1586456",
+    "path": "sources/source_0134_automatic_evaluation_of_machine_translation_quality_using_longest_common_subsequence_and_skip_bigram_statistics.md",
+    "file": "sources/source_0134_automatic_evaluation_of_machine_translation_quality_using_longest_common_subsequence_and_skip_bigram_statistics.md",
+    "title": "Automatic Evaluation Of Machine Translation Quality Using Longest Common Subsequence And Skip-Bigram Statistics"
+  },
+  {
+    "source_id": "15897060",
+    "path": "sources/source_0135_bleu_in_characters_towards_automatic_mt_evaluation_in_languages_without_word_delimiters.md",
+    "file": "sources/source_0135_bleu_in_characters_towards_automatic_mt_evaluation_in_languages_without_word_delimiters.md",
+    "title": "BLEU in Characters: Towards Automatic MT Evaluation in Languages without Word Delimiters"
+  },
+  {
+    "source_id": "16414666",
+    "path": "sources/source_0136_image_retrieval_using_scene_graphs.md",
+    "file": "sources/source_0136_image_retrieval_using_scene_graphs.md",
+    "title": "Image retrieval using scene graphs"
+  },
+  {
+    "source_id": "7164502",
+    "path": "sources/source_0137_meteor_an_automatic_metric_for_mt_evaluation_with_improved_correlation_with_human_judgments.md",
+    "file": "sources/source_0137_meteor_an_automatic_metric_for_mt_evaluation_with_improved_correlation_with_human_judgments.md",
+    "title": "METEOR: An Automatic Metric For MT Evaluation With Improved Correlation With Human Judgments"
+  },
+  {
+    "source_id": "8864928",
+    "path": "sources/source_0138_understanding_inverse_document_frequency_on_theoretical_arguments_for_idf.md",
+    "file": "sources/source_0138_understanding_inverse_document_frequency_on_theoretical_arguments_for_idf.md",
+    "title": "Understanding inverse document frequency: On theoretical arguments for IDF"
+  },
+  {
+    "source_id": "964287",
+    "path": "sources/source_0139_rouge_a_package_for_automatic_evaluation_of_summaries.md",
+    "file": "sources/source_0139_rouge_a_package_for_automatic_evaluation_of_summaries.md",
+    "title": "ROUGE: A Package For Automatic Evaluation Of Summaries"
+  },
+  {
+    "source_id": "51878778",
+    "path": "sources/source_0140_learning_based_composite_metrics_for_improved_caption_evaluation.md",
+    "file": "sources/source_0140_learning_based_composite_metrics_for_improved_caption_evaluation.md",
+    "title": "Learning-based Composite Metrics for Improved Caption Evaluation"
+  }
+]

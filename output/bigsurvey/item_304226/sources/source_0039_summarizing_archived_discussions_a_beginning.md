@@ -1,0 +1,1 @@
+This paper describes an approach to digesting threads of archived discussion lists by clustering messages into approximate topical groups, and then extracting shorter overviews, and longer summaries for each group.

@@ -1,0 +1,1 @@
+In this section, we discuss some issues about the claimed values to be considered in the development of truth discovery approaches.

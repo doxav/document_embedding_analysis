@@ -1,0 +1,1 @@
+This project was funded in part by Federal funds from the US National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services under contract #HHSN272201200031C, which supports the Malaria HostPathogen Interaction Center (MaHPIC).

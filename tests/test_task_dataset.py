@@ -27,7 +27,7 @@ def test_task_bundle_dea_compatibility(tmp_path: Path):
     assert "target_file_path" in dea
 
 
-def test_promptfoo_file_backed_paths(tmp_path: Path):
+def test_MQS_evaluation_file_backed_paths(tmp_path: Path):
     bundle = TaskBundle(
         task_id="demo",
         dataset="demo",
@@ -38,7 +38,7 @@ def test_promptfoo_file_backed_paths(tmp_path: Path):
         sources=[TaskSource(source_id="s1", title="Source", text="Text")],
     )
     write_dataset([bundle], tmp_path)
-    row = json.loads((tmp_path / "promptfoo_dataset.jsonl").read_text().splitlines()[0])
+    row = json.loads((tmp_path / "MQS_evaluation_dataset.jsonl").read_text().splitlines()[0])
     assert (tmp_path / row["expected_path"]).exists()
     assert (tmp_path / row["input"]["instruction_path"]).exists()
     assert (tmp_path / row["sections_path"]).exists()
@@ -82,3 +82,69 @@ def test_task_bundle_truncates_long_generated_filenames(tmp_path: Path):
     source_file = next((item / "sources").glob("*.md"))
     assert len(section_file.name.encode("utf-8")) < 255
     assert len(source_file.name.encode("utf-8")) < 255
+
+
+def test_write_dataset_removes_stale_generated_items(tmp_path: Path):
+    first = TaskBundle(
+        task_id="old",
+        dataset="demo",
+        title="Old",
+        abstract="A",
+        instruction="I",
+        sections=[TaskSection(section="S", text="C", source_ids=["s1"])],
+        sources=[TaskSource(source_id="s1", title="Source", text="Text")],
+    )
+    second = TaskBundle(
+        task_id="new",
+        dataset="demo",
+        title="New",
+        abstract="A",
+        instruction="I",
+        sections=[TaskSection(section="S", text="C", source_ids=["s1"])],
+        sources=[TaskSource(source_id="s1", title="Source", text="Text")],
+    )
+
+    write_dataset([first], tmp_path)
+    assert (tmp_path / "item_old").exists()
+
+    write_dataset([second], tmp_path)
+    assert not (tmp_path / "item_old").exists()
+    assert (tmp_path / "item_new").exists()
+
+
+def test_write_dataset_validates_before_cleaning(tmp_path: Path):
+    good = TaskBundle(
+        task_id="kept",
+        dataset="demo",
+        title="Kept",
+        abstract="A",
+        instruction="I",
+        sections=[TaskSection(section="S", text="C", source_ids=["s1"])],
+        sources=[TaskSource(source_id="s1", title="Source", text="Text")],
+    )
+    duplicate_a = TaskBundle(
+        task_id="dup",
+        dataset="demo",
+        title="A",
+        abstract="A",
+        instruction="I",
+        sections=[TaskSection(section="S", text="C", source_ids=["s1"])],
+        sources=[TaskSource(source_id="s1", title="Source", text="Text")],
+    )
+    duplicate_b = TaskBundle(
+        task_id="dup",
+        dataset="demo",
+        title="B",
+        abstract="A",
+        instruction="I",
+        sections=[TaskSection(section="S", text="C", source_ids=["s1"])],
+        sources=[TaskSource(source_id="s1", title="Source", text="Text")],
+    )
+
+    write_dataset([good], tmp_path)
+
+    import pytest
+    with pytest.raises(ValueError, match="Duplicate TaskBundle.task_id"):
+        write_dataset([duplicate_a, duplicate_b], tmp_path)
+
+    assert (tmp_path / "item_kept").exists()

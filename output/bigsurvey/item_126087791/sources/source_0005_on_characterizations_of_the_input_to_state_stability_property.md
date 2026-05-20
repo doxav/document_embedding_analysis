@@ -1,0 +1,1 @@
+We show that the well-known Lyapunov sufficient condition for "input-to-state stability" (ISS) is also necessary, settling positively an open question raised by several authors during the past few years. Additional characterizations of the ISS property, including one in terms of nonlinear stability margins, are also provided.

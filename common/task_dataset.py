@@ -3,9 +3,12 @@ from __future__ import annotations
 import json
 import hashlib
 import re
+import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+
+MQS_EVALUATION_DATASET = "MQS_evaluation_dataset.jsonl"
 
 
 def _slug(v: str, max_length: int = 120) -> str:
@@ -138,7 +141,7 @@ def write_task_bundle(bundle: TaskBundle, root: Path) -> Path:
     return item_dir
 
 
-def _promptfoo_record_from_item(root: Path, item: Path) -> dict[str, Any]:
+def _MQS_evaluation_record_from_item(root: Path, item: Path) -> dict[str, Any]:
     task = json.loads((item / "task.json").read_text(encoding="utf-8"))
     source_paths = [
         str((item / "sources" / p.name).relative_to(root))
@@ -159,22 +162,35 @@ def _promptfoo_record_from_item(root: Path, item: Path) -> dict[str, Any]:
     }
 
 
-def write_promptfoo_dataset_from_items(root: Path, items: list[Path]) -> None:
-    with (root / "promptfoo_dataset.jsonl").open("w", encoding="utf-8") as f:
+def write_MQS_evaluation_dataset_from_items(root: Path, items: list[Path]) -> None:
+    with (root / MQS_EVALUATION_DATASET).open("w", encoding="utf-8") as f:
         for item in items:
-            f.write(json.dumps(_promptfoo_record_from_item(root, item), ensure_ascii=False) + "\n")
+            f.write(json.dumps(_MQS_evaluation_record_from_item(root, item), ensure_ascii=False) + "\n")
 
 
-def write_dataset(bundles: list[TaskBundle], root: Path) -> None:
-    root.mkdir(parents=True, exist_ok=True)
+def _clean_generated_dataset(root: Path) -> None:
+    for path in root.glob("item_*"):
+        if path.is_dir():
+            shutil.rmtree(path)
+    for name in ("dataset_manifest.json", MQS_EVALUATION_DATASET):
+        path = root / name
+        if path.exists():
+            path.unlink()
+
+
+def write_dataset(bundles: list[TaskBundle], root: Path, *, clean: bool = True) -> None:
     seen_task_ids: set[str] = set()
     for bundle in bundles:
+        _validate_bundle(bundle)
         if bundle.task_id in seen_task_ids:
             raise ValueError(f"Duplicate TaskBundle.task_id: {bundle.task_id}")
         seen_task_ids.add(bundle.task_id)
+    root.mkdir(parents=True, exist_ok=True)
+    if clean:
+        _clean_generated_dataset(root)
     items = [write_task_bundle(b, root) for b in bundles]
     (root / "dataset_manifest.json").write_text(
         json.dumps({"count": len(items)}, indent=2, ensure_ascii=False),
         encoding="utf-8",
     )
-    write_promptfoo_dataset_from_items(root, items)
+    write_MQS_evaluation_dataset_from_items(root, items)

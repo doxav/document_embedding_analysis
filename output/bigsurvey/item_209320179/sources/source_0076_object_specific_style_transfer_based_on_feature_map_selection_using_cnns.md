@@ -1,0 +1,1 @@
+We propose a method for transferring an arbitrary style to only a specific object in an image. Style transfer is the process of combining the content of an image and the style of another image into a new image. Our results show that the proposed method can realize style transfer to specific object.

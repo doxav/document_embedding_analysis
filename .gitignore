@@ -52,3 +52,17 @@ coverage.xml
 # Environments
 .env
 *.iml
+
+# Reproducible source-provided dataset caches.
+# Keep only README marker files in git; archives, extracted data, and official
+# JSON payloads are downloaded/recreated by the importer scripts.
+data/bigsurvey/*
+!data/bigsurvey/README.md
+data/multilexsum/*
+!data/multilexsum/README.md
+
+# Reproducible generated MQS_evaluation datasets.
+#output/bigsurvey/*
+#!output/bigsurvey/README.md
+#output/multilexsum/*
+#!output/multilexsum/README.md

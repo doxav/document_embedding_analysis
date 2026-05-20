@@ -1,0 +1,1 @@
+A is said to be a fuzzy number when its universe is the set of real numbers R and satisfy: The family of fuzzy numbers coincides with F C (R) and will be denoted by R F .  BIB8851568

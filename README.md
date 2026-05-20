@@ -149,19 +149,30 @@ The project supports two related benchmark styles:
 * **Native DEA / open retrieval:** the model starts from the target title, abstract, topic, and bibliography-style references. Source documents are not bundled; a system must retrieve them or reason from open references.
 * **Source-provided summarization:** the model is given source documents or source abstracts and must synthesize the target output.
 
-**Documented local snapshot:** 100 LaTeX `.tex`/`.bib` pairs, 10 arXiv PDFs, 10 configured Wikipedia URLs, 25 patent text files, 0 FreshWiki dumps. Existing generated outputs currently contain 10 LaTeX, 10 arXiv, 12 Wikipedia, and 24 patent DEA JSON files.
+**Documented local snapshot:** 100 LaTeX `.tex`/`.bib` pairs, 10 arXiv PDFs, configured Wikipedia URLs, 25 patent text files, and 0 FreshWiki dumps. BigSurvey and MultiLexSum raw files are reproducible local caches under `data/bigsurvey` and `data/multilexsum`; they are intentionally ignored by git because they are large. Existing checked-in native DEA outputs contain 10 LaTeX, 10 arXiv, 12 Wikipedia, and 24 patent DEA JSON files. BigSurvey and MultiLexSum MQS outputs are regenerated locally under `output/bigsurvey` and `output/multilexsum`.
 
 | Dataset / Type | Entry point | Input | Target output | Source-document availability | Notes |
 | --- | --- | --- | --- | --- | --- |
-| BigSurvey `split` archive | `scripts/import_bigsurvey.py --archive split` | Google Drive archive / local archive | Survey sections | **Provided** as cited-paper abstracts | Real Drive import tested; groups by `paper_id`; sample test split items had 17-112 source abstracts. |
-| BigSurvey `original` archive | `scripts/import_bigsurvey.py --archive original` | Google Drive archive / local archive | Survey sections | **Provided** as cited-paper abstracts | Real Drive import tested; archive lacks `paper_id`, so importer groups by title. |
-| MultiLexSum | `scripts/import_multilexsum.py` | Official release download or local JSON files | Long legal summary | **Provided** as legal case documents | Default mode fetches official `sources.json` plus `{train,dev,test}.json` split files; local `--records-json`/`--sources-json` mode is available for offline runs. |
+| BigSurvey `split` archive | `scripts/import_bigsurvey.py --archive split` | Google Drive archive / local archive under `data/bigsurvey` | Survey sections | **Provided** as cited-paper abstracts | Default BigSurvey mode; groups by `paper_id` and writes to `output/bigsurvey` unless overridden. |
+| BigSurvey `original` archive | `scripts/import_bigsurvey.py --archive original` | Google Drive archive / local archive under `data/bigsurvey` | Survey sections | **Provided** as cited-paper abstracts | Real Drive import tested; archive lacks `paper_id`, so importer groups by title. |
+| MultiLexSum | `scripts/import_multilexsum.py` | Official release files under `data/multilexsum` or local JSON files | Long legal summary | **Provided** as legal case documents | Default mode fetches official `sources.json` plus `{train,dev,test}.json` split files and writes to `output/multilexsum` unless overridden. |
 | LaTeX | `main.py` option `l` | `.tex` + `.bib` | Paper reconstruction DEA | **Partial retrieval locators only** | BibTeX may contain DOI/URL fields; these are open-retrieval locators, not bundled source documents. |
 | arXiv PDF | `main.py` option `a` | PDF files | Paper reconstruction DEA | **Not provided** | Parsed references are bibliographic text only; use open retrieval. |
 | Wikipedia | `main.py` option `w` | Wikipedia URLs | Article reconstruction DEA | **Not document-provided** | New extraction preserves external citation URLs as retrieval hints where Wikipedia exposes them, but coverage is incomplete and should be treated as open retrieval. |
 | Patents | `main.py` option `p` | EPO-style patent text | Patent reconstruction DEA | **Not provided** | Extracted references are patent-number strings only; use open retrieval. |
 | FreshWiki | `main.py` option `f` | FreshWiki JSON dumps | Article reconstruction DEA | Unknown locally | No local FreshWiki data is present in this checkout. |
-| Enriched DEA second pass | `scripts/enrich_dea_sources.py` | Existing DEA JSON | File-backed promptfoo rows | Depends on resource fields | Works only when resources contain real local paths, source URLs, or DOI/URL locators; otherwise rows are marked `reference_only_open_retrieval`. |
+| Enriched DEA second pass | `scripts/enrich_dea_sources.py` | Existing DEA JSON | File-backed MQS_evaluation rows | Depends on resource fields | Works only when resources contain real local paths, source URLs, or DOI/URL locators; otherwise rows are marked `reference_only_open_retrieval`. |
+
+### Dataset Directory Layout
+
+Source-provided datasets use the same visible layout as the native DEA datasets:
+
+| Path | Contents |
+| --- | --- |
+| `data/bigsurvey/` | Ignored local cache for downloaded BigSurvey archives and extracted dataframe files. The README marker in that directory explains how to recreate it. |
+| `data/multilexsum/` | Ignored local cache for official MultiLexSum split files and `sources.json`. The README marker in that directory explains how to recreate it. |
+| `output/bigsurvey/` | Ignored generated BigSurvey MQS evaluation dataset with `MQS_evaluation_dataset.jsonl`, `dataset_manifest.json`, and `item_*` folders. |
+| `output/multilexsum/` | Ignored generated MultiLexSum MQS evaluation dataset with `MQS_evaluation_dataset.jsonl`, `dataset_manifest.json`, and `item_*` folders. |
 
 ---
 
@@ -671,6 +682,74 @@ The splitter:
 * sanitizes filenames;
 * skips existing files.
 
+### BigSurvey importer
+
+```bash
+python scripts/import_bigsurvey.py --n 20 --split test --skip-embeddings
+```
+
+Defaults:
+
+| Option | Default |
+| --- | --- |
+| `--archive` | `split` Google Drive alias |
+| `--work-dir` | `data/bigsurvey` |
+| `--output-dir` | `output/bigsurvey` |
+| `--split` | `test` |
+
+If the archive is absent, the importer downloads it. If Google Drive is not
+reachable, place `split_survey_df.tar.gz` or `original_survey_df.tar.gz` under
+`data/bigsurvey/` and rerun the command.
+
+To check the original archive separately, write it outside the canonical output
+directory:
+
+```bash
+python scripts/import_bigsurvey.py \
+    --archive original \
+    --n 20 \
+    --split test \
+    --output-dir /tmp/dea_bigsurvey_original_check \
+    --skip-embeddings
+```
+
+The original archive currently yields 18 usable `test` examples even when `--n 20`
+is requested, because examples without required cited-paper abstracts are skipped.
+
+### MultiLexSum importer
+
+```bash
+python scripts/import_multilexsum.py --n 20 --split test --skip-embeddings
+```
+
+Defaults:
+
+| Option | Default |
+| --- | --- |
+| `--source` | `official` unless local JSON paths are supplied |
+| `--cache-dir` | `data/multilexsum` |
+| `--output-dir` | `output/multilexsum` |
+| `--split` | `test` |
+
+Official mode downloads `{split}.json` and `sources.json` if they are absent,
+using Hugging Face first and the AI2 S3 mirror as fallback. If both remotes are
+unavailable, place the official files under `data/multilexsum/` and use local
+mode:
+
+```bash
+python scripts/import_multilexsum.py \
+    --source local \
+    --records-json data/multilexsum/test.json \
+    --sources-json data/multilexsum/sources.json \
+    --n 20 \
+    --output-dir /tmp/dea_multilexsum_local_check \
+    --skip-embeddings
+```
+
+When local records do not contain an explicit `split` field, the importer treats
+the provided records file as already split. This matches the official
+`train.json`/`dev.json`/`test.json` release files.
+
 ---
 
 ## Testing
@@ -694,6 +773,22 @@ python tests.py
 ```
 
 The pytest suite should be able to import the package without requiring heavyweight optional dependencies unless tests explicitly exercise those features.
+
+Dataset command checks used for this README:
+
+```bash
+python scripts/import_bigsurvey.py --n 20 --split test --skip-embeddings
+python scripts/import_bigsurvey.py --archive original --n 20 --split test --output-dir /tmp/dea_bigsurvey_original_check --skip-embeddings
+python scripts/import_multilexsum.py --n 20 --split test --skip-embeddings
+python scripts/import_multilexsum.py --source local --records-json data/multilexsum/test.json --sources-json data/multilexsum/sources.json --n 20 --output-dir /tmp/dea_multilexsum_local_check --skip-embeddings
+python scripts/select_arxiv_latex.py --max-papers 1 --dry-run
+python scripts/split_epo_extract.py data/2022week30_EP0600000_extract.txt /tmp/dea_patents_check
+```
+
+`main.py` generation for LaTeX, arXiv, Wikipedia, patents, and FreshWiki is
+interactive and creates embedded DEA JSON. The current native extraction path
+uses OpenAI and HuggingFace embeddings, so run it only with `OPENAI_API_KEY` and
+local embedding dependencies configured.
 
 ---
 
@@ -778,8 +873,8 @@ This repo now supports both native DEA reconstruction targets and source-provide
 
 | Dataset | Source-provided benchmark? | Open retrieval needed? | Current behavior |
 | --- | --- | --- | --- |
-| BigSurvey `split` | Yes | No, for cited abstracts | Downloads from Drive alias `split`; writes promptfoo rows with source abstract files. |
-| BigSurvey `original` | Yes | No, for cited abstracts | Downloads from Drive alias `original`; writes promptfoo rows with source abstract files, grouped by title. |
+| BigSurvey `split` | Yes | No, for cited abstracts | Downloads from Drive alias `split`; writes MQS_evaluation rows with source abstract files. |
+| BigSurvey `original` | Yes | No, for cited abstracts | Downloads from Drive alias `original`; writes MQS_evaluation rows with source abstract files, grouped by title. |
 | MultiLexSum | Yes | No | Official mode downloads `sources.json` and `{split}.json`; local mode reads `--records-json` and `--sources-json`. |
 | LaTeX DEA outputs | No, not as bundled documents | Yes | BibTeX DOI/URL fields become best-effort retrieval locators; manifests use `source_locator_best_effort` when locators exist. |
 | arXiv DEA outputs | No | Yes | Existing parsed PDF references contain citation text only; manifests use `reference_only_open_retrieval` or `no_resources`. |
@@ -789,10 +884,10 @@ This repo now supports both native DEA reconstruction targets and source-provide
 | Generic enriched DEA | Conditional | Conditional | Only source-backed when resources contain local paths, HTTP URLs, or DOI/URL locators. |
 
 ### Example CLIs
-- `python scripts/import_bigsurvey.py --archive split --n 10 --split test --output-dir benchmark/source_provided/bigsurvey_split --skip-embeddings`
-- `python scripts/import_bigsurvey.py --archive original --n 10 --split test --output-dir benchmark/source_provided/bigsurvey_original --skip-embeddings`
-- `python scripts/import_multilexsum.py --n 20 --split test --output-dir benchmark/source_provided/multilexsum --skip-embeddings`
-- `python scripts/import_multilexsum.py --source local --records-json data/multilexsum/test.json --sources-json data/multilexsum/sources.json --n 20 --output-dir benchmark/source_provided/multilexsum_local --skip-embeddings`
+- `python scripts/import_bigsurvey.py --n 20 --split test --skip-embeddings`
+- `python scripts/import_bigsurvey.py --archive original --n 20 --split test --output-dir /tmp/dea_bigsurvey_original_check --skip-embeddings`
+- `python scripts/import_multilexsum.py --n 20 --split test --skip-embeddings`
+- `python scripts/import_multilexsum.py --source local --records-json data/multilexsum/test.json --sources-json data/multilexsum/sources.json --n 20 --output-dir /tmp/dea_multilexsum_local_check --skip-embeddings`
 - `python scripts/enrich_dea_sources.py --dea-root output/latex --output-dir benchmark/open_retrieval/latex --fetch-remote --continue-on-error`
 - `python scripts/enrich_dea_sources.py --dea-root output/arxiv --output-dir benchmark/open_retrieval/arxiv --continue-on-error`
 
@@ -804,11 +899,12 @@ This repo now supports both native DEA reconstruction targets and source-provide
 - `source_locator_best_effort` means DOI/URL/path fields exist, but they are retrieval locators rather than guaranteed bundled source documents.
 - `no_resources` means no bibliography/resource entries were extracted.
 - BigSurvey sources are cited-paper abstracts (not full PDFs).
-- Multi-LexSum sources are dataset-exposed legal source texts. Official mode caches the large upstream `sources.json` under `.cache/multilexsum` and stream-selects only needed documents for output.
+- Multi-LexSum sources are dataset-exposed legal source texts. Official mode caches the large upstream `sources.json` under `data/multilexsum` and stream-selects only needed documents for output.
+- BigSurvey and MultiLexSum cache/output payloads are ignored by git. Keep the README marker files, and rerun the importer commands to recreate the local artifacts.
 
 ### Adding a new dataset
 1. Create `TaskBundle` records.
-2. Write with `write_dataset(...)` for canonical layout + `promptfoo_dataset.jsonl`.
+2. Write with `write_dataset(...)` for canonical layout + `MQS_evaluation_dataset.jsonl`.
 3. Optionally convert/export DEA-compatible `dea_solution.json`.
 
 

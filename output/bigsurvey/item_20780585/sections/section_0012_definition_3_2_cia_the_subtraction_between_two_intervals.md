@@ -1,0 +1,1 @@
+Lodwick et. al BIB14431044 extended this idea for the fuzzy case from Theorem 2.4. Also, from this theorem it is possible to define Hukuhara difference between fuzzy numbers.

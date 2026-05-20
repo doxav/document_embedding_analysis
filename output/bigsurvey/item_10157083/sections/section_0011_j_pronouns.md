@@ -1,0 +1,1 @@
+Pronouns such as "she, they, it" cannot be included in summary unless they are expanded into corresponding nouns.

@@ -1,0 +1,1 @@
+Dataset. The IAPR TC-12 dataset BIB18883184 has 20K images. The images are collected from various sources such as sports, photographs of people, animals, landscapes, and many other locations around the world. The images of this dataset have captions in multiple languages. Images have multiple objects as well.

@@ -1,0 +1,1 @@
+This section describes commonly used experimental setups for the evaluation of algorithms in the presence of label noise. Firstly, widely used datasets and methods to generate test sets are discussed. Afterwards, methodologies for adding synthetic noise are be presented.

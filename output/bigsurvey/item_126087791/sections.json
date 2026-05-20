@@ -1,0 +1,540 @@
+[
+  {
+    "section": "Introduction",
+    "text": "Real world systems are inherently nonlinear in nature at least when considered over wide operating range although many of the systems are assumed to 'behave' as linear in the vicinity of a certain operating point at low speeds under certain assumptions. Many physical processes are represented by nonlinear models. Examples include; coulomb friction, gravitational and electrostatic at-traction, voltage-current characteristics of most electronic systems and drag on a vehicle in motion. Recently, many researchers from such broad areas like process control, biomedical engineering, robotics, aircraft and spacecraft control have shown an active interest in the design and analysis of nonlinear control strategies. Thus, most of the real problems necessitate invariably bumping into nonlinearities BIB110112677 . Primary reasons behind growing interest in nonlinear control include BIB106519536 ; improvement of linear control systems, analysis of hard nonlinearities, need to deal with model uncertainties and design simplicity. Nonlinear strategies improve trivial approaches by taking into accounts the dynamic forces like centripetal and Coriolis forces which vary in proportion to the square of the speed. So, the linear control laws put a serious constraint on speed of motion to achieve a specified accuracy. However, simple nonlinear controller can reasonably compensate the nonlinear forces thus achieving high speed in an ample workspace. Also, hard nonlinearities like dead-zones, hysteresis, Coulomb friction, stiction, backlash and saturation do not permit linear approximation of real-world systems  . After predicting these nonlinearities, nonlinear approaches properly compensate these to achieve unmatched performance. Moreover, real systems often exhibit uncertainties in the model parameters primarily due to sudden or slow change in the values of these parameters. A nonlinear controller through robustness or adaptability can handle the consequences due to model uncertainties  . The systems that are not linearly controllable or observable may be controllable/observable in a nonlinear sense. Modern technology such as high accuracy high speed robots require fulfilling strict design requirements. The positioning of such robots is a nonlinear problem since it involves coordinate transformation matrices having sine and cosine terms. The linear control of the manipulators assumes each joint to be independent and considers the inertia 'seen' by each joint as a constant. This approximation leads to non-uniform damping throughout the workenvelope and results other undesirable effects  . Considering a 6 Degree Of Freedom (DOF) manipulator, the over performance of a nonlinear strategy particularly in the presence of a disturbance is evident from Fig. 1 where a bounded matched disturbance (Fig. 1a) is fed to the manipulator and tracking performance (Fig. 1b) of a nonlinear approach Sliding Mode Control (SMC) is compared with a linear strategy i.e. Computed Torque Control with Proportional Integral Derivative (CTC-PID). Non applicability of superposition and homogeneity in case of nonlinear systems results in major implications on the analysis and design of the control systems BIB120657526 . The straight forward relationship between transfer function zero(s) and pole(s) locations and time response does not hold valid in general. An unforced nonlinear system can possess limit cycles not speculated by linear theory. The controllability and observability cannot be determined simply based on rank tests. Moreover, stability of a system is no longer just a simple function of eigenvalue locations since nonlinear systems may have multiple stable/unstable equilibrium points. Owing to the pertinent importance of nonlinear control in wide range of recent applications, this paper presents a brief comment on the subject topic. Interested readers are encouraged to refer to the original literature cited for more specific details. The remaining paper is structured as follows: Section 2 briefly presents historical perspective of nonlinear control systems while recent advances and challenges are discussed in Section 3 and 4 respectively. Finally Section 5 comments on conclusion.",
+    "source_ids": [
+      "106519536",
+      "110112677",
+      "120657526"
+    ],
+    "citations": [
+      {
+        "source_id": "106519536",
+        "title": "Applied Nonlinear Control",
+        "citing_sentences": [
+          "This FLC will be used to balance a car-pole inverted pendulum system [15] , as shown in Fig.",
+          "where J(θ) is the normalized log-likelihood of the model that is computed using (19) , and n p is the total number of free parameters.",
+          "If the output is repeatedly differentiated, we find that the system has a well-defined strong relative degree [33] , [34] of four.",
+          "The robot can be stabilized using a conventional PD feedback controller (7) where and are diagonal matrices of positive proportional and derivative gains, respectively, the vector with new input signals from the batch adaptive controller, and the tracking error (8) If (7) is applied to (6) , then the closed-loop system takes the form (9) When all motions, speeds, and accelerations in (9) are chosen to be reference ones, the input signal is obtained (10) and the residual error dynamics, with input , is given by (11) For appropriate choices of and [13] , the residual error dynamics can be made passive for the output (12) where is a positive constant scalar, and is an vector of gradients of a potential function.",
+          "One important technique in nonlinear control is feedback linearization ( [32, 33] ).",
+          "By Barbalat's lemma [14]",
+          ", where x 2di is the desired trajectory for x 2i , it can be shown [36] that the following control input satisfies the sliding conditions",
+          "For a fair comparison, we selected the PD gains in (75) as K 1 = 1000, K 2 = 300, and Λ = 0.3 such that the level of control efforts is comparable to that of the nonlinear control approach in (23) .",
+          "To synthesize the adaptive control law U 2 , it is assumed that the full state vector components are available through the measure and that the sign of h 1 is known [12] .",
+          "A possible solution is to monitor the energy corresponding to friction and friction compensation over a period of time t − t 0 (19) and to switch off or scale down the friction compensation if the energy exceeds a certain positive threshold.",
+          "[1] ).",
+          "The first step in this design is similar to the one for the backstepping approach [9] , except for the equation (19) were S 2 (Surface) is used instead of z 2 for more clearance.",
+          "To execute a torque level controller, a feedback loop was implemented as follows: (50) where denotes a vector of the drive and steering motor torques, respectively, is a diagonal scaling term, and is a velocity mismatch signal defined as (51) where and denote the linear and angular velocity inputs computed in (29) and (30) , and and denote actual linear and angular velocity of the mobile robot computed from the time derivative of the motor encoders.",
+          "If the internal dynamics is stable in the boundedinput bounded-output (BIBO) sense, the control system (55) can be stabilized [25] .",
+          "The switching-type FSMC proposed by Li [47] is a method based on FLC and sliding mode controller (SMC) [48] - [50] , which achieves asymptotic stability of the system.",
+          "The simplified equation with the introduction of the preprocessed variables is given in (5) In order to perform the pattern classification, output in (1) and (5) is converted to a Boolean value by considering the condition .",
+          "In order to estimate the robot mass, we made use of an algorithm taken from classical adaptive control techniques [15] .",
+          "Building autonomy ties to developing and unifying algorithms for localization and mapping [7] , state estimation [8] , motion planning [9, 10] , robotic vision [11] and control [12, 13] .",
+          "Which implying that S→0 when t→∞, and therefore 0 , → e e  when t→∞ [17] .",
+          "Remark 4: The convergence of the estimated parameters can only be ensured if the trajectory is persistently exciting [26] , [34] .",
+          "28 To employ this methodology to an adaptive neural network controller, a Liapunov function must be found to determine how fast the network weights may be updated or changed.",
+          "T IS WELL KNOWN that sliding-mode controllers (SMCs) are powerful in controlling nonlinear systems with bounded unknown disturbances [4] - [6] .",
+          "A thorough discussion of forgetting factors can be found in Section 8.7 of Slotine and Li (1991) .",
+          "This hypothesis is strongly reminiscent of the concept of ''persistent excitation'' that is essential for effective adaptive control [49] .",
+          "We briefly recall a well known parameter estimation procedure based on filtering linear dynamics [15] , which is used in our algorithm during the estimation of constant parameters such as the inter-distance between contact points, the moment of inertia J and the mass m. Notably, given the linear systemẏ = θu, the problem is to estimate the unknown constant parameter θ ∈ R on the basis of measurements of the quantities u ∈ R l and y ∈ R l only, where l ≥ 1.",
+          "Action research is grounded in theory of motor control, which was largely laid out in classical engineering fields like cybernetics (Wiener, 1948 ), optimal control (Bellman, 1957 , and control theory (Slotine and Li, 1991; Narendra and Annaswamy, 2005) .",
+          "By using Barbalat's lemma [27] , it can be shown that lim t→∞ Ω(t) = 0.",
+          "The wellknown approach is to use a saturation function [3] sat(σ) = σ σ <|1|, sgn(σ) otherwise.",
+          "For more details about the state feedback linearization method one may refer to [13, 14] .",
+          "This model is used in Slotine and Li (1991) as a standard reference model for a complex nonlinear control task (see in particular sections 6 and 9).",
+          "The most popular modification is the boundary layer approach, which is, basically, the application of a high gain feedback when the motion of the system reaches -vicinity of a sliding manifold [5] , [14] .",
+          "For the discrete system, given that f decays to zero, u converges to the steady state g after a transient time, such that the system will asymptotically converge to g. After the transient time, the system will exponentially converge to g as only the linear spring-damper dynamics remain relevant (Slotine & Li, 1991) .",
+          "The derivation of the adaptation rule is carried out using the algorithm proposed in (Slotine and Li [1991] ).",
+          "The adaptive tracking error [36] is",
+          "Again, the kinematic equations are given by (10) where is the system output, is the input vector, and Once again we use input-output linearization to derive a control law for which gives us the following closed-loop dynamics: (11) where is an auxiliary control input and is the chosen positive definite controller gain matrix.",
+          "It is important to stress that in [41] it is stated that, because of the approximate nature of the describing function method, results are not very accurate some times, i.e., a) the predicted amplitude and frequency might not be accurate, b) a predicted limit cycle might actually not exist, or c) an existing limit cycle is not predicted.",
+          "The system could even become unstable as a result of the chattering phenomenon when an unmodeled structure dynamics is excited [18] .",
+          "Therefore, if x 3 is not vanishing, then the largest invariant set M ⊂ V consists of the only equilibrium point (0 0 0) T . Thus, the thesis holds due to the invariance Krasovskii-LaSalle principle [15] .",
+          "The parallel combination of two passive mappings is still a passive mapping (Slotine and Li, 1991) Remark: These stability results apply only if the Q(s) lter is designed using the model in (36).",
+          "In (4), can be interpreted as the approximation of the continuous control law that would remain , and is the discontinuous part which helps to satisfy the sliding condition in the presence of parameter uncertainty [6] , [8] .",
+          "31 The preceding feedback linearization is dependent on the exact cancellation of the nonlinearity as shown in Eqs.",
+          "Reducing the chattering, a thin boundary layer of thickness around the switching surface is proposed in [5] ,",
+          "A two-port element inside a teleoperation system can be characterized as passive when the energy (integral of power over time) of the output of the two-port element is greater than the energy of the input [129] .",
+          "Consider the system (8) with decentralized update laws (9) .",
+          "In the backstepping design procedure, a control Lyapunov function (CLF) is first constructed, and a virtual control law consisting system states and satisfying the Lyapunov stability theorem [11] is chosen.",
+          "which is a well known form in the adaptive control theory of robot manipulators (Slotine and Li [1991] ).",
+          "For the premise variable in the fuzzy rules, the augmented state x(t) in (14) and the system output z(t) in (19) ,ẽ(t) replaces the role of e(t).",
+          "To establish convergence, we invoke the corollary of Barbalat's Lemma used for stability analysis from [14] (Lemma 4.3) which states that:",
+          "[24] ).",
+          "51, 52 If stable, small perturbations (initial conditions) will be forgotten and the trajectories will converge to the limit cycle.",
+          "However, the monotonous switching feedback produced by these controllers causes high frequency chattering in the control signals, which leads to undesirable loads on control actuators [12, 13] .",
+          "Since perfect knowledge of the system is almost impossible, the technique of exact feedback linearization seems impractical for nonlinear system design [1] , [32] .",
+          "where L s f h is the s-th-order Lie Derivative [47] , of the scalar field h with respect to the vector field f. In (10) the zero-order and first-order Lie Derivatives are used for each measurement.",
+          "48 ; so, this can be used to evaluate the correctness of the results.",
+          ". . with L 0 f h = h (see [8] ).",
+          "Non-linear control provides a way to address complex relationships between inputs and outputs [29] ."
+        ]
+      },
+      {
+        "source_id": "110112677",
+        "title": "A systematic review of current and emergent manipulator control approaches",
+        "citing_sentences": [
+          "The approach to controlling a multi-DOF manipulator must be robust enough to cope with the effects of inherent nonlinearities and coupling in the robot dynamics [3] to [5] .",
+          "Many researchers are looking into passive and active approaches to address part of safety issues in HRI (Braun et al., 2013; Potkonjak et al., 2011; Kim et al., 2012; Ficuciello and Villani, 2012; Di Natali and Valdastri, 2012; Ajwad et al., 2014 Ajwad et al., , 2015 ."
+        ]
+      },
+      {
+        "source_id": "120657526",
+        "title": "Modern Control Theory",
+        "citing_sentences": [
+          "The interested reader can find a complete discussion related to stability in [7] .",
+          "Therefore, we hereafter focus on examining (25) which is the so-called semigroup property [18] .",
+          "As has been demonstrated in several reports (Jakobi et al., 1995; (Brogan, 1991) .",
+          "In some cases it is possible to employ Lyapunov's direct approach to stability analysis in the design of a feedback controller (Brogan, 1991) .",
+          "After the placement of the eigenvalues have been chosen, the state feedback gain matrix may be found using any of the methods given in [6] , such as Ackermann's method.",
+          "Details can be found in [30, Ch."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Historical Perspective",
+    "text": "History of nonlinear control dates back to 18 th century when centrifugal \"flyball\" governor was invented to control steam engine by regulating the admission of steam into the cylinder. However, the governor was made to work without concrete analytical concepts BIB109353893 . In 1892, A.M. Lyapunov, a Russian mathematician, presented two methods in order to determine the stability of dynamic systems described by Ordinary Differential Equations (ODE). The second method called as direct method of Lyapunov, can determine stability without actually solving the ODE and thus finds potential in stability analysis of nonlinear control systems  . Lyapunov showed that if the linear approximation of a system is stable near an equilibrium point, then the truly nonlinear system will be stable for some neighborhood of that point. Lyapunov's work was translated into French in 1907 and recovered in control context later by Kalman and Bertram. Other noticeable works which benefited nonlinear control include Van der Pol's research on electronic oscillations and Duffing's findings on nonlinear vibrations. Based on the proposed nonlinear second order equations, approaches were developed to predict various phenomena of nonlinear systems, which include subharmonic oscillations, limit cycles, jump phenomena and frequency entrainment. As a subject, control engineering was in its infancy till late 1930s when scientific community started to face the problem of servomechanisms control  . Such mechanisms, approximated by second order systems, were dealt with the phase plane method, introduced by Poincaré. The event of Second World War boosted research in nonlinear control of servomechanisms due to the functional requirements imposed by fire-control systems and control of guided vehicles. During 1940-1960, three main analytical approaches used for analyzing nonlinear systems include; the describing function, the phase plane method and various methods involving relay systems. In the classical era, most problems involved single input, single output, linear, finite dimensional and time-invariant systems. Year 1960 is considered as start of modern era for nonlinear control BIB109353893 . This is the same time when the first International Federation of Automatic Control (IFAC) congress was held in Moscow, which brought theory of mechanics and Nyquist-Bode feedback theory closer to create to-day's control theory. The two key application drivers during this time were defense and space race. Other industrial avenues where nonlinear control were applied include automobiles, ships, steel, paper, minerals etc. The nonlinear, time varying, highly dimensional, poorly modelled and multivariable nature of the encountered real systems were outside the bounds of classical control theory. The digital computer was first introduced as a design tool and later as a component of a control system. In early 1970s, scientists investigated that the notions of energy and dissipation are linked with Lyapunov theory. So, dynamic systems can be viewed as energy transformation mechanisms. Based on this concept, Willems Jan proposed a theory for dissipative systems  . In 1990s, Sontag and Wang proposed theory of input-to-state stability for nonlinear control systems BIB13893551 , which can analyze stability of complex structures based on behavior of elementary subsystems and has been successfully applied to biological and chemical processes BIB54730875 . In 1995, Isidori presented geometric control theory by introducing the concept of zero dynamics  . With the ability to analyze controllability and observability, differential geometry finds enormous potential in the domain of nonlinear control systems. A critical review of early history of nonlinear control shows that concepts related with optimality, stability and uncertainty were descriptive rather than constructive. 1990s is considered as decade of 'activation process' when the descriptive research was being transformed into formal design methods through constructive procedures BIB205866696 . Table 1 summarizes prominent historical advances which directly or indirectly enriched the domain of nonlinear control systems.",
+    "source_ids": [
+      "109353893",
+      "13893551",
+      "205866696",
+      "54730875"
+    ],
+    "citations": [
+      {
+        "source_id": "109353893",
+        "title": "Early developments in nonlinear control",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "13893551",
+        "title": "On Characterizations of the Input-to-State Stability Property",
+        "citing_sentences": [
+          "These results are established with the help of the Lyapunov theory and the inputto-state stability (ISS) (Sontag and Wang, 1995) .",
+          "According to [21] , a necessary and sufficient condition for ISS in this case is the existence of a positive definite, radially unbounded, smooth function such that for some continuous, positive definite, strictly increasing functions , for all",
+          "Then solutions to (16)",
+          "In that case, the assumptions |Ψ i (y)| ≤ γ i |y| and |Φ i (y)| ≤ η i |y| can be relaxed, and similar stability results based on the input-to-state stability property [26] [27] [28] can be obtained.",
+          "As shown in Remark 2.4 in [SW95] , there is no loss of generality in modifying inequalities (3.20) to"
+        ]
+      },
+      {
+        "source_id": "205866696",
+        "title": "Constructive nonlinear control: a historical perspective",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "54730875",
+        "title": "New Trends in Nonlinear Control Systems and Applications",
+        "citing_sentences": []
+      }
+    ]
+  },
+  {
+    "section": "Mathematical Viewpoint",
+    "text": "Developments in pure and applied Mathematics and to some extent in Physics have a great role in evolving nonlinear control strategies. Application of Differential algebra and multivariable calculus for understanding, formulation and conceptual solutions to the problems in automatic control resulted in various nonlinear control strategies. Detailed reviews of these strategies are reported in   . As an educational example, a variable structure control technique, SMC is selected here to be examined from mathematical perspective due to its robustness feature and long history of theoretical and practical developments. This control technique has now become a de-facto  solution to handle modeling and parametric uncertainties of a nonlinear system. Its other distinguishing features are reduced-order compensated dynamics and finite-time convergence. The core idea behind SMC is to drive the nonlinear dynamics of the plant onto the selected sliding surface (reaching phase). The dynamics is then maintained at this surface for all subsequent time irrespective of nonlinearities. Figure 2 conceptualizes this concept.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "Fig. 2: Graphical representation of SMC",
+    "text": "Considering a general architecture BIB114186060 with a nonlinear system assumed to be in canonical form i.e. where uϵR is the control input and xϵ R n is the vector corresponding to the measurable states of the system. g(xt) and a(x, t) represent smooth vector fields and are known terms. Δ(xt) representing matched uncertainties is assumed to be norm bounded i.e.,",
+    "source_ids": [
+      "114186060"
+    ],
+    "citations": [
+      {
+        "source_id": "114186060",
+        "title": "Design and Comparison of Two Control Strategies for Multi-DOF Articulated Robotic Arm Manipulator",
+        "citing_sentences": [
+          "As robots are stepping into social environment, the need for more suitable and safe (compliant) control strategies are even more important (Khan et al., 2010a (Khan et al., , b, 2014a Rezoug and Hamerlain, 2014; Islam et al., 2014; Iqbal et al., 2014; Ding and Fang, 2013) ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Δ (x, t) =a (x, t) δ(t). δ(t)",
+    "text": "is known and satisfies δ(t) ≤ K * where K is a positive constant. To achieve the objective of directing the states to zero even in the presence of disturbances, we define a sliding surface as where C is a row vector of the dimensions same as that of the states vector. The choice of elements of C ensures that s becomes Hurwitz monic polynomial. The control law keeps s = 0, which results in order reduction by evolving the system with n−1 states in sliding mode. This ultimately makes the feedback system insensitive to the matched disturbances. The control law for SMC consists of a nominal feedback control term and an additional part to deal with uncertainties. The overall control law can be written as where u eqv corresponds to the equivalent control input and u disc is a discontinuous control term. The design of u eqv involves posingṡ = 0 along the dynamics of (1) while assuming that Δ (x, t) = 0. Therefore, This control law is capable of ensuring thatṡ = 0. However, the condition s ≠ 0 may occur demonstrating that the sliding mode is not in practice. Thus, u disc is designed so as to mitigate the consequences of disturbances finally maintaining s = 0. This term can be designed based on a Lyapunov function of the form Differentiating w.r.t. time along (1), we geṫ Using norm bounded assumption, (5) reduces tȯ Considering provided that K −|δ (t)| ≥ μ > 0. The inequality in (7) establishes that that sliding mode takes place in finite time even in the presence of uncertainties. Consequently, the closed loop dynamics can be written as . . . . Choice of positive values of the constants c i in (2) ensures that the poles of the feedback system are in Left Half Plane (LHP). As a final comment, x → 0 as t → ∞ and the system in (8) is not influenced by the uncertainties highlighting the invariance feature of SMC. An ideal SMC may require infinitely fast switching in an attempt to accurately track the reference trajectory. However, practical switched controllers have imperfections limiting the switching frequency. Thus the representative point may oscillate around the selected sliding surface leading to an undesirable phenomenon termed as chattering. Figure 3 illustrates this concept. Solutions to this problem are discussed in BIB10135647 .",
+    "source_ids": [
+      "10135647"
+    ],
+    "citations": [
+      {
+        "source_id": "10135647",
+        "title": "Discussion Aspects of High-Order Sliding Mode Control",
+        "citing_sentences": []
+      }
+    ]
+  },
+  {
+    "section": "Recent Advances",
+    "text": "In the last two decades, the advancements in nonlinear control systems have been in two folds; advances in theoretical approaches and more importantly applicationdriven developments. In theory, major breakthrough has been seen in the areas of sliding control, feedback linearization and nonlinear adaptive strategies. Recently, nonlinear control systems have gained high popularity primarily due to the extensive application of theoretical concepts to solve real world problems in various domains like electrical, mechanical, medical, avionics, space etc. Moreover, the advances in computer hardware and information technology have greatly resolved the computational constraints on analysis and design of nonlinear control systems. Now we see numerous applications of nonlinear control systems ranging from 'drive by wire' cars to 'fly by wire' aircraft flight control systems, to robotic, medical, industrial and space systems. Robotic manipulators have reshaped the industrial automation and are now an integral part of most of the modern plants. Although linear control strategies like PID  have been the main workhorse in industry since decades, however, the trend to employ nonlinear approaches is gradually increasing  . A typical example of implementation of a nonlinear approach i.e. SMC on a customdeveloped pseudo-industrial platform BIB111625791 is presented in BIB16698172 . The control objective was to ensure tracking of desired trajectory (q d ). This was achieved by defining a sliding manifold (S =ė+Ce) based on error signal (e = q d − q). The control law giving required input joint torque (τ) is expressed in (9) while the corresponding blockdigram is illustrated in Fig. 4 . (9) where M (q) denotes the inertia matrix, V (q,q) is the matrix comprising of Centrifugal and Corollis forces and G(q) represents the gravity effect. The matrices K = diag {k 1 k 2 k 3 k 4 } and C = diag {c 1 c 2 c 3 c 4 } are sliding surface constant and switching gain constant respectively. The system dynamics can be altered by varying K and C. A more advanced variant of SMC, Integral Sliding Mode Control (ISMC) eliminates reaching phase and improves performance in terms of position error. It also significantly reduces the chattering phenomena. Based on ISMC law, Khan and Jalani proposed and experimentally validated a scheme for a humanoid robot arm control. They have also demonstrated compliance control via this scheme employing joint torque sensors BIB52840404 . The scheme is illustrated in Fig. 5 . Recently, the book by Speirs et al. BIB114130980 presents bio-inspired nonlinear control for generating human-like posture, mimicking human motion and model reference adaptive compliance approaches. They have addressed the associated actuator saturation issues by introducing anti-windup compensators. In medical domain, recent applications of nonlinear control includes anesthesia administration and control of devices for rehabilitation and prosthetics BIB110842354 BIB120164817 BIB107586108 . A nonlinear control approach to regulate Depth Of hypnosis (DOH) in Propofol anesthesia is reported in BIB21209046 . The pa- BIB52840404 tient's hypnosis level is measured by EEG-based sensors e.g. Bispectral Index (BIS). Based on the derived patient's model, SMC minimizes steady state error to maintain hypnosis level within allowable range so as to conduct surgical procedures. Fig. 6 presents simulation results of eight patients after the infusion of drug for surgery. DOH level of 100 represents awake state while the level of 40-60 refers to moderate hypnotic state and is considered as safe range to execute surgery. As shown in the figure, all the patients achieved the desired level of hypnosis. The last decade has seen the emergence of the systems biology approach to understand biological systems in a holistic manner BIB3474472 . Rather than enumerating individual components (molecules, proteins) the systems biology approach focuses on the interactions between subsystems in order to understand the emergent dynamic behavior of the living system. Both the structural and functional organizations are important for characterizing the so-called symbiotic state of the biological system under study BIB59681544 . The structural organization involves network topologies including gene regulatory networks and biochemical reaction networks, and physical layers including molecules within organelles, organelles within cells, cells within tissues, tissues with organs and so forth. The functional organization involves cell functions including cell growth, cell division, cell differentiation (specialization) and cell death (apoptosis). The essence of systems biology is an understanding of the nonlinear dynamics of the biological system, which in turn requires the developments of computational models. Construction and analysis of such models of different subsystems (modules) of a system allow us to identify feedback loops in the system. Computer simulations could be used to test a drug or therapy before expensive clinical trials. In control-theoretic terms, a disease could be represented by some region of the state space of a living system. Viewed as a control system, the reference or desired state of the system could represent the healthy state. The drug or therapy could be represented by a controller in the loop. An application of nonlinear control can be found in BIB122606172 where the authors apply feedback linearization and optimal control strategies to a nonlinear state-space model of HIV infection. Other applications of optimal control of biological systems can be found in BIB2826807 . The curious reader might wonder why nonlinearity is ubiquitous in biological systems. This question can be answered fully in a brief account like this text but a justification will be provided by a few examples. Under appropriate assumptions, the mass action kinetics and mass action-like kinetics. Mass action-like kinetics are obeyed by intracellular biochemical reactions, cell-cell interactions and inter-species interactions including the epidemiological and predator-prey interactions. The state variables in mass action-like kinetics multiply which gives rise to nonlinear terms in the differential equations BIB3474472 . For instance, the rate of a chemical interaction between two species, commonly written as depends on the probability of encounter (collision) per unit time of the reactant (interacting) species. Computing such a probability involves multiplication of the abundances of the reactant species. Other sources of nonlinearity include the feedback mechanisms in which a product of a reaction cascade could enhance or inhibit the reactants. Simplifications resulting from specific assumptions (e.g. quasi-steady state) including the Michaelis-Menten kinetics and Hill kinetics are in the form of fractions, and hence nonlinear terms in the model. The rich variety of such rateequation models has been outlined in Fig. 7 . In chemical industry, the control of basic variables like pressure, levels, temperatures, flows and some quality variables is usually achieved by PID based law enhanced with advanced structures such as feedforward control, cascade control, ratio control, dead-time compensators etc. Common process characteristics in a chemical industry include BIB96585275 ; unmeasured state variables and disturbances, multivariable interactions between variables, high order and distributed processes, uncertain and timevarying parameters and dead-time on inputs and measure- BIB21209046 ments. Complex problems arising due to constraints, delays, lags and model uncertainty can better be resolved using nonlinear control approaches. Owing to these reasons, Model Predictive Control (MPC), explicitly based on nonlinear dynamic representation of the chemical process, was developed. MPC is based on mathematical optimization and is now de-facto standard in nonlinear control of process industries. Other related concepts include Dynamic Programming (DP) and iterative learning control for batch processes. A new trend BIB109884054 is to realize MPC law based on Support Vector Machine (SVM) and Genetic Algorithm (GA) for trajectory tracking and disturbance rejection. Nonlinear control techniques are gradually replacing their linear counterparts in refineries and petrochemical plants to handle chemicals and polymers BIB101535536 . A detailed review presenting challenges and progress of control systems in chemical industry is reported in  . Most of the power systems involve varying operating conditions and/or uncertainties, some of which may not be anticipated a priori BIB32003610 . Power systems e.g. Flexible AC Transmission Systems (FACTS) demand controllers that have to tuned online, thus making the trivial decentralised control laws inadequate. The major contributions of nonlinear control in power systems is to; regulate frequency and voltage, adequately damp the oscillations and preserve synchronisation in the presence of disturbances. Relevant techniques with eminent recent advances include; Nonlinear PI BIB55766236 , Optimal Control BIB217220 , MPC  , Passivity-based control BIB10169700 , SMC BIB22592746 and Observer-based SMC BIB109875888 . In power electronics, commonly encountered circuits exhibit nonlinear dynamics primarily due to the consequences of cyclic switching BIB112118687 . Existence of chaos, bifurcations and limit cycles in the circuits highlights the governing role of nonlinear control. In this context, MPC and SMC are common in power electronics owing to its ability to handle system constraints, multi-variable case and nonlinearities. Applications of MPC with prominent works in power electronics has been systematically reviewed in BIB26044553 . Scientific literature reports several successful implementations of control laws for applications like Uninterruptible Power Supplies (UPS), Active Front End (AFE), drives for induction machines and power converters connected to RL loads. Noticeable recent advancements include; SMC  and its variants BIB18771987  , Observer-based control BIB108816995 and reinforcement learning based nonlinear control  . Further control approaches based on physical principles e.g. current-limitation capability BIB206487012 and capacitor ampere-second balance BIB10852766 have also been proposed. Other recent applications of nonlinear control systems are reported for vehicle state estimation BIB107247571 and for control of Unmanned Aerial Vehicles (UAV) BIB118770747 , Autonomous Underwater Vehicle (AUV)  , Nuclear steam generator BIB123514673 , reactor BIB111440936 , building's heating and cooling BIB112055934 , power pricing and management BIB109818373 and so on. Another trend which is gaining popularity since last two decades is to introduce adaptability and optimality in traditional nonlinear control strategies.",
+    "source_ids": [
+      "101535536",
+      "10169700",
+      "107247571",
+      "107586108",
+      "10852766",
+      "108816995",
+      "109818373",
+      "109875888",
+      "109884054",
+      "110842354",
+      "111440936",
+      "111625791",
+      "112055934",
+      "112118687",
+      "114130980",
+      "118770747",
+      "120164817",
+      "122606172",
+      "123514673",
+      "16698172",
+      "18771987",
+      "206487012",
+      "21209046",
+      "217220",
+      "22592746",
+      "26044553",
+      "2826807",
+      "32003610",
+      "3474472",
+      "52840404",
+      "55766236",
+      "59681544",
+      "96585275"
+    ],
+    "citations": [
+      {
+        "source_id": "101535536",
+        "title": "Optimal nonlinear control of an industrial emulsion polymerization reactor",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "10169700",
+        "title": "Article Passivity-Based Nonlinear Excitation Control of Power Systems with Structure Matrix Reassignment",
+        "citing_sentences": [
+          "A passivity-based nonlinear excitation controller is proposed in [9] for a single machine infinite bus (SMIB) system by choosing interconnection and damping matrices."
+        ]
+      },
+      {
+        "source_id": "107247571",
+        "title": "Vehicle state estimation for anti-lock control with nonlinear observer☆",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "107586108",
+        "title": "Four-fingered lightweight exoskeleton robotic device accommodating different hand sizes",
+        "citing_sentences": [
+          "Following this, the IIT proposed several revised versions of this first concept, considering multi-finger designs, improving the overall wearability and performance of the system, and addressing rehabilitation applications [145] , [195] , [196] , [197] , [198] , [199] ."
+        ]
+      },
+      {
+        "source_id": "10852766",
+        "title": "Nonlinear variable frequency control of high power switched-capacitor converter",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "108816995",
+        "title": "Observer-based open transistor fault diagnosis and fault-tolerant control of five-phase permanent magnet motor drive for application in electric vehicles",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "109818373",
+        "title": "A nonlinear control method for price-based demand response program in smart grid",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "109875888",
+        "title": "The sliding mode load frequency control for hybrid power system based on disturbance observer",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "109884054",
+        "title": "Nonlinear model predictive control based on support vector machine and genetic algorithm",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "110842354",
+        "title": "Human hand compatible underactuated exoskeleton robotic system",
+        "citing_sentences": [
+          "Following this, the IIT proposed several revised versions of this first concept, considering multi-finger designs, improving the overall wearability and performance of the system, and addressing rehabilitation applications [145] , [195] , [196] , [197] , [198] , [199] .",
+          "With regard to classical approaches, Iqbal et al. have proposed proportional integral derivative (PID) controllers for mobile robots [6] and multi-DOF serial link robotic exoskeletons [7] and [8] ."
+        ]
+      },
+      {
+        "source_id": "111440936",
+        "title": "Nonlinear parametric predictive control for the temperature control of bench-scale batch reactor",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "111625791",
+        "title": "Non-linear Control Law for Articulated Serial Manipulators: Simulation Augmented with Hardware Implementation",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "112055934",
+        "title": "Nonlinear model predictive control for a heating and cooling system of a low-energy office building",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "112118687",
+        "title": "A review of applications of nonlinear dynamics in power electronics systems",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "114130980",
+        "title": "Biologically Inspired Control of Humanoid Robot Arms: Robust and Adaptive Approaches",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "118770747",
+        "title": "Nonlinear control of fixed-wing UAVs in presence of stochastic winds",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "120164817",
+        "title": "A novel exoskeleton robotic system for hand rehabilitation - Conceptualization to prototyping",
+        "citing_sentences": [
+          "Following this, the IIT proposed several revised versions of this first concept, considering multi-finger designs, improving the overall wearability and performance of the system, and addressing rehabilitation applications [145] , [195] , [196] , [197] , [198] , [199] .",
+          "With regard to classical approaches, Iqbal et al. have proposed proportional integral derivative (PID) controllers for mobile robots [6] and multi-DOF serial link robotic exoskeletons [7] and [8] ."
+        ]
+      },
+      {
+        "source_id": "122606172",
+        "title": "NONLINEAR CONTROL OF HIV-1 INFECTION WITH A SINGULAR PERTURBATION MODEL",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "123514673",
+        "title": "Control of the nuclear steam generators using adaptive dynamic sliding mode method based on the nonlinear model",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "16698172",
+        "title": "Towards Sophisticated Control of Robotic Manipulators: An Experimental Study on a Pseudo-Industrial Arm",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "18771987",
+        "title": "Super-Twisting Differentiator-Based High Order Sliding Mode Voltage Control Design for DC-DC Buck Converters",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "206487012",
+        "title": "Nonlinear Control of Single-Phase PWM Rectifiers With Inherent Current-Limiting Capability",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "21209046",
+        "title": "[Regulation of hypnosis in Propofol anesthesia administration based on non-linear control strategy].",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "217220",
+        "title": "Modeling and Nonlinear Optimal Control of Weak/Islanded Grids Using FACTS Device in a Game Theoretic Approach",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "22592746",
+        "title": "Sliding mode robust control based active-power modulation of multi-terminal HVDC transmissions",
+        "citing_sentences": [
+          "Sliding mode control (SMC) is one of the powerful control methods, which is thus developed to stabilize the power system [10] - [12] ."
+        ]
+      },
+      {
+        "source_id": "26044553",
+        "title": "Model Predictive Control: A Review of Its Applications in Power Electronics",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "2826807",
+        "title": "Optimal Control Strategy for a Fully Determined HIV Model",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "32003610",
+        "title": "Nonlinear Control Systems and Power System Dynamics",
+        "citing_sentences": [
+          "Several control methods have been used in this topic [3] , [5] , [7] - [9] , such as proportional-integral (PI) control, internal model control, fuzzy logic control, intelligent control, etc."
+        ]
+      },
+      {
+        "source_id": "3474472",
+        "title": "Stochastic Approaches for Systems Biology",
+        "citing_sentences": [
+          "This enables us to focus on evaluating the accuracy of our expressions derived for the probability of the observed number of molecules being equal to or above some threshold; namely, we consider the binomial distribution (21) , which is exact for a given P obs (t) (recall that we have (20) , a lower bound on P obs (t)), with the Poisson and Gaussian approximations (25) and (27) , respectively."
+        ]
+      },
+      {
+        "source_id": "52840404",
+        "title": "Realisation of model reference compliance control of a humanoid robot arm via integral sliding mode control",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "55766236",
+        "title": "Nonlinear PI control for variable pitch wind turbine",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "59681544",
+        "title": "Applied Systems Theory",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "96585275",
+        "title": "Nonlinear control of chemical processes: a review",
+        "citing_sentences": [
+          "During the past 20 years there has been a major effort to develop rigorous techniques for nonlinear systems (see Bequette 16 for an early review of chemical process applications)."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Nonlinear adaptive control",
+    "text": "The most effective and advanced nonlinear control schemes are the adaptive controllers. The basic idea of an adaptive controller is to estimate uncertain parameters and to tune the controller online to adopt to the dynamic situation where the variations in the system parameters or environment are significant. Adaptive control got more popularity in 1950s in the aerospace control community. However, due to lack of well-understood stability tools and proper hardware, it lost its charm. Another particular reason for this loss of interest was incident of the plane crash which was controlled by an adaptive law BIB14823361 . Nevertheless, interest in adaptive control has revived especially in social robotic because of its suitability for a highly nonlinear, unstructured and dynamic human environment as compared to the controlled and well-ordered industrial work cells. In general, there are two main types of adaptive control schemes i.e. Model Reference Adaptive Control (MRAC) (see Fig. 8 ) and Self Tuning Adaptive Control (STAC) (Fig. 9) . In MRAC, the adaptation mechanism estimates suitable parameters, so that the system behave the same as the reference model. In STAC, the slowly varying parameters or unknown constants are optimized so as to minimize/ maximize an objective function typically minimization of error or maximization of efficiency. BIB19938625 Adaptive controllers may employ dynamic model and estimate the uncertain parameters BIB106690519 or may be dynamic model free. Model based adaptive controllers can be easily tuned and their performance is usually better as observed be Khan et al. BIB19938625 . However, dynamic model becomes very cumbersome as the DOF increases. This may results in computational and communication issues thus making the implementation of dynamic model based adaptive schemes more challenging. Therefore, dynamic model free adaptive controllers can be the best choice for a high DOF plant, eliminating the need for a dynamic model.",
+    "source_ids": [
+      "106690519",
+      "14823361",
+      "19938625"
+    ],
+    "citations": [
+      {
+        "source_id": "106690519",
+        "title": "Robot Manipulator Control: Theory and Practice",
+        "citing_sentences": [
+          "The (q), µ(q,q) and ν(q) of the dynamic model (Lewis et al., 2003) for the BERT II arm has been obtained with the help of MapleSim (Khan, 2012; Maplesoft, 2015; Khan et al., 2010b ) (an associated software package of Maple)."
+        ]
+      },
+      {
+        "source_id": "14823361",
+        "title": "Adaptive Systems: History, Techniques, Problems, and Perspectives",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "19938625",
+        "title": "Safe Adaptive Compliance Control of a Humanoid Robotic Arm with Anti-Windup Compensation and Posture Control",
+        "citing_sentences": [
+          "The reference model is inside the sliding mode variable r. While in Khan et al. (2010b Khan et al. ( , 2014b , Khan and Herrmann (2014) and Colbaugh et al. (1996) the reference model is \"external\" where, tracking demand is modified (using force feedback) to compensate the external forces."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Nonlinear optimal control",
+    "text": "The most effective and advanced nonlinear control adaptive controllers are very powerful in terms of tracking accuracy and fast response. However, adaptive control action usually involves high energy and aggressiveness. This may be a major disadvantage in application where optimal usage of resources is critical e.g UAV drones and autonomous robots. On the other hand, traditional linear optimal control techniques e.g. LQG and H∞ are offline techniques and require very accurate model of the system as well as full state feedback. Reinforcement learning is one of the key methods to introduce optimality into the adaptive control schemes. Sutton et al. BIB62703909 have argued that reinforcement learning based adaptive optimal schemes are direct adaptive controllers. In direct adaptive controllers, the estimated parameters are employed directly to calculate the control signal where as in indirect methods, the estimated values are used in finding controller's parameters. Reinforcement learning based optimal adaptive controllers solve nonlinear algebraic Riccati equation online. It usually consists of an Actor-Critic structure as shown in Fig. 10 . Critic evaluates the action taken by the actor i.e. rewarding it (or punishing it). Subsequently, the control policy is updated and finally developing an optimal control policy over time.",
+    "source_ids": [
+      "62703909"
+    ],
+    "citations": [
+      {
+        "source_id": "62703909",
+        "title": "Reinforcement Learning is Direct Adaptive Optimal Control",
+        "citing_sentences": [
+          "Reinforcement learning is a valuable tool for applying control as it provides methods to generate a policy that does not rely on the knowledge of the system [18, 19] .",
+          "Reinforcement learning is based on the common sense idea that if an action is followed by an improvement in the state of affairs, then the tendency to produce that action is strengthened [7] .",
+          "The applications of RL range from combinatorial search problems such as learning to play games [2] to autonomous navigation [3] , multi-agent systems [4] , and optimal control [5] ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Tutorial Example",
+    "text": "As an educational example, an inverted pendulum mounted on a moving cart is presented in this section. Fig. 11 depicts a cart of (effective) mass M pivotted with an inverted pendulum of mass m and (massless) rod length l. The system is driven by a horizontal force u applied at the cart. The two outputs include the (horizontal) cart displacement x and the pendulum angle φ. Assume viscous friction of coefficient b. Application of basic Newtonian methods, or the more advanced energy methods based on Lagrangian, leads to following pair of nonlinear ordinary  The nonlinearity arises from the trigonometric functions, products, and squares of the outputs. It is often useful to rewrite such equations into a set of first-order differential equations that is referred as state-space form: where z is a vector of state variables and f is a vector of functions. For the system at hand, once chouce of state variables could be which will require f 1 =φ and f 3 =ẋ. The other two functions f 2 and f 4 could be worked out algebraically. The nonlinear state-space model can be linearized around a suitable equilibrium, say the origin of the 4-dimensional state space. The resulting linear system would be of the form where δxis the deviation of the state vector x around the equilibrium state and δuis the deviation of the input u around the specific input required to maintain the equilibrium state. For the model at hand, the coefficient matrices can be worked out to The reader is encouraged to compute the eignevalues of A for the following parameters: M =3 kg, m =0.2 kg, l=0.31 m, and b=0.1 Ns/m. It should turn out that some of the eigenvalues have positive real parts. That corresponds to an unstable system. The eigenvalues, also called system poles, can be relocated by MATLAB commands acker and place. Such a relocation is useful not only to stablize a system but also to achieve desired closed-loop behavior such as good damping and a fast response.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "Challenges",
+    "text": "Nature is nonlinear and the best way will be to deal with it with nonlinear approaches. Although, linear control has been successfully employed for decades. The problem with linear system is that it may not be able to cater for the modern and advanced technology such as multi-degree of freedom robots (with under actuation or constraints), UAVS, submarines and missile control in which more complex system operations are involved and greater application ranges are required. The decision to choose linear or nonlinear control for a particular application may be a difficult one. Linear control is well tested and the people in industry have confidence in it. There are plenty of excellent analysis tools available for linear systems such as Bode plot, root locus, Nyquist stability criteria, Laplace transform, Z-transform and Fourier transform etc. In contrast, nonlinear system needs complex mathematical analysis e.g. Lypunov stability criterion, Popov criterion and singular perturbation methods. Mathematical modelling may also be cumbersome for nonlinear systems. Nonlinear system may suffer from limit cycle, chaos and bifurcation. Most of the schemes can only ensure local stability while global stabilities cannot be guaranteed BIB106519536 . In addition, computational power may be one of the main limitations to implement advanced nonlinear control approaches due to high initial investment involved. The cost of nonlinear control prototyping hardware is still very high. To commercialize these advanced techniques, no cheap, portable and capable hardware is available yet. More efficient programming may be required to reduce computational overhead. For instance, in our previous work BIB17984299 , reinforcement learning based optimal adaptive control for humanoid robots was implemented for a single DOF on dSPACE 1006 employing a sampling time of 1 msec. To extend it to two DOF, MATLAB's embedded functions had to be replaced with more efficient C/C++ S-functions. Although actuator saturations usually incur in linear control too, it may, however, be more problematic and catastrophic in case of nonlinear control since the control signal here is very high and aggressive. Hence, it easily leads to windup of the system. In the work by Khan et al. BIB19938625 , anti-windup compensator was incorporated to deal with actuator saturation issues in the model reference adaptive compliance control of a humanoid robotic arm. However, anti-windup compensators usually degrade the performance of the nominal control scheme. Nonlinear control schemes may need more expensive actuators to survive longer. Most of the nonlinear controllers pose greater risk to damage expensive systems if not implemented with care. Also, complex and exhaustive tuning process may be involved. Due to the above mentioned reasons, people in industry are still quite wary of the nonlinear control and there is a big gap between nonlinear control researchers and industrial control engineers. Industries still rely mainly on simple traditional linear schemes. More work is needed to reduce complexity of these advanced nonlinear strategies. Significant efforts are needed to convince the control practitioners to adapt these modern nonlinear techniques.",
+    "source_ids": [
+      "106519536",
+      "17984299",
+      "19938625"
+    ],
+    "citations": [
+      {
+        "source_id": "106519536",
+        "title": "Applied Nonlinear Control",
+        "citing_sentences": [
+          "This FLC will be used to balance a car-pole inverted pendulum system [15] , as shown in Fig.",
+          "where J(θ) is the normalized log-likelihood of the model that is computed using (19) , and n p is the total number of free parameters.",
+          "If the output is repeatedly differentiated, we find that the system has a well-defined strong relative degree [33] , [34] of four.",
+          "The robot can be stabilized using a conventional PD feedback controller (7) where and are diagonal matrices of positive proportional and derivative gains, respectively, the vector with new input signals from the batch adaptive controller, and the tracking error (8) If (7) is applied to (6) , then the closed-loop system takes the form (9) When all motions, speeds, and accelerations in (9) are chosen to be reference ones, the input signal is obtained (10) and the residual error dynamics, with input , is given by (11) For appropriate choices of and [13] , the residual error dynamics can be made passive for the output (12) where is a positive constant scalar, and is an vector of gradients of a potential function.",
+          "One important technique in nonlinear control is feedback linearization ( [32, 33] ).",
+          "By Barbalat's lemma [14]",
+          ", where x 2di is the desired trajectory for x 2i , it can be shown [36] that the following control input satisfies the sliding conditions",
+          "For a fair comparison, we selected the PD gains in (75) as K 1 = 1000, K 2 = 300, and Λ = 0.3 such that the level of control efforts is comparable to that of the nonlinear control approach in (23) .",
+          "To synthesize the adaptive control law U 2 , it is assumed that the full state vector components are available through the measure and that the sign of h 1 is known [12] .",
+          "A possible solution is to monitor the energy corresponding to friction and friction compensation over a period of time t − t 0 (19) and to switch off or scale down the friction compensation if the energy exceeds a certain positive threshold.",
+          "[1] ).",
+          "The first step in this design is similar to the one for the backstepping approach [9] , except for the equation (19) were S 2 (Surface) is used instead of z 2 for more clearance.",
+          "To execute a torque level controller, a feedback loop was implemented as follows: (50) where denotes a vector of the drive and steering motor torques, respectively, is a diagonal scaling term, and is a velocity mismatch signal defined as (51) where and denote the linear and angular velocity inputs computed in (29) and (30) , and and denote actual linear and angular velocity of the mobile robot computed from the time derivative of the motor encoders.",
+          "If the internal dynamics is stable in the boundedinput bounded-output (BIBO) sense, the control system (55) can be stabilized [25] .",
+          "The switching-type FSMC proposed by Li [47] is a method based on FLC and sliding mode controller (SMC) [48] - [50] , which achieves asymptotic stability of the system.",
+          "The simplified equation with the introduction of the preprocessed variables is given in (5) In order to perform the pattern classification, output in (1) and (5) is converted to a Boolean value by considering the condition .",
+          "In order to estimate the robot mass, we made use of an algorithm taken from classical adaptive control techniques [15] .",
+          "Building autonomy ties to developing and unifying algorithms for localization and mapping [7] , state estimation [8] , motion planning [9, 10] , robotic vision [11] and control [12, 13] .",
+          "Which implying that S→0 when t→∞, and therefore 0 , → e e  when t→∞ [17] .",
+          "Remark 4: The convergence of the estimated parameters can only be ensured if the trajectory is persistently exciting [26] , [34] .",
+          "28 To employ this methodology to an adaptive neural network controller, a Liapunov function must be found to determine how fast the network weights may be updated or changed.",
+          "T IS WELL KNOWN that sliding-mode controllers (SMCs) are powerful in controlling nonlinear systems with bounded unknown disturbances [4] - [6] .",
+          "A thorough discussion of forgetting factors can be found in Section 8.7 of Slotine and Li (1991) .",
+          "This hypothesis is strongly reminiscent of the concept of ''persistent excitation'' that is essential for effective adaptive control [49] .",
+          "We briefly recall a well known parameter estimation procedure based on filtering linear dynamics [15] , which is used in our algorithm during the estimation of constant parameters such as the inter-distance between contact points, the moment of inertia J and the mass m. Notably, given the linear systemẏ = θu, the problem is to estimate the unknown constant parameter θ ∈ R on the basis of measurements of the quantities u ∈ R l and y ∈ R l only, where l ≥ 1.",
+          "Action research is grounded in theory of motor control, which was largely laid out in classical engineering fields like cybernetics (Wiener, 1948 ), optimal control (Bellman, 1957 , and control theory (Slotine and Li, 1991; Narendra and Annaswamy, 2005) .",
+          "By using Barbalat's lemma [27] , it can be shown that lim t→∞ Ω(t) = 0.",
+          "The wellknown approach is to use a saturation function [3] sat(σ) = σ σ <|1|, sgn(σ) otherwise.",
+          "For more details about the state feedback linearization method one may refer to [13, 14] .",
+          "This model is used in Slotine and Li (1991) as a standard reference model for a complex nonlinear control task (see in particular sections 6 and 9).",
+          "The most popular modification is the boundary layer approach, which is, basically, the application of a high gain feedback when the motion of the system reaches -vicinity of a sliding manifold [5] , [14] .",
+          "For the discrete system, given that f decays to zero, u converges to the steady state g after a transient time, such that the system will asymptotically converge to g. After the transient time, the system will exponentially converge to g as only the linear spring-damper dynamics remain relevant (Slotine & Li, 1991) .",
+          "The derivation of the adaptation rule is carried out using the algorithm proposed in (Slotine and Li [1991] ).",
+          "The adaptive tracking error [36] is",
+          "Again, the kinematic equations are given by (10) where is the system output, is the input vector, and Once again we use input-output linearization to derive a control law for which gives us the following closed-loop dynamics: (11) where is an auxiliary control input and is the chosen positive definite controller gain matrix.",
+          "It is important to stress that in [41] it is stated that, because of the approximate nature of the describing function method, results are not very accurate some times, i.e., a) the predicted amplitude and frequency might not be accurate, b) a predicted limit cycle might actually not exist, or c) an existing limit cycle is not predicted.",
+          "The system could even become unstable as a result of the chattering phenomenon when an unmodeled structure dynamics is excited [18] .",
+          "Therefore, if x 3 is not vanishing, then the largest invariant set M ⊂ V consists of the only equilibrium point (0 0 0) T . Thus, the thesis holds due to the invariance Krasovskii-LaSalle principle [15] .",
+          "The parallel combination of two passive mappings is still a passive mapping (Slotine and Li, 1991) Remark: These stability results apply only if the Q(s) lter is designed using the model in (36).",
+          "In (4), can be interpreted as the approximation of the continuous control law that would remain , and is the discontinuous part which helps to satisfy the sliding condition in the presence of parameter uncertainty [6] , [8] .",
+          "31 The preceding feedback linearization is dependent on the exact cancellation of the nonlinearity as shown in Eqs.",
+          "Reducing the chattering, a thin boundary layer of thickness around the switching surface is proposed in [5] ,",
+          "A two-port element inside a teleoperation system can be characterized as passive when the energy (integral of power over time) of the output of the two-port element is greater than the energy of the input [129] .",
+          "Consider the system (8) with decentralized update laws (9) .",
+          "In the backstepping design procedure, a control Lyapunov function (CLF) is first constructed, and a virtual control law consisting system states and satisfying the Lyapunov stability theorem [11] is chosen.",
+          "which is a well known form in the adaptive control theory of robot manipulators (Slotine and Li [1991] ).",
+          "For the premise variable in the fuzzy rules, the augmented state x(t) in (14) and the system output z(t) in (19) ,ẽ(t) replaces the role of e(t).",
+          "To establish convergence, we invoke the corollary of Barbalat's Lemma used for stability analysis from [14] (Lemma 4.3) which states that:",
+          "[24] ).",
+          "51, 52 If stable, small perturbations (initial conditions) will be forgotten and the trajectories will converge to the limit cycle.",
+          "However, the monotonous switching feedback produced by these controllers causes high frequency chattering in the control signals, which leads to undesirable loads on control actuators [12, 13] .",
+          "Since perfect knowledge of the system is almost impossible, the technique of exact feedback linearization seems impractical for nonlinear system design [1] , [32] .",
+          "where L s f h is the s-th-order Lie Derivative [47] , of the scalar field h with respect to the vector field f. In (10) the zero-order and first-order Lie Derivatives are used for each measurement.",
+          "48 ; so, this can be used to evaluate the correctness of the results.",
+          ". . with L 0 f h = h (see [8] ).",
+          "Non-linear control provides a way to address complex relationships between inputs and outputs [29] ."
+        ]
+      },
+      {
+        "source_id": "17984299",
+        "title": "Reinforcement learning and optimal adaptive control: An overview and implementation examples",
+        "citing_sentences": [
+          "Theorem 3: For the N isolated subsystems (4), the weight update laws for tuning the critic networks are given by (36) ."
+        ]
+      },
+      {
+        "source_id": "19938625",
+        "title": "Safe Adaptive Compliance Control of a Humanoid Robotic Arm with Anti-Windup Compensation and Posture Control",
+        "citing_sentences": [
+          "The reference model is inside the sliding mode variable r. While in Khan et al. (2010b Khan et al. ( , 2014b , Khan and Herrmann (2014) and Colbaugh et al. (1996) the reference model is \"external\" where, tracking demand is modified (using force feedback) to compensate the external forces."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Conclusion",
+    "text": "In recent years, requirements of modern technology and maturation of various emerging fields have spurred advancements in nonlinear control systems from theoretical as well as applications point of view. Consequently, the topic of nonlinear control has now become a fundamental part of understanding of control engineers and helps them to systematically deal with practical control problems. A common design strategy to solve these problems is to linearize the system valid at a representative operating point(s). This approximate design approach is simple and works sometimes, however, it may impair the original features of nonlinear systems leading to inaccuracy or false conclusions. The domain of nonlinear control systems has a lively future with numerous interesting and important challenges. The growing applications of nonlinear control systems, such as robots, energy, biology, health care and big data research, are anticipated to further boost up research on advanced theories and development of associated physical technologies.",
+    "source_ids": [],
+    "citations": []
+  }
+]

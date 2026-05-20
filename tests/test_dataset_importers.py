@@ -5,7 +5,7 @@ import pandas as pd
 
 from common.task_dataset import write_dataset
 from scripts.import_bigsurvey import dataframe_to_task_bundles
-from scripts.import_multilexsum import load_records, records_to_task_bundles, select_sources_from_json
+from scripts.import_multilexsum import filter_local_records_by_split, load_records, records_to_task_bundles, select_sources_from_json
 
 
 def test_bigsurvey_schema_mapping_no_target_leakage_and_split_filter(tmp_path: Path):
@@ -83,7 +83,7 @@ def test_multilexsum_conversion_and_write(tmp_path: Path):
     assert bundles[0].sections[0].section == "Long Summary"
 
     write_dataset(bundles, tmp_path)
-    assert (tmp_path / "promptfoo_dataset.jsonl").exists()
+    assert (tmp_path / "MQS_evaluation_dataset.jsonl").exists()
     item = sorted(tmp_path.glob("item_*"))[0]
     assert (item / "task.json").exists()
     assert (item / "dea_solution.json").exists()
@@ -130,12 +130,12 @@ def test_multilexsum_load_records_supports_jsonl(tmp_path: Path):
     assert [r["case_id"] for r in load_records(records_path)] == ["a", "b"]
 
 
-def test_promptfoo_paths_exist(tmp_path: Path):
+def test_MQS_evaluation_paths_exist(tmp_path: Path):
     records = [{"id": "x1", "summary_long": "Long body", "title": "Case"}]
     sources_blob = {"x1": [{"title": "S1", "text": "source text"}]}
     bundles = records_to_task_bundles(records, sources_blob)
     write_dataset(bundles, tmp_path)
-    lines = [json.loads(x) for x in (tmp_path / "promptfoo_dataset.jsonl").read_text().splitlines() if x.strip()]
+    lines = [json.loads(x) for x in (tmp_path / "MQS_evaluation_dataset.jsonl").read_text().splitlines() if x.strip()]
     assert lines
     for rec in lines:
         assert (tmp_path / rec["expected_path"]).exists()
@@ -155,6 +155,15 @@ def test_multilexsum_cli_style_split_filtering():
         "train": [{"title": "Train source", "text": "train source"}],
         "test": [{"title": "Test source", "text": "test source"}],
     }
-    filtered = [r for r in records if str(r.get("split", "test")).lower() == "test"]
+    filtered = filter_local_records_by_split(records, "test")
     bundles = records_to_task_bundles(filtered, sources_blob)
     assert [b.task_id for b in bundles] == ["test"]
+
+
+def test_multilexsum_local_official_split_file_keeps_subset_field():
+    records = [
+        {"case_id": "a", "summary/long": "A", "case_documents": ["a-1"], "subset": "train"},
+        {"case_id": "b", "summary/long": "B", "case_documents": ["b-1"], "subset": "dev"},
+    ]
+
+    assert filter_local_records_by_split(records, "test") == records

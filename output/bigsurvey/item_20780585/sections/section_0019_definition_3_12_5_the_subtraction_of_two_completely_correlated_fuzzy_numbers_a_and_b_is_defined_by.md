@@ -1,0 +1,1 @@
+From Theorem 2.8, BIB17053652 proof that, for all α ∈ [0, 1], we have

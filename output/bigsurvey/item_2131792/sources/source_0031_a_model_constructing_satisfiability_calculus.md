@@ -1,0 +1,1 @@
+We present a new calculus where recent model-based decision procedures and techniques can be justified and combined with the standard DPLLT approach to satisfiability modulo theories. The new calculus generalizes the ideas found in CDCL-style propositional SAT solvers to the first-order setting.

@@ -1,0 +1,1 @@
+In this section, we discuss the following factors that need to be taken into consideration for the outputs of truth discovery: (1) What kind of assumptions we should adopt for the identified truths? (2) Which format of output is better, labeling or scoring? (3) How to evaluate the performance of truth discovery methods? (4) How to interpret the outputs of truth discovery?

@@ -78,19 +78,35 @@ def dataframe_to_task_bundles(df, n: int | None = None, split: str | None = None
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--archive", default="original", help="original, split, local path, Drive id, or URL")
-    p.add_argument("--work-dir", default=".cache/bigsurvey")
-    p.add_argument("--output-dir", required=True)
+    p.add_argument("--archive", default="split", help="original, split, local path, Drive id, or URL")
+    p.add_argument("--work-dir", default="data/bigsurvey")
+    p.add_argument("--output-dir", default="output/bigsurvey")
     p.add_argument("--n", type=int)
     p.add_argument("--split", default="test")
     p.add_argument("--overwrite", action="store_true")
     p.add_argument("--skip-embeddings", action="store_true")
     args = p.parse_args()
 
-    archive = ensure_bigsurvey_archive(args.archive, Path(args.work_dir), overwrite=args.overwrite)
-    files = unpack_archive_safe(archive, Path(args.work_dir) / "extracted", overwrite=args.overwrite)
-    df, _ = find_bigsurvey_dataframe(files)
+    work_dir = Path(args.work_dir)
+    try:
+        archive = ensure_bigsurvey_archive(args.archive, work_dir, overwrite=args.overwrite)
+        archive_label = args.archive.strip().lower() if args.archive.strip().lower() in {"original", "split"} else archive.stem
+        files = unpack_archive_safe(archive, work_dir / f"extracted_{archive_label}", overwrite=args.overwrite)
+        df, _ = find_bigsurvey_dataframe(files)
+    except Exception as exc:
+        raise SystemExit(
+            "Could not prepare BigSurvey input data. "
+            "Run with network access so the importer can download the Google Drive archive, "
+            "or place split_survey_df.tar.gz/original_survey_df.tar.gz under data/bigsurvey. "
+            f"Original error: {exc}"
+        ) from exc
     bundles = dataframe_to_task_bundles(df, n=args.n, split=args.split)
+    if not bundles:
+        raise SystemExit(
+            "BigSurvey import produced 0 examples. "
+            "Check --split, --n, and whether the archive contains title/abstract/section/text/"
+            "bib_titles/bib_abstracts columns."
+        )
     write_dataset(bundles, Path(args.output_dir))
     (Path(args.output_dir) / "dataset_manifest.json").write_text(json.dumps({"dataset": "bigsurvey", "count": len(bundles), "split": args.split}, indent=2), encoding="utf-8")
 

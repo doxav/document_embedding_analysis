@@ -1,0 +1,1 @@
+: R 2 −→ R a continuous function. Then, [f J (A, B)] α = f ([J] α ).

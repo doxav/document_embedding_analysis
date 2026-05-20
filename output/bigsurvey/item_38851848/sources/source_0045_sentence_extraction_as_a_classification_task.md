@@ -1,0 +1,1 @@
+A gate network which permits two levels of logic to be performed by interconnected gate networks which are controlled by the same phase.

@@ -1,0 +1,1 @@
+There are two approaches that restore the algebraic properties of real arithmetic to fuzzy arithmetic - constraint interval arithmetic on alpha-cuts and arithmetic on intervals of gradual numbers. In this study, the relationships between fuzzy interval analysis from a constraint interval approach and from a gradual number approach will be discussed.

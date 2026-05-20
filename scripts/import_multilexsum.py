@@ -114,6 +114,15 @@ def load_sources(path: Path) -> dict[str, Any]:
     return payload
 
 
+def filter_local_records_by_split(records: list[dict[str, Any]], split: str | None) -> list[dict[str, Any]]:
+    if not split or split == "all":
+        return records
+    records_with_split = [r for r in records if "split" in r]
+    if not records_with_split:
+        return records
+    return [r for r in records if str(r.get("split", "")).lower() == split.lower()]
+
+
 def select_sources_from_json(path: Path, source_ids: set[str]) -> dict[str, Any]:
     if not source_ids:
         return {}
@@ -317,8 +326,8 @@ def main():
     p.add_argument("--source", choices=("official", "local"), help="Data source mode. Defaults to official unless local JSON paths are supplied.")
     p.add_argument("--records-json", "--records", dest="records_json")
     p.add_argument("--sources-json", "--sources", dest="sources_json")
-    p.add_argument("--output-dir", required=True)
-    p.add_argument("--cache-dir", default=".cache/multilexsum")
+    p.add_argument("--output-dir", default="output/multilexsum")
+    p.add_argument("--cache-dir", default="data/multilexsum")
     p.add_argument("--n", type=int)
     p.add_argument("--split", default="test")
     p.add_argument("--overwrite-cache", action="store_true")
@@ -328,21 +337,42 @@ def main():
     mode = args.source or ("local" if args.records_json or args.sources_json else "official")
     if mode == "local":
         if not args.records_json or not args.sources_json:
-            raise SystemExit("Local mode requires --records-json and --sources-json")
-        records = load_records(Path(args.records_json))
-        sources = load_sources(Path(args.sources_json))
-        if args.split and args.split != "all":
-            records = [r for r in records if str(r.get("split", r.get("subset", args.split))).lower() == args.split.lower()]
+            raise SystemExit("Local MultiLexSum mode requires --records-json and --sources-json")
+        try:
+            records = load_records(Path(args.records_json))
+            sources = load_sources(Path(args.sources_json))
+        except Exception as exc:
+            raise SystemExit(
+                "Could not load local MultiLexSum files. "
+                "Provide a split records file such as data/multilexsum/test.json and the official "
+                "data/multilexsum/sources.json, or run official mode to download them. "
+                f"Original error: {exc}"
+            ) from exc
+        records = filter_local_records_by_split(records, args.split)
         bundles = records_to_task_bundles(records, sources, split=None, n=args.n)
     else:
-        cache_dir = Path(args.cache_dir)
-        records = official_records(args.split, cache_dir, overwrite=args.overwrite_cache)
-        selected_records = candidate_records(records, args.n)
-        sources = official_sources(selected_records, cache_dir, overwrite=args.overwrite_cache)
-        bundles = records_to_task_bundles(selected_records, sources, split=args.split, n=args.n)
-        if args.n and len(bundles) < args.n and len(selected_records) < len(records):
-            sources = official_sources(records, cache_dir, overwrite=False)
-            bundles = records_to_task_bundles(records, sources, split=args.split, n=args.n)
+        try:
+            cache_dir = Path(args.cache_dir)
+            records = official_records(args.split, cache_dir, overwrite=args.overwrite_cache)
+            selected_records = candidate_records(records, args.n)
+            sources = official_sources(selected_records, cache_dir, overwrite=args.overwrite_cache)
+            bundles = records_to_task_bundles(selected_records, sources, split=args.split, n=args.n)
+            if args.n and len(bundles) < args.n and len(selected_records) < len(records):
+                sources = official_sources(records, cache_dir, overwrite=False)
+                bundles = records_to_task_bundles(records, sources, split=args.split, n=args.n)
+        except Exception as exc:
+            raise SystemExit(
+                "Could not prepare official MultiLexSum input data. "
+                "Run with network access so the importer can download from Hugging Face or the AI2 S3 mirror, "
+                "or place the official split file and sources.json under data/multilexsum. "
+                f"Original error: {exc}"
+            ) from exc
+
+    if not bundles:
+        raise SystemExit(
+            "MultiLexSum import produced 0 examples. "
+            "Check --split, --n, and whether the records have summaries plus resolvable case_documents/source texts."
+        )
 
     write_dataset(bundles, Path(args.output_dir))
     manifest = Path(args.output_dir) / "dataset_manifest.json"

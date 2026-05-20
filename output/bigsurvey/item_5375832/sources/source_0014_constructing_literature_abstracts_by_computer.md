@@ -1,0 +1,1 @@
+11-Deoxy prostaglandin type compounds, i.e. prostaglandin type compounds in which the 11-hydroxy group is replaced by hydrogen, are disclosed, with processes for making them. These compounds are useful for a variety of pharmacological purposes, including anti-ulcer, inhibition of platelet aggregation, increase of nasal patency, and labor induction at term.

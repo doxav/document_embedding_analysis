@@ -1,0 +1,1 @@
+This paper discusses a language independent algorithm for single and multiple document summarization.

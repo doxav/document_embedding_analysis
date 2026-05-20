@@ -1,0 +1,1 @@
+Covers in a progressive fashion a number of analysis tools and design techniques directly applicable to nonlinear control problems in high performance systems (in aerospace, robotics and automotive areas).

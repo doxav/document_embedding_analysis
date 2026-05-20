@@ -1,0 +1,1 @@
+The zero level of a fuzzy set A of U is defined as the smallest closed set that contain the support of the fuzzy set A, that is, The family of all fuzzy subsets of U with nonempty, compact and convex α-levels will be denoted by F C (U ).

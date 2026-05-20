@@ -1,0 +1,1 @@
+Generator Fake images Noise Update Figure 6 : Network architecture of GAN. BIB71149784

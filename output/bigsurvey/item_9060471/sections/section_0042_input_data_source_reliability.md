@@ -1,0 +1,1 @@
+Categorical Continuous Heterogeneous Labeled Truth Source Dependency Enriched Meaning • Regular EM BIB8350875 : Regular EM is proposed for crowd/social sensing applications, in which the observations provided by humans can be modeled as binary variables. The truth discovery task is formulated as a maximum likelihood estimation problem, and solved by EM algorithm.

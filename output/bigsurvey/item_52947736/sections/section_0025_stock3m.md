@@ -1,0 +1,1 @@
+Dataset. The Stock3M dataset has 3,217,654 images uploaded by users and it is 26 times larger than the MS COCO dataset. The images of this dataset have a diversity of content.

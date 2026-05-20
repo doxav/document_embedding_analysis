@@ -1,0 +1,1 @@
+EBM requires practitioners to stay up-to-date with the latest medical literature and use the latest research discoveries. Practitioners currently utilise a variety of sources to obtain information.

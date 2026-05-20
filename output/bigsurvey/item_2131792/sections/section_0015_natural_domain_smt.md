@@ -1,0 +1,1 @@
+In DPLL(T) there is a fundamental difference between propositional and other kinds of unknowns: the second are never dealt with directly during the search process. In contrast, in natural-domain SMT, one directly constrains and assigns to numeric unknowns during the search. After initial attempts BIB33275132 BIB4493873 , two main directions arose.

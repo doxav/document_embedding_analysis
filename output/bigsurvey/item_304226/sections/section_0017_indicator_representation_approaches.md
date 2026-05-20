@@ -1,0 +1,1 @@
+Indicator representation approaches aim to model the representation of the text based on a set of features and use them to directly rank the sentences rather than representing the topics of the input text. Graph-based methods and machine learning techniques are often employed to determine the important sentences to be included in the summary.

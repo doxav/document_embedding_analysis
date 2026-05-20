@@ -1,0 +1,1 @@
+DSPEs with support for multiple high-level languages such as Java, Scala, Python, R, and SQL provide developers with greater choice of language to use for coding to reduce the implementation time of processing pipelines.

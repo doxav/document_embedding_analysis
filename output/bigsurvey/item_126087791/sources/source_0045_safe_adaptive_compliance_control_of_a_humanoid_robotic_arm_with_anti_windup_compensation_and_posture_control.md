@@ -1,0 +1,1 @@
+Safety is very important for physical human-robot interaction. Compliance control can solve an important aspect of the safety problem by dealing with impact and other forces arising during close contact between humans and robots.

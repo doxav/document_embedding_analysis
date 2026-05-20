@@ -1,0 +1,1 @@
+Proper noun is name of a person, place and concept etc. Sentences containing proper nouns are having greater chances for including in summary.

@@ -1,0 +1,1 @@
+The Web holds valuable, vast, and unstructured information about public opinion. Here, the history, current use, and future of opinion mining and sentiment analysis are discussed, along with relevant techniques and tools.

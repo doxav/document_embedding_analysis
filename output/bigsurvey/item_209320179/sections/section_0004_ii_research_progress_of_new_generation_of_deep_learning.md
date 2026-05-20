@@ -1,0 +1,1 @@
+Deep learning is often used as classifiers or feature extractors for various tasks in image processing BIB7038503 , BIB15596453 . In the following parts, we mainly introduce several new generations of deep learning techniques that have used for image processing, and that referred to throughout the survey.

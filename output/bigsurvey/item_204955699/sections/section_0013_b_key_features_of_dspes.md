@@ -1,0 +1,1 @@
+The following sub-sections highlight the key features of DSPEs. These features include the programming model, data source interaction model, data partitioning strategy, state management, message processing guarantee, fault tolerance and recovery, deployment, and support base (e.g. community, high level language, advanced input sources, storage, and analytics).

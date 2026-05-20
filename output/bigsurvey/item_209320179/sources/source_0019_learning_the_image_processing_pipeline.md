@@ -1,0 +1,1 @@
+There are many innovations in imaging sensors designs. A bottleneck in evaluating proposed designs is the need to create optimal processing algorithms. I describe a pipeline architecture and simulation methods that automate the pipeline design. Article not available.

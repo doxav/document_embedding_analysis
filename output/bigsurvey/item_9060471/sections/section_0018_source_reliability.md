@@ -1,0 +1,1 @@
+As source reliability estimation is the most important feature of truth discovery, here we examine some assumptions and discuss several advanced topics about the source reliability estimation.

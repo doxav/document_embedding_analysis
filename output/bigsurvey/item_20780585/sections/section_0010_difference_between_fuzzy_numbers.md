@@ -1,0 +1,1 @@
+Next we present different manners (in literature) to realize the difference between fuzzy numbers.

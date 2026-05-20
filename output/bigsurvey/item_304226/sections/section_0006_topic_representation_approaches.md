@@ -1,0 +1,1 @@
+In this section we describe some of the most widely used topic representation approaches.

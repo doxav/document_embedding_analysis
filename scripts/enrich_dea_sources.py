@@ -10,7 +10,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from common.source_enrichment import enrich_dea_solution, write_enriched_task_bundle
-from common.task_dataset import write_promptfoo_dataset_from_items
+from common.task_dataset import write_MQS_evaluation_dataset_from_items
 
 
 def main():
@@ -56,7 +56,7 @@ def main():
         ),
         encoding="utf-8",
     )
-    write_promptfoo_dataset_from_items(output_root, item_dirs)
+    write_MQS_evaluation_dataset_from_items(output_root, item_dirs)
     if mode_counts.get("reference_only_open_retrieval") or mode_counts.get("no_resources"):
         print(
             "Warning: some DEA items do not provide source documents. "

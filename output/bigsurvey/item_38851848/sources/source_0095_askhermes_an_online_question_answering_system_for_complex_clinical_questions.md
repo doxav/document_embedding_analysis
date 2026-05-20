@@ -1,0 +1,1 @@
+Objective ::: Clinical questions are often long and complex and take many forms. We have built a clinical question answering system named AskHERMES to perform robust semantic analysis on complex clinical questions and output question-focused extractive summaries as answers.

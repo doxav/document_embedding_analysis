@@ -1,0 +1,1 @@
+Sentences containing words that appear in the title are also indicative of the theme of the document. These sentences are having greater chances for including in summary.

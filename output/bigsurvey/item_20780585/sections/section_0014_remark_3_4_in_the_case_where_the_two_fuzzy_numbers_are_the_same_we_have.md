@@ -1,0 +1,1 @@
+[A − CIA A] α = {[(1 − λ A )a − α + λ A a + α ] − [(1 − λ A )a − α + λ A a + α ]} = {0} where 0 ≤ λ A ≤ 1. Therefore, A − CIA A = {0}.

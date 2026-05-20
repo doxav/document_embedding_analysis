@@ -1,0 +1,497 @@
+[
+  {
+    "section": "I. INTRODUCTION",
+    "text": "Text summarization  has become an important and timely tool for assisting and interpreting text information in today's fast-growing information age. It is very difficult for human beings to manually summarize large documents of text. There is an abundance of text material available on the internet. However, usually the Internet provides more information than is needed. Therefore, a twofold problem is encountered: searching for relevant documents through an overwhelming number of documents available, and absorbing a large quantity of relevant information. The goal of automatic text summarization is condensing the source text into a shorter version preserving its information content and overall meaning. A summary  can be employed in an indicative way as a pointer to some parts of the original document, or in an informative way to cover all relevant information of the text. In both cases the most important advantage of using a summary is its reduced reading time. A good summary system should reflect the diverse topics of the document while keeping redundancy to a minimum. Summarization tools may also search for headings and other markers of subtopics in order to identify the key points of a document. Microsoft Word's AutoSummarize function is a simple example of text summarization. Text Summarization methods can be classified into extractive and abstractive summarization. An extractive summarization method consists of selecting important sentences, paragraphs etc. from the original document and concatenating them into shorter form. The importance of sentences is decided based on statistical and linguistic features of sentences. An Abstractive summarization BIB2962090 [33] attempts to develop an understanding of the main concepts in a document and then express those concepts in clear natural language. It uses linguistic methods to examine and interpret the text and then to find the new concepts and expressions to best describe it by generating a new shorter text that conveys the most important information from the original text document. This paper focuses on extractive text summarization methods. Extractive summaries BIB10238698 are formulated by extracting key text segments (sentences or passages) from the text, based on statistical analysis of individual or mixed surface level features such as word/phrase frequency, location or cue words to locate the sentences to be extracted. The \"most important\" content is treated as the \"most frequent\" or the \"most favorably positioned\" content. Such an approach thus avoids any efforts on deep text understanding. They are conceptually simple, easy to implement. Extractive text summarization process  can be divided into two steps: 1) Pre Processing step and 2) Processing step. Pre Processing is structured representation of the original text. It usually includes: a) Sentences boundary identification. In English, sentence boundary is identified with presence of dot at the end of sentence. b) Stop-Word Elimination-Common words with no semantics and which do not aggregate relevant information to the task are eliminated. c) Stemming-The purpose of stemming is to obtain the stem or radix of each word, which emphasize its semantics. In Processing step, features influencing the relevance of sentences are decided and calculated and then weights are assigned to these features using weight learning method. Final score of each sentence is determined using Feature-weight equation. Top ranked sentences are selected for final summary. Problems with the extractive summary  [47] are: 1. Extracted sentences usually tend to be longer than average. Due to this, parts of the segments that are not essential for summary also get included, consuming space. 2. Important or relevant information is usually spread across sentences, and extractive summaries cannot capture this (unless the summary is long enough to hold all those sentences). 3. Conflicting information may not be presented accurately.  . Pure extraction often leads to problems in overall coherence of the summary-a frequent issue concerns \"dangling\" anaphora. Sentences often contain pronouns, which lose their referents when extracted out of context. Worse yet, stitching together decontextualized extracts may lead to a misleading interpretation of anaphors (resulting in an inaccurate representation of source information, i.e., low fidelity). Similar issues exist with temporal expressions. These problems become more severe in the multi-document case, since extracts are drawn from different sources. A general approach to addressing these issues involves post-processing extracts, for example, replacing pronouns with their antecedents, replacing relative temporal expression with actual dates, etc. Problems with the abstractive summary  are: The biggest challenge for abstractive summary is the representation problem. Systems' capabilities are constrained by the richness of their representations and their ability to generate such structures-systems cannot summarize what their representations cannot capture. In limited domains, it may be feasible to devise appropriate structures, but a general-purpose solution depends on open-domain semantic analysis. Systems that can truly \"understand\" natural language are beyond the capabilities of today's technology. Summary evaluation  [36] BIB3050993 is a very important aspect for text summarization. Generally, summaries can be evaluated using intrinsic or extrinsic measures. While intrinsic methods attempt to measure summary quality using human evaluation and extrinsic methods measure the same through a task-based  performance measure such the information retrieval-oriented task. Newsblaster is a good example of a text summarizer, that helps users find the news that is of the most interest to them. The system automatically collects, clusters, categorizes, and summarizes news from several sites on the web (CNN, Reuters, Fox News, etc.) on a daily basis, and it provides users a user-friendly interface to browse the results.",
+    "source_ids": [
+      "10238698",
+      "2962090",
+      "3050993"
+    ],
+    "citations": [
+      {
+        "source_id": "10238698",
+        "title": "Optimizing Text Summarization Based on Fuzzy Logic",
+        "citing_sentences": [
+          "Automatic text summarization (Kyoomarsi et al., 2008; Gupta & Lehal, 2010) is reducing the source text into a shorter form retaining its information content and overall meaning."
+        ]
+      },
+      {
+        "source_id": "2962090",
+        "title": "Lexrank: graph-based centrality as salience in text summarization",
+        "citing_sentences": [
+          "2 Note that sentence extraction does not solve the problem of selecting and ordering summary sentences to form a coherent There are several approaches to modeling document content: simple word frequency-based methods (Luhn, 1958; Nenkova and Vanderwende, 2005) , graph-based approaches (Radev, 2004; Wan and Yang, 2006) , as well as more linguistically motivated techniques (Mckeown et al., 1999; Leskovec et al., 2005; Harabagiu et al., 2007) .",
+          "Graph centrality has also been used to estimate the salience of a sentence (Erkan and Radev, 2004) .",
+          "One of the systems that we compare C-LexRank with is LexRank (Erkan & Radev, 2004) .",
+          "Graph-based methods have gained attention in several areas of NLP, including knowledge-based WSD (Mihalcea, 2005; Navigli and Velardi, 2005) and summarization (Erkan and Radev, 2004; Mihalcea and Tarau, 2004) .",
+          "Examples include contextual spelling correction (Jones and Martin 1997) , summarization (Barzilay 2003; Erkan and Radev 2004) and question answering (Lin and Pantel 2001) .",
+          "[18] [19] [20] ) have shown that degree centrality, when compared to other connectedness metrics, performs best for most tasks.",
+          "LexRank (Erkan and Radev, 2004 ) works based on a random walk on the cosine similarity of sentences and prints out the most frequently visited sentences.",
+          "This summarizer [14] uses a graph-based method that computes pairwise similarity between two sentencesin our case two documents-and makes the similarity score the weight of the edge between the two sentences.",
+          "Finally, the last system that we implement is TextRank, which uses a variation of the PageRank graph centrality algorithm in order to identify the most important sentences in a document (Page et al., 1999; Erkan and Radev, 2004; Mihalcea and Tarau, 2004) .",
+          "LexRank (Erkan and Radev, 2004) works by first building a graph of all the documents (D i ) in a cluster.",
+          "Inspired by the idea of graph based algorithms to collectively rank and select the best candidate, research efforts in the natural language community have applied graph-based approaches on keyword selection ), text summarization (Erkan and Radev, 2004; Mihalcea, 2004) , word sense disambiguation Mihalcea, 2005) , sentiment analysis (Pang and Lee, 2004) , and sentence retrieval for question answering (Otterbacher et al., 2005) .",
+          "To create a sparse graph, we use the cosine threshold value of 0.1 obtained in (Erkan and Radev, 2004) .",
+          "Some approaches focus on selection of relevant sentences using probabilistic approaches (Daumé III and Marcu, 2005; Conroy et al., 2006) , semisupervised learning (Wang et al., 2011) and graphbased methods (Erkan and Radev, 2004; Otterbacher et al., 2005) .",
+          "After building the context corpus, we use LexRank (Erkan and Radev, 2004) to generate 2 QA and 2 DP surveys using the citation sentences only, and the new context corpus explained above.",
+          "Graph-based methods have also been employed (Erkan and Radev, 2004a; Erkan and Radev, 2004b; Mihalcea, 2005; Mihalcea and Tarau, 2005; Mihalcea and Radev, 2006) .",
+          "8 To be specific, given the data graph comprising all the features of the entity under consideration, the notion of RDF sentence proposed in [20] amounts to one single RDF triple, which further corresponds to a feature of the entity.",
+          "To produce the citation summary we used Mead's ) Random Summary and Lexrank (Erkan and Radev, 2004) on the entire citation summary network as baseline techniques.",
+          "These methods include adaptations to the PageRank method (Brin and Page, 1998) including TextRank (Mihalcea and Tarau, 2004) , LexRank (Erkan and Radev, 2004) , and Topic PageRank (Liu et al., 2010) ."
+        ]
+      },
+      {
+        "source_id": "3050993",
+        "title": "Automated Summarization Evaluation with Basic Elements",
+        "citing_sentences": [
+          "26 The BE (Basic Elements) method 26 and the Pyramid method, 31, 32 acknowledge the fact that there is no single best model summary and they offer ways to address the content variation across multiple model summaries of the same source text.",
+          "There have been other more recent techniques for evaluating text summaries [8, 22, 5] , but ROUGE still remains the standard evaluation algorithm.",
+          "Different approaches have been proposed to measure matches using words or more meaningful semantic units, for example, ROUGE (Lin, 2004) , factoid analysis (Teufel and Halteren, 2004) , pyramid method (Nenkova and Passonneau, 2004) , and Basic Element (BE) (Hovy et al., 2006) ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "II. TEXT SUMMARIZATION EARLY HISTORY",
+    "text": "Interest in automatic text summarization, arose as early as the fifties. An important paper of these days is the one in 1958, suggested to weight the sentences of a document as a function of high frequency words BIB15475171 , disregarding the very high frequency common words. Automatic text summarization system BIB1177942 in 1969, which, in addition to the standard keyword method (i.e., frequency depending weights), also used the following three methods for determining the sentence weights: 1. Cue Method: This is based on the hypothesis that the relevance of a sentence is computed by the presence or absence of certain cue words in the cue dictionary. 2. Title Method: Here, the sentence weight is computed as a sum of all the content words appearing in the title and (sub-) headings of a text. 3. Location Method: This method is based on the assumption that sentences occurring in initial position of both text and individual paragraphs have a higher probability of being relevant. The results showed, that the best correlation between the automatic and human-made extracts was achieved using a combination of these three latter methods. The Trainable Document Summarizer BIB5775833 in 1995 performs sentence extracting task, based on a number of weighting heuristics. Following features were used and evaluated: 1. Sentence Length Cut-O Feature: sentences containing less than a pre-specified number of words are not included in the abstract 2. Fixed-Phrase Feature: sentences containing certain cue words and phrases are included 3. Paragraph Feature: this is basically equivalent to Location Method feature in BIB1177942 4. Thematic Word Feature: the most frequent words are defined as thematic words. Sentence scores are functions of the thematic words' frequencies 5. Uppercase Word Feature: upper-case words (with certain obvious exceptions) are treated as thematic words, as well. A Corpus was used in this method, which contained 188 document/summary pairs from 21 publications in a scientific/technical domain. The summaries were produced by professional experts and the sentences occurring in the summaries were aligned to the original document texts, indicating also the degree of similarity as mentioned earlier, the vast majority (about 80%) of the summary sentences could be classified as direct sentence matches. The ANES text extraction system  in 1995 is a system that performs automatic, domain-independent condensation of news data. The process of summary generation has four major constituents: 1. Corpus analysis: this is mainly a calculation of the tf*idf -weights for all terms 2. Statistical selection of signature words: terms with a high tf*idf-weight plus headline-words 3. Sentence weighting: summing over all signature word weights, modifying the weights by some other factors, such as relative location 4. Sentence selection: Selecting high scored sentences. Hidden Markov Models (HMMs) BIB13955350 : As prove to be a mathematically sound frame-work for document retrieval. If one approaches the task of text abstracting from such a probabilistic modeling perspective, it might well be possible that HMMs could be employed for this purpose, as well. Clustering: Building links  and/or clusters between index terms, phrases and/or other subparts of the documents has been employed by standard information retrieval. Although this is not an issue in any of the above mentioned abstracting systems, it seems to be worth of consideration when building such systems.",
+    "source_ids": [
+      "1177942",
+      "13955350",
+      "15475171",
+      "5775833"
+    ],
+    "citations": [
+      {
+        "source_id": "1177942",
+        "title": "New Methods in Automatic Extracting",
+        "citing_sentences": [
+          "The pioneers of automated summarization (Luhn, 1958; Baxendale, 1958; Edmundson, 1969) had envisioned their approaches being used for the automatic creation of scientific summaries.",
+          "Early techniques for sentence extraction computed a score for each sentence based on features such as position in the text (Baxendale 1958; Edmundson 1969) , word and phrase frequency (Luhn 1958) , key phrases (e.g., \"it is important to note\") (Edmundson 1969) .",
+          "Automatic summarization has long been proposed as a helpful tool for managing the massive amounts of language data in our modern lives (Luhn, 1958; Edmundson, 1969; Teufel and Moens, 1997; Carbonell and Goldstein, 1998; Radev et al., 2001) .",
+          "Earlier work on automatic text summarization has mainly focused on extraction of sentences that are more significant in comparison to others in a document corpus [20] [21] [22] [23] .",
+          "Edmundson's (Edmundson, 1969) (Baxendale, 1958) conducted an investigation of a sample of 200 paragraphs.",
+          "7, 8 Very active and intensive research efforts are seen especially since the 1990s from the computational linguistics community.",
+          "90 In clinical documentation, de Estrada et al. 96 developed a system called Puya that found cue phrases indicating normality or abnormality in the physical exam sections of notes.",
+          "Scientific text summarization is of paramount importance and scientific texts were automatic summarization's first application domain [14, 5] .",
+          "The highestranking material can then be extracted and displayed verbatim as \"extracts\" (Luhn 1958; Edmundson 1969; Paice 1990; Kupiec, Pedersen, and Chen 1995) .",
+          "We are also working on adding sentence extraction capability, in addition to the existing phrase extraction capability (Luhn 1958 , Edmundson 1969 , Marsh et al. 1984 , Paice 1990 , Paice and Jones 1993 , Johnson et al. 1993 , Salton et al. 1994 , Kupiec et al. 1995 , Brandow et al. 1995 , Jang and Myaeng 1997 .",
+          "Edmundson developed techniques that added positional features such as formatting clues like titles and headings for summarizing a diverse corpora of documents to help users evaluate documents for further reading [5] .",
+          "Sentence extraction techniques consider the words in the sentences, look for cue words and phrases [11, 24] , consider even more focused features such as sentence length and case of words [29] , or compare patterns of relationships between sentences [30] [31] [32] .",
+          "Since the seminal work of Luhn [9] , text processing tasks frequently use features based on IR measures [5] , [7] , [23] .",
+          "Rath et al. (1961) and Edmundson (1969) have explored extractive summary formation, and have raised important evaluation issues for extractive summaries when compared to several human produced gold standards.",
+          "Although subsequent research has developed sophisticated summarization methods based on various new features, the work presented by Edmundson (1969) is still followed today as the foundation for extraction based summarization.",
+          "From each sentence of the training (and testing) data, we extract different query-related features and importance-oriented features such as: n-gram overlap, Longest Common Subsequence (LCS), Weighted LCS (WLCS), skip-bigram, exact word overlap, synonym overlap, hypernym/hyponym overlap, gloss overlap, Basic Element (BE) overlap, syntactic tree similarity measure, position of sentences, length of sentences, Named Entity (NE) match, cue word match and title match [1, 3, 5, 13] .",
+          "Earliest instances of research on summarization of scientific documents extract salient sentences from text using features like word and phrase frequency [10] , positions in the text [11] , and key phrases [12] .",
+          "The location features were used in [4] , where key phrases are used dealt with three additional components: pragmatic words (cue words, i.e., words would have positive or negative effect on the respective sentence weight like significant, key idea, or hardly); title and heading words; and structural indicators (sentence location, where the sentences Suan Dusit Rajabhat University and Universiti Teknologi Malaysia.",
+          "Early research on extractive summarization is based on simple heuristic features of the sentences such as their position in the text, the overall frequency of the words they contain, or some key phrases indicating the importance of the sentences (Baxendale, 1958; Edmundson, 1969; Luhn, 1958) .",
+          "Sentence position (Edmundson, 1969 ) is a popular feature used in summarization especially for news domain.",
+          "There exist approaches that deal mainly with lexical features, like tf*idf weighing of words in the input text(s), words used in the titles and section headings (Luhn, 1958; Edmundson, 1968) , or the presence or absence of certain cue phrases like significant, important, and in conclusion (Kupiec et al., 1995; Teufel and Moens, 1997) .",
+          "Statistical approaches are based on simple heuristics such as the position of the sentences in the document [15] , the frequency of terms [16, 17] , the presence of certain cue words [17] or the word overlap between sentences and the document title and headings [17] .",
+          "Automatic keyphrase extraction is related to many other technologies, such as automatic summarization (Luhn, 1958; Edmundson, 1969; Kupiec et al., 1995) , information extraction (Soderland and Lehnert, 1994) , and keyphrase assignment and automatic indexing (Sparck Jones, 1973; Field, 1975; Leung and Kan, 1997; Dumais et al., 1998) .",
+          "Several papers explore the task of producing a summary of a document by extracting key sentences from the document (Luhn, 1958; Edmundson, 1969; Marsh et al., 1984; Paice, 1990; Paice and Jones, 1993; Johnson et al., 1993; Salton et al., 1994; Kupiec et al., 1995; Brandow et al., 1995; Jang and Myaeng, 1997) .",
+          "Since then several methods and theories have been applied, including the use of term frequency * inverse document frequency (TF * IDF) measures, sentence position, and cue and title words (Luhn 1958; Edmundson 1969; Kupiec, Pedersen, and Chen 1995; Brandow, Mitze, and Rau 1995) ; partial understanding using conceptual structures (DeJong 1982; Tait 1982) ; bottom-up understanding, top-down parsing, and automatic linguistic acquisition (Rau, Jacobs, and Zernik 1989) ; recognition of thematic text structures (Hahn 1990) ; cohesive properties of texts (Benbrahim and Ahmad 1995; Barzilay and Elhadad 1997) ; and rhetorical structure theory (Ono, Sumita, and Miike 1994; Marcu 1997 )."
+        ]
+      },
+      {
+        "source_id": "13955350",
+        "title": "Document and passage retrieval based on hidden Markov models",
+        "citing_sentences": [
+          "Previous work has been inconclusive as to whether there is benefit to retrieving passages of different lengths [13, 3, 25] ."
+        ]
+      },
+      {
+        "source_id": "15475171",
+        "title": "The automatic creation of literature abstracts",
+        "citing_sentences": [
+          "Early work in information retrieval by Luhn [15] lets us concretize the notion of \"interesting\" clusters.",
+          "The surface-oriented approaches select material from the source based on weights for features such as (1) position in some structural representation of the document (Edmundson 1969; Kupiec, Pedersen and Chen 1995; Hovy and Lin 1999) , (2) presence of cue phrases (Edmundson 1969; Pollock and Zamora 1975) like \"in summary\" or \"in conclusion\", as well as terms like \"excellent\" (higher weight), and \"unimportant7' (lower weight), (3) presence of background terms from the title, headings in the text, the initial part of the text, or a user's query, and (4) presence of statistically salient terms, also called 'keywords' (Luhn 1958 ; Edmundson 1969) .",
+          "The pioneers of automated summarization (Luhn, 1958; Baxendale, 1958; Edmundson, 1969) had envisioned their approaches being used for the automatic creation of scientific summaries.",
+          "Early techniques for sentence extraction computed a score for each sentence based on features such as position in the text (Baxendale 1958; Edmundson 1969) , word and phrase frequency (Luhn 1958) , key phrases (e.g., \"it is important to note\") (Edmundson 1969) .",
+          "Luhn in 1958 [9] .",
+          "Luhn (1958) proposed to represent the input by topic words and score each sentence by the amount of topic words it contains.",
+          "Automatic summarization has long been proposed as a helpful tool for managing the massive amounts of language data in our modern lives (Luhn, 1958; Edmundson, 1969; Teufel and Moens, 1997; Carbonell and Goldstein, 1998; Radev et al., 2001) .",
+          "Earlier work on automatic text summarization has mainly focused on extraction of sentences that are more significant in comparison to others in a document corpus [20] [21] [22] [23] .",
+          "2 Note that sentence extraction does not solve the problem of selecting and ordering summary sentences to form a coherent There are several approaches to modeling document content: simple word frequency-based methods (Luhn, 1958; Nenkova and Vanderwende, 2005) , graph-based approaches (Radev, 2004; Wan and Yang, 2006) , as well as more linguistically motivated techniques (Mckeown et al., 1999; Leskovec et al., 2005; Harabagiu et al., 2007) .",
+          "Subjective annotation of key terms (or term pairs, in our case) is criticized in the literature, as the background, interests and viewpoint of the annotator affect what he or she considers to be relevant [14] .",
+          "Numerous researchers have addressed the automation of document summarisation, although the most common method has been through the selection of sentences from the original document (Brandow, Mitze, & Rau, 1995; Edmundson, 1969; Luhn, 1958; Paice, 1981; Salton, Singhal, Mitra, & Buckley, 1997 ).",
+          "To our knowledge, no systematic study has yet been performed, though some variant of it has been used in computational studies (see for example (Edmundson, 1969; Luhn, 1958; Baxendale, 1958) ), writing-education classes (for example, (Sjostrom and Hare, 1984) ), and has been the subject of cognitive psychological verification (Kieras, 1985) .",
+          "The earliest studies on text summarization dated back to the late 1950's with the pioneering work of Hans Peter Luhn, 6 in which he invented a statistical sentence extraction method that calculates a significance score for each sentence based on counting word frequency.",
+          "Luhn [1958] computes cluster weight by dividing the square of the number of significant words within the cluster by the total number of words in the cluster.",
+          "The first studies conducted on text summaries use simple features like terms from keywords/key phrases, terms from user queries, frequency of words, and position of words/sentences (Luhn, 1958) .",
+          "To fill the documents x terms matrix, a frequency count takes place, in which for each document the Luhn's cut (Luhn, 1958) is applied.",
+          "The summarisation system then locates clusters of significant terms within a sentence, and computes a significance factor for each sentence (Luhn, 1958) .",
+          "Early methods for identifying important topics relied on counts: frequency 88 and term frequencyinverse document frequency, which corrects for word specificity.",
+          "Scientific text summarization is of paramount importance and scientific texts were automatic summarization's first application domain [14, 5] .",
+          "The highestranking material can then be extracted and displayed verbatim as \"extracts\" (Luhn 1958; Edmundson 1969; Paice 1990; Kupiec, Pedersen, and Chen 1995) .",
+          "Luhn's method is a systematic approach to perform summarization which forms the core of the field today [23] .",
+          "We are also working on adding sentence extraction capability, in addition to the existing phrase extraction capability (Luhn 1958 , Edmundson 1969 , Marsh et al. 1984 , Paice 1990 , Paice and Jones 1993 , Johnson et al. 1993 , Salton et al. 1994 , Kupiec et al. 1995 , Brandow et al. 1995 , Jang and Myaeng 1997 .",
+          "The term frequency component (TF) assigns more weight to words that occur frequently within a document because important words are often repeated [4] .",
+          "However, most current summarization systems can either use static summarization methods [8] [9] [10] [11] [12] [13] or use topic detection and tracking (TDT) methods [14] [15] [16] [17] [18] .",
+          "There has been ongoing research to make machines produce automatic summaries of an article, especially when the abstract of an article is not provided (news articles for example) or is not freely available (Luhn, 1958; Kupiec et al., 1995; Radev et al., 2002; Teufel and Moens, 2002) .",
+          "However, the majority of commonly used bag-of-words retrieval models (including, among many others, BM25 [30] and language modeling [11, 29, 39] ) still use unsupervised term weighting based on global collection statistics, which resembles the term weighting proposed by Luhn [20] in 1958.",
+          "Since the seminal work of Luhn [9] , text processing tasks frequently use features based on IR measures [5] , [7] , [23] .",
+          "Automatic summarization is the process of automatically generating a summary that retains the most important content of the original text document (Edmundson, 1969; Luhn, 1958; Nenkova and McKeown, 2012) .",
+          "Statements typical for these early works were in the following fashion: \"It should be emphasized that this system is based on the capabilities of machines, not of human beings\" [6] .",
+          "The very first work on automatic text summarization by Luhn (1958) computes salient sentences based on word frequency (number of times a word occurs in a document) and phrase frequency.",
+          "To select important content, we used techniques that proved effective in single document summarization such as sentence position [1] , term frequency [13] , topic signature [11, 7] , and term clustering.",
+          "Earliest instances of research on summarization of scientific documents extract salient sentences from text using features like word and phrase frequency [10] , positions in the text [11] , and key phrases [12] .",
+          "Multi-document summarization has been an active area of research over the past two decades and yet, barring a few exceptions (Radev and McKeown 1998; Daumé III et al. 2002; Barzilay and McKeown 2005) , most systems still use shallow features to produce an extractive summary, an age-old technique (Luhn 1958 ) that has well-known problems.",
+          "For instance, Luhn [1] looked at the frequency of word distributions should imply the most important concepts of the document.",
+          "Automatic summarization has been an active field of research for close to 60 years (Luhn, 1958) .",
+          "Early research on extractive summarization is based on simple heuristic features of the sentences such as their position in the text, the overall frequency of the words they contain, or some key phrases indicating the importance of the sentences (Baxendale, 1958; Edmundson, 1969; Luhn, 1958) .",
+          "Stop words are extremely common words that typically cause problems in natural language processing and are therefore typically extracted prior to natural language processing (Luhn 1958 If a word is marked as a neologism, NeoCrawler saves it to the database.",
+          "There exist approaches that deal mainly with lexical features, like tf*idf weighing of words in the input text(s), words used in the titles and section headings (Luhn, 1958; Edmundson, 1968) , or the presence or absence of certain cue phrases like significant, important, and in conclusion (Kupiec et al., 1995; Teufel and Moens, 1997) .",
+          "Comparing SumBasic to Luhn (1958) .",
+          "It has been empirically verified that a writer repeats important words in the text as he or she tries to explain or verify them (Luhn, 1958) .",
+          "Following the work of Tombros [17] , which studied summarization of TREC documents, the required minimum occurrence count for significant terms in a mediumsized TREC document was taken to be 7; where a medium sized document is defined as one containing no more than 40 sentences and not less than 25 sentences.",
+          "The Concept of stop words was originally introduced by [27] .",
+          "In our work we used log-likelihood to select sentences with the maximum sum of log likelihood scores, unlike the traditional method of measuring cosine similarity overlap between articles or sentences to indicate importance (Luhn, 1958; Barzilay et al., 2001; Radev et al., 2004) .",
+          "• Term frequency representation: Following Luhn's theory [16] , we assume that the more times a word (or concept) appears in a document, the more relevant become the sentences that contain this word.",
+          "Automatic keyphrase extraction is related to many other technologies, such as automatic summarization (Luhn, 1958; Edmundson, 1969; Kupiec et al., 1995) , information extraction (Soderland and Lehnert, 1994) , and keyphrase assignment and automatic indexing (Sparck Jones, 1973; Field, 1975; Leung and Kan, 1997; Dumais et al., 1998) .",
+          "Several papers explore the task of producing a summary of a document by extracting key sentences from the document (Luhn, 1958; Edmundson, 1969; Marsh et al., 1984; Paice, 1990; Paice and Jones, 1993; Johnson et al., 1993; Salton et al., 1994; Kupiec et al., 1995; Brandow et al., 1995; Jang and Myaeng, 1997) .",
+          "where w i = a word, f req(w i ) = the term frequency of word w i in the document, stopwords (and sometimes also words with a very low TF value) are set to 0, • TFScore (extension of [20] ):",
+          "Automatic summarization was first studied almost 50 years ago by Luhn (Luhn, 1958) and has continued to be a steady subject of research.",
+          "General text summarization, including single document summarization (Luhn, 1958; Goldstein et al., 1999) and multi-document summarization (Kraaij et al., 2001; Radev et al., 2003) has been well studied; our work is under the framework of extractive summarization (Luhn, 1958; McKeown and Radev, 1995; Goldstein et al., 1999; Kraaij et al., 2001 ), but our problem formulation differs from any existing formulation of the summarization problem.",
+          "In early studies, Luhn (1959) and Edmundson (1968) identified several privileged positions, such as first and last sentences.",
+          "In these methods, many surface features are useful, such as term frequency (Luhn, 1958) , TF*IDF weights (Erkan and Radev, 2004) , sentence length (Cao et al., 2015a) and sentence positions (Ren et al., 2017) .",
+          "Most of the existing approach [13, 14, 15] use the features of fragments to compute the final score.",
+          "In seminal work on automatic summarisation, Luhn (1958) introduces a representation based on content words.",
+          "The Concept of stop words was originally introduced by [37] .",
+          "In the same year as Maron et al.'s work, Luhn suggested Bthat the frequency of word occurrence in an article furnishes a useful measurement of word significance[ [21] ; his approach later became known as term frequency weighting.",
+          "Since then several methods and theories have been applied, including the use of term frequency * inverse document frequency (TF * IDF) measures, sentence position, and cue and title words (Luhn 1958; Edmundson 1969; Kupiec, Pedersen, and Chen 1995; Brandow, Mitze, and Rau 1995) ; partial understanding using conceptual structures (DeJong 1982; Tait 1982) ; bottom-up understanding, top-down parsing, and automatic linguistic acquisition (Rau, Jacobs, and Zernik 1989) ; recognition of thematic text structures (Hahn 1990) ; cohesive properties of texts (Benbrahim and Ahmad 1995; Barzilay and Elhadad 1997) ; and rhetorical structure theory (Ono, Sumita, and Miike 1994; Marcu 1997 )."
+        ]
+      },
+      {
+        "source_id": "5775833",
+        "title": "A trainable document summarizer",
+        "citing_sentences": [
+          "In recent research, corpus-based approaches have become quite dominant, including the machine learning of feature combinations (Kupiec, Pedersen and Chen 1995; Mani and Bloedorn 1998; Aone, Okurowski, Gorlinsky and Larsen 1999; Teufel and Moens 1999) , as well as the learning of sentence-shortening rules (Knight and Marcu 2000) .",
+          "[1] , [7] , [10] ).",
+          "Machine learning methods have also been employed to extract sentences, including unsupervised methods (Nomoto and Matsumoto, 2001 ) and supervised methods (Kupiec et al., 1995; Conroy and O'Leary, 2001; Amini and Gallinari, 2002; Shen et al., 2007) .",
+          "The application of machine learning to summarization was pioneered by Kupiec, Pedersen, and Chen (1995) , who developed a summarizer using a Bayesian classifier to combine features from a corpus of scientific articles and their abstracts.",
+          "We have studied generic single-document summarization using the Canadian French Sociological Articles corpus, generated from the journal Perspectives interdisciplinaires sur le travail et la santé (Pistes) 6 .",
+          "Kupiec et al. (1995) scored sentences with a feature-based statistical classifier.",
+          "In fact, this method is commonly used for content selection in text summarization (e.g., Kupiec et al., 1995) .",
+          "Examples of recent systems include Kupiec et al. (1995) and Brandow et al. (1995) .",
+          "These methods make use of information about the relative positions of the sentences in the text (Kupiec, Pedersen, and Chen 1995; Chen and Withgott 1992) .",
+          "In addition to the traditional way of extracting the highest ranked sentences in a document to compose a summary as in (Edmundson 1969; Lin 1999; Kupiec et al. 1995; Brandow 1995; Zechner 1996) , we embedded a machine learning mechanism in our system.",
+          "Kupiec, Pedersen, and Chen (1995) used the abstracts of scientific articles as a target summary.",
+          "Early attempts mostly leverage human-engineered features (Filatova and Hatzivassiloglou, 2004) coupled with binary classifiers (Kupiec et al., 1995) , hidden Markov models (Conroy and O'leary, 2001) , graph based methods (Mihalcea, 2005) , and integer linear programming (Woodsend and Lapata, 2010) .",
+          "It can be expressed using Bayes' rule, as (Kupiec et al., 1995) :",
+          "Kupiec et al. (1995) use a statistical method and show how extracts can be used to create summaries but use no annotated metadata in summarization.",
+          "Kupiec, Pedersen, and Chen (1995) report sentence length as a useful feature for text extraction.",
+          "Basic Features We employ several basic features that have been used previously in supervised models to rank sentence salience (Kupiec et al., 1995; Conroy et al., 2001 ).",
+          "After extracting these eight features from a Web page, we apply the Naïve Bayesian classifier to train a summarizer, as in [20] .",
+          "We are also working on adding sentence extraction capability, in addition to the existing phrase extraction capability (Luhn 1958 , Edmundson 1969 , Marsh et al. 1984 , Paice 1990 , Paice and Jones 1993 , Johnson et al. 1993 , Salton et al. 1994 , Kupiec et al. 1995 , Brandow et al. 1995 , Jang and Myaeng 1997 .",
+          "Kupiec used a Naïve Bayes classifier trained on a collection of 188 scientific documents and their corresponding human created summaries to learn the probabilities that a document sentence will be chosen in the human summaries [9] .",
+          "This was in fact confirmed earlier by the experiments in (Kupiec et al., 1995) , where it was found out that for a data set of 188 scientific articles, 79% of the sentences in the abstracts could be perfectly matched with the sentences in the corresponding documents.",
+          "To address question (2), we consider a summarization system that learns extraction rules directly from a parallel corpus of full texts and their summaries (Kupiec et al., 1999) .",
+          "Most of these approaches use statistics from the corpus itself to decide on the importance of sentences, and some leverage existing training sets of summaries to learn the properties of a summary [29, 33] .",
+          "In the supervised setting, several early methods (Kupiec et al., 1995) made independent binary decisions whether to include a particular sentence in the summary or not.",
+          "The task of an extraction-based text summarizer is to select from a text the most important sentences that are in size a small percentage of the original text yet still as informative as the full text (Kupiec et al., 1995) .",
+          "There has been ongoing research to make machines produce automatic summaries of an article, especially when the abstract of an article is not provided (news articles for example) or is not freely available (Luhn, 1958; Kupiec et al., 1995; Radev et al., 2002; Teufel and Moens, 2002) .",
+          "Traditional summarization methods manually define features to rank sentences for their salience in order to identify the most important sentences in a document or set of documents (Kupiec et al., 1995; Mani, 2001; Filatova and Hatzivassiloglou, 2004; Nenkova et al., 2006; Spärck Jones, 2007) .",
+          "In this work we have explored the framework of using a ML approach to produce trainable text summarizers, in a way which was proposed a few years ago by Kupiec [7] .",
+          "AZ is based on machine learning with the Naive Bayes classifier, as in the Kupiec, Pedersen, & Chen (1995) approach to statistical sentence extraction.",
+          "The first approach identifies the most meaning-bearing sentences in the input and concatenates these sentences to form a summary [10] [11] [12] .",
+          "Traditionally, summarization systems have been evaluated in two major ways: (1) intrinsically, measuring the amount of the core information preserved from the original text (Kupiec, Pedersen, and Chen 1995; Teufel and Moens 1997) , and (2) extrinsically, measuring how much the summary can benefit in accomplishing another task (e.g., finding a document relevant to a query or classifying a document into a topical category) (Mani et al. 1998) .",
+          "These are realised as a novel combination of interactive and collaborative interfaces which rely on NLP and information retrieval techniques, including language identification 10 , clustering algorithms (based on keywords or Latent Dirichlet Allocation (LDA) [4] ), discussion summarisation [19] , keyword and keyphrase detection (based on [7] ), and extractive summarisation [9] .",
+          "The passage extraction framework [e.g., 32, 25, 36] identifies certain segments of the text (typically sentences) that are the most representative of the document's content.",
+          "In statistical method [14] was described by using a Bayesian classifier to compute the probability that a sentence in a source document should be included in a summary.",
+          "Researchers have also tried to integrate machine learning into summarization as more features have been proposed and more training data have become available (Kupiec, Pedersen, & Chen, 1995; Lin, 1999; Osborne, 2002; Daumé III & Marcu, 2004) .",
+          "Kupiec, Pedersen and Chen (1995) 's work is an instance of this, where they use 188 Engineering Information summaries that are mostly indicative in nature.",
+          "It is usually modeled as a sentence ranking problem by using the scores from classifiers (Kupiec et al., 1995) , sequential labeling models (Conroy and O'leary, 2001) as well as integer linear programmers (Woodsend and Lapata, 2010) .",
+          "The first experiments in Argumentative Zoning used Naïve Bayes (NB) classifiers (Kupiec et al., 1995; Teufel, 1999) which assume conditional independence of the features.",
+          "There has been some work on learning a probabilistic model of summarization from text; some of the earliest work on this was due to Kupiec et al. (1995) , who used a collection of manually-summarized text to learn the weights for a set of features used in a generic summarization system.",
+          "While some statistical approaches have had some success in extracting one or more sentences which can serve as a summary (Brandow et al. 1995; Kupiec et al. 1995; Salton et al. 1997) , summarization in general has remained an elusive task.",
+          "Automatic keyphrase extraction is related to many other technologies, such as automatic summarization (Luhn, 1958; Edmundson, 1969; Kupiec et al., 1995) , information extraction (Soderland and Lehnert, 1994) , and keyphrase assignment and automatic indexing (Sparck Jones, 1973; Field, 1975; Leung and Kan, 1997; Dumais et al., 1998) .",
+          "Previous related work on extractive systems included the use of semantic tagging and coreference/lexical chains (Saggion et al., 2003; Barzilay and Elhadad, 1997; Azzam et al., 1998) , lexical occurrence/structural statistics (Mathis et al., 1973) , discourse structure (Marcu, 1998) , cue phrases (Luhn, 1958; Paice, 1990; Rau et al., 1994) , positional indicators (Edmunson, 1964) and other extraction methods (Kuipec et al., 1995) .",
+          "Kupiec et al. (1995) and Jang and Myaeng (1997) use a Bayesian statistical model to learn how to extract key sentences.",
+          "Kupiec et al. (1995) use a Naive Bayes classifier to learn feature combinations.",
+          "Kupiec, Pedersen and Chen [1] proposed a binary Naive Bayes classifier to solve the problem of fragment selection.",
+          "Statistical and linguistic features used in sentence extraction include frequent keywords, title keywords, cue phrases, sentence position, sentence length, and so on [4] [5] [6] .",
+          "Frequency-based (Edmundson, 1969; Kupiec, Pedersen, and Chen, 1995; Brandow, Mitze, and Rau, 1995) , knowledge-based (Reimer and Hahn, 1988; McKeown and l:Ladev, 1995) , and discoursebased (Johnson et al., 1993; Miike et al., 1994; Jones, 1995) approaches to automated summarization correspond to a continuum of increasing understanding of the text and increasing complexity in text processing.",
+          "(Kupiec et al., 1995) use the abstracts of scientific articles as a target summary, where they use 188 Engineering Information summaries that are mostly indicative in na-ture.",
+          "Relevant work in rhetorical classification for scientific articles, which is the first step toward the production of scientific abstracts, is due to Teufel and Moens (1998) , who used statistical approaches borrowed from Kupiec, Pedersen, and Chen (1995) ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "B. Title word feature:",
+    "text": "Sentences containing words that appear in the title are also indicative of the theme of the document. These sentences are having greater chances for including in summary.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "C. Sentence location feature:",
+    "text": "Usually first and last sentence of first and last paragraph of a text document are more important and are having greater chances to be included in summary.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "D. Sentence Length feature:",
+    "text": "Very large and very short sentences are usually not included in summary.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "E. Proper Noun feature:",
+    "text": "Proper noun is name of a person, place and concept etc. Sentences containing proper nouns are having greater chances for including in summary.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "F. Upper-case word feature:",
+    "text": "Sentences containing acronyms or proper names are included.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "G. Cue-Phrase Feature:",
+    "text": "Sentences containing any cue phrase (e.g. \"in conclusion\", \"this letter\", \"this report\", \"summary\", \"argue\", \"purpose\", \"develop\", \"attempt\" etc.) are most likely to be in summaries.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "H. Biased Word Feature:",
+    "text": "If a word appearing in a sentence is from biased word list, then that sentence is important. Biased word list is previously defined and may contain domain specific words.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "I. Font based feature:",
+    "text": "Sentences containing words appearing in upper case, bold, italics or Underlined fonts are usually more important.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "J. Pronouns:",
+    "text": "Pronouns such as \"she, they, it\" cannot be included in summary unless they are expanded into corresponding nouns.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "K. Sentence-to-Sentence Cohesion:",
+    "text": "For each sentence s compute the similarity between s and each other sentence s' of the document, then add up those similarity values, obtaining the raw value of this feature for s. The process is repeated for all sentences.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "L. Sentence-to-Centroid Cohesion:",
+    "text": "For each sentence s as compute the vector representing the centroid of the document, which is the arithmetic average over the corresponding coordinate values of all the sentences of the document; then compute the similarity between the centroid and each sentence, obtaining the raw value of this feature for each sentence.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "M. Occurrence of non-essential information:",
+    "text": "Some words are indicators of non-essential information. These words are speech markers such as \"because\", \"furthermore\", and \"additionally\", and typically occur in the beginning of a sentence. This is also a binary feature, taking on the value \"true\" if the sentence contains at least one of these discourse markers, and \"false\" otherwise.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "N. Discourse analysis:",
+    "text": "Discourse level information  , in a text is one of good feature for text summarization. In order to produce a coherent, fluent summary, and to determine the flow of the author's argument, it is necessary to determine the overall discourse structure of the text and then removing sentences peripheral to the main message of the text. These features are important as, a number of methods of text summarization are using them. These features are covering statistical and linguistic characteristics of a language.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "IV. EXTRACTIVE SUMMARIZATION METHODS",
+    "text": "Extractive summarizers  [14]  aim at picking out the most relevant sentences in the document while also maintaining a low redundancy in the summary.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "A. Term Frequency-Inverse Document Frequency (TF-IDF) method:",
+    "text": "Bag-of-words model is built at sentence level, with the usual weighted term-frequency and inverse sentencefrequency paradigm BIB18123343 , where sentence-frequency is the number of sentences in the document that contain that term. These sentence vectors are then scored by similarity to the query and the highest scoring sentences are picked to be part of the summary. This is a direct adaptation of Information Retrieval paradigm to summarization. Summarization is query-specific, but can be adapted to be generic as described below. To generate a generic summary, non stop-words that occur most frequently in the document(s) may be taken as the query words. Since these words represent the theme of the document, they generate generic summaries. Termfrequency is usually 0 or 1 for sentences-since normally the same content-word does not appear many times in a given sentence. If users create query words the way they create for information retrieval, then the query based summary generation would become generic summarization.",
+    "source_ids": [
+      "18123343"
+    ],
+    "citations": [
+      {
+        "source_id": "18123343",
+        "title": "Word Sequence Models for Single Text Summarization",
+        "citing_sentences": []
+      }
+    ]
+  },
+  {
+    "section": "B. Cluster based method:",
+    "text": "Documents are usually written such that they address different topics one after the other in an organized manner. They are normally broken up explicitly or implicitly into sections. This organization applies even to summaries of documents. It is intuitive to think that summaries should address different \"themes\" appearing in the documents. Some summarizers incorporate this aspect through clustering. If the document collection for which summary is being produced is of totally different topics, document clustering becomes almost essential to generate a meaningful summary. Documents are represented using term frequencyinverse document frequency (TF-IDF) BIB641047 of scores of words. Term frequency used in this context is the average number of occurrences (per document) over the cluster. IDF value is computed based on the entire corpus. The summarizer takes already clustered documents as input. Each cluster is considered a theme. The theme is represented by words with top ranking term frequency, inverse document frequency (TF-IDF) scores in that cluster. Sentence selection is based on similarity of the sentences to the theme of the cluster C i .The next factor that is considered for sentence selection is the location of the sentence in the document (L i ). In the context of newswire articles, the closer to the beginning a sentence appears, the higher its weight age for inclusion in summary. The last factor that increases the score of a sentence is its similarity to the first sentence in the document to which it belongs (F i ). The overall score (Si) of a sentence i is a weighted sum of the above three factors: where S i is the score of sentence C i,, F i are the scores of the sentence i based on the similarity to theme of cluster and first sentence of the document it belongs to, respectively. L i is the score of the sentence based on its location in the document. w 1, w 2 andw 3 are the weights for linear combination of the three scores. Note the similarity between the sentence score in equations (1) and BIB10238698 . The role of F in (2) is similar to that of T in (1). The difference however, is that S i, in (2) is further re-scored using a redundancy factor. Once the documents are clustered, sentence selection from within the cluster to form its summary is local to the documents in the cluster. The IDF value based on the corpus statistics seems counter-intuitive. A better choice may be to take the Average-TF alone to determine the theme of the cluster, and then rely on the \"anti redundancy\" factor to cover the important 'themes' within the cluster.",
+    "source_ids": [
+      "10238698",
+      "641047"
+    ],
+    "citations": [
+      {
+        "source_id": "10238698",
+        "title": "Optimizing Text Summarization Based on Fuzzy Logic",
+        "citing_sentences": [
+          "Automatic text summarization (Kyoomarsi et al., 2008; Gupta & Lehal, 2010) is reducing the source text into a shorter form retaining its information content and overall meaning."
+        ]
+      },
+      {
+        "source_id": "641047",
+        "title": "Narrative text classification for automatic key phrase extraction in web document corpora",
+        "citing_sentences": [
+          "Other related works include web page keyword extraction (Kelleher and Luz, 2005; Zhang et al., 2005; Chen et al., 2005) , advertising keywords finding (Yih et al., 2006) ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "C. Graph theoretic approach:",
+    "text": "As seen in the previous methods, the first step involved in the process of summarizing one or more documents is identifying the issues or topics addressed in the document. Graph theoretic representation BIB3506525 of passages provides a method of identification of these themes. After the common preprocessing steps, namely, stop word removal and stemming, sentences in the documents are represented as nodes in an undirected graph. There is a node for every sentence. Two sentences are connected with an edge if the two sentences share some common words, or in other words, their (cosine, or such) similarity is above some threshold. This representation yields two results: The partitions contained in the graph (that is those sub-graphs that are unconnected to the other sub graphs), form distinct topics covered in the documents. This allows a choice of coverage in the summary. For query-specific summaries, sentences may be selected only from the pertinent sub graph, while for generic summaries, representative sentences may be chosen from each of the sub-graphs. The second result yielded by the graph-theoretic method is the identification of the important sentences in the document. The nodes with high cardinality (number of edges connected to that node), are the important sentences in the partition, and hence carry higher preference to be included in the summary. Figure2 shows an example graph for a document. It can be seen that there are about 3-4 topics in the document; the nodes that are encircled can be seen to be informative sentences in the document, since they share information with many other sentences in the document. The graph theoretic method may also be adapted easily for visualization of inter-and intra-document similarity.",
+    "source_ids": [
+      "3506525"
+    ],
+    "citations": [
+      {
+        "source_id": "3506525",
+        "title": "Generic text summarization using local and global properties of sentences",
+        "citing_sentences": []
+      }
+    ]
+  },
+  {
+    "section": "D. Machine Learning approach",
+    "text": "Given a set of training document and their extractive summaries, the summarization process is modeled as a classification problem: sentences are classified as summary sentences and non-summary sentences based on the features that they possess. The classification probabilities are learnt statistically BIB1356305 from the training data, using Bayes' rule: P (s∈<S | F1, F2, ..., FN) = P (F1, F2, . .., FN | s∈S) * P (s∈S) / P (F1, F2,..., FN) where s is a sentence from the document collection, F1, F2…FN are features used in classification. S is the summary to be generated, and P (s∈< S | F1, F2, ..., FN) is the probability that sentence s will be chosen to form the summary given that it possesses features F1,F2…FN.",
+    "source_ids": [
+      "1356305"
+    ],
+    "citations": [
+      {
+        "source_id": "1356305",
+        "title": "Automatic Text Summarization using a Machine Learning Approach",
+        "citing_sentences": [
+          "Those Punjabi sentences containing nouns (Neto et al., 2002) and proper names are important.",
+          "A vast majority of this work has focused on extractive summarization where the idea is to construct a summary by selecting the most relevant sentences from the document ( (Neto et al., 2002) , (Erkan and Radev, 2004) , (Filippova and Altun, 2013) , (Colmenares et al., 2015) , (Riedhammer et al., 2010) , (Ribeiro et al., 2013) ).",
+          "Notable examples are Neto et al. (2002) , Erkan & Radev (2004) , Wong et al. (2008) , Filippova & Altun (2013) and Colmenares et al. (2015) .",
+          "Most summarization models studied in the past are extractive in nature (Neto et al., 2002; Dorr et al., 2003; Filippova and Altun, 2013; Colmenares et al., 2015; Nallapati et al., 2017) , which usually work by identifying the most important phrases of an input document and re-arranging them into a new summary sequence.",
+          "We used GEP to generate a sentence ranking function from the training data and applied it to the test data, which also differs from (Lin 1999 ) who used decision tree, (Aone et al. 1999; Kupiec et al. 1995) who used Bayes's rule, and (Neto et al. 2002) who implemented both Naïve Bayes and decision tree C4.5.",
+          "In recent, closed-loop approaches, models of saliency are trained from annotated text corpora using machine-learning algorithms [55] - [57] .",
+          "A vast majority of the past work in summarization has been extractive, which consists of identifying key sentences or passages in the source document and reproducing them as summary (Neto et al., 2002; Erkan and Radev, 2004; Wong et al., 2008; Filippova and Altun, 2013; Colmenares et al., 2015) .",
+          "In extractive summarization, the model selects passages from the input document and combines them to form a shorter summary, sometimes with a post-processing step to ensure final coherence of the output (Neto et al., 2002; Dorr et al., 2003; Filippova and Altun, 2013; Colmenares et al., 2015; Nallapati et al., 2017) ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "E. LSA Method",
+    "text": "Singular Value Decomposition (SVD)  is a very powerful mathematical tool that can find principal orthogonal dimensions of multidimensional data. It has applications in many areas and is known by different names: Karhunen-Loeve Transform in image processing, Principal Component Analysis (PCA) in signal processes and Latent Semantic Analysis (LSA) in text processing. It gets this name LSA because SVD applied to documentword matrices, groups documents that are semantically related to each other, even when they do not share common words. Words that usually occur in related contexts are also related in the same singular space. This method can be applied to extract the topic-words and content-sentences from documents. The advantage of using LSA vectors for summarization rather than the word vectors is that conceptual (or semantic) relations as represented in human brain are automatically captured in the LSA, while using word vectors without the LSA transformation requires design of explicit methods to derive conceptual relations. Since SVD finds principal and mutually orthogonal dimensions of the sentence vectors, picking out a representative sentence from each of the dimensions ensures relevance to the document, and orthogonality ensures non-redundancy. It is to be noted that this property applies only to data that has principal dimensions inherently-however, LSA would probably work since most of the text data has such principal dimensions owing to the variety of topics it addresses.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "F. An approach to concept-obtained text summarization",
+    "text": "The idea of this approach is to obtain concepts of words based on HowNet   , and use concept as feature, instead of word. This approach uses conceptual vector space model to form a rough summarization, and then calculate degree of semantic similarity of sentence for reducing its redundancy. A good summary system should extract the diverse topics of the document while keeping redundancy to a minimum. This method consists of the following three main stages: Stage 1: Using Hownet as tool to obtain concept of text, and establishing conceptual vector space model. Stage 2: Calculate importance of concept based on conceptual vector space model. Stage 3: Generate the final summary by calculating importance of sentence and reducing the redundancy of summarization.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "G. Text summarization with neural networks",
+    "text": "This method involves training the neural networks to learn the types of sentences that should be included in the summary. This is accomplished by training the network with sentences in several test paragraphs where each sentence is identified as to whether it should be included in the summary or not. This is done by a human reader. The neural network BIB19005073 learns the patterns inherent in sentences that should be included in the summary and those that should not be included. It uses three-layered Feed forward neural network, which has been proven to be a universal function approximator. The first phase of the process involves training the neural networks to learn the types of sentences that should be included in the summary. This is accomplished by training the network with sentences in several test paragraphs where each sentence is identified as to whether it should be included in the summary or not. This is done by a human reader. The neural network learns the patterns inherent in sentences that should be included in the summary and those that should not be included. The Neural Network BIB59626690 after Training is shown in figure3. Once the network has learned the features that must exist in summary sentences, we need to discover the trends and relationships among the features that are inherent in the majority of sentences. This is accomplished by the feature fusion phase, which consists of two steps: 1) eliminating uncommon features; and 2) collapsing the effects of common features. The connections having very small weights after training can be pruned without affecting the performance of the network. As a result, any input or hidden layer neuron having no emanating connections can be safely removed from the network. In addition, any hidden layer neuron having no abutting connections can be removed. This corresponds to eliminating uncommon features from the network BIB59626690 as shown in figure4. The hidden layer activation values for each hidden layer neuron are clustered utilizing an adaptive clustering technique. Each cluster is identified by its centroid and frequency. The activation value of each hidden layer neuron is replaced by the centroid of the cluster, which the activation value belongs to. This corresponds to collapsing the effects of common features. The combination of these two steps corresponds to Figure 5 . Neural Network after feature fusion generalizing the effects of features, as a whole, and providing control parameters for sentence ranking. The Neural Network BIB59626690 after feature fusion is shown in figure5.",
+    "source_ids": [
+      "19005073",
+      "59626690"
+    ],
+    "citations": [
+      {
+        "source_id": "19005073",
+        "title": "Automatic text summarization with neural networks",
+        "citing_sentences": [
+          "2) Processing (Fattah & Ren, 2008; Kaikhah, 2004; Neto et al., 2000) phase determines the final score of each sentence using feature-weight equation and top ranked sentences in proper order are selected for final summary."
+        ]
+      },
+      {
+        "source_id": "59626690",
+        "title": "Text Summarization Using Neural Networks",
+        "citing_sentences": []
+      }
+    ]
+  },
+  {
+    "section": "H. Automatic text summarization based on fuzzy logic",
+    "text": "This method considers each characteristic of a text such as sentence length, similarity to little, similarity to key word and etc. as the input of fuzzy system[2] BIB2971834 . Then, it enters all the rules needed for summarization, in the knowledge base of system. After ward, a value from zero to one is obtained for each sentence in the output based on sentence characteristics and the available rules in the knowledge base. The obtained value in the output determines the degree of the importance of the sentence in the final summary. The input membership function for each feature is divided into three membership functions which are composed of insignificant values (low L), very low (VL), medium (M), significant values (High h) and very high (VH). The important sentences are extracted using IF-THEN rules according to the feature criteria. Text summarization based on fuzzy logic system architecture  is shown in figure6. Fuzzy logic system design usually implicates selecting fuzzy rules and membership function. The selection of fuzzy rules and membership functions directly affect the performance of the fuzzy logic system. The fuzzy logic system consists of four components: fuzzifier, inference engine, defuzzifier, and the fuzzy knowledge base. In the fuzzifier, crisp inputs are translated into linguistic values using a membership function to be used to the input linguistic variables. After fuzzification, the inference engine refers to the rule base containing fuzzy IFTHEN rules to derive the linguistic values. In the last step, the output linguistic variables from the inference are converted to the final crisp values by the defuzzifier using membership function for representing the final sentence score.",
+    "source_ids": [
+      "2971834"
+    ],
+    "citations": [
+      {
+        "source_id": "2971834",
+        "title": "Sentence Features Fusion for Text Summarization Using Fuzzy Logic",
+        "citing_sentences": []
+      }
+    ]
+  },
+  {
+    "section": "I. Text summarization using regression for estimating feature weights",
+    "text": "Mathematical regression  is a good model to estimate the text feature weights. In this model, a mathematical function can relate output to input. The feature parameters of many manually summarized English documents are used as independent input variables and corresponding dependent outputs are specified in training phase. A relation between inputs and outputs is established. Then testing data are introduced to the system model for evaluation of its efficiency. In",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "J. Multi-document extractive summarization",
+    "text": "Multi document extractive summarization deals with extraction of summarized information from multiple texts written about the same topic. Resulting summary report allows individual users, so as professional information consumers, to quickly familiarize themselves with information contained in a large cluster of documents. Multi-document summarization creates information reports that are both concise and comprehensive. With different opinions being put together & outlined, every topic is described from multiple perspectives within a single document. NeATS  is a multi-document summarization system that attempts to extract relevant or interesting portions from a set of documents about some topic and present them in coherent order. It is an extraction-based multidocument summarization system. Given an input of a collection of sets of newspaper articles, NeATS generates summaries in three stages: content selection, filtering, and presentation. The goal of content selection is to identify important concepts mentioned in a document collection. In a key step for locating important sentences, NeATS computes the likelihood ratio to identify key concepts in unigrams, bigrams, and trigrams, using the on-topic document collection as the relevant set and the off-topic document collection as the irrelevant set. With the individual key concepts available, these concepts are clustered in order to identify major subtopics within the main topic. Clusters are formed through strict lexical connection. Each sentence in the document set is then ranked, using the key concept structures. NeATS uses three different filters: sentence position, stigma words, and maximum marginal relevancy. Sentence position is a good content filter, that only retains the leading 10 sentences. Some sentences start with stigma words like: • Conjunctions (e.g., but, although, however) • The verb say and its derivatives • Quotation marks • Pronouns such as he, she, and they usually cause discontinuity in summaries. The scores of these sentences are reduced to avoid including them in short summaries. Redundancy issue is addressed in maximum marginal relevancy filter. A sentence is added to the summary if and only if its content has less than X percent overlap with the summary. The overlap ratio is computed using simple stemmed word overlap and the threshold X is set empirically. Hub/Authority BIB18376399 framework is multi document summarization system which, firstly detect the sub-topics in multi-documents by sentence clustering and extract the feature words (or phrase) of different sub-topics. Secondly, all feature words and the cue phrases are used as the vertex of Hub and all sentences are regarded as the vertex of Authority. If the sentence contains the words in Hub, there is an edge between the Hub word and the Authority sentence. The initial weight of each vertex considers both the content and the cues such as cue phrase and first sentence. Through the mutual reinforcement mechanism of the Hub-Authority algorithm, we can rank the importance of the sentences within the multi-documents. The assumption behind this cue-based Hub/Authority approach is that a good Hub word (or phrase) is the content that points to many good authorities sentences and a good authority sentence is a vertex that is pointed to by many good hub words. Thirdly, It has used the Markov Model to order the subtopics that the final summarization should contain and output the text summarization according to the sentence ranking score of all sentences within one sub-topic as user' requirement. Generic relation extraction (GRE)  is a novel multi document text summarization approach, which aims to build systems for relation identification and characterization that can be transferred across domains and tasks without modification of model parameters.",
+    "source_ids": [
+      "18376399"
+    ],
+    "citations": [
+      {
+        "source_id": "18376399",
+        "title": "A cue-based hub-authority approach for multi-document text summarization",
+        "citing_sentences": []
+      }
+    ]
+  },
+  {
+    "section": "K. Query based extractive text summarization",
+    "text": "In query based text summarization  system, the sentences in a given document are scored based on the frequency counts of terms (words or phrases). The sentences containing the query phrases are given higher scores than the ones containing single query words. Then, the sentences with highest scores are incorporated into the output summary together with their structural context. Portions of text may be extracted from different sections or subsections. The resulting summary is the union of such extracts. The number of extracted sentences and the extent to which their context is displayed depends on the summary frame size which is fixed to the size of the screen that can be seen without scrolling. In the sentence extraction algorithm, whenever a sentence is selected for the inclusion in the summary, some of the headings in that context are also selected. The query based sentence extraction algorithm is as follows: Algorithm: 1: Rank all the sentences according to their score. 2: Add the main title of the document to the summary. 3: Add the first level-1 heading to the summary. 4: While (summary size limit not exceeded) 5: Add the next highest scored sentence. 6: Add the structural context of the sentence: (if any and not already included in the summary) 7: Add the highest level heading above the extracted text (call this heading h). 8: Add the heading before h in the same level. 9: Add the heading after h in the same level. 10: Repeat steps 7, 8 and 9 for the next highest level headings.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "11: End while",
+    "text": "An another query-specific summarization BIB11629513 method views a document as a set of interconnected text fragments (passages) and focuses on keyword queries, since keyword search is the most popular information discovery method on documents, because of its power and ease of use. Firstly, at the preprocessing stage, it adds structure to every document, which can then be viewed as a labeled, weighted graph, called the document graph. Then, at query time, given a set of keywords, it performs keyword proximity search on the document graphs to discover how the keywords are associated in the document graphs. For each document its summary is the minimum spanning tree on the corresponding document graph that contains all the keywords. In query-specific opinion summarization system  (QOS), When input an opinion question, the system returns a summary with relevance to the opinion and target described by the question. The system has several modules to be able to do this: a question analysis and query reformulation module, a latent semantic indexing based sentence scoring module, a sentence polarity detection module, and a redundancy removal module. Bayesian summarization  (BAYESUM) is a model for sentence extraction in query-focused summarization. BAYESUM leverages the common case in which multiple documents are relevant to a single query. Using these documents as reinforcement for query terms, BAYESUM is not afflicted by the paucity of information in short queries. For a collection of D documents and Q queries, assume a D × Q binary matrix r, where r dq = 1 if an only if document d is relevant to query q. In multi document summarization, r dq will be 1 exactly when d is in the document set corresponding to query q.",
+    "source_ids": [
+      "11629513"
+    ],
+    "citations": [
+      {
+        "source_id": "11629513",
+        "title": "Structure-based query-specific document summarization",
+        "citing_sentences": []
+      }
+    ]
+  },
+  {
+    "section": "L. Multilingual Extractive Text summarization",
+    "text": "Multilingual text summarization is to summarize the source text in different language to the target language final summary. SimFinderML  identifies similar pieces of text by computing similarity over multiple features. There are two types of features, composite features, and unary features. All features are computed over primitives, syntactic, linguistic, or knowledge-based information units extracted from the sentences. Both composite and unary features are constructed over the primitives. The primitives used and features computed can be set at run-time, allowing for easy experimentation with different settings, and making it easy to add new features and primitives. Support for new languages is added to the system by developing modules conforming to interfaces for text pre-processing and primitive extraction for the language, and using existing dictionary-based translation methods, or adding other language-specific translation methods. MINDS  integrates multi-lingual summarization and multi document summarization capabilities using a multiengine, core summarization system and provides fast, interactive document access through hypertext summaries. Core summarization problem of MINDS is taking a single text and producing a shorter text in the same language that contains all the main points in the input text. It is using a robust, graded approach for building the core engine by incorporating statistical, syntactic and documents structure analyses among other techniques. This approach is less expensive and more robust than a summarization technique based entirely on a single method. The core engine is being designed in such a way that as additional resources, such as lexical and other knowledge bases or text processing and MT engines, become available from other ongoing research efforts they can be incorporated into the overall multiengine MINDS system. Ideally the core engine itself will remain language independent. A prototype core engine has been built for English, Spanish, Russian, and Japanese documents. MEAD BIB10151424 is the multi-lingual summarization and evaluation method. MEAD's architecture consists of four stages. First, documents in a cluster are converted to MEAD's internal (XML-based) format. Second, given a configuration file or command-line options, a number of features are extracted for each sentence of the cluster. Third, these features are combined into a composite score for each sentence. Fourth, these scores can be further refined after considering possible cross-sentence dependencies (e.g., repeated sentences, chronological ordering, source preferences, etc.) In addition to a number of command-line utilities, MEAD provides a Perl API which lets external programs access its internal libraries. V. CONCLUSIONS This survey paper is concentrating on extractive summarization methods. An extractive summary is selection of important sentences from the original text. The importance of sentences is decided based on statistical and linguistic features of sentences. Many variations of the extractive approach  have been tried in the last ten years. However, it is hard to say how much greater interpretive sophistication, at sentence or text level, contributes to performance. Without the use of NLP, the generated summary may suffer from lack of cohesion and semantics. If texts containing multiple topics, the generated summary might not be balanced. Deciding proper weights of individual features is very important as quality of final summary is depending on it. We should devote more time in deciding feature weights. The biggest challenge for text summarization is to summarize content from a number of textual and semi structured sources, including databases and web pages, in the right way (language, format, size, time) for a specific user. The text summarization software should produce the effective summary in less time and with least redundancy. Summaries can be evaluated using intrinsic or extrinsic measures. While intrinsic methods attempt to measure summary quality using human evaluation and extrinsic methods measure the same through a task based performance measure  such the information retrievaloriented task. Engineering from University College of Engineering, Punjabi University Patiala, under the supervision of Dr. Gurpreet Singh Lehal. He is state merit holder in 10 th and 12 th classes of Punjab School education board. He is devoting his research work in field of Natural Language Processing. He has developed a number of research projects in field of NLP including synonyms detection, automatic question answering and text summarization etc. One of his research paper on Punjabi language text processing was awarded as best research paper by Dr. V. Raja Raman at an International Conference.",
+    "source_ids": [
+      "10151424"
+    ],
+    "citations": [
+      {
+        "source_id": "10151424",
+        "title": "MEAD - A Platform for Multidocument Multilingual Text Summarization",
+        "citing_sentences": [
+          "The selected sentences were given as an input to the MEAD toolkit, a multi-document summarization system which implements a centroid-based approach [66] .",
+          "In the absence of any other multi-document summarization systems in the domain of scientific article summarization, we used a widely used and freely available multi-document summarization system called MEAD (Radev, 2004) as our baseline.",
+          "(Radev et al., 2004) ).",
+          "This summarizer 8 [40] is a well-known flexible and extensible multi-document summarization system and was chosen to provide a comparison between the more structured document domain-in which MEAD works fairly well-and the domain of Twitter posts being studied.",
+          "In the absence of any other multi-document summarization system in the domain of scientific article summarization, we used a widely used and freely available multi-document summarization system called MEAD (Radev, 2004) as our baseline.",
+          "First, they utilize humanengineered features such as sentence position and length (Radev et al., 2004a) , word frequency and importance (Nenkova et al., 2006; , among others, to rank sentence salience.",
+          "Early work with these models above mostly leverage human engineered features such as sentence position and length (Radev et al., 2004) , word frequency (Nenkova et al., 2006) and event features (Filatova and Hatzivassiloglou, 2004b) .",
+          "Radev et al. [1] discussed the MEAD algorithm which is the platform for multidocument text summarization.",
+          "The other two systems, TGRAPH (Parveen et al., 2015) and URANK (Wan, 2010) , produce more typical summaries and represent the state of the art.",
+          "Most efforts made towards extractive summarization either rely * Corresponding author: Rui Yan (ruiyan@pku.edu.cn) on human-engineered features such as sentence length, word position, and frequency (Cohen, 2002; Radev et al., 2004; Woodsend and Lapata, 2010; Yan et al., 2011a Yan et al., ,b, 2012 or use neural networks to automatically learn features for sentence selection (Cheng and Lapata, 2016; Nallapati et al., 2016a) ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "DR. GURPREET SINGH LEHAL",
+    "text": "Professor",
+    "source_ids": [],
+    "citations": []
+  }
+]

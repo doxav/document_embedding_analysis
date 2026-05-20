@@ -1,0 +1,346 @@
+{
+  "task_id": "20780585",
+  "dataset": "bigsurvey",
+  "title": "A Survey on Fuzzy Differences",
+  "abstract": "Several definitions of difference between fuzzy numbers are well established in literature: standard, Hukuhara, generalized Hukuhara, generalized, CIA and other differences based on joint possibility distributions. We present and compare them. An example of epidemiological model of a disease with direct transmission illustrates the different approaches. Finally, we briefly state some derivatives defined by using the cited differences.",
+  "instruction": "Write a structured long-form literature-review synthesis using only the provided cited-paper abstracts.",
+  "sections": [
+    {
+      "section": "Introduction",
+      "text": "The standard difference between two fuzzy numbers A and B is based on the difference between intervals  . For each α in the unit interval, it takes into account all the possible combinations between two elements, one from the α-level of A and the other from the α-level of B. Consequently, the result is always greater (in diameter) than any of the sets involved in the operation. Thus, the difference between two non-crisp numbers is always a non-crisp number and subtracting a non-crisp number from itself is never the crisp number zero. Using the Hukuhara difference BIB122918374 , the result of subtracting a non-crisp number A from itself (A ⊖ H A) is, in fact, zero. However, for this case, a necessary condition for the subtraction between two different fuzzy numbers A and B to exist is the first term to have bigger diameter than the second one. Generalizing the idea of this difference, BIB121514760  proposed the generalized Hukuhara difference, which also satisfies A − gH A = 0 and is defined for a bigger class of fuzzy numbers than the Hukuhara difference. An extension of generalized Hukuhara difference is the generalized difference   , which has the same results of the generalized Hukuhara operator (when it exists), but is defined for more pairs of fuzzy numbers. Another possibility is CIA (Constraint Interval Arithmetic) BIB14431044 . In this case, the diameter of the difference between two fuzzy numbers using CIA is smaller than using standard difference. All differences mentioned above makes use of the interval arithmetic on α-levels. Extensions to fuzzy numbers are drawn up via Stacking Theorem  over the resulting α-levels. Another way is similar to arithmetic for random variables, that is, the subtractions between fuzzy numbers are obtained using the joint possibility (or membership) distribution between the involved fuzzy numbers BIB17053652 . The comparison between the results obtained from two approaches is made via a kind of Nguyen's theorem extension BIB17053652 . In this study we present the definitions of all cited differences as well as its derivatives and we analyze its relations and exhibit an illustrative example.",
+      "source_ids": [
+        "121514760",
+        "122918374",
+        "14431044",
+        "17053652"
+      ],
+      "citations": [
+        {
+          "source_id": "121514760",
+          "title": "Generalized Hukuhara Differentiability of Interval-valued Functions and Interval Differential Equations",
+          "citing_sentences": [
+            "In what follows, we draw some recent and necessary notions about differentiation of interval-valued and fuzzy functions (see, for example, Stefanini and Bede 32 and Stefanini."
+          ]
+        },
+        {
+          "source_id": "122918374",
+          "title": "Differentials of fuzzy functions",
+          "citing_sentences": [
+            "Theorem 4.24 (Embedding theorem [18] )."
+          ]
+        },
+        {
+          "source_id": "14431044",
+          "title": "A comparison of interval analysis using constraint interval arithmetic and fuzzy interval analysis using gradual numbers",
+          "citing_sentences": []
+        },
+        {
+          "source_id": "17053652",
+          "title": "Additions of completely correlated fuzzy numbers",
+          "citing_sentences": []
+        }
+      ]
+    },
+    {
+      "section": "Preliminary",
+      "text": "In this section we present some basic concepts and notation used in this study.",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Definition 2.1 A fuzzy subset A of U is characterized by a membership function µ",
+      "text": "Since a classical set is defined by its characteristic function of counter-domain {0, 1}, we can say that a classical set is a particular case of a fuzzy set. We denote by F(U ) the family of all fuzzy subsets of U . In what follows U is as a topological space.",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Definition 2.2 Let A be a fuzzy subset of U and",
+      "text": "The zero level of a fuzzy set A of U is defined as the smallest closed set that contain the support of the fuzzy set A, that is, The family of all fuzzy subsets of U with nonempty, compact and convex α-levels will be denoted by F C (U ).",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Definition 2.3 A fuzzy subset",
+      "text": "A is said to be a fuzzy number when its universe is the set of real numbers R and satisfy: The family of fuzzy numbers coincides with F C (R) and will be denoted by R F .  BIB8851568",
+      "source_ids": [
+        "8851568"
+      ],
+      "citations": [
+        {
+          "source_id": "8851568",
+          "title": "Mathematics of Fuzzy Sets and Fuzzy Logic",
+          "citing_sentences": []
+        }
+      ]
+    },
+    {
+      "section": "Theorem 2.4 (Stacking Theorem,",
+      "text": "iii. For any sequence α n which converges from below to α ∈ (0, 1] we have iv For any sequence α n which converges from above to 0 we have",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Definition 2.5 A t-norm T is any binary operation",
+      "text": "that has the following properties: The following concepts are from the possibility theory and will be used to define the interactive difference between fuzzy numbers BIB17053652 . If the joint possibility distribution is given by a tnorm T , we have When T = min, A and B are called non-interactive fuzzy numbers. The following statement is a more general definition that has the Zadeh's extension as a particular case when the t-norm is the minimum norm.  The Zadeh's extension principle is an important tool widely used to extend point-valued functions to fuzzy-set-valued functions.",
+      "source_ids": [
+        "17053652"
+      ],
+      "citations": [
+        {
+          "source_id": "17053652",
+          "title": "Additions of completely correlated fuzzy numbers",
+          "citing_sentences": []
+        }
+      ]
+    },
+    {
+      "section": "Theorem 2.8 [5] Let A, B ∈ F(R) be completely correlated fuzzy numbers, J its joint possibility distribution and f",
+      "text": ": R 2 −→ R a continuous function. Then, [f J (A, B)] α = f ([J] α ).",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Definition 2.9",
+      "text": "Two fuzzy numbers A and B are said to be completely correlated if there are q, r ∈ R, with q ̸ = 0, such that their joint possibility distribution C is defined by where",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Difference between fuzzy numbers",
+      "text": "Next we present different manners (in literature) to realize the difference between fuzzy numbers.",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Difference via interval theory",
+      "text": "Initially we present the fuzzy differences arising from the interval theory.  Standard difference can also be called Minkowski difference. In BIB126100901 , the author proposed an arithmetic called CIA. For that goal, he redefined intervals as functions with real values, that is, an interval [a",
+      "source_ids": [
+        "126100901"
+      ],
+      "citations": [
+        {
+          "source_id": "126100901",
+          "title": "Constrained Interval Arithmetic",
+          "citing_sentences": []
+        }
+      ]
+    },
+    {
+      "section": "Definition 3.2 (CIA) The subtraction between two intervals",
+      "text": "Lodwick et. al BIB14431044 extended this idea for the fuzzy case from Theorem 2.4. Also, from this theorem it is possible to define Hukuhara difference between fuzzy numbers.",
+      "source_ids": [
+        "14431044"
+      ],
+      "citations": [
+        {
+          "source_id": "14431044",
+          "title": "A comparison of interval analysis using constraint interval arithmetic and fuzzy interval analysis using gradual numbers",
+          "citing_sentences": []
+        }
+      ]
+    },
+    {
+      "section": "Definition 3.3 (CIA) The subtraction between two fuzzy numbers A and B is defined level-wise by",
+      "text": "[A − CIA B]α ={[(1 − λA)a − α + λAa + α ] − [(1 − λB )b − α + λB b + α ], 0 ≤ λA ≤ 1, 0 ≤ λB ≤ 1}.",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Remark 3.4 In the case where the two fuzzy numbers are the same, we have",
+      "text": "[A − CIA A] α = {[(1 − λ A )a − α + λ A a + α ] − [(1 − λ A )a − α + λ A a + α ]} = {0} where 0 ≤ λ A ≤ 1. Therefore, A − CIA A = {0}.",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Definition 3.5 Given two fuzzy numbers A, B the Hukuhara difference (H-difference)",
+      "text": "Definition 3.6 BIB121514760  Given two fuzzy numbers",
+      "source_ids": [
+        "121514760"
+      ],
+      "citations": [
+        {
+          "source_id": "121514760",
+          "title": "Generalized Hukuhara Differentiability of Interval-valued Functions and Interval Differential Equations",
+          "citing_sentences": [
+            "In what follows, we draw some recent and necessary notions about differentiation of interval-valued and fuzzy functions (see, for example, Stefanini and Bede 32 and Stefanini."
+          ]
+        }
+      ]
+    },
+    {
+      "section": "Definition 3.7 [2, 10] Given two fuzzy numbers A, B the generalized difference (g-difference)",
+      "text": "A ⊖ g B = C is the fuzzy number C with α-levels",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "where the gH-difference (⊖ gH ) is related to the intervals",
+      "text": "In   the generalized difference between fuzzy numbers was proposed as a difference that always exists and results in a fuzzy number. But for this, as observed in BIB5175963 , a convexification is required for the difference to be always a fuzzy number. Each of the differences presented in this subsection, A − B is a fuzzy numbers according to Theorem 2.4.",
+      "source_ids": [
+        "5175963"
+      ],
+      "citations": [
+        {
+          "source_id": "5175963",
+          "title": "A note on the generalized difference and the generalized differentiability",
+          "citing_sentences": []
+        }
+      ]
+    },
+    {
+      "section": "Differences via joint possibility distribution",
+      "text": "Differences via joint possibility distribution are obtained with the help of Definition 2.7. Note that this form of dealing with fuzzy numbers is totally inspired by the arithmetic for random variables, which considers the joint probability distribution.  where Next the difference with joint possibility distribution is given by t-norms.  That is, the Zadeh difference consider A and B noninteractive, since the join possibility distribution is given by minimum t-norm.  that is, the Zadeh difference coincides with the standard difference. The proof is found in BIB123769799 . The difference using joint possibility distributions may not necessarily be given by t-norms.",
+      "source_ids": [
+        "123769799"
+      ],
+      "citations": [
+        {
+          "source_id": "123769799",
+          "title": "Fuzzy Differential Equations in Various Approaches",
+          "citing_sentences": []
+        }
+      ]
+    },
+    {
+      "section": "Definition 3.12 [5]The subtraction of two completely correlated fuzzy numbers A and B is defined by",
+      "text": "From Theorem 2.8, BIB17053652 proof that, for all α ∈ [0, 1], we have",
+      "source_ids": [
+        "17053652"
+      ],
+      "citations": [
+        {
+          "source_id": "17053652",
+          "title": "Additions of completely correlated fuzzy numbers",
+          "citing_sentences": []
+        }
+      ]
+    },
+    {
+      "section": "Remark 3.13 The sum of two completely correlated fuzzy numbers A and B is given by",
+      "text": "[A + C B] α = (q + 1)[B] α + r.",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Proposition 3.14 Given two completely correlated fuzzy numbers A and B such that [A] α = q[B] α + r, the difference A − C B has the following expression",
+      "text": "if q < 0.",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Comparing the differences",
+      "text": "Before we compare the different fuzzy differences we define the following notation: X difference is the set of the pairs of fuzzy numbers such that the difference between them exists. For the difference diameters (diam) it is possible to show, by definition, that: Regarding the existence of each difference (which means that the result is a fuzzy number), we have: • X standard , X CIA , X T , X J and X C is equivalent to R F × R F , that is, in these cases the difference between two fuzzy numbers always exists; • X H ⊂ X gH ⊂ X g ⊂ X T and the differences H and gH do not always exist;",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Remark 3.15 Note that the difference by joint possibility distribution always exists. The issue is to obtain this distribution.",
+      "text": "As in the completely correlated difference, we have If q ≥ 1 the difference C is the Hukuhara difference. If q ≥ 0 the difference C is the generalized Hukuhara difference and for q < 0 the difference C is the standard difference. Comparing the completely correlated difference with CIA, we notice that they are equivalent if and only if q = 1 when we compute A− C A and q < 0 if we compute A− C B (see Figure 1) . The upside of using the joint possibility distributions is that it provides the membership function of the difference. On the other hand, differences via interval arithmetic present a practical method to calculate the difference. Also, they do not require knowledge of the joint possibility distribution.",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Application: Epidemiological Model",
+      "text": "The simplest classical model that describes the dynamics of transmitted diseases by direct contact without vital dynamics (i.e., without death/birth) is presented by the following equations [13] : Figure 1 : Relations between the differences defined by joint distribution and differences based on interval arithmetic. The dotted lines mean equality in the results of the subtractions between two fuzzy numbers (considering the mentioned hypothesis) . where S(t) and I(t) are respectively the proportions of susceptible and infected individuals at instant t and the parameter λ > 0 is the disease transmission rate. From (3), the sum of proportion of susceptible individuals (S) and the proportion of infected ones (I) is equal to 1, that is, The solution of (3) is given by Thus, from (4) it follows that In the epidemiological point of view (SI model), once an individual is infected he/she never gets recovered. Now, if in (3) we consider that initial condition is uncertain, for each t, the solutions (5) and (6) are uncertain too. If we suppose that S 0 (and I 0 ) is a fuzzy triangular number, from (4) we have on which difference we use. We compute I 0 , using each one of the differences between 1 and S 0 given in the last section. • If S 0 and I 0 are non-interactive, the difference between them is given by the standard form: • If the difference is given by T -norms (different from the minimum t-norm), that is, S 0 and I 0 are interactive, we have [ • If S 0 and I 0 are completely correlated, we have In that case, from Remark 3.13, • The Hukuhara difference does not exist, because we do not have an increasing diameter. On the other hand, the differences ⊖ g and ⊖ gH , which is equivalent to the triangular number Note that, S t and I t can not be triangular fuzzy numbers. In summay, from the coherence point of view, the difference that better represents the SI model is the completely correlated difference, because it is the one that best fits S + I = 1, which faces the hypothesis of non existence of vital dynamic. Moreover, intuitively, the hypotheses S + I = 1 suggests that there is interaction between S and I. A study for this case we made in   . The main reason for studying the difference between fuzzy numbers is due to connection with the derivatives.",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Fuzzy Derivative",
+      "text": "Different fuzzy differences produce different fuzzy derivatives for fuzzy functions. It is natural to expect that this derivative represents the various meanings of derivative. For example, the variation rate, since we expect that stationary systems (that is, constant function) must have null derivative. As we have seen, not always the difference between two identical fuzzy numbers is the crisp number zero (for example standard difference). For this reason, some difference are not indicate for to define derivative, since the division in the limit  where A and B are fuzzy numbers. The following limits are studied from d ∞ .",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Definition 5.2 [8] Let",
+      "text": "and exist and they are equal to some element exists and it is equal to some element exists and it is equal to some element  and",
+      "source_ids": [],
+      "citations": []
+    },
+    {
+      "section": "Conclusion",
+      "text": "We studied different versions of difference for fuzzy numbers and compared them in terms of existence (existence means the result is a fuzzy number) and diameter of the resulting α-levels. Next we concluded that for a certain epidemiological model the completely correlated difference is more suitable and coherent to reality. Using the differences we define the derivatives. The J-derivative and the Cderivative take into account possible interactivity (dependencies) present in the studied process. It makes sense we use interactivity in fuzzy processes, otherwise we may have a constant function where F (x + h) − F (x) is not zero (as is the case when using the t-norm of the minimum). The derivatives of Subsection 3.1 may be considered interactive, the only one that is not interactive is the Zadeh difference (or standard difference).",
+      "source_ids": [],
+      "citations": []
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "121514760",
+      "title": "Generalized Hukuhara Differentiability of Interval-valued Functions and Interval Differential Equations",
+      "text": "In the present paper we introduce and study a generalization of the Hukuhara differ- ence and also generalizations of the Hukuhara differentiability to the case of interval valued functions. We consider several possible definitions for the derivative of an interval valued function and we study connections between them and their proper- ties. Using these concepts we study interval differential equations. Local existence and uniqueness of two solutions is obtained together with characterizations of the solutions of an interval differential equation by ODE systems and by differential algebraic equations. We also show some connection with differential inclusions. The thoretical results are turned into practical algorithms to solve interval differential equations.",
+      "path": "sources/source_0001_generalized_hukuhara_differentiability_of_interval_valued_functions_and_interval_differential_equations.md",
+      "metadata": {
+        "bib_id": "121514760"
+      }
+    },
+    {
+      "source_id": "122918374",
+      "title": "Differentials of fuzzy functions",
+      "text": "In this paper the Radstrom embedding theorem (Proc. Amer. Math. Soc. 3 (1952), 165) is generalized and is used to define the concept of the differential of a fuzzy function.",
+      "path": "sources/source_0002_differentials_of_fuzzy_functions.md",
+      "metadata": {
+        "bib_id": "122918374"
+      }
+    },
+    {
+      "source_id": "14431044",
+      "title": "A comparison of interval analysis using constraint interval arithmetic and fuzzy interval analysis using gradual numbers",
+      "text": "There are two approaches that restore the algebraic properties of real arithmetic to fuzzy arithmetic - constraint interval arithmetic on alpha-cuts and arithmetic on intervals of gradual numbers. In this study, the relationships between fuzzy interval analysis from a constraint interval approach and from a gradual number approach will be discussed.",
+      "path": "sources/source_0003_a_comparison_of_interval_analysis_using_constraint_interval_arithmetic_and_fuzzy_interval_analysis_using_gradual_numbers.md",
+      "metadata": {
+        "bib_id": "14431044"
+      }
+    },
+    {
+      "source_id": "17053652",
+      "title": "Additions of completely correlated fuzzy numbers",
+      "text": "In this paper we consider additions of interactive fuzzy numbers. The interactivity relation between fuzzy numbers are defined by their joint possibility distribution. We show that Nguyen's theorem remains valid in this environment. We give explicit formulas for the /spl gamma/-level sets of the extended sum of two completely correlated fuzzy numbers. We show that the interactive and the non-interactive sums have the same membership function for any pair of completely positively correlated fuzzy numbers. Finally, we prove that (i) the interactive sum of two completely negatively correlated fuzzy numbers A and B with A(x) = B(-x) for all x /spl isin/ /spl Ropf/, is (crisp) zero; (ii) the interactive difference of two completely positively correlated fuzzy numbers A and B with identical membership function, that is, a(x) - b(x) for all x /spl isin/ /spl Ropf/, is (crisp) zero.",
+      "path": "sources/source_0004_additions_of_completely_correlated_fuzzy_numbers.md",
+      "metadata": {
+        "bib_id": "17053652"
+      }
+    },
+    {
+      "source_id": "8851568",
+      "title": "Mathematics of Fuzzy Sets and Fuzzy Logic",
+      "text": "This book presents a mathematically-based introduction into the fascinating topic of Fuzzy Sets and Fuzzy Logic and might be used as textbook at both undergraduate and graduate levels and also as reference guide for mathematician, scientists or engineers who would like to get an insight into Fuzzy Logic. Fuzzy Sets have been introduced by Lotfi Zadeh in 1965 and since then, they have been used in many applications. As a consequence, there is a vast literature on the practical applications of fuzzy sets, while theory has a more modest coverage. The main purpose of the present book is to reduce this gap by providing a theoretical introduction into Fuzzy Sets based on Mathematical Analysis and Approximation Theory. Well-known applications, as for example fuzzy control, are also discussed in this book and placed on new ground, a theoretical foundation. Moreover, a few advanced chapters and several new results are included. These comprise, among others, a new systematic and constructive approach for fuzzy inference systems of Mamdani and Takagi-Sugeno types, that investigates their approximation capability by providing new error estimates.",
+      "path": "sources/source_0005_mathematics_of_fuzzy_sets_and_fuzzy_logic.md",
+      "metadata": {
+        "bib_id": "8851568"
+      }
+    },
+    {
+      "source_id": "126100901",
+      "title": "Constrained Interval Arithmetic",
+      "text": "This paper presents an approach to solving the long-standing dependency problem in internal arithmetic. An extension to internal arithmetic, called here constrained internal arithmetic, is developed. Unlike interval arithmetic, constrained internal arithmetic has an additive inverse, a multiplicative inverse and satisfies the distributive law. This means that the algebraic structure of constrained interval arithmetic is different than that of interval arithmetic. The applicability of constrained interval arithmetic is explored.",
+      "path": "sources/source_0006_constrained_interval_arithmetic.md",
+      "metadata": {
+        "bib_id": "126100901"
+      }
+    },
+    {
+      "source_id": "5175963",
+      "title": "A note on the generalized difference and the generalized differentiability",
+      "text": "This note reveals that the assertion in Stefanini (2008) 2 that the generalized difference between two fuzzy numbers is always a fuzzy number is incorrect. As a consequence, the theorem of existence of the generalized differentiability in Bede and Stefanini (2013) 7 is also incorrect. We propose a modification in the definition of the generalized difference in order to assure the mentioned results.",
+      "path": "sources/source_0007_a_note_on_the_generalized_difference_and_the_generalized_differentiability.md",
+      "metadata": {
+        "bib_id": "5175963"
+      }
+    },
+    {
+      "source_id": "123769799",
+      "title": "Fuzzy Differential Equations in Various Approaches",
+      "text": "1. Introduction. -2. Basic Concepts. -3. Fuzzy Calculus. -4. Fuzzy Differential Equations. -Mathematical Background. -Index.",
+      "path": "sources/source_0008_fuzzy_differential_equations_in_various_approaches.md",
+      "metadata": {
+        "bib_id": "123769799"
+      }
+    }
+  ],
+  "metadata": {
+    "split": "test",
+    "group_key": "paper_id",
+    "paper_id": "20780585"
+  }
+}

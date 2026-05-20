@@ -1,0 +1,1 @@
+iii. For any sequence α n which converges from below to α ∈ (0, 1] we have iv For any sequence α n which converges from above to 0 we have
