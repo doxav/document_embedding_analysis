@@ -1,0 +1,1 @@
+This chapter contains sections titled: The Problem, The Generalized Delta Rule, Simulation Results, Some Further Generalizations, Conclusion

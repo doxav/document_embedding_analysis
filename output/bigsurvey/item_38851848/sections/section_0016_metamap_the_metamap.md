@@ -1,0 +1,1 @@
+29 is a software that can map biomedical text to UMLS Metathesaurus, which was developed and is managed by the NLM. It also employs word sense disambiguation and a part-of-speech tagger that is designed specifically for biomedical text.

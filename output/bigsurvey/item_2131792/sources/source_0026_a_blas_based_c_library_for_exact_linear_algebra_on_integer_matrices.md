@@ -1,0 +1,1 @@
+Algorithms for solving linear systems of equations over the integers are designed and implemented. The implementations are based on the highly optimized and portable ATLAS/BLAS library for numerical linear algebra and the GNU Multiple Precision library (GMP) for large integer arithmetic.

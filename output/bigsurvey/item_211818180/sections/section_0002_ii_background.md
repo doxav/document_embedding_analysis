@@ -1,0 +1,1 @@
+NLP has long been viewed as one aspect of artificial intelligence (AI), since understanding and generating natural language are high-level indications of intelligence. Deep learning is an effective AI tool, so we next situate deep learning in the AI world. After that we explain motivations for applying deep learning to NLP.

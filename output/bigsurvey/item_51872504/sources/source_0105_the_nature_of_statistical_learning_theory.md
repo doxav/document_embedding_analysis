@@ -1,0 +1,1 @@
+Setting of the learning problem consistency of learning processes bounds on the rate of convergence of learning processes controlling the generalization ability of learning processes constructing learning algorithms what is important in learning theory?.

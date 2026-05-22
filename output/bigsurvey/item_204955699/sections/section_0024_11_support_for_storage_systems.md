@@ -1,0 +1,1 @@
+DSPEs such as Spark Streaming provides a native in-memory storage, while others generally do not have their own data storage systems but provide data source and sink connectors to data ingestions systems such as Kinesis, Kafka, HDFS, and Cassandra, and search tools such as Solr and Elastic-Search. Refer to Section 2 for a detailed description of some of these storage systems.

@@ -1,0 +1,1 @@
+Attention-based, semantic-concept-based, and novel object-based methods and stylized captions are put together into the "others" group because these categories are independent of other methods.

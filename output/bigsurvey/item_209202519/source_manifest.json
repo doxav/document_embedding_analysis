@@ -1,0 +1,848 @@
+[
+  {
+    "source_id": "1241368",
+    "path": "sources/source_0001_rich_feature_hierarchies_for_accurate_object_detection_and_semantic_segmentation.md",
+    "file": "sources/source_0001_rich_feature_hierarchies_for_accurate_object_detection_and_semantic_segmentation.md",
+    "title": "Rich Feature Hierarchies for Accurate Object Detection and Semantic Segmentation"
+  },
+  {
+    "source_id": "14124313",
+    "path": "sources/source_0002_very_deep_convolutional_networks_for_large_scale_image_recognition.md",
+    "file": "sources/source_0002_very_deep_convolutional_networks_for_large_scale_image_recognition.md",
+    "title": "Very Deep Convolutional Networks for Large-Scale Image Recognition"
+  },
+  {
+    "source_id": "14554538",
+    "path": "sources/source_0003_efficient_piecewise_training_of_deep_structured_models_for_semantic_segmentation.md",
+    "file": "sources/source_0003_efficient_piecewise_training_of_deep_structured_models_for_semantic_segmentation.md",
+    "title": "Efficient Piecewise Training of Deep Structured Models for Semantic Segmentation"
+  },
+  {
+    "source_id": "16687466",
+    "path": "sources/source_0004_data_poisoning_attacks_on_factorization_based_collaborative_filtering.md",
+    "file": "sources/source_0004_data_poisoning_attacks_on_factorization_based_collaborative_filtering.md",
+    "title": "Data Poisoning Attacks on Factorization-Based Collaborative Filtering"
+  },
+  {
+    "source_id": "17187125",
+    "path": "sources/source_0005_a_comprehensive_introduction_to_label_noise.md",
+    "file": "sources/source_0005_a_comprehensive_introduction_to_label_noise.md",
+    "title": "A comprehensive introduction to label noise"
+  },
+  {
+    "source_id": "195908774",
+    "path": "sources/source_0006_imagenet_classification_with_deep_convolutional_neural_networks.md",
+    "file": "sources/source_0006_imagenet_classification_with_deep_convolutional_neural_networks.md",
+    "title": "Imagenet classification with deep convolutional neural networks"
+  },
+  {
+    "source_id": "2141740",
+    "path": "sources/source_0007_ssd_single_shot_multibox_detector.md",
+    "file": "sources/source_0007_ssd_single_shot_multibox_detector.md",
+    "title": "SSD: Single Shot MultiBox Detector"
+  },
+  {
+    "source_id": "29767720",
+    "path": "sources/source_0008_learning_from_noisy_examples.md",
+    "file": "sources/source_0008_learning_from_noisy_examples.md",
+    "title": "Learning from noisy examples"
+  },
+  {
+    "source_id": "3331253",
+    "path": "sources/source_0009_class_noise_vs_attribute_noise_a_quantitative_study.md",
+    "file": "sources/source_0009_class_noise_vs_attribute_noise_a_quantitative_study.md",
+    "title": "Class Noise vs. Attribute Noise: A Quantitative Study"
+  },
+  {
+    "source_id": "3511978",
+    "path": "sources/source_0010_deep_learning_is_robust_to_massive_label_noise.md",
+    "file": "sources/source_0010_deep_learning_is_robust_to_massive_label_noise.md",
+    "title": "Deep Learning is Robust to Massive Label Noise"
+  },
+  {
+    "source_id": "35426171",
+    "path": "sources/source_0011_certified_defenses_for_data_poisoning_attacks.md",
+    "file": "sources/source_0011_certified_defenses_for_data_poisoning_attacks.md",
+    "title": "Certified Defenses for Data Poisoning Attacks"
+  },
+  {
+    "source_id": "56507745",
+    "path": "sources/source_0012_fully_convolutional_networks_for_semantic_segmentation.md",
+    "file": "sources/source_0012_fully_convolutional_networks_for_semantic_segmentation.md",
+    "title": "Fully convolutional networks for semantic segmentation"
+  },
+  {
+    "source_id": "6054025",
+    "path": "sources/source_0013_classification_in_the_presence_of_label_noise_a_survey.md",
+    "file": "sources/source_0013_classification_in_the_presence_of_label_noise_a_survey.md",
+    "title": "Classification in the Presence of Label Noise: A Survey"
+  },
+  {
+    "source_id": "6212000",
+    "path": "sources/source_0014_understanding_deep_learning_requires_rethinking_generalization.md",
+    "file": "sources/source_0014_understanding_deep_learning_requires_rethinking_generalization.md",
+    "title": "Understanding deep learning requires rethinking generalization"
+  },
+  {
+    "source_id": "7531746",
+    "path": "sources/source_0015_a_study_of_the_effect_of_different_types_of_noise_on_the_precision_of_supervised_learning_techniques.md",
+    "file": "sources/source_0015_a_study_of_the_effect_of_different_types_of_noise_on_the_precision_of_supervised_learning_techniques.md",
+    "title": "A study of the effect of different types of noise on the precision of supervised learning techniques"
+  },
+  {
+    "source_id": "4564331",
+    "path": "sources/source_0016_iterative_learning_with_open_set_noisy_labels.md",
+    "file": "sources/source_0016_iterative_learning_with_open_set_noisy_labels.md",
+    "title": "Iterative Learning with Open-set Noisy Labels"
+  },
+  {
+    "source_id": "3300937",
+    "path": "sources/source_0017_learning_from_noisy_singly_labeled_data.md",
+    "file": "sources/source_0017_learning_from_noisy_singly_labeled_data.md",
+    "title": "Learning From Noisy Singly-labeled Data"
+  },
+  {
+    "source_id": "4545336",
+    "path": "sources/source_0018_who_said_what_modeling_individual_labelers_improves_classification.md",
+    "file": "sources/source_0018_who_said_what_modeling_individual_labelers_improves_classification.md",
+    "title": "Who Said What: Modeling Individual Labelers Improves Classification"
+  },
+  {
+    "source_id": "119295965",
+    "path": "sources/source_0019_devil_is_in_the_edges_learning_semantic_boundaries_from_noisy_annotations.md",
+    "file": "sources/source_0019_devil_is_in_the_edges_learning_semantic_boundaries_from_noisy_annotations.md",
+    "title": "Devil Is in the Edges: Learning Semantic Boundaries From Noisy Annotations"
+  },
+  {
+    "source_id": "12457267",
+    "path": "sources/source_0020_high_frequency_covariance_estimates_with_noisy_and_asynchronous_financial_data.md",
+    "file": "sources/source_0020_high_frequency_covariance_estimates_with_noisy_and_asynchronous_financial_data.md",
+    "title": "High-Frequency Covariance Estimates With Noisy and Asynchronous Financial Data"
+  },
+  {
+    "source_id": "15080437",
+    "path": "sources/source_0021_the_unreasonable_effectiveness_of_noisy_data_for_fine_grained_recognition.md",
+    "file": "sources/source_0021_the_unreasonable_effectiveness_of_noisy_data_for_fine_grained_recognition.md",
+    "title": "The Unreasonable Effectiveness of Noisy Data for Fine-Grained Recognition"
+  },
+  {
+    "source_id": "1601286",
+    "path": "sources/source_0022_social_network_analysis_using_topic_models.md",
+    "file": "sources/source_0022_social_network_analysis_using_topic_models.md",
+    "title": "Social-network analysis using topic models"
+  },
+  {
+    "source_id": "16484321",
+    "path": "sources/source_0023_the_multidimensional_wisdom_of_crowds.md",
+    "file": "sources/source_0023_the_multidimensional_wisdom_of_crowds.md",
+    "title": "The multidimensional wisdom of crowds"
+  },
+  {
+    "source_id": "18331139",
+    "path": "sources/source_0024_harvesting_image_databases_from_the_web.md",
+    "file": "sources/source_0024_harvesting_image_databases_from_the_web.md",
+    "title": "Harvesting Image Databases from The Web"
+  },
+  {
+    "source_id": "26657811",
+    "path": "sources/source_0025_development_and_validation_of_a_deep_learning_algorithm_for_detection_of_diabetic_retinopathy_in_retinal_fundus_7366f5f5.md",
+    "file": "sources/source_0025_development_and_validation_of_a_deep_learning_algorithm_for_detection_of_diabetic_retinopathy_in_retinal_fundus_7366f5f5.md",
+    "title": "Development and Validation of a Deep Learning Algorithm for Detection of Diabetic Retinopathy in Retinal Fundus Photographs"
+  },
+  {
+    "source_id": "3633787",
+    "path": "sources/source_0026_learning_from_weak_and_noisy_labels_for_semantic_segmentation.md",
+    "file": "sources/source_0026_learning_from_weak_and_noisy_labels_for_semantic_segmentation.md",
+    "title": "Learning from Weak and Noisy Labels for Semantic Segmentation"
+  },
+  {
+    "source_id": "44113767",
+    "path": "sources/source_0027_training_a_neural_network_based_on_unreliable_human_annotation_of_medical_images.md",
+    "file": "sources/source_0027_training_a_neural_network_based_on_unreliable_human_annotation_of_medical_images.md",
+    "title": "Training a neural network based on unreliable human annotation of medical images"
+  },
+  {
+    "source_id": "51974607",
+    "path": "sources/source_0028_clinically_applicable_deep_learning_for_diagnosis_and_referral_in_retinal_disease.md",
+    "file": "sources/source_0028_clinically_applicable_deep_learning_for_diagnosis_and_referral_in_retinal_disease.md",
+    "title": "Clinically applicable deep learning for diagnosis and referral in retinal disease"
+  },
+  {
+    "source_id": "59158837",
+    "path": "sources/source_0029_robust_learning_at_noisy_labeled_medical_images_applied_to_skin_lesion_classification.md",
+    "file": "sources/source_0029_robust_learning_at_noisy_labeled_medical_images_applied_to_skin_lesion_classification.md",
+    "title": "Robust Learning at Noisy Labeled Medical Images: Applied to Skin Lesion Classification"
+  },
+  {
+    "source_id": "11284353",
+    "path": "sources/source_0030_learning_from_multiple_annotators_with_varying_expertise.md",
+    "file": "sources/source_0030_learning_from_multiple_annotators_with_varying_expertise.md",
+    "title": "Learning from multiple annotators with varying expertise"
+  },
+  {
+    "source_id": "11777930",
+    "path": "sources/source_0031_classification_with_noisy_labels_by_importance_reweighting.md",
+    "file": "sources/source_0031_classification_with_noisy_labels_by_importance_reweighting.md",
+    "title": "Classification with Noisy Labels by Importance Reweighting"
+  },
+  {
+    "source_id": "12190952",
+    "path": "sources/source_0032_training_deep_neural_networks_using_a_noise_adaptation_layer.md",
+    "file": "sources/source_0032_training_deep_neural_networks_using_a_noise_adaptation_layer.md",
+    "title": "Training deep neural-networks using a noise adaptation layer"
+  },
+  {
+    "source_id": "131777002",
+    "path": "sources/source_0033_unsupervised_label_noise_modeling_and_loss_correction.md",
+    "file": "sources/source_0033_unsupervised_label_noise_modeling_and_loss_correction.md",
+    "title": "Unsupervised label noise modeling and loss correction"
+  },
+  {
+    "source_id": "1354303",
+    "path": "sources/source_0034_self_error_correcting_convolutional_neural_network_for_learning_with_noisy_labels.md",
+    "file": "sources/source_0034_self_error_correcting_convolutional_neural_network_for_learning_with_noisy_labels.md",
+    "title": "Self-Error-Correcting Convolutional Neural Network for Learning with Noisy Labels"
+  },
+  {
+    "source_id": "13982294",
+    "path": "sources/source_0035_learning_discriminative_reconstructions_for_unsupervised_outlier_removal.md",
+    "file": "sources/source_0035_learning_discriminative_reconstructions_for_unsupervised_outlier_removal.md",
+    "title": "Learning Discriminative Reconstructions for Unsupervised Outlier Removal"
+  },
+  {
+    "source_id": "1430496",
+    "path": "sources/source_0036_decoupling_when_to_update_from_how_to_update.md",
+    "file": "sources/source_0036_decoupling_when_to_update_from_how_to_update.md",
+    "title": "Decoupling\"when to update\"from\"how to update\""
+  },
+  {
+    "source_id": "14659675",
+    "path": "sources/source_0037_learning_from_noisy_labels_with_distillation.md",
+    "file": "sources/source_0037_learning_from_noisy_labels_with_distillation.md",
+    "title": "Learning from Noisy Labels with Distillation"
+  },
+  {
+    "source_id": "14726351",
+    "path": "sources/source_0038_supervised_learning_from_multiple_experts_whom_to_trust_when_everyone_lies_a_bit.md",
+    "file": "sources/source_0038_supervised_learning_from_multiple_experts_whom_to_trust_when_everyone_lies_a_bit.md",
+    "title": "Supervised learning from multiple experts: whom to trust when everyone lies a bit"
+  },
+  {
+    "source_id": "147704382",
+    "path": "sources/source_0039_photometric_transformer_networks_and_label_adjustment_for_breast_density_prediction.md",
+    "file": "sources/source_0039_photometric_transformer_networks_and_label_adjustment_for_breast_density_prediction.md",
+    "title": "Photometric Transformer Networks and Label Adjustment for Breast Density Prediction"
+  },
+  {
+    "source_id": "14888659",
+    "path": "sources/source_0040_deep_classifiers_from_image_tags_in_the_wild.md",
+    "file": "sources/source_0040_deep_classifiers_from_image_tags_in_the_wild.md",
+    "title": "Deep Classifiers from Image Tags in the Wild"
+  },
+  {
+    "source_id": "152282273",
+    "path": "sources/source_0041_understanding_and_utilizing_deep_neural_networks_trained_with_noisy_labels.md",
+    "file": "sources/source_0041_understanding_and_utilizing_deep_neural_networks_trained_with_noisy_labels.md",
+    "title": "Understanding and Utilizing Deep Neural Networks Trained with Noisy Labels"
+  },
+  {
+    "source_id": "16083709",
+    "path": "sources/source_0042_learning_deep_networks_from_noisy_labels_with_dropout_regularization.md",
+    "file": "sources/source_0042_learning_deep_networks_from_noisy_labels_with_dropout_regularization.md",
+    "title": "Learning Deep Networks from Noisy Labels with Dropout Regularization"
+  },
+  {
+    "source_id": "16406313",
+    "path": "sources/source_0043_making_deep_neural_networks_robust_to_label_noise_a_loss_correction_approach.md",
+    "file": "sources/source_0043_making_deep_neural_networks_robust_to_label_noise_a_loss_correction_approach.md",
+    "title": "Making Deep Neural Networks Robust to Label Noise: A Loss Correction Approach"
+  },
+  {
+    "source_id": "164146",
+    "path": "sources/source_0044_learning_from_noisy_large_scale_datasets_with_minimal_supervision.md",
+    "file": "sources/source_0044_learning_from_noisy_large_scale_datasets_with_minimal_supervision.md",
+    "title": "Learning from Noisy Large-Scale Datasets with Minimal Supervision"
+  },
+  {
+    "source_id": "165163910",
+    "path": "sources/source_0045_curriculum_loss_robust_learning_and_generalization_against_label_corruption.md",
+    "file": "sources/source_0045_curriculum_loss_robust_learning_and_generalization_against_label_corruption.md",
+    "title": "Curriculum Loss: Robust Learning and Generalization against Label Corruption"
+  },
+  {
+    "source_id": "166227922",
+    "path": "sources/source_0046_combating_label_noise_in_deep_learning_using_abstention.md",
+    "file": "sources/source_0046_combating_label_noise_in_deep_learning_using_abstention.md",
+    "title": "Combating Label Noise in Deep Learning Using Abstention"
+  },
+  {
+    "source_id": "173990545",
+    "path": "sources/source_0047_robust_learning_under_label_noise_with_iterative_noise_filtering.md",
+    "file": "sources/source_0047_robust_learning_under_label_noise_with_iterative_noise_filtering.md",
+    "title": "Robust Learning Under Label Noise With Iterative Noise-Filtering"
+  },
+  {
+    "source_id": "19179988",
+    "path": "sources/source_0048_deep_learning_from_crowds.md",
+    "file": "sources/source_0048_deep_learning_from_crowds.md",
+    "title": "Deep learning from crowds"
+  },
+  {
+    "source_id": "19228089",
+    "path": "sources/source_0049_iterative_cross_learning_on_noisy_labels.md",
+    "file": "sources/source_0049_iterative_cross_learning_on_noisy_labels.md",
+    "title": "Iterative Cross Learning on Noisy Labels"
+  },
+  {
+    "source_id": "19306177",
+    "path": "sources/source_0050_learning_with_confident_examples_rank_pruning_for_robust_classification_with_noisy_labels.md",
+    "file": "sources/source_0050_learning_with_confident_examples_rank_pruning_for_robust_classification_with_noisy_labels.md",
+    "title": "Learning with Confident Examples: Rank Pruning for Robust Classification with Noisy Labels"
+  },
+  {
+    "source_id": "199453105",
+    "path": "sources/source_0051_deep_self_learning_from_noisy_labels.md",
+    "file": "sources/source_0051_deep_self_learning_from_noisy_labels.md",
+    "title": "Deep Self-Learning From Noisy Labels"
+  },
+  {
+    "source_id": "201070534",
+    "path": "sources/source_0052_symmetric_cross_entropy_for_robust_learning_with_noisy_labels.md",
+    "file": "sources/source_0052_symmetric_cross_entropy_for_robust_learning_with_noisy_labels.md",
+    "title": "Symmetric Cross Entropy for Robust Learning With Noisy Labels"
+  },
+  {
+    "source_id": "201106554",
+    "path": "sources/source_0053_nlnl_negative_learning_for_noisy_labels.md",
+    "file": "sources/source_0053_nlnl_negative_learning_for_noisy_labels.md",
+    "title": "NLNL: Negative Learning for Noisy Labels"
+  },
+  {
+    "source_id": "203737303",
+    "path": "sources/source_0054_self_learning_to_filter_noisy_labels_with_self_ensembling.md",
+    "file": "sources/source_0054_self_learning_to_filter_noisy_labels_with_self_ensembling.md",
+    "title": "SELF: Learning to Filter Noisy Labels with Self-Ensembling"
+  },
+  {
+    "source_id": "206592873",
+    "path": "sources/source_0055_learning_from_massive_noisy_labeled_data_for_image_classification.md",
+    "file": "sources/source_0055_learning_from_massive_noisy_labeled_data_for_image_classification.md",
+    "title": "Learning from massive noisy labeled data for image classification"
+  },
+  {
+    "source_id": "206593880",
+    "path": "sources/source_0056_rethinking_the_inception_architecture_for_computer_vision.md",
+    "file": "sources/source_0056_rethinking_the_inception_architecture_for_computer_vision.md",
+    "title": "Rethinking the Inception Architecture for Computer Vision"
+  },
+  {
+    "source_id": "20785832",
+    "path": "sources/source_0057_active_bias_training_more_accurate_neural_networks_by_emphasizing_high_variance_samples.md",
+    "file": "sources/source_0057_active_bias_training_more_accurate_neural_networks_by_emphasizing_high_variance_samples.md",
+    "title": "Active Bias: Training More Accurate Neural Networks by Emphasizing High Variance Samples"
+  },
+  {
+    "source_id": "209386409",
+    "path": "sources/source_0058_improved_mean_absolute_error_for_learning_meaningful_patterns_from_abnormal_training_data.md",
+    "file": "sources/source_0058_improved_mean_absolute_error_for_learning_meaningful_patterns_from_abnormal_training_data.md",
+    "title": "Improved Mean Absolute Error for Learning Meaningful Patterns from Abnormal Training Data"
+  },
+  {
+    "source_id": "21685171",
+    "path": "sources/source_0059_multiclass_learning_with_partially_corrupted_labels.md",
+    "file": "sources/source_0059_multiclass_learning_with_partially_corrupted_labels.md",
+    "title": "Multiclass Learning With Partially Corrupted Labels"
+  },
+  {
+    "source_id": "21725595",
+    "path": "sources/source_0060_choicenet_robust_learning_by_revealing_output_correlations.md",
+    "file": "sources/source_0060_choicenet_robust_learning_by_revealing_output_correlations.md",
+    "title": "ChoiceNet: Robust Learning by Revealing Output Correlations"
+  },
+  {
+    "source_id": "2181703",
+    "path": "sources/source_0061_training_deep_neural_networks_on_noisy_labels_with_bootstrapping.md",
+    "file": "sources/source_0061_training_deep_neural_networks_on_noisy_labels_with_bootstrapping.md",
+    "title": "Training Deep Neural Networks on Noisy Labels with Bootstrapping"
+  },
+  {
+    "source_id": "2332622",
+    "path": "sources/source_0062_whose_vote_should_count_more_optimal_integration_of_labels_from_labelers_of_unknown_expertise.md",
+    "file": "sources/source_0062_whose_vote_should_count_more_optimal_integration_of_labels_from_labelers_of_unknown_expertise.md",
+    "title": "Whose vote should count more: Optimal integration of labels from labelers of unknown expertise"
+  },
+  {
+    "source_id": "24758700",
+    "path": "sources/source_0063_learning_with_biased_complementary_labels.md",
+    "file": "sources/source_0063_learning_with_biased_complementary_labels.md",
+    "title": "Learning with Biased Complementary Labels"
+  },
+  {
+    "source_id": "2622234",
+    "path": "sources/source_0064_rboost_label_noise_robust_boosting_algorithm_based_on_a_nonconvex_loss_function_and_the_numerically_stable_base_learners.md",
+    "file": "sources/source_0064_rboost_label_noise_robust_boosting_algorithm_based_on_a_nonconvex_loss_function_and_the_numerically_stable_base_learners.md",
+    "title": "RBoost: Label Noise-Robust Boosting Algorithm Based on a Nonconvex Loss Function and the Numerically Stable Base Learners"
+  },
+  {
+    "source_id": "2833811",
+    "path": "sources/source_0065_convexity_classification_and_risk_bounds.md",
+    "file": "sources/source_0065_convexity_classification_and_risk_bounds.md",
+    "title": "Convexity, classification, and risk bounds"
+  },
+  {
+    "source_id": "29153563",
+    "path": "sources/source_0066_masking_a_new_perspective_of_noisy_supervision.md",
+    "file": "sources/source_0066_masking_a_new_perspective_of_noisy_supervision.md",
+    "title": "Masking: A New Perspective of Noisy Supervision"
+  },
+  {
+    "source_id": "29164161",
+    "path": "sources/source_0067_generalized_cross_entropy_loss_for_training_deep_neural_networks_with_noisy_labels.md",
+    "file": "sources/source_0067_generalized_cross_entropy_loss_for_training_deep_neural_networks_with_noisy_labels.md",
+    "title": "Generalized Cross Entropy Loss for Training Deep Neural Networks with Noisy Labels"
+  },
+  {
+    "source_id": "29352928",
+    "path": "sources/source_0068_noise_detection_in_the_meta_learning_level.md",
+    "file": "sources/source_0068_noise_detection_in_the_meta_learning_level.md",
+    "title": "Noise detection in the meta-learning level"
+  },
+  {
+    "source_id": "29480947",
+    "path": "sources/source_0069_a_noise_detection_based_adaboost_algorithm_for_mislabeled_data.md",
+    "file": "sources/source_0069_a_noise_detection_based_adaboost_algorithm_for_mislabeled_data.md",
+    "title": "A noise-detection based AdaBoost algorithm for mislabeled data"
+  },
+  {
+    "source_id": "3039286",
+    "path": "sources/source_0070_seeing_through_the_human_reporting_bias_visual_classifiers_from_noisy_human_centric_labels.md",
+    "file": "sources/source_0070_seeing_through_the_human_reporting_bias_visual_classifiers_from_noisy_human_centric_labels.md",
+    "title": "Seeing through the Human Reporting Bias: Visual Classifiers from Noisy Human-Centric Labels"
+  },
+  {
+    "source_id": "3091496",
+    "path": "sources/source_0071_avoiding_your_teacher_s_mistakes_training_neural_networks_with_controlled_weak_supervision.md",
+    "file": "sources/source_0071_avoiding_your_teacher_s_mistakes_training_neural_networks_with_controlled_weak_supervision.md",
+    "title": "Avoiding Your Teacher's Mistakes: Training Neural Networks with Controlled Weak Supervision"
+  },
+  {
+    "source_id": "3162051",
+    "path": "sources/source_0072_mixup_beyond_empirical_risk_minimization.md",
+    "file": "sources/source_0072_mixup_beyond_empirical_risk_minimization.md",
+    "title": "mixup: Beyond Empirical Risk Minimization"
+  },
+  {
+    "source_id": "34506824",
+    "path": "sources/source_0073_lean_crowdsourcing_combining_humans_and_machines_in_an_online_system.md",
+    "file": "sources/source_0073_lean_crowdsourcing_combining_humans_and_machines_in_an_online_system.md",
+    "title": "Lean Crowdsourcing: Combining Humans and Machines in an Online System"
+  },
+  {
+    "source_id": "3481593",
+    "path": "sources/source_0074_fidelity_weighted_learning.md",
+    "file": "sources/source_0074_fidelity_weighted_learning.md",
+    "title": "Fidelity-Weighted Learning"
+  },
+  {
+    "source_id": "3653594",
+    "path": "sources/source_0075_using_trusted_data_to_train_deep_networks_on_labels_corrupted_by_severe_noise.md",
+    "file": "sources/source_0075_using_trusted_data_to_train_deep_networks_on_labels_corrupted_by_severe_noise.md",
+    "title": "Using Trusted Data to Train Deep Networks on Labels Corrupted by Severe Noise"
+  },
+  {
+    "source_id": "366973",
+    "path": "sources/source_0076_visual_recognition_by_learning_from_web_data_a_weakly_supervised_domain_generalization_approach.md",
+    "file": "sources/source_0076_visual_recognition_by_learning_from_web_data_a_weakly_supervised_domain_generalization_approach.md",
+    "title": "Visual recognition by learning from web data: A weakly supervised domain generalization approach"
+  },
+  {
+    "source_id": "3672345",
+    "path": "sources/source_0077_learning_to_learn_from_weak_supervision_by_full_supervision.md",
+    "file": "sources/source_0077_learning_to_learn_from_weak_supervision_by_full_supervision.md",
+    "title": "Learning to Learn from Weak Supervision by Full Supervision"
+  },
+  {
+    "source_id": "391854",
+    "path": "sources/source_0078_noise_tolerance_under_risk_minimization.md",
+    "file": "sources/source_0078_noise_tolerance_under_risk_minimization.md",
+    "title": "Noise Tolerance under Risk Minimization"
+  },
+  {
+    "source_id": "4007229",
+    "path": "sources/source_0079_attend_in_groups_a_weakly_supervised_deep_learning_framework_for_learning_from_web_data.md",
+    "file": "sources/source_0079_attend_in_groups_a_weakly_supervised_deep_learning_framework_for_learning_from_web_data.md",
+    "title": "Attend in Groups: A Weakly-Supervised Deep Learning Framework for Learning from Web Data"
+  },
+  {
+    "source_id": "4143180",
+    "path": "sources/source_0080_a_semi_supervised_two_stage_approach_to_learning_from_noisy_labels.md",
+    "file": "sources/source_0080_a_semi_supervised_two_stage_approach_to_learning_from_noisy_labels.md",
+    "title": "A Semi-Supervised Two-Stage Approach to Learning from Noisy Labels"
+  },
+  {
+    "source_id": "423350",
+    "path": "sources/source_0081_learning_with_noisy_labels.md",
+    "file": "sources/source_0081_learning_with_noisy_labels.md",
+    "title": "Learning with noisy labels"
+  },
+  {
+    "source_id": "4321928",
+    "path": "sources/source_0082_learning_to_reweight_examples_for_robust_deep_learning.md",
+    "file": "sources/source_0082_learning_to_reweight_examples_for_robust_deep_learning.md",
+    "title": "Learning to Reweight Examples for Robust Deep Learning"
+  },
+  {
+    "source_id": "4417115",
+    "path": "sources/source_0083_cleannet_transfer_learning_for_scalable_image_classifier_training_with_label_noise.md",
+    "file": "sources/source_0083_cleannet_transfer_learning_for_scalable_image_classifier_training_with_label_noise.md",
+    "title": "CleanNet: Transfer Learning for Scalable Image Classifier Training with Label Noise"
+  },
+  {
+    "source_id": "4544107",
+    "path": "sources/source_0084_joint_optimization_framework_for_learning_with_noisy_labels.md",
+    "file": "sources/source_0084_joint_optimization_framework_for_learning_with_noisy_labels.md",
+    "title": "Joint Optimization Framework for Learning with Noisy Labels"
+  },
+  {
+    "source_id": "45813168",
+    "path": "sources/source_0085_maximum_likelihood_estimation_of_observer_error_rates_using_the_em_algorithm.md",
+    "file": "sources/source_0085_maximum_likelihood_estimation_of_observer_error_rates_using_the_em_algorithm.md",
+    "title": "Maximum Likelihood Estimation of Observer Error-Rates Using the EM Algorithm"
+  },
+  {
+    "source_id": "46980528",
+    "path": "sources/source_0086_dimensionality_driven_learning_with_noisy_labels.md",
+    "file": "sources/source_0086_dimensionality_driven_learning_with_noisy_labels.md",
+    "title": "Dimensionality-Driven Learning with Noisy Labels"
+  },
+  {
+    "source_id": "5019500",
+    "path": "sources/source_0087_improving_crowdsourced_label_quality_using_noise_correction.md",
+    "file": "sources/source_0087_improving_crowdsourced_label_quality_using_noise_correction.md",
+    "title": "Improving Crowdsourced Label Quality Using Noise Correction"
+  },
+  {
+    "source_id": "51614388",
+    "path": "sources/source_0088_progressive_stochastic_learning_for_noisy_labels.md",
+    "file": "sources/source_0088_progressive_stochastic_learning_for_noisy_labels.md",
+    "title": "Progressive Stochastic Learning for Noisy Labels"
+  },
+  {
+    "source_id": "51876228",
+    "path": "sources/source_0089_mentornet_learning_data_driven_curriculum_for_very_deep_neural_networks_on_corrupted_labels.md",
+    "file": "sources/source_0089_mentornet_learning_data_driven_curriculum_for_very_deep_neural_networks_on_corrupted_labels.md",
+    "title": "MentorNet: Learning Data-Driven Curriculum for Very Deep Neural Networks on Corrupted Labels"
+  },
+  {
+    "source_id": "51920640",
+    "path": "sources/source_0090_curriculumnet_weakly_supervised_learning_from_large_scale_web_images.md",
+    "file": "sources/source_0090_curriculumnet_weakly_supervised_learning_from_large_scale_web_images.md",
+    "title": "CurriculumNet: Weakly Supervised Learning from Large-Scale Web Images"
+  },
+  {
+    "source_id": "52161569",
+    "path": "sources/source_0091_deep_bilevel_learning.md",
+    "file": "sources/source_0091_deep_bilevel_learning.md",
+    "title": "Deep Bilevel Learning"
+  },
+  {
+    "source_id": "52197739",
+    "path": "sources/source_0092_hyperspectral_image_classification_in_the_presence_of_noisy_labels.md",
+    "file": "sources/source_0092_hyperspectral_image_classification_in_the_presence_of_noisy_labels.md",
+    "title": "Hyperspectral Image Classification in the Presence of Noisy Labels"
+  },
+  {
+    "source_id": "52895255",
+    "path": "sources/source_0093_pumpout_a_meta_approach_for_robustly_training_deep_neural_networks_with_noisy_labels.md",
+    "file": "sources/source_0093_pumpout_a_meta_approach_for_robustly_training_deep_neural_networks_with_noisy_labels.md",
+    "title": "Pumpout: A Meta Approach for Robustly Training Deep Neural Networks with Noisy Labels"
+  },
+  {
+    "source_id": "53209366",
+    "path": "sources/source_0094_improving_multi_person_pose_estimation_using_label_correction.md",
+    "file": "sources/source_0094_improving_multi_person_pose_estimation_using_label_correction.md",
+    "title": "Improving Multi-Person Pose Estimation using Label Correction"
+  },
+  {
+    "source_id": "5351802",
+    "path": "sources/source_0095_a_light_cnn_for_deep_face_representation_with_noisy_labels.md",
+    "file": "sources/source_0095_a_light_cnn_for_deep_face_representation_with_noisy_labels.md",
+    "title": "A Light CNN for Deep Face Representation With Noisy Labels"
+  },
+  {
+    "source_id": "5377124",
+    "path": "sources/source_0096_boosting_in_the_presence_of_label_noise.md",
+    "file": "sources/source_0096_boosting_in_the_presence_of_label_noise.md",
+    "title": "Boosting in the presence of label noise"
+  },
+  {
+    "source_id": "55751842",
+    "path": "sources/source_0097_learning_to_learn_from_noisy_labeled_data.md",
+    "file": "sources/source_0097_learning_to_learn_from_noisy_labeled_data.md",
+    "title": "Learning to Learn From Noisy Labeled Data"
+  },
+  {
+    "source_id": "5658192",
+    "path": "sources/source_0098_webly_supervised_learning_of_convolutional_networks.md",
+    "file": "sources/source_0098_webly_supervised_learning_of_convolutional_networks.md",
+    "title": "Webly Supervised Learning of Convolutional Networks"
+  },
+  {
+    "source_id": "60440658",
+    "path": "sources/source_0099_learning_from_noisy_labels_by_regularized_estimation_of_annotator_confusion.md",
+    "file": "sources/source_0099_learning_from_noisy_labels_by_regularized_estimation_of_annotator_confusion.md",
+    "title": "Learning From Noisy Labels by Regularized Estimation of Annotator Confusion"
+  },
+  {
+    "source_id": "62159611",
+    "path": "sources/source_0100_an_empirical_comparison_of_two_boosting_algorithms_on_real_data_sets_with_artificial_class_noise.md",
+    "file": "sources/source_0100_an_empirical_comparison_of_two_boosting_algorithms_on_real_data_sets_with_artificial_class_noise.md",
+    "title": "An Empirical Comparison of Two Boosting Algorithms on Real Data Sets with Artificial Class Noise"
+  },
+  {
+    "source_id": "6546734",
+    "path": "sources/source_0101_robust_loss_functions_under_label_noise_for_deep_neural_networks.md",
+    "file": "sources/source_0101_robust_loss_functions_under_label_noise_for_deep_neural_networks.md",
+    "title": "Robust Loss Functions under Label Noise for Deep Neural Networks"
+  },
+  {
+    "source_id": "6706414",
+    "path": "sources/source_0102_explaining_and_harnessing_adversarial_examples.md",
+    "file": "sources/source_0102_explaining_and_harnessing_adversarial_examples.md",
+    "title": "Explaining and Harnessing Adversarial Examples"
+  },
+  {
+    "source_id": "67856781",
+    "path": "sources/source_0103_learning_a_deep_convnet_for_multi_label_classification_with_partial_labels.md",
+    "file": "sources/source_0103_learning_a_deep_convnet_for_multi_label_classification_with_partial_labels.md",
+    "title": "Learning a Deep ConvNet for Multi-Label Classification With Partial Labels"
+  },
+  {
+    "source_id": "6788443",
+    "path": "sources/source_0104_learning_with_symmetric_label_noise_the_importance_of_being_unhinged.md",
+    "file": "sources/source_0104_learning_with_symmetric_label_noise_the_importance_of_being_unhinged.md",
+    "title": "Learning with Symmetric Label Noise: The Importance of Being Unhinged"
+  },
+  {
+    "source_id": "6844431",
+    "path": "sources/source_0105_dropout_a_simple_way_to_prevent_neural_networks_from_overfitting.md",
+    "file": "sources/source_0105_dropout_a_simple_way_to_prevent_neural_networks_from_overfitting.md",
+    "title": "Dropout: a simple way to prevent neural networks from overfitting"
+  },
+  {
+    "source_id": "69632926",
+    "path": "sources/source_0106_safeguarded_dynamic_label_regression_for_noisy_supervision.md",
+    "file": "sources/source_0106_safeguarded_dynamic_label_regression_for_noisy_supervision.md",
+    "title": "Safeguarded Dynamic Label Regression for Noisy Supervision"
+  },
+  {
+    "source_id": "776653",
+    "path": "sources/source_0107_learning_with_auxiliary_less_noisy_labels.md",
+    "file": "sources/source_0107_learning_with_auxiliary_less_noisy_labels.md",
+    "title": "Learning With Auxiliary Less-Noisy Labels"
+  },
+  {
+    "source_id": "83458813",
+    "path": "sources/source_0108_probabilistic_end_to_end_noise_correction_for_learning_with_noisy_labels.md",
+    "file": "sources/source_0108_probabilistic_end_to_end_noise_correction_for_learning_with_noisy_labels.md",
+    "title": "Probabilistic End-To-End Noise Correction for Learning With Noisy Labels"
+  },
+  {
+    "source_id": "85500272",
+    "path": "sources/source_0109_noise_tolerant_paradigm_for_training_face_recognition_cnns.md",
+    "file": "sources/source_0109_noise_tolerant_paradigm_for_training_face_recognition_cnns.md",
+    "title": "Noise-Tolerant Paradigm for Training Face Recognition CNNs"
+  },
+  {
+    "source_id": "8606632",
+    "path": "sources/source_0110_auxiliary_image_regularization_for_deep_cnns_with_noisy_labels.md",
+    "file": "sources/source_0110_auxiliary_image_regularization_for_deep_cnns_with_noisy_labels.md",
+    "title": "Auxiliary Image Regularization for Deep CNNs with Noisy Labels"
+  },
+  {
+    "source_id": "865549",
+    "path": "sources/source_0111_loss_factorization_weakly_supervised_learning_and_label_noise_robustness.md",
+    "file": "sources/source_0111_loss_factorization_weakly_supervised_learning_and_label_noise_robustness.md",
+    "title": "Loss factorization, weakly supervised learning and label noise robustness"
+  },
+  {
+    "source_id": "8760204",
+    "path": "sources/source_0112_a_robust_multi_class_adaboost_algorithm_for_mislabeled_noisy_data.md",
+    "file": "sources/source_0112_a_robust_multi_class_adaboost_algorithm_for_mislabeled_noisy_data.md",
+    "title": "A robust multi-class AdaBoost algorithm for mislabeled noisy data"
+  },
+  {
+    "source_id": "8774197",
+    "path": "sources/source_0113_making_risk_minimization_tolerant_to_label_noise.md",
+    "file": "sources/source_0113_making_risk_minimization_tolerant_to_label_noise.md",
+    "title": "Making Risk Minimization Tolerant to Label Noise"
+  },
+  {
+    "source_id": "9095966",
+    "path": "sources/source_0114_deep_learning_from_noisy_image_labels_with_quality_embedding.md",
+    "file": "sources/source_0114_deep_learning_from_noisy_image_labels_with_quality_embedding.md",
+    "title": "Deep Learning From Noisy Image Labels With Quality Embedding"
+  },
+  {
+    "source_id": "9448393",
+    "path": "sources/source_0115_learning_to_label_aerial_images_from_noisy_data.md",
+    "file": "sources/source_0115_learning_to_label_aerial_images_from_noisy_data.md",
+    "title": "Learning to Label Aerial Images from Noisy Data"
+  },
+  {
+    "source_id": "9531606",
+    "path": "sources/source_0116_training_deep_neural_networks_based_on_unreliable_labels.md",
+    "file": "sources/source_0116_training_deep_neural_networks_based_on_unreliable_labels.md",
+    "title": "Training deep neural-networks based on unreliable labels"
+  },
+  {
+    "source_id": "9545399",
+    "path": "sources/source_0117_regularizing_neural_networks_by_penalizing_confident_output_distributions.md",
+    "file": "sources/source_0117_regularizing_neural_networks_by_penalizing_confident_output_distributions.md",
+    "title": "Regularizing Neural Networks by Penalizing Confident Output Distributions"
+  },
+  {
+    "source_id": "9963515",
+    "path": "sources/source_0118_toward_robustness_against_label_noise_in_training_deep_discriminative_neural_networks.md",
+    "file": "sources/source_0118_toward_robustness_against_label_noise_in_training_deep_discriminative_neural_networks.md",
+    "title": "Toward Robustness against Label Noise in Training Deep Discriminative Neural Networks"
+  },
+  {
+    "source_id": "81981674",
+    "path": "sources/source_0119_graph_convolutional_label_noise_cleaner_train_a_plug_and_play_action_classifier_for_anomaly_detection.md",
+    "file": "sources/source_0119_graph_convolutional_label_noise_cleaner_train_a_plug_and_play_action_classifier_for_anomaly_detection.md",
+    "title": "Graph Convolutional Label Noise Cleaner: Train a Plug-And-Play Action Classifier for Anomaly Detection"
+  },
+  {
+    "source_id": "1977996",
+    "path": "sources/source_0120_self_paced_learning_for_latent_variable_models.md",
+    "file": "sources/source_0120_self_paced_learning_for_latent_variable_models.md",
+    "title": "Self-Paced Learning for Latent Variable Models"
+  },
+  {
+    "source_id": "52065462",
+    "path": "sources/source_0121_co_teaching_robust_training_of_deep_neural_networks_with_extremely_noisy_labels.md",
+    "file": "sources/source_0121_co_teaching_robust_training_of_deep_neural_networks_with_extremely_noisy_labels.md",
+    "title": "Co-teaching: Robust Training of Deep Neural Networks with Extremely Noisy Labels"
+  },
+  {
+    "source_id": "59316631",
+    "path": "sources/source_0122_how_does_disagreement_help_generalization_against_label_corruption.md",
+    "file": "sources/source_0122_how_does_disagreement_help_generalization_against_label_corruption.md",
+    "title": "How does Disagreement Help Generalization against Label Corruption?"
+  },
+  {
+    "source_id": "873046",
+    "path": "sources/source_0123_curriculum_learning.md",
+    "file": "sources/source_0123_curriculum_learning.md",
+    "title": "Curriculum learning"
+  },
+  {
+    "source_id": "14401236",
+    "path": "sources/source_0124_loop_local_outlier_probabilities.md",
+    "file": "sources/source_0124_loop_local_outlier_probabilities.md",
+    "title": "LoOP: local outlier probabilities"
+  },
+  {
+    "source_id": "14888472",
+    "path": "sources/source_0125_quality_management_on_amazon_mechanical_turk.md",
+    "file": "sources/source_0125_quality_management_on_amazon_mechanical_turk.md",
+    "title": "Quality management on Amazon Mechanical Turk"
+  },
+  {
+    "source_id": "3920589",
+    "path": "sources/source_0126_class_noise_and_supervised_learning_in_medical_domains_the_effect_of_feature_extraction.md",
+    "file": "sources/source_0126_class_noise_and_supervised_learning_in_medical_domains_the_effect_of_feature_extraction.md",
+    "title": "Class Noise and Supervised Learning in Medical Domains: The Effect of Feature Extraction"
+  },
+  {
+    "source_id": "14531849",
+    "path": "sources/source_0127_on_the_convergence_of_a_family_of_robust_losses_for_stochastic_gradient_descent.md",
+    "file": "sources/source_0127_on_the_convergence_of_a_family_of_robust_losses_for_stochastic_gradient_descent.md",
+    "title": "On the Convergence of A Family of Robust Losses for Stochastic Gradient Descent"
+  },
+  {
+    "source_id": "2928017",
+    "path": "sources/source_0128_learning_to_learn_by_gradient_descent_by_gradient_descent.md",
+    "file": "sources/source_0128_learning_to_learn_by_gradient_descent_by_gradient_descent.md",
+    "title": "Learning to learn by gradient descent by gradient descent"
+  },
+  {
+    "source_id": "6719686",
+    "path": "sources/source_0129_model_agnostic_meta_learning_for_fast_adaptation_of_deep_networks.md",
+    "file": "sources/source_0129_model_agnostic_meta_learning_for_fast_adaptation_of_deep_networks.md",
+    "title": "Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks"
+  },
+  {
+    "source_id": "7200347",
+    "path": "sources/source_0130_distilling_the_knowledge_in_a_neural_network.md",
+    "file": "sources/source_0130_distilling_the_knowledge_in_a_neural_network.md",
+    "title": "Distilling the Knowledge in a Neural Network"
+  },
+  {
+    "source_id": "18347009",
+    "path": "sources/source_0131_dimensionality_discriminability_density_and_distance_distributions.md",
+    "file": "sources/source_0131_dimensionality_discriminability_density_and_distance_distributions.md",
+    "title": "Dimensionality, Discriminability, Density and Distance Distributions"
+  },
+  {
+    "source_id": "12394453",
+    "path": "sources/source_0132_an_experimental_comparison_of_three_methods_for_constructing_ensembles_of_decision_trees_bagging_boosting_and_r_bdcef4a2.md",
+    "file": "sources/source_0132_an_experimental_comparison_of_three_methods_for_constructing_ensembles_of_decision_trees_bagging_boosting_and_r_bdcef4a2.md",
+    "title": "An Experimental Comparison of Three Methods for Constructing Ensembles of Decision Trees: Bagging, Boosting, and Randomization"
+  },
+  {
+    "source_id": "195345989",
+    "path": "sources/source_0133_the_new_data_and_new_challenges_in_multimedia_research.md",
+    "file": "sources/source_0133_the_new_data_and_new_challenges_in_multimedia_research.md",
+    "title": "The New Data and New Challenges in Multimedia Research."
+  },
+  {
+    "source_id": "10842458",
+    "path": "sources/source_0134_disturblabel_regularizing_cnn_on_the_loss_layer.md",
+    "file": "sources/source_0134_disturblabel_regularizing_cnn_on_the_loss_layer.md",
+    "title": "DisturbLabel: Regularizing CNN on the Loss Layer"
+  },
+  {
+    "source_id": "2199862",
+    "path": "sources/source_0135_learning_object_categories_from_internet_image_searches.md",
+    "file": "sources/source_0135_learning_object_categories_from_internet_image_searches.md",
+    "title": "Learning Object Categories From Internet Image Searches"
+  },
+  {
+    "source_id": "2608922",
+    "path": "sources/source_0136_places_a_10_million_image_database_for_scene_recognition.md",
+    "file": "sources/source_0136_places_a_10_million_image_database_for_scene_recognition.md",
+    "title": "Places: A 10 Million Image Database for Scene Recognition"
+  },
+  {
+    "source_id": "53212997",
+    "path": "sources/source_0137_robustness_of_conditional_gans_to_noisy_labels.md",
+    "file": "sources/source_0137_robustness_of_conditional_gans_to_noisy_labels.md",
+    "title": "Robustness of Conditional GANs to Noisy Labels"
+  },
+  {
+    "source_id": "53774782",
+    "path": "sources/source_0138_label_noise_robust_generative_adversarial_networks.md",
+    "file": "sources/source_0138_label_noise_robust_generative_adversarial_networks.md",
+    "title": "Label-Noise Robust Generative Adversarial Networks"
+  },
+  {
+    "source_id": "57572929",
+    "path": "sources/source_0139_learning_sound_event_classifiers_from_web_audio_with_noisy_labels.md",
+    "file": "sources/source_0139_learning_sound_event_classifiers_from_web_audio_with_noisy_labels.md",
+    "title": "Learning Sound Event Classifiers from Web Audio with Noisy Labels"
+  },
+  {
+    "source_id": "5776303",
+    "path": "sources/source_0140_learning_visual_features_from_large_weakly_supervised_data.md",
+    "file": "sources/source_0140_learning_visual_features_from_large_weakly_supervised_data.md",
+    "title": "Learning Visual Features from Large Weakly Supervised Data"
+  },
+  {
+    "source_id": "8317437",
+    "path": "sources/source_0141_lsun_construction_of_a_large_scale_image_dataset_using_deep_learning_with_humans_in_the_loop.md",
+    "file": "sources/source_0141_lsun_construction_of_a_large_scale_image_dataset_using_deep_learning_with_humans_in_the_loop.md",
+    "title": "LSUN: Construction of a Large-scale Image Dataset using Deep Learning with Humans in the Loop"
+  }
+]

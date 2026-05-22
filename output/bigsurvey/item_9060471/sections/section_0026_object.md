@@ -1,0 +1,1 @@
+In this section, we describe how the object difficulty and the relations among objects affect truth discovery.

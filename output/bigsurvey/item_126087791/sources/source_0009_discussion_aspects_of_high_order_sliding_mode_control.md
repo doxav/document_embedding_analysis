@@ -1,0 +1,1 @@
+This technical note discusses to what extent the high order sliding mode control may serve as an alternative to the conventional sliding mode control. Definition of sliding mode order, relative degree, chattering attenuation, filtering, and implementation complexity constitute the scope of the discussion.

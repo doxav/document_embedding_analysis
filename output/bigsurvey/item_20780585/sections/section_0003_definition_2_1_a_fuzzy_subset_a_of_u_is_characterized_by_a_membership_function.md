@@ -1,0 +1,1 @@
+Since a classical set is defined by its characteristic function of counter-domain {0, 1}, we can say that a classical set is a particular case of a fuzzy set. We denote by F(U ) the family of all fuzzy subsets of U . In what follows U is as a topological space.

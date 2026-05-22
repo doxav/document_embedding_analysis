@@ -1,0 +1,1 @@
+The large film review dataset IMDB BIB1428702 was proposed by Andrew Maas et al. in the 2011 ACL paper, which is a data set for binary emotion classification, each sample is a txt file, including training sets, test sets, and no tagged datasets. There are 25000 training sets, 12500 positive and negative, and 25000 test sets, 12500 positive and negative.

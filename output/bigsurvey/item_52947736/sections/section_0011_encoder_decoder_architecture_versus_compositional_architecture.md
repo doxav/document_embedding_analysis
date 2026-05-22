@@ -1,0 +1,1 @@
+Some methods use just simple vanilla encoders and decoders to generate captions. However, other methods use multiple networks for it.

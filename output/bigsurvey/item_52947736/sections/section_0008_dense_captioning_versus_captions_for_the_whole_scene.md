@@ -1,0 +1,1 @@
+In dense captioning, captions are generated for each region of the scene. Other methods generate captions for the whole scene.

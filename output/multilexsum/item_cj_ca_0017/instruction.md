@@ -1,0 +1,1 @@
+Draft a long legal case summary using only the provided case documents.

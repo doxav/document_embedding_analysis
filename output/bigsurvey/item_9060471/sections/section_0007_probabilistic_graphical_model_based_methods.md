@@ -1,0 +1,1 @@
+Some truth discovery methods BIB14376137  BIB8837716 are based on probabilistic graphical models (PGMs). Figure 1 shows a general PGM to incorporate the principle of truth discovery, and the corresponding likelihood is following:

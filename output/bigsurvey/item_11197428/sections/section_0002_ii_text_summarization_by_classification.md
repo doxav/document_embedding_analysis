@@ -1,0 +1,1 @@
+Many research papers and books related to natural language processing and computational linguistics were thoroughly investigated in order to determine current techniques used for automated text summarization and in particular their www.ijacsa.thesai.org advantages and disadvantages. Text summarization techniques were classified by Hahn and Mani  as follows:

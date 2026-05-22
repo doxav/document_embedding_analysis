@@ -1,0 +1,1 @@
+Extractive summarizers  [14]  aim at picking out the most relevant sentences in the document while also maintaining a low redundancy in the summary.

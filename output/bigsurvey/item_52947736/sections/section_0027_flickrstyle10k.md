@@ -1,0 +1,1 @@
+Dataset. The FlickrStyle10K dataset has 10,000 Flickr images with stylized captions. The training data consists of 7,000 images. The validation and test data consist of 2,000 and 1,000 images, respectively. Each image contains romantic, humorous, and factual captions.

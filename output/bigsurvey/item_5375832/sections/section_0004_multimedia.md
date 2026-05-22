@@ -1,0 +1,1 @@
+An extra category is added to include a technique that although it presents similarities with techniques in the other categories, it has the special characteristic of approaching summarization from a cognitive perspective aiming at simulating the human summarizers' tasks.

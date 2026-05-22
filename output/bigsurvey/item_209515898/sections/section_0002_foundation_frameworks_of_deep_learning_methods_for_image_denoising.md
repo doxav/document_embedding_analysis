@@ -1,0 +1,1 @@
+This section offers an illustration of deep learning, including the notions, main network frameworks (techniques), and hardware and software, which is basis of deep learning techniques for image denoising in this survey.

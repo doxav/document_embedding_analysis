@@ -1,0 +1,914 @@
+[
+  {
+    "source_id": "11715509",
+    "path": "sources/source_0001_deep_learning_in_neural_networks_an_overview.md",
+    "file": "sources/source_0001_deep_learning_in_neural_networks_an_overview.md",
+    "title": "Deep Learning in Neural Networks: An Overview"
+  },
+  {
+    "source_id": "120118103",
+    "path": "sources/source_0002_a_logical_calculus_of_the_ideas_immanent_in_nervous_activity.md",
+    "file": "sources/source_0002_a_logical_calculus_of_the_ideas_immanent_in_nervous_activity.md",
+    "title": "A logical calculus of the ideas immanent in nervous activity"
+  },
+  {
+    "source_id": "3074096",
+    "path": "sources/source_0003_deep_learning.md",
+    "file": "sources/source_0003_deep_learning.md",
+    "title": "Deep learning"
+  },
+  {
+    "source_id": "351666",
+    "path": "sources/source_0004_natural_language_processing_almost_from_scratch.md",
+    "file": "sources/source_0004_natural_language_processing_almost_from_scratch.md",
+    "title": "Natural Language Processing (almost) from Scratch"
+  },
+  {
+    "source_id": "392458",
+    "path": "sources/source_0005_large_scale_deep_unsupervised_learning_using_graphics_processors.md",
+    "file": "sources/source_0005_large_scale_deep_unsupervised_learning_using_graphics_processors.md",
+    "title": "Large-scale deep unsupervised learning using graphics processors"
+  },
+  {
+    "source_id": "8604637",
+    "path": "sources/source_0006_deep_learning_with_cots_hpc_systems.md",
+    "file": "sources/source_0006_deep_learning_with_cots_hpc_systems.md",
+    "title": "Deep learning with COTS HPC systems"
+  },
+  {
+    "source_id": "904144",
+    "path": "sources/source_0007_flexible_high_performance_convolutional_neural_networks_for_image_classification.md",
+    "file": "sources/source_0007_flexible_high_performance_convolutional_neural_networks_for_image_classification.md",
+    "title": "Flexible, High Performance Convolutional Neural Networks for Image Classification"
+  },
+  {
+    "source_id": "60112007",
+    "path": "sources/source_0008_natural_language_understanding.md",
+    "file": "sources/source_0008_natural_language_understanding.md",
+    "title": "Natural Language Understanding."
+  },
+  {
+    "source_id": "62245742",
+    "path": "sources/source_0009_learning_internal_representations_by_error_propagation.md",
+    "file": "sources/source_0009_learning_internal_representations_by_error_propagation.md",
+    "title": "Learning internal representations by error propagation"
+  },
+  {
+    "source_id": "12873739",
+    "path": "sources/source_0010_relation_classification_via_convolutional_deep_neural_network.md",
+    "file": "sources/source_0010_relation_classification_via_convolutional_deep_neural_network.md",
+    "title": "Relation Classification via Convolutional Deep Neural Network"
+  },
+  {
+    "source_id": "1306065",
+    "path": "sources/source_0011_a_convolutional_neural_network_for_modelling_sentences.md",
+    "file": "sources/source_0011_a_convolutional_neural_network_for_modelling_sentences.md",
+    "title": "A Convolutional Neural Network for Modelling Sentences"
+  },
+  {
+    "source_id": "14542261",
+    "path": "sources/source_0012_gradient_based_learning_applied_to_document_recognition.md",
+    "file": "sources/source_0012_gradient_based_learning_applied_to_document_recognition.md",
+    "title": "Gradient-Based Learning Applied to Document Recognition"
+  },
+  {
+    "source_id": "15874232",
+    "path": "sources/source_0013_deep_convolutional_neural_networks_for_sentiment_analysis_of_short_texts.md",
+    "file": "sources/source_0013_deep_convolutional_neural_networks_for_sentiment_analysis_of_short_texts.md",
+    "title": "Deep Convolutional Neural Networks for Sentiment Analysis of Short Texts"
+  },
+  {
+    "source_id": "2357880",
+    "path": "sources/source_0014_neocognitron_a_new_algorithm_for_pattern_recognition_tolerant_of_deformations_and_shifts_in_position.md",
+    "file": "sources/source_0014_neocognitron_a_new_algorithm_for_pattern_recognition_tolerant_of_deformations_and_shifts_in_position.md",
+    "title": "Neocognitron: A new algorithm for pattern recognition tolerant of deformations and shifts in position"
+  },
+  {
+    "source_id": "41312633",
+    "path": "sources/source_0015_backpropagation_applied_to_handwritten_zip_code_recognition.md",
+    "file": "sources/source_0015_backpropagation_applied_to_handwritten_zip_code_recognition.md",
+    "title": "Backpropagation Applied to Handwritten Zip Code Recognition"
+  },
+  {
+    "source_id": "5556470",
+    "path": "sources/source_0016_one_weird_trick_for_parallelizing_convolutional_neural_networks.md",
+    "file": "sources/source_0016_one_weird_trick_for_parallelizing_convolutional_neural_networks.md",
+    "title": "One weird trick for parallelizing convolutional neural networks"
+  },
+  {
+    "source_id": "20186027",
+    "path": "sources/source_0017_a_hierarchical_neural_network_model_for_control_and_learning_of_voluntary_movement.md",
+    "file": "sources/source_0017_a_hierarchical_neural_network_model_for_control_and_learning_of_voluntary_movement.md",
+    "title": "A hierarchical neural-network model for control and learning of voluntary movement"
+  },
+  {
+    "source_id": "6536466",
+    "path": "sources/source_0018_learning_task_dependent_distributed_representations_by_backpropagation_through_structure.md",
+    "file": "sources/source_0018_learning_task_dependent_distributed_representations_by_backpropagation_through_structure.md",
+    "title": "Learning task-dependent distributed representations by backpropagation through structure"
+  },
+  {
+    "source_id": "6979578",
+    "path": "sources/source_0019_dynamic_pooling_and_unfolding_recursive_autoencoders_for_paraphrase_detection.md",
+    "file": "sources/source_0019_dynamic_pooling_and_unfolding_recursive_autoencoders_for_paraphrase_detection.md",
+    "title": "Dynamic Pooling and Unfolding Recursive Autoencoders for Paraphrase Detection"
+  },
+  {
+    "source_id": "13756489",
+    "path": "sources/source_0020_attention_is_all_you_need.md",
+    "file": "sources/source_0020_attention_is_all_you_need.md",
+    "title": "Attention Is All You Need"
+  },
+  {
+    "source_id": "14850173",
+    "path": "sources/source_0021_extensions_of_recurrent_neural_network_language_model.md",
+    "file": "sources/source_0021_extensions_of_recurrent_neural_network_language_model.md",
+    "title": "Extensions of recurrent neural network language model"
+  },
+  {
+    "source_id": "15076873",
+    "path": "sources/source_0022_strategies_for_training_large_scale_neural_network_language_models.md",
+    "file": "sources/source_0022_strategies_for_training_large_scale_neural_network_language_models.md",
+    "title": "Strategies for training large scale neural network language models"
+  },
+  {
+    "source_id": "15539264",
+    "path": "sources/source_0023_rectified_linear_units_improve_restricted_boltzmann_machines.md",
+    "file": "sources/source_0023_rectified_linear_units_improve_restricted_boltzmann_machines.md",
+    "title": "Rectified Linear Units Improve Restricted Boltzmann Machines"
+  },
+  {
+    "source_id": "17048224",
+    "path": "sources/source_0024_recurrent_neural_network_based_language_model.md",
+    "file": "sources/source_0024_recurrent_neural_network_based_language_model.md",
+    "title": "Recurrent neural network based language model"
+  },
+  {
+    "source_id": "18271205",
+    "path": "sources/source_0025_learning_complex_extended_sequences_using_the_principle_of_history_compression.md",
+    "file": "sources/source_0025_learning_complex_extended_sequences_using_the_principle_of_history_compression.md",
+    "title": "Learning Complex, Extended Sequences Using the Principle of History Compression"
+  },
+  {
+    "source_id": "1915014",
+    "path": "sources/source_0026_long_short_term_memory.md",
+    "file": "sources/source_0026_long_short_term_memory.md",
+    "title": "Long Short-Term Memory"
+  },
+  {
+    "source_id": "1918428",
+    "path": "sources/source_0027_a_neural_attention_model_for_abstractive_sentence_summarization.md",
+    "file": "sources/source_0027_a_neural_attention_model_for_abstractive_sentence_summarization.md",
+    "title": "A Neural Attention Model for Abstractive Sentence Summarization"
+  },
+  {
+    "source_id": "206457500",
+    "path": "sources/source_0028_learning_long_term_dependencies_with_gradient_descent_is_difficult.md",
+    "file": "sources/source_0028_learning_long_term_dependencies_with_gradient_descent_is_difficult.md",
+    "title": "Learning Long-Term Dependencies with Gradient Descent is Difficult"
+  },
+  {
+    "source_id": "2763403",
+    "path": "sources/source_0029_finding_structure_in_time.md",
+    "file": "sources/source_0029_finding_structure_in_time.md",
+    "title": "Finding Structure in Time"
+  },
+  {
+    "source_id": "2843869",
+    "path": "sources/source_0030_hierarchical_recurrent_neural_networks_for_long_term_dependencies.md",
+    "file": "sources/source_0030_hierarchical_recurrent_neural_networks_for_long_term_dependencies.md",
+    "title": "Hierarchical Recurrent Neural Networks for Long-Term Dependencies"
+  },
+  {
+    "source_id": "3356463",
+    "path": "sources/source_0031_lstm_a_search_space_odyssey.md",
+    "file": "sources/source_0031_lstm_a_search_space_odyssey.md",
+    "title": "LSTM: A Search Space Odyssey"
+  },
+  {
+    "source_id": "5201925",
+    "path": "sources/source_0032_empirical_evaluation_of_gated_recurrent_neural_networks_on_sequence_modeling.md",
+    "file": "sources/source_0032_empirical_evaluation_of_gated_recurrent_neural_networks_on_sequence_modeling.md",
+    "title": "Empirical Evaluation of Gated Recurrent Neural Networks on Sequence Modeling"
+  },
+  {
+    "source_id": "52098500",
+    "path": "sources/source_0033_placing_search_in_context_the_concept_revisited.md",
+    "file": "sources/source_0033_placing_search_in_context_the_concept_revisited.md",
+    "title": "Placing search in context: the concept revisited"
+  },
+  {
+    "source_id": "9433631",
+    "path": "sources/source_0034_densely_connected_convolutional_networks.md",
+    "file": "sources/source_0034_densely_connected_convolutional_networks.md",
+    "title": "Densely Connected Convolutional Networks"
+  },
+  {
+    "source_id": "14136307",
+    "path": "sources/source_0035_one_billion_word_benchmark_for_measuring_progress_in_statistical_language_modeling.md",
+    "file": "sources/source_0035_one_billion_word_benchmark_for_measuring_progress_in_statistical_language_modeling.md",
+    "title": "One Billion Word Benchmark for Measuring Progress in Statistical Language Modeling"
+  },
+  {
+    "source_id": "1995619",
+    "path": "sources/source_0036_evaluation_metrics_for_language_models.md",
+    "file": "sources/source_0036_evaluation_metrics_for_language_models.md",
+    "title": "Evaluation Metrics For Language Models"
+  },
+  {
+    "source_id": "252796",
+    "path": "sources/source_0037_building_a_large_annotated_corpus_of_english_the_penn_treebank.md",
+    "file": "sources/source_0037_building_a_large_annotated_corpus_of_english_the_penn_treebank.md",
+    "title": "Building A Large Annotated Corpus Of English: The Penn Treebank"
+  },
+  {
+    "source_id": "27996838",
+    "path": "sources/source_0038_improved_language_modelling_through_better_language_model_evaluation_measures.md",
+    "file": "sources/source_0038_improved_language_modelling_through_better_language_model_evaluation_measures.md",
+    "title": "Improved language modelling through better language model evaluation measures"
+  },
+  {
+    "source_id": "2852525",
+    "path": "sources/source_0039_a_neural_probabilistic_language_model.md",
+    "file": "sources/source_0039_a_neural_probabilistic_language_model.md",
+    "title": "A Neural Probabilistic Language Model"
+  },
+  {
+    "source_id": "60842487",
+    "path": "sources/source_0040_analyzing_and_predicting_language_model_improvements.md",
+    "file": "sources/source_0040_analyzing_and_predicting_language_model_improvements.md",
+    "title": "Analyzing and predicting language model improvements"
+  },
+  {
+    "source_id": "3000562",
+    "path": "sources/source_0041_frustratingly_short_attention_spans_in_neural_language_modeling.md",
+    "file": "sources/source_0041_frustratingly_short_attention_spans_in_neural_language_modeling.md",
+    "title": "Frustratingly Short Attention Spans in Neural Language Modeling"
+  },
+  {
+    "source_id": "16636683",
+    "path": "sources/source_0042_network_in_network.md",
+    "file": "sources/source_0042_network_in_network.md",
+    "title": "Network In Network"
+  },
+  {
+    "source_id": "17719760",
+    "path": "sources/source_0043_recurrent_neural_network_regularization.md",
+    "file": "sources/source_0043_recurrent_neural_network_regularization.md",
+    "title": "Recurrent Neural Network Regularization"
+  },
+  {
+    "source_id": "260422",
+    "path": "sources/source_0044_exploring_the_limits_of_language_modeling.md",
+    "file": "sources/source_0044_exploring_the_limits_of_language_modeling.md",
+    "title": "Exploring the Limits of Language Modeling"
+  },
+  {
+    "source_id": "2838374",
+    "path": "sources/source_0045_compositional_morphology_for_word_representations_and_language_modelling.md",
+    "file": "sources/source_0045_compositional_morphology_for_word_representations_and_language_modelling.md",
+    "title": "Compositional Morphology for Word Representations and Language Modelling"
+  },
+  {
+    "source_id": "3330295",
+    "path": "sources/source_0046_scaling_recurrent_neural_network_language_models.md",
+    "file": "sources/source_0046_scaling_recurrent_neural_network_language_models.md",
+    "title": "Scaling recurrent neural network language models"
+  },
+  {
+    "source_id": "686481",
+    "path": "sources/source_0047_character_aware_neural_language_models.md",
+    "file": "sources/source_0047_character_aware_neural_language_models.md",
+    "title": "Character-Aware Neural Language Models"
+  },
+  {
+    "source_id": "7454685",
+    "path": "sources/source_0048_document_context_language_models.md",
+    "file": "sources/source_0048_document_context_language_models.md",
+    "title": "Document Context Language Models"
+  },
+  {
+    "source_id": "11913192",
+    "path": "sources/source_0049_character_composition_model_with_convolutional_neural_networks_for_dependency_parsing_on_morphologically_rich_languages.md",
+    "file": "sources/source_0049_character_composition_model_with_convolutional_neural_networks_for_dependency_parsing_on_morphologically_rich_languages.md",
+    "title": "Character Composition Model with Convolutional Neural Networks for Dependency Parsing on Morphologically Rich Languages"
+  },
+  {
+    "source_id": "13012136",
+    "path": "sources/source_0050_construction_of_a_japanese_relevance_tagged_corpus.md",
+    "file": "sources/source_0050_construction_of_a_japanese_relevance_tagged_corpus.md",
+    "title": "Construction of a Japanese Relevance-tagged Corpus"
+  },
+  {
+    "source_id": "13495961",
+    "path": "sources/source_0051_a_character_level_decoder_without_explicit_segmentation_for_neural_machine_translation.md",
+    "file": "sources/source_0051_a_character_level_decoder_without_explicit_segmentation_for_neural_machine_translation.md",
+    "title": "A Character-Level Decoder without Explicit Segmentation for Neural Machine Translation"
+  },
+  {
+    "source_id": "13951607",
+    "path": "sources/source_0052_case_frame_compilation_from_the_web_using_high_performance_computing.md",
+    "file": "sources/source_0052_case_frame_compilation_from_the_web_using_high_performance_computing.md",
+    "title": "Case Frame Compilation from the Web using High-Performance Computing"
+  },
+  {
+    "source_id": "14276764",
+    "path": "sources/source_0053_better_word_representations_with_recursive_neural_networks_for_morphology.md",
+    "file": "sources/source_0053_better_word_representations_with_recursive_neural_networks_for_morphology.md",
+    "title": "Better Word Representations with Recursive Neural Networks for Morphology"
+  },
+  {
+    "source_id": "145580646",
+    "path": "sources/source_0054_contextual_correlates_of_semantic_similarity.md",
+    "file": "sources/source_0054_contextual_correlates_of_semantic_similarity.md",
+    "title": "Contextual correlates of semantic similarity"
+  },
+  {
+    "source_id": "15043144",
+    "path": "sources/source_0055_morphological_analysis_for_unsegmented_languages_using_recurrent_neural_network_language_model.md",
+    "file": "sources/source_0055_morphological_analysis_for_unsegmented_languages_using_recurrent_neural_network_language_model.md",
+    "title": "Morphological Analysis for Unsegmented Languages using Recurrent Neural Network Language Model"
+  },
+  {
+    "source_id": "15924543",
+    "path": "sources/source_0056_an_arabic_hebrew_parallel_corpus_of_ted_talks.md",
+    "file": "sources/source_0056_an_arabic_hebrew_parallel_corpus_of_ted_talks.md",
+    "title": "An Arabic-Hebrew parallel corpus of TED talks"
+  },
+  {
+    "source_id": "372093",
+    "path": "sources/source_0057_improving_word_representations_via_global_context_and_multiple_word_prototypes.md",
+    "file": "sources/source_0057_improving_word_representations_via_global_context_and_multiple_word_prototypes.md",
+    "title": "Improving Word Representations via Global Context and Multiple Word Prototypes"
+  },
+  {
+    "source_id": "6443069",
+    "path": "sources/source_0058_building_a_diverse_document_leads_corpus_annotated_with_semantic_relations.md",
+    "file": "sources/source_0058_building_a_diverse_document_leads_corpus_annotated_with_semantic_relations.md",
+    "title": "Building a Diverse Document Leads Corpus Annotated with Semantic Relations"
+  },
+  {
+    "source_id": "11108420",
+    "path": "sources/source_0059_overview_of_the_2012_shared_task_on_parsing_the_web_slav.md",
+    "file": "sources/source_0059_overview_of_the_2012_shared_task_on_parsing_the_web_slav.md",
+    "title": "Overview of the 2012 Shared Task on Parsing the Web Slav"
+  },
+  {
+    "source_id": "11616343",
+    "path": "sources/source_0060_a_fast_and_accurate_dependency_parser_using_neural_networks.md",
+    "file": "sources/source_0060_a_fast_and_accurate_dependency_parser_using_neural_networks.md",
+    "title": "A Fast and Accurate Dependency Parser using Neural Networks"
+  },
+  {
+    "source_id": "14223",
+    "path": "sources/source_0061_grammar_as_a_foreign_language.md",
+    "file": "sources/source_0061_grammar_as_a_foreign_language.md",
+    "title": "Grammar as a Foreign Language"
+  },
+  {
+    "source_id": "14358598",
+    "path": "sources/source_0062_incrementality_in_deterministic_dependency_parsing.md",
+    "file": "sources/source_0062_incrementality_in_deterministic_dependency_parsing.md",
+    "title": "Incrementality In Deterministic Dependency Parsing"
+  },
+  {
+    "source_id": "16432742",
+    "path": "sources/source_0063_estimation_of_probabilistic_context_free_grammars.md",
+    "file": "sources/source_0063_estimation_of_probabilistic_context_free_grammars.md",
+    "title": "Estimation Of Probabilistic Context-Free Grammars"
+  },
+  {
+    "source_id": "17048295",
+    "path": "sources/source_0064_the_inside_outside_recursive_neural_network_model_for_dependency_parsing.md",
+    "file": "sources/source_0064_the_inside_outside_recursive_neural_network_model_for_dependency_parsing.md",
+    "title": "The Inside-Outside Recursive Neural Network model for Dependency Parsing"
+  },
+  {
+    "source_id": "18584794",
+    "path": "sources/source_0065_transition_based_dependency_parsing_using_recursive_neural_networks.md",
+    "file": "sources/source_0065_transition_based_dependency_parsing_using_recursive_neural_networks.md",
+    "title": "Transition-based Dependency Parsing Using Recursive Neural Networks"
+  },
+  {
+    "source_id": "2412277",
+    "path": "sources/source_0066_incremental_parsing_with_minimal_features_using_bi_directional_lstm.md",
+    "file": "sources/source_0066_incremental_parsing_with_minimal_features_using_bi_directional_lstm.md",
+    "title": "Incremental Parsing with Minimal Features Using Bi-Directional LSTM"
+  },
+  {
+    "source_id": "2952144",
+    "path": "sources/source_0067_globally_normalized_transition_based_neural_networks.md",
+    "file": "sources/source_0067_globally_normalized_transition_based_neural_networks.md",
+    "title": "Globally Normalized Transition-Based Neural Networks"
+  },
+  {
+    "source_id": "29764642",
+    "path": "sources/source_0068_improving_neural_parsing_by_disentangling_model_combination_and_reranking_effects.md",
+    "file": "sources/source_0068_improving_neural_parsing_by_disentangling_model_combination_and_reranking_effects.md",
+    "title": "Improving Neural Parsing by Disentangling Model Combination and Reranking Effects"
+  },
+  {
+    "source_id": "3033526",
+    "path": "sources/source_0069_improved_semantic_representations_from_tree_structured_long_short_term_memory_networks.md",
+    "file": "sources/source_0069_improved_semantic_representations_from_tree_structured_long_short_term_memory_networks.md",
+    "title": "Improved Semantic Representations From Tree-Structured Long Short-Term Memory Networks"
+  },
+  {
+    "source_id": "3542573",
+    "path": "sources/source_0070_the_stanford_typed_dependencies_representation.md",
+    "file": "sources/source_0070_the_stanford_typed_dependencies_representation.md",
+    "title": "The Stanford Typed Dependencies Representation"
+  },
+  {
+    "source_id": "59759783",
+    "path": "sources/source_0071_a_probabilistic_parsing_method_for_sentence_disambiguation.md",
+    "file": "sources/source_0071_a_probabilistic_parsing_method_for_sentence_disambiguation.md",
+    "title": "A Probabilistic Parsing Method for Sentence Disambiguation"
+  },
+  {
+    "source_id": "62304080",
+    "path": "sources/source_0072_basic_methods_of_probabilistic_context_free_grammars.md",
+    "file": "sources/source_0072_basic_methods_of_probabilistic_context_free_grammars.md",
+    "title": "Basic Methods of Probabilistic Context Free Grammars"
+  },
+  {
+    "source_id": "6534839",
+    "path": "sources/source_0073_the_conll_2008_shared_task_on_joint_parsing_of_syntactic_and_semantic_dependencies.md",
+    "file": "sources/source_0073_the_conll_2008_shared_task_on_joint_parsing_of_syntactic_and_semantic_dependencies.md",
+    "title": "The CoNLL 2008 Shared Task on Joint Parsing of Syntactic and Semantic Dependencies"
+  },
+  {
+    "source_id": "8317576",
+    "path": "sources/source_0074_questionbank_creating_a_corpus_of_parse_annotated_questions.md",
+    "file": "sources/source_0074_questionbank_creating_a_corpus_of_parse_annotated_questions.md",
+    "title": "QuestionBank: Creating A Corpus Of Parse-Annotated Questions"
+  },
+  {
+    "source_id": "9210201",
+    "path": "sources/source_0075_the_conll_2009_shared_task_syntactic_and_semantic_dependencies_in_multiple_languages.md",
+    "file": "sources/source_0075_the_conll_2009_shared_task_syntactic_and_semantic_dependencies_in_multiple_languages.md",
+    "title": "The CoNLL-2009 Shared Task: Syntactic and Semantic Dependencies in Multiple Languages"
+  },
+  {
+    "source_id": "1957433",
+    "path": "sources/source_0076_glove_global_vectors_for_word_representation.md",
+    "file": "sources/source_0076_glove_global_vectors_for_word_representation.md",
+    "title": "Glove: Global Vectors for Word Representation"
+  },
+  {
+    "source_id": "10181753",
+    "path": "sources/source_0077_unsupervised_construction_of_large_paraphrase_corpora_exploiting_massively_parallel_news_sources.md",
+    "file": "sources/source_0077_unsupervised_construction_of_large_paraphrase_corpora_exploiting_massively_parallel_news_sources.md",
+    "title": "Unsupervised Construction Of Large Paraphrase Corpora: Exploiting Massively Parallel News Sources"
+  },
+  {
+    "source_id": "11650107",
+    "path": "sources/source_0078_semeval_2014_task_10_multilingual_semantic_textual_similarity.md",
+    "file": "sources/source_0078_semeval_2014_task_10_multilingual_semantic_textual_similarity.md",
+    "title": "SemEval-2014 Task 10: Multilingual Semantic Textual Similarity"
+  },
+  {
+    "source_id": "12549805",
+    "path": "sources/source_0079_semeval_2012_task_6_a_pilot_on_semantic_textual_similarity.md",
+    "file": "sources/source_0079_semeval_2012_task_6_a_pilot_on_semantic_textual_similarity.md",
+    "title": "SemEval-2012 Task 6: A Pilot on Semantic Textual Similarity"
+  },
+  {
+    "source_id": "1373518",
+    "path": "sources/source_0080_wikiqa_a_challenge_dataset_for_open_domain_question_answering.md",
+    "file": "sources/source_0080_wikiqa_a_challenge_dataset_for_open_domain_question_answering.md",
+    "title": "WikiQA: A Challenge Dataset for Open-Domain Question Answering"
+  },
+  {
+    "source_id": "16404002",
+    "path": "sources/source_0081_semeval_2014_task_1_evaluation_of_compositional_distributional_semantic_models_on_full_sentences_through_semant_ac3e05d1.md",
+    "file": "sources/source_0081_semeval_2014_task_1_evaluation_of_compositional_distributional_semantic_models_on_full_sentences_through_semant_ac3e05d1.md",
+    "title": "SemEval-2014 Task 1: Evaluation of Compositional Distributional Semantic Models on Full Sentences through Semantic Relatedness and Textual Entailment"
+  },
+  {
+    "source_id": "4497054",
+    "path": "sources/source_0082_convolutional_neural_network_architectures_for_matching_natural_language_sentences.md",
+    "file": "sources/source_0082_convolutional_neural_network_architectures_for_matching_natural_language_sentences.md",
+    "title": "Convolutional Neural Network Architectures for Matching Natural Language Sentences"
+  },
+  {
+    "source_id": "52817936",
+    "path": "sources/source_0083_paraphrase_identification_as_probabilistic_quasi_synchronous_recognition.md",
+    "file": "sources/source_0083_paraphrase_identification_as_probabilistic_quasi_synchronous_recognition.md",
+    "title": "Paraphrase Identification as Probabilistic Quasi-Synchronous Recognition"
+  },
+  {
+    "source_id": "9095914",
+    "path": "sources/source_0084_a_semantic_matching_energy_function_for_learning_with_multi_relational_data.md",
+    "file": "sources/source_0084_a_semantic_matching_energy_function_for_learning_with_multi_relational_data.md",
+    "title": "A semantic matching energy function for learning with multi-relational data"
+  },
+  {
+    "source_id": "990233",
+    "path": "sources/source_0085_recursive_deep_models_for_semantic_compositionality_over_a_sentiment_treebank.md",
+    "file": "sources/source_0085_recursive_deep_models_for_semantic_compositionality_over_a_sentiment_treebank.md",
+    "title": "Recursive Deep Models for Semantic Compositionality Over a Sentiment Treebank"
+  },
+  {
+    "source_id": "11039301",
+    "path": "sources/source_0086_learning_question_classifiers.md",
+    "file": "sources/source_0086_learning_question_classifiers.md",
+    "title": "Learning Question Classifiers"
+  },
+  {
+    "source_id": "13888490",
+    "path": "sources/source_0087_on_the_evaluation_of_semantic_phenomena_in_neural_machine_translation_using_natural_language_inference.md",
+    "file": "sources/source_0087_on_the_evaluation_of_semantic_phenomena_in_neural_machine_translation_using_natural_language_inference.md",
+    "title": "On the Evaluation of Semantic Phenomena in Neural Machine Translation Using Natural Language Inference"
+  },
+  {
+    "source_id": "14215409",
+    "path": "sources/source_0088_neural_semantic_parsing_over_multiple_knowledge_bases.md",
+    "file": "sources/source_0088_neural_semantic_parsing_over_multiple_knowledge_bases.md",
+    "title": "Neural Semantic Parsing over Multiple Knowledge-bases"
+  },
+  {
+    "source_id": "14687186",
+    "path": "sources/source_0089_parsing_with_compositional_vector_grammars.md",
+    "file": "sources/source_0089_parsing_with_compositional_vector_grammars.md",
+    "title": "Parsing with Compositional Vector Grammars"
+  },
+  {
+    "source_id": "15274877",
+    "path": "sources/source_0090_resolving_complex_cases_of_definite_pronouns_the_winograd_schema_challenge.md",
+    "file": "sources/source_0090_resolving_complex_cases_of_definite_pronouns_the_winograd_schema_challenge.md",
+    "title": "Resolving Complex Cases of Definite Pronouns: The Winograd Schema Challenge"
+  },
+  {
+    "source_id": "16447573",
+    "path": "sources/source_0091_distributed_representations_of_words_and_phrases_and_their_compositionality.md",
+    "file": "sources/source_0091_distributed_representations_of_words_and_phrases_and_their_compositionality.md",
+    "title": "Distributed Representations of Words and Phrases and their Compositionality"
+  },
+  {
+    "source_id": "21382535",
+    "path": "sources/source_0092_hypothesis_only_baselines_in_natural_language_inference.md",
+    "file": "sources/source_0092_hypothesis_only_baselines_in_natural_language_inference.md",
+    "title": "Hypothesis Only Baselines in Natural Language Inference"
+  },
+  {
+    "source_id": "2407601",
+    "path": "sources/source_0093_distributed_representations_of_sentences_and_documents.md",
+    "file": "sources/source_0093_distributed_representations_of_sentences_and_documents.md",
+    "title": "Distributed Representations of Sentences and Documents"
+  },
+  {
+    "source_id": "3011504",
+    "path": "sources/source_0094_semantic_proto_roles.md",
+    "file": "sources/source_0094_semantic_proto_roles.md",
+    "title": "Semantic Proto-Roles"
+  },
+  {
+    "source_id": "32106959",
+    "path": "sources/source_0095_natural_language_multitasking_analyzing_and_improving_syntactic_saliency_of_hidden_representations.md",
+    "file": "sources/source_0095_natural_language_multitasking_analyzing_and_improving_syntactic_saliency_of_hidden_representations.md",
+    "title": "Natural Language Multitasking: Analyzing and Improving Syntactic Saliency of Hidden Representations"
+  },
+  {
+    "source_id": "602051",
+    "path": "sources/source_0096_framenet_fast_paraphrastic_tripling_of_framenet.md",
+    "file": "sources/source_0096_framenet_fast_paraphrastic_tripling_of_framenet.md",
+    "title": "FrameNet+: Fast Paraphrastic Tripling of FrameNet"
+  },
+  {
+    "source_id": "1160080",
+    "path": "sources/source_0097_named_entity_recognition_with_long_short_term_memory.md",
+    "file": "sources/source_0097_named_entity_recognition_with_long_short_term_memory.md",
+    "title": "Named Entity Recognition With Long Short-Term Memory"
+  },
+  {
+    "source_id": "14515377",
+    "path": "sources/source_0098_towards_robust_linguistic_analysis_using_ontonotes.md",
+    "file": "sources/source_0098_towards_robust_linguistic_analysis_using_ontonotes.md",
+    "title": "Towards Robust Linguistic Analysis using OntoNotes"
+  },
+  {
+    "source_id": "14584850",
+    "path": "sources/source_0099_non_lexical_neural_architecture_for_fine_grained_pos_tagging.md",
+    "file": "sources/source_0099_non_lexical_neural_architecture_for_fine_grained_pos_tagging.md",
+    "title": "Non-lexical neural architecture for fine-grained POS Tagging"
+  },
+  {
+    "source_id": "277918",
+    "path": "sources/source_0100_conditional_random_fields_probabilistic_models_for_segmenting_and_labeling_sequence_data.md",
+    "file": "sources/source_0100_conditional_random_fields_probabilistic_models_for_segmenting_and_labeling_sequence_data.md",
+    "title": "Conditional Random Fields: Probabilistic Models for Segmenting and Labeling Sequence Data"
+  },
+  {
+    "source_id": "562554",
+    "path": "sources/source_0101_harem_an_advanced_ner_evaluation_contest_for_portuguese.md",
+    "file": "sources/source_0101_harem_an_advanced_ner_evaluation_contest_for_portuguese.md",
+    "title": "HAREM: An Advanced NER Evaluation Contest for Portuguese"
+  },
+  {
+    "source_id": "6042994",
+    "path": "sources/source_0102_neural_architectures_for_named_entity_recognition.md",
+    "file": "sources/source_0102_neural_architectures_for_named_entity_recognition.md",
+    "title": "Neural Architectures for Named Entity Recognition"
+  },
+  {
+    "source_id": "62905880",
+    "path": "sources/source_0103_information_retrieval.md",
+    "file": "sources/source_0103_information_retrieval.md",
+    "title": "Information retrieval"
+  },
+  {
+    "source_id": "6300165",
+    "path": "sources/source_0104_named_entity_recognition_with_bidirectional_lstm_cnns.md",
+    "file": "sources/source_0104_named_entity_recognition_with_bidirectional_lstm_cnns.md",
+    "title": "Named Entity Recognition with Bidirectional LSTM-CNNs"
+  },
+  {
+    "source_id": "7138354",
+    "path": "sources/source_0105_the_nature_of_statistical_learning_theory.md",
+    "file": "sources/source_0105_the_nature_of_statistical_learning_theory.md",
+    "title": "The Nature of Statistical Learning Theory"
+  },
+  {
+    "source_id": "8508974",
+    "path": "sources/source_0106_ontonotes_the_90_solution.md",
+    "file": "sources/source_0106_ontonotes_the_90_solution.md",
+    "title": "OntoNotes: The 90% Solution"
+  },
+  {
+    "source_id": "9150889",
+    "path": "sources/source_0107_boosting_named_entity_recognition_with_neural_character_embeddings.md",
+    "file": "sources/source_0107_boosting_named_entity_recognition_with_neural_character_embeddings.md",
+    "title": "Boosting Named Entity Recognition with Neural Character Embeddings"
+  },
+  {
+    "source_id": "146843",
+    "path": "sources/source_0108_modeling_coverage_for_neural_machine_translation.md",
+    "file": "sources/source_0108_modeling_coverage_for_neural_machine_translation.md",
+    "title": "Modeling Coverage for Neural Machine Translation"
+  },
+  {
+    "source_id": "19096101",
+    "path": "sources/source_0109_joint_entity_and_relation_extraction_based_on_a_hybrid_neural_network.md",
+    "file": "sources/source_0109_joint_entity_and_relation_extraction_based_on_a_hybrid_neural_network.md",
+    "title": "Joint entity and relation extraction based on a hybrid neural network"
+  },
+  {
+    "source_id": "19171653",
+    "path": "sources/source_0110_logician_a_unified_end_to_end_neural_approach_for_open_domain_information_extraction.md",
+    "file": "sources/source_0110_logician_a_unified_end_to_end_neural_approach_for_open_domain_information_extraction.md",
+    "title": "Logician: A Unified End-to-End Neural Approach for Open-Domain Information Extraction"
+  },
+  {
+    "source_id": "123487779",
+    "path": "sources/source_0111_practical_methods_of_optimization.md",
+    "file": "sources/source_0111_practical_methods_of_optimization.md",
+    "title": "Practical Methods of Optimization"
+  },
+  {
+    "source_id": "2309950",
+    "path": "sources/source_0112_a_fast_learning_algorithm_for_deep_belief_nets.md",
+    "file": "sources/source_0112_a_fast_learning_algorithm_for_deep_belief_nets.md",
+    "title": "A Fast Learning Algorithm for Deep Belief Nets"
+  },
+  {
+    "source_id": "2427083",
+    "path": "sources/source_0113_text_categorization_with_support_vector_machines_learning_with_many_relevant_features.md",
+    "file": "sources/source_0113_text_categorization_with_support_vector_machines_learning_with_many_relevant_features.md",
+    "title": "Text categorization with support vector machines: Learning with many relevant features"
+  },
+  {
+    "source_id": "5079983",
+    "path": "sources/source_0114_very_deep_convolutional_networks_for_text_classification.md",
+    "file": "sources/source_0114_very_deep_convolutional_networks_for_text_classification.md",
+    "title": "Very Deep Convolutional Networks for Text Classification"
+  },
+  {
+    "source_id": "533055",
+    "path": "sources/source_0115_information_processing_in_dynamical_systems_foundations_of_harmony_theory.md",
+    "file": "sources/source_0115_information_processing_in_dynamical_systems_foundations_of_harmony_theory.md",
+    "title": "Information processing in dynamical systems: foundations of harmony theory"
+  },
+  {
+    "source_id": "8268690",
+    "path": "sources/source_0116_sliq_a_fast_scalable_classifier_for_data_mining.md",
+    "file": "sources/source_0116_sliq_a_fast_scalable_classifier_for_data_mining.md",
+    "title": "SLIQ: A fast scalable classifier for data mining"
+  },
+  {
+    "source_id": "9166388",
+    "path": "sources/source_0117_reinforcement_learning_an_introduction.md",
+    "file": "sources/source_0117_reinforcement_learning_an_introduction.md",
+    "title": "Reinforcement Learning: An Introduction"
+  },
+  {
+    "source_id": "1508503",
+    "path": "sources/source_0118_the_pagerank_citation_ranking_bringing_order_to_the_web.md",
+    "file": "sources/source_0118_the_pagerank_citation_ranking_bringing_order_to_the_web.md",
+    "title": "The PageRank Citation Ranking: Bringing Order to the Web"
+  },
+  {
+    "source_id": "15475171",
+    "path": "sources/source_0119_the_automatic_creation_of_literature_abstracts.md",
+    "file": "sources/source_0119_the_automatic_creation_of_literature_abstracts.md",
+    "title": "The automatic creation of literature abstracts"
+  },
+  {
+    "source_id": "3648736",
+    "path": "sources/source_0120_convolutional_sequence_to_sequence_learning.md",
+    "file": "sources/source_0120_convolutional_sequence_to_sequence_learning.md",
+    "title": "Convolutional Sequence to Sequence Learning"
+  },
+  {
+    "source_id": "506350",
+    "path": "sources/source_0121_lexrank_graph_based_lexical_centrality_as_salience_in_text_summarization.md",
+    "file": "sources/source_0121_lexrank_graph_based_lexical_centrality_as_salience_in_text_summarization.md",
+    "title": "LexRank: Graph-based Lexical Centrality as Salience in Text Summarization"
+  },
+  {
+    "source_id": "5775833",
+    "path": "sources/source_0122_a_trainable_document_summarizer.md",
+    "file": "sources/source_0122_a_trainable_document_summarizer.md",
+    "title": "A trainable document summarizer"
+  },
+  {
+    "source_id": "7147309",
+    "path": "sources/source_0123_sequence_level_training_with_recurrent_neural_networks.md",
+    "file": "sources/source_0123_sequence_level_training_with_recurrent_neural_networks.md",
+    "title": "Sequence Level Training with Recurrent Neural Networks"
+  },
+  {
+    "source_id": "988010",
+    "path": "sources/source_0124_opinosis_a_graph_based_approach_to_abstractive_summarization_of_highly_redundant_opinions.md",
+    "file": "sources/source_0124_opinosis_a_graph_based_approach_to_abstractive_summarization_of_highly_redundant_opinions.md",
+    "title": "Opinosis: A Graph Based Approach to Abstractive Summarization of Highly Redundant Opinions"
+  },
+  {
+    "source_id": "12926055",
+    "path": "sources/source_0125_question_answering_over_freebase_with_multi_column_convolutional_neural_networks.md",
+    "file": "sources/source_0125_question_answering_over_freebase_with_multi_column_convolutional_neural_networks.md",
+    "title": "Question Answering over Freebase with Multi-Column Convolutional Neural Networks"
+  },
+  {
+    "source_id": "6001997",
+    "path": "sources/source_0126_theorem_proving_by_resolution_as_a_basis_for_question_answering_systems_in.md",
+    "file": "sources/source_0126_theorem_proving_by_resolution_as_a_basis_for_question_answering_systems_in.md",
+    "title": "Theorem-proving by resolution as a basis for question-answering systems, in"
+  },
+  {
+    "source_id": "12639289",
+    "path": "sources/source_0127_recurrent_continuous_translation_models.md",
+    "file": "sources/source_0127_recurrent_continuous_translation_models.md",
+    "title": "Recurrent Continuous Translation Models"
+  },
+  {
+    "source_id": "16126936",
+    "path": "sources/source_0128_linguistic_input_features_improve_neural_machine_translation.md",
+    "file": "sources/source_0128_linguistic_input_features_improve_neural_machine_translation.md",
+    "title": "Linguistic Input Features Improve Neural Machine Translation"
+  },
+  {
+    "source_id": "2201909",
+    "path": "sources/source_0129_massive_exploration_of_neural_machine_translation_architectures.md",
+    "file": "sources/source_0129_massive_exploration_of_neural_machine_translation_architectures.md",
+    "title": "Massive Exploration of Neural Machine Translation Architectures"
+  },
+  {
+    "source_id": "2617020",
+    "path": "sources/source_0130_a_unified_architecture_for_natural_language_processing_deep_neural_networks_with_multitask_learning.md",
+    "file": "sources/source_0130_a_unified_architecture_for_natural_language_processing_deep_neural_networks_with_multitask_learning.md",
+    "title": "A unified architecture for natural language processing: deep neural networks with multitask learning"
+  },
+  {
+    "source_id": "29769422",
+    "path": "sources/source_0131_weighted_transformer_network_for_machine_translation.md",
+    "file": "sources/source_0131_weighted_transformer_network_for_machine_translation.md",
+    "title": "Weighted Transformer Network for Machine Translation"
+  },
+  {
+    "source_id": "8884845",
+    "path": "sources/source_0132_statistical_phrase_based_translation.md",
+    "file": "sources/source_0132_statistical_phrase_based_translation.md",
+    "title": "Statistical Phrase-Based Translation"
+  },
+  {
+    "source_id": "905565",
+    "path": "sources/source_0133_nematus_a_toolkit_for_neural_machine_translation.md",
+    "file": "sources/source_0133_nematus_a_toolkit_for_neural_machine_translation.md",
+    "title": "Nematus: a Toolkit for Neural Machine Translation"
+  },
+  {
+    "source_id": "10116609",
+    "path": "sources/source_0134_babytalk_understanding_and_generating_simple_image_descriptions.md",
+    "file": "sources/source_0134_babytalk_understanding_and_generating_simple_image_descriptions.md",
+    "title": "BabyTalk: Understanding and Generating Simple Image Descriptions"
+  },
+  {
+    "source_id": "1169492",
+    "path": "sources/source_0135_show_and_tell_a_neural_image_caption_generator.md",
+    "file": "sources/source_0135_show_and_tell_a_neural_image_caption_generator.md",
+    "title": "Show and tell: A neural image caption generator"
+  },
+  {
+    "source_id": "12561212",
+    "path": "sources/source_0136_object_recognition_as_machine_translation_learning_a_lexicon_for_a_fixed_image_vocabulary.md",
+    "file": "sources/source_0136_object_recognition_as_machine_translation_learning_a_lexicon_for_a_fixed_image_vocabulary.md",
+    "title": "Object Recognition as Machine Translation: Learning a Lexicon for a Fixed Image Vocabulary"
+  },
+  {
+    "source_id": "206594923",
+    "path": "sources/source_0137_self_critical_sequence_training_for_image_captioning.md",
+    "file": "sources/source_0137_self_critical_sequence_training_for_image_captioning.md",
+    "title": "Self-Critical Sequence Training for Image Captioning"
+  },
+  {
+    "source_id": "206595494",
+    "path": "sources/source_0138_hierarchical_boundary_aware_neural_encoder_for_video_captioning.md",
+    "file": "sources/source_0138_hierarchical_boundary_aware_neural_encoder_for_video_captioning.md",
+    "title": "Hierarchical Boundary-Aware Neural Encoder for Video Captioning"
+  },
+  {
+    "source_id": "206766566",
+    "path": "sources/source_0139_aligning_where_to_see_and_what_to_tell_image_captioning_with_region_based_attention_and_scene_specific_contexts.md",
+    "file": "sources/source_0139_aligning_where_to_see_and_what_to_tell_image_captioning_with_region_based_attention_and_scene_specific_contexts.md",
+    "title": "Aligning Where to See and What to Tell: Image Captioning with Region-Based Attention and Scene-Specific Contexts"
+  },
+  {
+    "source_id": "3120635",
+    "path": "sources/source_0140_image_captioning_with_semantic_attention.md",
+    "file": "sources/source_0140_image_captioning_with_semantic_attention.md",
+    "title": "Image Captioning with Semantic Attention"
+  },
+  {
+    "source_id": "3867284",
+    "path": "sources/source_0141_hierarchical_recurrent_neural_encoder_for_video_representation_with_application_to_captioning.md",
+    "file": "sources/source_0141_hierarchical_recurrent_neural_encoder_for_video_representation_with_application_to_captioning.md",
+    "title": "Hierarchical Recurrent Neural Encoder for Video Representation with Application to Captioning"
+  },
+  {
+    "source_id": "485828",
+    "path": "sources/source_0142_delving_deeper_into_convolutional_networks_for_learning_video_representations.md",
+    "file": "sources/source_0142_delving_deeper_into_convolutional_networks_for_learning_video_representations.md",
+    "title": "Delving Deeper into Convolutional Networks for Learning Video Representations"
+  },
+  {
+    "source_id": "59605920",
+    "path": "sources/source_0143_long_term_recurrent_convolutional_networks_for_visual_recognition_and_description.md",
+    "file": "sources/source_0143_long_term_recurrent_convolutional_networks_for_visual_recognition_and_description.md",
+    "title": "Long-term recurrent convolutional networks for visual recognition and description"
+  },
+  {
+    "source_id": "6918332",
+    "path": "sources/source_0144_deep_compositional_captioning_describing_novel_object_categories_without_paired_training_data.md",
+    "file": "sources/source_0144_deep_compositional_captioning_describing_novel_object_categories_without_paired_training_data.md",
+    "title": "Deep Compositional Captioning: Describing Novel Object Categories without Paired Training Data"
+  },
+  {
+    "source_id": "8517067",
+    "path": "sources/source_0145_deep_visual_semantic_alignments_for_generating_image_descriptions.md",
+    "file": "sources/source_0145_deep_visual_semantic_alignments_for_generating_image_descriptions.md",
+    "title": "Deep visual-semantic alignments for generating image descriptions"
+  },
+  {
+    "source_id": "9946644",
+    "path": "sources/source_0146_attention_based_lstm_with_semantic_consistency_for_videos_captioning.md",
+    "file": "sources/source_0146_attention_based_lstm_with_semantic_consistency_for_videos_captioning.md",
+    "title": "Attention-based LSTM with Semantic Consistency for Videos Captioning"
+  },
+  {
+    "source_id": "148721796",
+    "path": "sources/source_0147_measuring_organizational_legitimacy_in_social_media_assessing_citizens_judgments_with_sentiment_analysis.md",
+    "file": "sources/source_0147_measuring_organizational_legitimacy_in_social_media_assessing_citizens_judgments_with_sentiment_analysis.md",
+    "title": "Measuring Organizational Legitimacy in Social Media: Assessing Citizens’ Judgments With Sentiment Analysis"
+  },
+  {
+    "source_id": "414569",
+    "path": "sources/source_0148_bb_twtr_at_semeval_2017_task_4_twitter_sentiment_analysis_with_cnns_and_lstms.md",
+    "file": "sources/source_0148_bb_twtr_at_semeval_2017_task_4_twitter_sentiment_analysis_with_cnns_and_lstms.md",
+    "title": "BB_twtr at SemEval-2017 Task 4: Twitter Sentiment Analysis with CNNs and LSTMs"
+  },
+  {
+    "source_id": "5936694",
+    "path": "sources/source_0149_sentimental_feature_selection_for_sentiment_analysis_of_chinese_online_reviews.md",
+    "file": "sources/source_0149_sentimental_feature_selection_for_sentiment_analysis_of_chinese_online_reviews.md",
+    "title": "Sentimental feature selection for sentiment analysis of Chinese online reviews"
+  },
+  {
+    "source_id": "20051102",
+    "path": "sources/source_0150_neuromorphic_computing_gets_ready_for_the_really_big_time.md",
+    "file": "sources/source_0150_neuromorphic_computing_gets_ready_for_the_really_big_time.md",
+    "title": "Neuromorphic computing gets ready for the (really) big time"
+  },
+  {
+    "source_id": "54114373",
+    "path": "sources/source_0151_procedures_as_a_representation_for_data_in_a_computer_program_for_understanding_natural_language.md",
+    "file": "sources/source_0151_procedures_as_a_representation_for_data_in_a_computer_program_for_understanding_natural_language.md",
+    "title": "Procedures As A Representation For Data In A Computer Program For Understanding Natural Language"
+  },
+  {
+    "source_id": "60693966",
+    "path": "sources/source_0152_computer_architecture_a_quantitative_approach.md",
+    "file": "sources/source_0152_computer_architecture_a_quantitative_approach.md",
+    "title": "Computer Architecture: A Quantitative Approach"
+  }
+]

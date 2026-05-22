@@ -1,0 +1,1 @@
+We first discuss several features of input data that requires pre-processing conducted before the truth discovery step.

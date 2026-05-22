@@ -1,0 +1,1 @@
+Question answering (QA) is a fine-grained version of Information Retrieval (IR). In IR a desired set of information has to be retrieved from a set of documents. The desired information could be a specific document, text, image, etc. On the other hand, in QA specific answers are sought, typically ones that

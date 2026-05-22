@@ -1,0 +1,1 @@
+In   the generalized difference between fuzzy numbers was proposed as a difference that always exists and results in a fuzzy number. But for this, as observed in BIB5175963 , a convexification is required for the difference to be always a fuzzy number. Each of the differences presented in this subsection, A − B is a fuzzy numbers according to Theorem 2.4.

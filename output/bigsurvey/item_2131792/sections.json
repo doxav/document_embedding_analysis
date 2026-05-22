@@ -1,0 +1,1025 @@
+[
+  {
+    "section": "Introduction",
+    "text": "Satisfiability modulo theory (SMT) solving consists in deciding the satisfiability of a first-order formula with unknowns and relations lying in certain theories. For instance, the following formula has no solution x, y ∈ R: The formula may contain negations (¬), conjunctions (∧), disjunctions (∨) and, possibly, quantifiers (∃, ∀). A SMT-solver reports whether a formula is satisfiable, and if so, may provide a model of this satisfaction; for instance, if one omits x ≥ 1 in the preceding formula, then its solutions include (x = 0, y = 1). Other possible features include dynamic addition and retraction of constraints, production of proofs and Craig interpolants (Sec. 4.2), and optimization (Sec. 4.3). SMT-solving has major applications in the formal verification of hardware, software, and control systems. Quantifier-free SMT subsumes Boolean satisfiability (SAT), the canonical NP-complete problem, and certain classes of formulas accepted by SMT-solvers belong to higher complexity classes or are even undecidable. This has not deterred researchers from looking for algorithms that, in practice, solve many relevant instances at reasonable costs. Care is taken that the worst-case cost does not extend to situations that can be dealt with more cheaply. Most SMT solvers follow the DPLL(T) framework (Sec. 2.2): a CDCL solver for SAT (Sec. 2.1) is used to traverse the Boolean structure, and conjunctions of atoms from the formula are passed to a solver for the theory. This approach limits the interaction between theory values and Boolean reasoning, which led to the introduction of natural domain approaches (Sec. 3). Finally, we shall see in Sec. 4 how to go beyond mere quantifier-free satisfiability testing, by handling quantifiers, providing Craig interpolants, or providing optimal solutions. Let us now first see a few generalities, and how SMT-solving is used in practice.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "Generalities",
+    "text": "Consider quantifier-free propositional formulas, that is, formulas constructed from unknowns (or variables) taking the values \"true\" (t) and \"false\" (f ) and propositional connectives ∨ (or), ∧ (and), ¬ (not);x shall be short-hand for ¬x. 2 A formula is: in negation normal form (NNF) if the only ¬ connectives are at the leaves of its syntax tree (that is, wrap around unknowns but not larger formulas); a clause if it is a disjunction of literals (a literal is an unknown or its negation); in disjunctive normal form (DNF) if it is a disjunction of conjunctions of literals; in conjunctive normal form (CNF) if it is a conjunction of clauses. If A implies B, then A is stronger than B and B weaker than A. Uppercase letters (F ) shall denote formulas, lowercase letters (x) unknowns, and lowercase bold letters ( x) vectors of unknowns. Satisfiability testing consists in deciding whether there exists a satisfying assignment (or solution) for these unknowns, that is, an assignment making the formula true. For instance, a = t, b = t, c = f is a satisfying assignment for (a ∨ c) ∧ (b ∨ c) ∧ (ā ∨c). In case the formula is satisfiable, a solver is generally expected to provide such a satisfying assignment; in the case it is unsatisfiable, it may be queried for an unsatisfiable core, a subset of the conjunction given as input to the solver that is still unsatisfiable. Satisfiability modulo theory extends propositional satisfiability by having some atomic propositions be predicates from a theory. For instance, (x > 0 ∨ c) ∧ (y > 0 ∨ c) ∧ (x ≤ 0 ∨c) is a formula over linear rational arithmetic (LRA) or linear integer arithmetic (LIA), depending on whether x and y are to be interpreted over the rationals or integers. Different unknowns may range in different sets; for instance f (x) = f (y)∧x = z + 1 ∧ z = y − 1 has unknowns f : Z → Z and x, y, z ∈ Z. This formula is said to be over the combination of uninterpreted functions and linear integer arithmetic (UFLIA). In this formula, f is said to be uninterpreted because we give no definition for it; we shall see in Sec. 2.6 that this formula has no satisfying assignment and how to establish this fact automatically.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "The SMT-LIB Format and Available Theories",
+    "text": "SMT solvers can be used i) as a library, from an application programming interface, typically from C/C++, Java, Python, or OCaml ii) as an independent process, from a textual representation, possibly through a bidirectional pipe. Listing 1: Example of SMT-LIB 2 file. Assertions x ≥ 0, y ≤ 0, f (x) = f (y) and x + y ≤ 0 are added, then the problem is checked to be unsatisfiable. The last assertion is retracted and replaced by x+ y ≤ 1, the problem becomes satisfiable and a model is requested (see Listing 2) ( s e t − l o g i c QF_UFLIA ) ( set−option : produce−models t r u e ) ( declare−fun x ( ) I n t ) ( declare−fun y ( ) I n t ) ( declare−fun f ( I n t ) I n t ) ( a s s e r t ( >= x 0 ) ) ( a s s e r t ( >= y 0 ) ) ( a s s e r t ( d i s t i n c t ( f x ) ( f y ) ) ) ( push 1 ) ( a s s e r t ( <= (+ x y ) 0 ) ) ( check−sat ) ( pop 1 ) ( a s s e r t ( <= (+ x y ) 1 ) ) ( check−sat ) ( get−model ) Listing 2: Z3's answers to the SMT-LIB Listing 1 unsat s a t ( model ( define−fun y ( ) I n t 1 ) ( define−fun x ( ) I n t 0 ) ( define−fun f ( ( x ! 1 I n t ) ) I n t ( i t e (= x ! 1 0 ) 2 ( i t e (= x ! 1 1 ) 3 2 ) ) ) ) APIs for SMT-solvers are not standardized, though there have been efforts such as JavaSMT 3 to provide a common layer for several solvers. In contrast, much effort has been put into designing and supporting the common SMT-LIB  format, a textual representation (Listing 1); some solvers support other languages than SMT-LIB, sometimes alongside it. Libraries of benchmark problems, sorted according to the theories involved and the presence or absence of quantifiers (Tab. 1), are available in that format. New theories are proposed; for instance, a theory for constraints over IEEE-754 floating-point arithmetic  is under evaluation. Alas, some features, such as quantifier elimination or the extraction of Craig interpolants (Sec. 4.2) do not have standard commands. Furthermore, not all tools implement all operators and commands following the standard.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "Use in Program Analysis Applications",
+    "text": "A major use of SMT-solvers is the analysis of software. In most cases (but not always), the solutions of the formula to be tested for satisfiability correspond linear real arithmetic LRA linear integer arithmetic LIA linear mixed integer and real arithmetic LIRA bit-vector arithmetic BV nonlinear (polynomial) real arithmetic NRA nonlinear (polynomial) integer arithmetic NIA nonlinear (polynomial) mixed integer and real arithmetic NIRA uninterpreted functions UF arrays A / AX quantifier-free QF_ Table 1 : Categories of formulas in SMT-LIB; e.g. QF_UFLIA means quantifierfree combination of uninterpreted functions. to execution traces of the software verifying certain desirable or undesirable properties: for instance traces going into error states.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "Symbolic Execution",
+    "text": "In symbolic program execution BIB9983849 , a program is executed as though operating on symbolic inputs. Along a straight path in the program, the semantics of the instructions and tests encountered accumulate as a path condition, expressing the relationship between the final values and the inputs. In case a branching instruction is encountered, the analyzer tests whether either branch may be taken by checking for a solution to the conjunction of the path condition and the guard associated with the branch: branches for which a solution is known not to exist are not retained for the rest of the analysis. The analysis thus explores a tree of possible executions, which in general does not cover all possible executions of the program: this is acceptable in bug-finding applications. Pure symbolic execution may prove infeasible due to the large number of paths to explore. This is especially true if the program involves loads and writes to memory, due to the aliasing conditions to test (\"does this read correspond to this write?\"). Because of this, often what is done is a mixture of concrete and symbolic execution, dubbed concolic: sometimes a non-symbolic value is picked (e.g. memory allocation addresses) for simpler execution. In whitebox fuzzing, concolic execution is applied from symbolic values coming from external inputs (files, network communications) so as to reach security hazards BIB52897803 .",
+    "source_ids": [
+      "52897803",
+      "9983849"
+    ],
+    "citations": [
+      {
+        "source_id": "52897803",
+        "title": "SAGE: whitebox fuzzing for security testing",
+        "citing_sentences": [
+          "Although successful in many cases [9, 10, 18, 25] , symbolic test generation faces several challenges [8, 34] .",
+          "To mention a few, in verification, SMT solvers have been used for device driver verification [7, 35] , checking complex verification conditions [23, 39, 49] , and improving precision of invariant generation [34, 46] ; in testing and bug finding, they have been instrumental in making symbolic execution [15, 27] , fuzzing [28] , and bounded model checking techniques [19, 25] practical; in program synthesis, they have been used to search for programs satisfying a given specification [31, 59] ; in functional programming, they have been used to support strong typing guarantees with refinement types [13, 53] .",
+          "Other systems attempt to blend fuzzing with symbolic execution to gain maximal code coverage [6] , [7] , [19] , [20] .",
+          "The current fuzzing techniques can be broadly categorized into three main categories: i) Blackbox fuzzing [18] , [14] , [1] , ii) Whitebox fuzzing [12] , and iii) Greybox fuzzing [26] .",
+          "Similar techniques have been used in KLEE [4] and SAGE [8] , but for pure numeric constraints only.",
+          "Dynamic analysis techniques aim to evaluate applications' responses to detect any sanitization mistakes [12, 14, 26] .",
+          "Dynamic analysis allows users to overcome many limitations of static analysis (e.g., packed or obfuscated code) and to perform a wide range of more sophisticated examinations [24] -including taint propagation [33] , [55] , symbolic and concolic execution [10] , [15] , [22] , unpacking [34] , malware sandboxing [1] , [5] , and whitebox fuzzing [28] , [29] .",
+          "12 MergePoint does not always fork when it encounters a symbolic branch.",
+          "Dynamic approaches to program analysis such as fuzz testing [10, 13, 42] and dynamic taint tracking [e.g., 28, 40] have been proposed to address the deficiencies of static program analysis.",
+          "Instead of using (only) a taint-based companion module, there are also approaches that leverage computation-intensive symbolic execution that relies on constraint solving [22] , [31] , [32] .",
+          "Whitebox fuzzing, such as SAGE, consists of executing the program and gathering constraints on inputs [14] .",
+          "Fuzzing has been proved as an effective and fast technique for finding security vulnerabilities [30] , [31] .",
+          "The limitations of taint analysis have been addressed by several authors using symbolic execution [e.g., 1, 4, 8, 22] .",
+          "Whitebox fuzzing, such as SAGE, consists of executing the program and gathering constraints on inputs using search techniques and heuristics, and to exploits constraints to guide the test generation [16] .",
+          "Fuzzing approaches are an essential technique for a fast detection of critical security vulnerabilities in various applications [50] ."
+        ]
+      },
+      {
+        "source_id": "9983849",
+        "title": "Symbolic execution and program testing",
+        "citing_sentences": [
+          "The trace formula construction proceeds identically to symbolic execution or bounded model checking algorithms [2, 6, 15] .",
+          "Symbolic execution [24] is a widely used program analysis approach that originally aimed to explore the potential paths of a program for proving software quality, such as concurrency bug detection [13, 42] , software verification [10] , and security checking [3] .",
+          "Next, the main search loop is entered (lines [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] .",
+          "18 The inputs and initial values of the program are symbolic constants X 0 ;X 1 ,…, so-called because they repre- The situation is more complicated at a branch point.",
+          "Symbolic execution [11] simulates the execution of a program using symbolic values instead of actual values as inputs.",
+          "In the mid 1970's, King was one of the first to propose symbolic evaluation as an aid to program testing [9] .",
+          "At a high-level, MAYHEM finds exploitable paths by augmenting symbolic execution [16] with additional constraints at potentially vulnerable program points.",
+          "26 The method has been extended to STSs, and is used in the Agatha tool for behavioral analysis 27 and conformance testing.",
+          "This paper presents an approach for the analysis of deep neural networks based on symbolic execution [7] , [18] .",
+          "More discussion of symbolic execution can be found elsewhere [19, 15] .",
+          "The result of the execution can be represented graphically as a symbolic execution tree (King 1976; Adrion et al. 1982) .",
+          "As mentioned in Section 1, symbolic execution [29, 10, 37] and its hybrid variant, concolic execution [7, 28] have found limited success in testing real-world apps due to path explosion problem and difficulty in modeling real-world execution environment with network, sensors, and cloud.",
+          "It extends static symbolic execution [12] by collecting symbolic constraints from concrete execution traces obtained by monitoring the executed instructions.",
+          "Such configuration scripts are not accessible to automated reasoning, unless heavyweight solutions like symbolic execution [27] are employed.",
+          "To test this hypothesis, we used symbolic execution [18] , [15] , [6] to discover a subject program's interactions, which are conjunctions of option settings needed to achieve specific testing goals, given a particular test suite.",
+          "Finding a suitable (and reasonably sized) set of inputs is often problematic, and a number of techniques such as symbolic execution [7] , evolutionary search algorithms [9] and testability-transformations [6] have been proposed to address it.",
+          "Symbolic execution [181] uses symbolic values, rather than actual values, as program inputs.",
+          "Independent of the work on dynamic test data generation, symbolic execution and constraint solving have also been developed as techniques for automated software test data generation [12, 3] since the 1970's.",
+          "Other methods have been proposed, including techniques based on symbolic execution [Boyer et al. 1975; Clarke 1976; King 1976; DeMillo and Offutt 1991] , the goal-oriented approach [Korel 1992] , and the chaining approach [Ferguson and Korel 1996] .",
+          "Symbolic execution [7] is a technique that enables analysis of programs that take un-initialized inputs.",
+          "Jtest uses symbolic execution [19] to generate method arguments to achieve structural coverage.",
+          "With the goal of generating programs for which total coverage is reachable, we thought in the way the variables are treated in symbolic execution [35, 36] and some methods of formal derivation of programs [37, 38, 39] .",
+          "The general approach taken by the verifier, symbolic execution, is well known; see, for example, [29, 30, 50] .",
+          "Bounding the path length in symbolic execution is a wellknown technique [28] .",
+          "Symbolic execution treats input variables to a program as unknown quantities or symbols [10] .",
+          "While many of the individual test inputs it generates may be garbage, due to its low computational overhead, CGF generates test inputs much faster than more sophisticated methods such as symbolic execution [17, 34] and dynamic symbolic execution (a.k.a.",
+          "Usability evaluation of symbolic execution for proving correctness of program implementing Floyd's method [10] was in [21] , but problems with loops were handled by manually inserting ASSUME statements where necessary.",
+          "Symbolic execution [15, 7] is a program analysis technique that uses symbolic values, instead of actual data, as inputs to execute a program fragment, e.g.",
+          "The precision of our under-approximation depends on d. Starting from the weakest precondition computed for various d in step 2 anded with the assertion ϕ, the third step uses symbolic execution [24] to compute the set of bug-triggering inputs handled by the bug fix.",
+          "King [14] developed EFFIGY, a system for symbolic execution of programs with a fixed number of integer variables.",
+          "In this section, we provide basic background on symbolic execution (symbex) [21] , the technique that underlies CASTAN's analysis.",
+          "We do this using symbolic execution [11] : we first fill the stacks and heap of a standard Forth abstract machine with symbols representing arbitrary values (e.g.",
+          "We will refer to Otter, our symbolic execution framework, to make our explanations concrete (and to save space), but the basic ideas apply to any symbolic execution tool [21, 15, 5, 19] .",
+          "For instance, Oyente [29] , Mythril [31] and Manticore [30] leverage symbolic execution [26] to detect various types of bugs (including re-entrancy) in Ethereum smart contracts.",
+          "The classic idea of symbolic execution [47] as well as its more recent variants, e.g., where concrete inputs guide symbolic execution [12, 35, 74] , enable a form of white-box test input generation that has received much recent attention for finding security bugs [36, 37, 46, 73] .",
+          "The standard approach to generating test-cases statically is to perform a symbolic execution of the program [18, 14, 11] , where the contents of variables are expressions rather than concrete values.",
+          "Symbolic execution techniques execute a program with symbolic inputs and try to cover all possible paths in the program [7] .",
+          "Approaches to test data generation via symbolic execution date back to 1976 [21] , [22] ; typically, these approaches generate a thorough set of test cases by deducing which combinations of inputs will cause the software to follow given paths.",
+          "However, random testing is extremely unlikely to test all possible behaviors of a program A number of symbolic techniques for automated test generation [5] , [6] have been proposed to address the limitations of random testing.",
+          "Although symbolic execution was first introduced in the mid 1970s [15] , the dramatic growth in the computational power of the average machine and the availability of increasingly powerful decision procedures in recent years have renewed interest in using symbolic execution for test-input generation (e.g., [2, 11, 19, 25, 28] ).",
+          "Symbolic execution was discovered in 1975, 14 with the volume of academic research and commercial systems exploding in the last decade.",
+          "For example, program analysis techniques like symbolic execution [Cadar et al. 2006; Godefroid et al. 2005; King 1976; Sen et al. 2013 ] would systematically explore executions in a program and collect symbolic path constraints, which could then be solved using a constraint solver and used to determine which location in the program to continue exploring.",
+          "[6] return; [7] label0: $r4 = new JLex.CLexGen; [8] $r5 = r0[0]; [9] specialinvoke $r4.<init>($r5); [10] r1 = $r4; [11] r1.generate(); [12] label1: goto label3; [13] label2: $r6 := @caughtexception; [14] H-Fuzzing constructs the heuristic fuzz data referring to both the control flow graph and the static decompiled results.",
+          "Although the idea of symbolic execution is quite old (proposed by King in 1976 [160] ), symbolic execution has emerged as an effective tool recently with advanced in constraint satisfaction tools.",
+          "Symbolic execution [23] , [24] is a well-established method for program analysis.",
+          "It formulates the test data generation problem as one of finding a solution to a constraint satisfaction problem, the constraints of which are produced by a combination of dynamic and symbolic (King, 1976) execution of the program under test.",
+          "The concept of symbolic execution [22] was proposed by King in 1976.",
+          "loop (0) 0 (1) length (2) array input 0 (3) loop (4) 0 (5) sub (6) length (7) array input 0 (8) 1 (9) if (10) bigger (11) read memory (12) array value (13) array input 0 (14) index (15) read memory (16) array value (17) array input 0 (18) add (19) index (20) 1 (21) seq (22) seq (23) write memory (24) integer tmp 0(25) read memory (26) array value (27) array input 0 (28) index (29) write memory (30) array value (31) array input 0(32) index (33) read memory (34) array value (35) array input 0(36) add (37) index ( As we expected, in our trials we found the best performance when crossover had a low probability.",
+          "Forward symbolic execution is a technique for executing a program on symbolic values [21] .",
+          "Symbolic execution [13] is a path-sensitive program analysis technique that computes program output values as expressions over symbolic input values and constants.",
+          "Clarke et al. [6] and King [17] proposed test generation techniques using code coverage as the test criterion, and their techniques are based on symbolic execution, which generates test inputs by solving symbolic constraints statically extracted from code.",
+          "The idea of using constraints to represent inputs dates back at least three decades [36, 15, 39, 54] ; the idea has been implemented in various tools including EFFIGY [39] , TESTGEN [41] and INKA [25] .",
+          "The algorithm is based on symbolic execution [21] of the C program, using symbolic expressions to over-approximate the sets of values that may be stored in memory during concrete execution.",
+          "As a motivating example, we consider the symbolic execution [7, 20] of stringmanipulating programs.",
+          "We call this approach symbolic prediction in reference to symbolic program execution (King, 1976) , because we essentially move a symbolic instancex down the regression tree and keep track of the constraints imposed onx by all encountered predicates.",
+          "Any automated test-case generation technique may be employed, for example [50] , [51] .",
+          "Symbolic execution has been pioneered in [18] as a way to reason about symbolic states reached by a program execution.",
+          "Symbolic execution [Clarke 1976; Clarke and Richardson 1985; King 1976 ] is a technique that executes code with symbolic, rather than concrete, values, and can generate such symbolic summaries of source code.",
+          "Symbolic execution has been proposed as a program analysis technique since the 1970's [1] .",
+          "Symbolic execution [10] , is another test case generation approach related to our work.",
+          "The main component of our TCG framework is symbolic execution [12, 17, 19, 20, 23] , whereby instead of on actual values, programs are executed on symbolic values, represented as constraint variables.",
+          "Symbolic execution is usually performed either by treating all program inputs as symbolic [19] or by a priori determining which inputs to treat as symbolic and which to treat as concrete (e.g., symbolic primitives and concrete references [18] ).",
+          "Source code analysis techniques such as symbolic execution [25] or abstract interpretation [13] could further support search space reduction by finding constraints or defining ranges on the input variables relevant to the branch under investigation.",
+          "Full-scale, but not automatic, program verifiers include the early systems of James King [26, 25] and Peter Deutsch [6] , the Stanford Pascal Verifier [32] , the Gypsy Verification Environment [14] for developing programs by iterative refinement of specifications, the Penelope [15] verification system for a subset of Ada, and the coalgebra-based Java verifier LOOP [22] .",
+          "Symbolic execution [6, 9, 14, 27, 33, 50] is the method we use for verifying VigNAT's low-level properties (P 2 ) in §5.2.1.",
+          "For example, in the function of Figure 7 there exists a data dependence between Statements 13 and 20 because Statement 13 assigns a value to variable top, Statement 20 uses variable top, and there exists a the control path (13, 14, 15, 19, 23, 6, 7, 8, 9, 15, 19, 20 ) from 13 to 20 along which variable top is not modified.",
+          "Automatic test case generation techniques like symbolic [7, 10] , concolic [4] , and random execution [9] do not use domain information, and thus tend to generate test cases that may be both incomplete and difficult to understand.",
+          "This paper presents Barad, a novel GUI testing framework based on symbolic execution [5] [6] [13] .",
+          "The earliest conceptualization of symbolic execution dates back to 1976 [23] .",
+          "Then, we perform symbolic executions [19] , [21] , [24] , [45] .",
+          "One effective automatic testing method for identifying subtle programming errors is based on symbolic execution [King 1976 ] and combinations with dynamic analysis called dynamic symbolic execution [Cadar et al. 2008 [Cadar et al. , 2006 Godefroid et al. 2005; .",
+          "Following the typical symbolic executions [20, 33] , Symstra symbolically explores both branches of if statements, modifying the constraint with a conjunct that needs to hold for the execution to take a certain branch.",
+          "Unlike Reluplex, our framework generates interpretable program source code as output, where we can use traditional symbolic program verification techniques (King, 1976) to prove program properties.",
+          "Symbolic execution [15] collapses families of executions by replacing concrete values with symbolic ones.",
+          "Examples include the work of Clarke, Howden, King, and Ramamoorthy et al. [10, 29, 30, 33, 53] ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Inductiveness Check and Bounded Model Checking",
+    "text": "In some other cases BIB17988148 BIB3503815  , the formula encodes the full set of executions between two control locations in a program, such that there is no looping construct between these locations: one Boolean variable is added per control location, expressing whether or not the execution goes through that location. In the Floyd-Hoare approach to proving the correctness of programs (see e.g. BIB7767429 ), the user is prompted for an inductive invariant for each looping construct: a formula I that holds at loop initiation, and that, if it holds at one loop iteration, holds at the next (inductiveness). In other words, there is no execution of the loop guard and loop body that starts in I and ends in ¬I ′ (I ′ is I where the variables are renamed in order to express their final, not initial, values). In modern tools, the loop guard and body are turned into a first-order formula that is conjoined with I and ¬I ′ , then checked for unsatisfiability; or equivalently through a weakest precondition computation, as in Frama-C BIB47093689 . In order to prove the postcondition ∀k 0 ≤ k < n ⇒ t[k] = 42, one needs the loop invariant The inductiveness condition is where update(t, i, 42) is the array t where i has been replaced by 42, and is formula I where i has been replaced by x. This condition is checked by showing that the negation of this formula is unsatisfiable -after Skolemization: is introduced to handle the uninterpreted function f (Sec. 2.6) and the resulting problem is solved over linear integer arithmetic (Sec.2.4).",
+    "source_ids": [
+      "17988148",
+      "3503815",
+      "47093689",
+      "7767429"
+    ],
+    "citations": [
+      {
+        "source_id": "17988148",
+        "title": "Invariant Generation through Strategy Iteration in Succinctly Represented Control Flow Graphs",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "3503815",
+        "title": "PAGAI: a path sensitive static analyzer",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "47093689",
+        "title": "Frama-C: a software analysis perspective",
+        "citing_sentences": [
+          "They are integrated to the Frama-C platform [63] , which is an extensible and collaborative platform dedicated to source-code analysis of C software."
+        ]
+      },
+      {
+        "source_id": "7767429",
+        "title": "The formal semantics of programming languages: an introduction",
+        "citing_sentences": [
+          "If a transition leads to a configuration with the special command stop and some memory m, then we say the execution terminates in m. We write m[x → v] when updating variable x with value v in memory m. The semantic rules are mostly standard [53] .",
+          "But the teaching dimension of concept classes relevant to programming languages and formal methods, such as classes of program invariants or programs in the while [69] language with only linear arithmetic over integers is not known.",
+          "First, we must prove that the operational semantics [30] of Lolisa (the inductive relational forms) are equivalent to the operational semantics (the executable function forms).",
+          "if e {c} {c} | while e {c} Var(P ) will denote the set of variables of P . The operational semantics is standard [53] and naturally induces a transition relation on the set of states Σ, denoted , specifying the relation between a state and its possible successors in a transition system Σ, .",
+          "This section considers the semantics of Winskel's simple imperative language Imp (Winskel 1993) , introduces relevant terminology and reviews completeness of abstract interpretations.",
+          "It has been widely taught, especially at the undergraduate level [12, 29, 37, 41] , and it is generally found to be significantly more accessible than denotational semantics.",
+          "We consider the well-known (small-step) operational semantics of Imp, −→, in Table 1 [27] ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "The DPLL(T) Architecture",
+    "text": "Most SMT-solvers follow the DPLL(T) architecture: a solver for pure propositional formulas, following the DPLL or CDCL class of algorithms, drives decision procedures for each theory (e.g. linear arithmetic) by adding or retracting constraints and querying for satisfiability. DPLL(T) and decision procedures for many interesting logics are explained in more detail in e.g. BIB52887640  .",
+    "source_ids": [
+      "52887640"
+    ],
+    "citations": [
+      {
+        "source_id": "52887640",
+        "title": "The Calculus of Computation: Decision Procedures with Applications to Verification",
+        "citing_sentences": [
+          "Given a theory T and a quantifier-free formula ψ, we say that ψ is T -satisfiable if and only if there exists a structure that satisfies both the formula and the sentences of T , or equivalently, if T ∪ {ψ} is satisfiable [13] .",
+          "Propositional logic and predicate logic are also called propositional calculus and predicate calculus, respectively, since both of these logics, like calculus, define a set of symbols and a system of rules for manipulating those symbols [26] .",
+          "The Fourier-Motzkin algorithm [4, 9] eliminates variable x from this conjunction as follows."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "CDCL Satisfiability Testing",
+    "text": "We shall only give a cursory view of satisfiability testing and refer the reader to e.g. BIB41802054 for more in-depth treatment. Many algorithms for satisfiability testing for quantifier-free formulas only accept formulas in conjunctive normal form (conjunction of clauses). Naive conversion into conjunctive normal form, by application of distributivity of ∨ over ∧, incurs an exponential blowup. It is however possible to construct, from any formula F , a formula F ′ in CNF but with additional free variables, such that any satisfying assignment to F can be extended to a satisfying assignment on F ′ and any satisfying assignment on F ′ , restricted to the free variables of F , is a satisfying assignment of F . Tseitin's encoding is the simplest way to do so: to any subformula e 1 ∧ e 2 of F , associate a new propositional variable x e1∧e2 and constrain it such that it is equivalent to e 1 ∧ e 2 by clauses ¬x e1∧e2 ∨ e 1 , ¬x e1∧e2 ∨ e 2 , ¬e 1 ∨ ¬e 2 ∨ x e1∧e2 (and similarly for e 1 ∨ e 2 ). Assign propositional variables to sub-formulas: ) these equivalences are turned into clauses: The model (a, b, c, d) = (t, f , f , t) of (5) is extended by (e, f, g) = (t, f , t), producing a model of the system of clauses (7), i.e., the conjunction of these clauses. Conversely, any model of that system, projected over (a, b, c, d), yields a model of (5).",
+    "source_ids": [
+      "41802054"
+    ],
+    "citations": [
+      {
+        "source_id": "41802054",
+        "title": "Handbook of satisfiability",
+        "citing_sentences": [
+          "For the sake of completeness, we mention that the CDCL algorithm is usually complemented with heuristics that control the number of learned constraints, and restart the computation to explore different branches of the search tree (Biere et al. 2009 ).",
+          "A second approach to dealing with statistical issues would be to exploit extensions of SAT, especially Boolean optimization in terms of maximum satisfiability (MaxSAT) of propositional formulas (Biere et al., 2009) , where the task is to find a truth assignment that satisfies the maximum number of CNF clauses.",
+          "The Propositional Satisfiability Problem (SAT) is to find an assignment to a set of Boolean variables so as to satisfy a given Boolean formula, typically expressed in conjunctive normal form [4] .",
+          "As a recent development, the best non-portfolio solver in the satisfiable crafted category was incomplete (based on local search [2, Chapter 6] ).",
+          "This widespread adoption is the result of the efficiency gains made during the last decade [1] .",
+          "sat, like csp, has a variety of practical real world applications such as hardware verification, security protocol analysis, theorem proving, scheduling, routing, planning, digital circuit design [5] .",
+          "Restrictions are expressed through standard SAT clauses and pseudo-Boolean linear clauses (linear inequality with Boolean literals) [22] .",
+          "The SAT problem was the first problem shown to be NP-complete 5 , and many practical problems can be reduced to a SAT formulation [55] and solved through off-the-shelf SAT solvers.",
+          "A distinct feature of JBMC, when compared with other approaches [2, 8, 10] , is the use of Bounded Model Checking (BMC) [5] in combination with Boolean Satisfiability and Satisfiability Modulo Theories (SMT) [3] and full symbolic state-space exploration, which allows us to perform a bit-accurate verification of Java programs.",
+          "Given a transition system M, a property φ, and a bound k, BMC unrolls the system k times and translates it into a VC ψ such that ψ is satisfiable if and only if φ has a counterexample of length k or less [1] .",
+          "Since the input to cachet and relsat are logic formulas in CNF (Conjunctive Normal Form 4 ), we sketch here the feature diagram translation to CNF following the directions in [8] .",
+          "see [15, 42, 46] ) and SMT-solvers (e.g.",
+          "In this paper, we provide an exact inference algorithm based on using a general-purpose Boolean constraint solver (Biere et al., 2009; Gebser et al., 2011) , and demonstrate that it is orders of magnitudes faster than the current state-of-the-art method by Plis et al. (2015b) .",
+          "For more information see for example Biere et al. [7] , Dutertre and de Moura [22] , and Kroening and Strichman [42] .",
+          "Satisfiability (SAT) [5] solvers are tools that decide if a boolean formula over a set X of boolean variables can be true under some assignment α on the boolean variables, i. e., a mapping α : X → {TRUE, FALSE}.",
+          "Solving MaxSAT problem amounts to finding a variable assignment that maximizes the number of satisfied clauses in a CNF formula [20] .",
+          "For instance, the OCL expression Set{1,2,3}->collect(i|i*i) would yield the intermediate relation [ [1, 1] , [2, 4] , [3, 9] ].",
+          "When targeting SAT, most effort has focussed on constructing performant encodings (i.e. translations into SAT) of classes of constraints such as the allDifferent or arithmetic constraints [53, 69, 29, 63, 67] .",
+          "When targeting SAT, most effort has focussed on constructing performant encodings (i.e. translations into SAT) of classes of constraints such as the allDifferent or arithmetic constraints [53, 69, 29, 63, 67] .",
+          "The particular scenarios focus on the partial MaxSAT (PMS) problem [10] ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Let F",
+    "text": "′ be the conjunction of clauses forming the problem. The DavisPutnam-Logemann-Loveland algorithm (DPLL) decides a propositional formula in CNF (conjunction of clauses) by maintaining a partial assignment of the variables (that is, an assignment to only some of the variables) and Boolean constraint propagation: if we have assigned a = f , b = t and we have a clause a ∨ ¬b ∨ c, then we can derive c = t. If an assignment satisfies all clauses, then the algorithm terminates with one solution. If it falsifies at least one clause, then there is no solution for our starting partial assignment (thus no solution at all if our starting partial assignment was empty). If propagation is insufficient to conclude, then the algorithm chooses a variable x and a true value b and extends the assignment with x = b; if no solution is found for that assignment, then it backtracks and replaces it by x =b. The solver thus constructs a search tree. The practical performance of the solver depends highly on the heuristics for choosing x and b. Much effort has been put into researching these heuristics, such as Variable State Independent Decaying Sum (VSIDS) BIB9292941 ; understanding why they work well is an active research topic. The Boolean constraint propagation phase must be implemented very efficiently, using data structures that minimize the traversal of irrelevant data (clauses that will not result in further propagation); e.g. the two watched literals per clause scheme [47, §4.5. From a run of the DPLL algorithm concluding to unsatisfiability one can extract a resolution proof of unsatisfiability. The proof has the form of a tree whose leaves are some of the original clauses of the problem (constituting an unsatisfiable core) and whose inner nodes correspond to the choices made during the search. Each inner node is the application of the resolution rule: knowing C 1 ∨ a and C 2 ∨ā, where C 1 and C 2 are clauses and a is a choice variable, one can derive C 1 ∨ C 2 , written: Example 3. Consider the system of clauses 7. Boolean clause propagation from unit clause φ simplifiesφ ∨ g andφ ∨ h into g and h respectively, and removes clauseḡ ∨h ∨ φ. Since g and h are now t, we can remove clausesē ∨ g and f ∨ g, b ∨ h, and c ∨ h, and simplifyḡ ∨ e ∨ f into e ∨ f andh ∨b ∨c intob ∨c: The system no longer has unit clauses to propagate and thus must pick a literal, for instance b. By propagation, the system now reaches a contradiction. Since contradiction was reached from assumption b, the converseb must be assumed. In fact, it is possible to derive the learned clauseb by resolution from the set of clauses: From any \"unsatisfiable\" run of a DPLL (even in the CDCL variant, see below) solver, a resolution proof can be extracted. This is a fundamental limitation of that approach, since it is known that for certain families of formulas, such as the pigeonhole principle BIB3479956 , any resolution proof has exponential size in the size of the formula -thus any DPLL/CDCL solver will take exponential time. Performance was considerably increased by extending DPLL with clause learning, yielding constraint-driven clause learning (CDCL) algorithms BIB1403165 . In CDCL, when a partial assignments leads by propagation to the falsification of a clause, the deductions made during this propagation are analyzed to obtain a subset of the partial assignment sufficient to entail the falsification of this clause. This subset yields a conjunctionx 1 ∧ · · · ∧x n (wherex i is either x i or ¬x i ), such that its conjunction with F ′ is unsatisfiable. In other words, it yields a clause ¬x 1 ∨ · · · ∨ ¬x n that is a consequence of F ′ (in fact, that clause can be obtained by resolution from F ′ ). This clause can thus be conjoined to the problem F ′ without changing its set of solutions; but learning that clause may help cut branches in the search tree early. Again, the learned clause appears as the root of a resolution proof whose leaves are clauses of the original problem. Since the same learned clause may be used several times, the final proof appears as a directed acyclic graph (DAG, i.e., a tree with shared sub-branches). There exist formulas admitting DAG resolution proofs exponentially shorter than the smallest tree resolution proof  . A resolution proof, or a more compact format, may thus be produced during an \"unsatisfiable\" run. A highly optimized SAT or SMT solver is likely to contain bugs, so it may be desirable to have an independent, simpler, possibly formally verified checker reprocess such as proof BIB17347292  BIB8015835 ].",
+    "source_ids": [
+      "1403165",
+      "17347292",
+      "3479956",
+      "8015835",
+      "9292941"
+    ],
+    "citations": [
+      {
+        "source_id": "1403165",
+        "title": "Conflict-Driven Clause Learning SAT Solvers",
+        "citing_sentences": [
+          "Lookahead solvers Since CDCL is currently the dominant approach in practical SAT solving, we assume the reader already knows how CDCL solvers work, and otherwise refer to [24] for more details.",
+          "On application benchmarks, conflict-driven clause learning (CDCL) [22] solvers are considered to be the state-of-the-art in SAT solving and, e.g., the application track of SAT competitions [4, 5] is dominated by CDCL solvers.",
+          "It implements the core technologies of modern SAT solving, including unit propagation, conflict-driven clause learning and watched literals [26] .",
+          "This mechanism is referred to as backjumping with asserting clauses [66, 67] .",
+          "[18, 41] ).",
+          "Asymmetric tautologies, also known as reverse unit propagation (RUP) clauses, are the most common learned clauses in conflict-driven clause learning (CDCL) SAT solvers (see [39, Subsection 4.4] )."
+        ]
+      },
+      {
+        "source_id": "17347292",
+        "title": "A Modular Integration of SAT/SMT Solvers to Coq through Proof Witnesses ⋆",
+        "citing_sentences": [
+          "The SMTCoq [3] project has developed an approach to use external SAT and SMT solvers and verify their proof witnesses.",
+          "Works on integrating SMT solvers or techniques into other theorem provers include [17, 9, 5, 2, 18, 6, 7] .",
+          "Satisfiability modulo theories (SMT) solvers are an important element of automated reasoning and there have been efforts analogous to those described above to bridge SMT solvers with interactive theorem provers [62, 63] .",
+          "Later, Pascal Fontaine (one of the developers of the SMT solver veriT), provided us with an encoding 4 that made it possible to automate the proof using a trusted connection between Coq and an SMT solver [2] .",
+          "ATPs) is a challenging task, see [1, 27, 38, 44] .",
+          "This could then be plugged into a certified checker like SMTCoq [2] , in order to check a posteriori the answers given by the automatic provers."
+        ]
+      },
+      {
+        "source_id": "3479956",
+        "title": "The intractability of resolution",
+        "citing_sentences": [
+          "[10, 16] Proof.",
+          "But this contradicts the following lemma (originally due to Haken [Hak85] ) which states that such a refutation must have a clause of size at least 2(n ′ ) 2 /9 > n(n + 1)/10.",
+          "In 1985, Armin Haken 21 showed that tautologies that encode the pigeonhole principle (n + 1 pigeons in n holes means some hole has more than one pigeon) do not have short resolution proofs."
+        ]
+      },
+      {
+        "source_id": "8015835",
+        "title": "Extended Resolution as Certificates for Propositional Logic",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "9292941",
+        "title": "Chaff: Engineering an Efficient SAT Solver",
+        "citing_sentences": [
+          "Most modern complete SAT-solvers, such as ZChaff [22] and MiniSat [8] to name just two, are based on the Davis-Putnam-Logemann-Loveland (DPLL) depth-first search algorithm [6, 5] .",
+          "The most efficient SAT solvers are based on the complete conflict-driven clause learning (CDCL) search algorithm (Marques-Silva and Sakallah, 1999; Moskewicz et al., 2001; Eén and Sörensson, 2004) .",
+          "solvers, Satz (version 214) (Li and Anbulagan, 1997) and zChaff (version 2004.11.15) (Moskewicz et al., 2001 ).",
+          "Most state-of-the-art complete SAT solvers are based on conflict-driven clause learning (CDCL; [57] ).",
+          "To avoid this performance bottleneck, Verifun uses a customized online variant of the zChaff SAT solver [14] .",
+          "Today, conflict analysis is implemented in almost all SAT solvers [17, 20, 22] .",
+          "TiniSat is a modern solver that uses clause learning and a unique decision heuristic that generally favours variables from recent assignments (as in BerkMin [8] ) and uses VSIDS [17] over the literals as a backup.",
+          "DPLL: Follow the heuristic used by the DPLL-based SAT solver zChaff (Moskewicz et al., 2001 ) before the first backtrack.",
+          "ZChaff [21] aborted the proof after 10 minutes, whereas RSAPS found a refutation in a median of 1,003,246 flips and 112 seconds, over 100 runs.",
+          "SAT based model checking platforms have been able to scale and perform well due to many advances in SAT solvers [20] .",
+          "Powerful, robust solvers have been developed for SAT employing techniques such as conflict-driven learning, watched literals, restarts and dynamic heuristics for backtracking solvers [15] , and sophisticated incomplete techniques such as stochastic local search [22] .",
+          "Starting the current line of SAT Competitions, a new series of competitions started in 2002, taking place during the SAT 2002 conference, as a consequence of the design of two new kind of solvers: survey propagation [3] , a new approach to efficiently solve randomly generated (satisfiable) instances, and Chaff [13] , one of the first efficient implementations of the conflict-driven clause learning (CDCL) algorithm [2, Chapter 4] [14] .",
+          "[8] .",
+          "Modern SAT solvers [5, 6] , are based on classical DPLL search procedure [7] combined with (i) restart policies [8, 9] , (ii) activity-based variable selection heuristics (VSIDSlike) [5] , and (iii) clause learning [10] .",
+          "[42] ), letting us leverage recent advances in the SAT solving community.",
+          "For example, the normalized VSIDS (NVSIDS) [12, 24, 6, 20] heuristic corresponds to an EMA.",
+          "In most current SAT solvers the strategy is based on some heuristic measure of variable activity, which is related to the occurrence of a variable in conflict clauses (Moskewicz, Madigan, Zhao, Zhang, & Malik, 2001) .",
+          "Another major breakthrough is the two watched literals scheme introduced by Chaff [19] .",
+          "The SAT-checker then verifies whether this parameterized counterexample is consistent with the actual transitions in K. The good performance of bounded model checkers such as BMC [7] relies both on a subtle construction of the SAT instance, and on the usage of state-of-the-art SAT-checkers such as CHAFF [49] .",
+          "It implements the monitoring algorithm presented in the previous section using the SAT solver zChaff [11] for satisfiability checking.",
+          "Modern SAT solvers are based on the idea of conflict driven clause learning (CDCL) [11, 15, 13] .",
+          "In order to check the property, we convert C ∧ ¬P into CNF by adding intermediate variables and pass it to a SAT solver such as Chaff [5] .",
+          "Due to many recent advances in SAT solvers [22] , [23] , verification techniques based on SAT have become very popular (see a recent survey [24] for useful pointers).",
+          "assat uses mchaff [53] as SAT solver.",
+          "We assume that the reader is familiar with classical CDCL scheme used in modern SAT solvers (see [30, 31, 1] ).",
+          "CHAFF [16] .",
+          "Lynce and Marques-Silva [17] show that the search effort required by the SAT solver zChaff [18] to prove a random 3-SAT formula unsatisfiable is correlated with the size of the strong backdoors w.r.t.",
+          "Example SAT/ SMT solver tools include MiniSAT [64] , Chaff [65] , and the Z3 tool from Microsoft [66] .",
+          "The state-of-art SAT algorithms are DPLL [7] and CDCL (a modern variant of DPLL) [14, 12] .",
+          "The quantifier elimination algorithm forall was implemented by modifying the ZCHAFF SAT solver [13] from Princeton University.",
+          "Modern DPLL-style SAT solvers [19, 23, 11 ] make assignments to variables, called decisions, and generate an implication graph which records the decisions and the effects of Boolean constraint propagation.",
+          "Fully dynamic event sets are closely related to the watched literals approach to improving unit propagation in SAT solving [Moskewicz et al. 2001] .",
+          "Both take advantage of the modern SAT solving architecture [2] , to exchange the conflict-clauses generated in the system and improve the overall performance.",
+          "For our system, ASSAT 2.0,we tried the following SAT solvers: Chaff2 (Mar 23, 2001 version) [17] , Walksat 41 [19] , GRASP (Feb, 2000 version) [20] , Satz 215.2 [13] , and SATO 4.1 (Zhang) [25] .",
+          "On the other hand, the machinery of watched literals has been well studied in the state-of-the-art SAT-solvers [9, 13, 16] .",
+          "For SAT-based BMC, COSPAN was used to perform static reductions on the model and Cadence SMV [McM99] , used as a post-processor, was used to do the SAT BMC.",
+          "We then transform the constraints extracted from the plans into a weighted MAX-SAT representation [25, 30, 49] , solve it and produce action models from the solution of the SAT problem.",
+          "All the other Dimacs instances that were used in [13] to estimate Chaff's performance are too easy for both programs.",
+          "It features common enhancements from state-ofthe-art SAT solvers, including conflict driven clause learning with non-chronological backtracking [17, 18] , and restarts [19] .",
+          "zChaff uses the Chaff algorithm, which is a refinement of the DPLL algorithm [18] .",
+          "This tool can \"plug in\" any automatic propositional theorem prover, and various theorem provers such as SATO [14] , zChaff [9] and Prover Technology CL-Tool (based on \"Stålmarck's method\" [13] ) have been used with GTO.",
+          "In function bcp(), the BCP in [18] is implemented, where the current assignments are applied back to the formula to generate implications on the unassigned variables.",
+          "A typical implementation for solving SAT uses a branchand-bound search over the values of all variables, with considerable sophistication in the software engineering of techniques for decision making, implication gathering, and backtracking [19, 22, 281 .",
+          "Many widely used state-of-the-art SAT solvers such as GRASP [4] , Chaff [6] , Berkmin [14] satisfy the requirements and can be easily modified to produce the trace to be checked.",
+          "We do this symbolic simulation using the SAT checker Chaff [16] .",
+          "Therefore, the majority of the circuit lines acquire their \"correct\" values through Boolean constraint propagation [10] .",
+          "Many performance enhancements have been of more algorithmic nature, such as non-chronological backtracking [21] , conflict-driven learning [31] , novel decision heuristics [13, 23] , restarts [16] , and powerful preprocessing techniques [2, 9] .",
+          "Such SAT solvers have become quite prevalent for combinatorial optimization, software verification, and cryptanalysis applications [60] , [61] .",
+          "SAT solving was performed using an implementation of the CHAFF algorithm [14] , modified to produce proofs of unsatisfiability (verification using a modification of the actual Princeton zChaff implementation produced substantially similar results).",
+          "In [8] and [20] a similar reasoning is given for efficient implementations of SAT and ATPG algorithms, respectively.",
+          "CBMC calls ZChaff [17] , which produces a satisfying assignment in less than a second.",
+          "Propositional reasoning is handled by an efficient Boolean satisfiability (SAT) solver, similar to Chaff [12] .",
+          "Numerous heuristics can be used in this step [25] but none of them dominates all the other heuristics on each problem instance.",
+          "Over the last 15 years we have seen a dramatic improvement in the efficiency of conflict-driven clause-learning (CDCL) SAT solvers [35, 43, 2, 7] over industrial instances generated from a large variety of applications such as verification, testing, security, and AI [11, 9, 46] .",
+          "We also tried MiniSat 1.14, Siege v4 [92] and zChaff 2004.11.15 [84] , but MiniSat 2.0 turned out to perform best on most of the instances of our test set.",
+          "In SAT, a widely used approach to determine the variable order in conflict-driven clause learning (CDCL) is variable state independent decaying sum (VSIDS) (Moskewicz, Madigan, Zhao, Zhang, & Malik, 2001) .",
+          "At this point, a clause learning algorithm will realize that the literal q forms what's called a unique implication point (UIP) for this conflict [10] , and will learn the singleton clause ¬q.",
+          "The watch literals scheme by Moskewicz et al. was introduced in their solver zChaff [19] , and is now a standard method used by most SAT solvers for efficient constraint propagation.",
+          "The simplicity of SAT supports the implementation of highly efficient solvers, employing techniques such as conflict-driven learning, watched literals, restarts and dynamic heuristics for backtracking solvers [44] , and sophisticated incomplete techniques such as stochastic local search [62] ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "DPLL(T)",
+    "text": "The most common way to deal with atomic propositions inside satisfiability testing is the so-called DPLL(T ) scheme, combining a CDCL satisfiability solver and a decision procedure for conjunctions of propositions from theory T . A quantifier-free formula F over T , say is converted into a propositional formula by replacing each atomic proposition by a propositional variable, using a dictionary (here, and after conversion to canonical form (so that e.g. x + y ≥ 1 and 2x + 2y − 2 ≥ 0 are considered the same, and x + y < 1 is considered as ¬(x + y ≥ 1)). F ′ realizes a propositional abstraction of F : any solution of F induces a solution of F ′ , but not all solutions of The theory clauseb ∨c ∨d is then conjoined to F ′ . Then the propositional problem becomes unsatisfiable, establishing that F has no solution. We have therefore refined the propositional abstraction according to spurious counterexamples. In current implementations, the propositional solver does not wait until a total satisfying assignment is computed to call the decision procedure for conjunctions of theory formulas. Partial assignments, commonly at each decision point in the DPLL/CDCL algorithm, are tested for satisfiability. In addition, the theory solver may, opportunistically, perform theory propagation: if it notices that some asserted constraints imply the truth or falsehood of another known predicate, it can signal it to the SAT solver. The theory solver should be incremental, that is, suited for fast addition or retraction of theory constraints, keeping enough internal state to avoid needless recomputation. The SAT solver should be incremental as well, allowing the dynamic addition of clauses. Multiple theories may be combined, most often by a variant of the NelsonOppen approach [44, Ch. 10].",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "Linear Real Arithmetic",
+    "text": "In the case of linear rational, or equivalently real, arithmetic (LRA), the theory solver is typically implemented using a variant BIB12576417  of the simplex algorithm BIB53739754 BIB29180149 . The atomic (in)equalities from the formula, put in canonical form, are collected; new variables are introduced for the linear combinations of variables that are not of the form ±x where x is a variable. For instance, (11) is rewritten as (x ≥ 0 ∨ α ≥ 1) ∧ (y ≥ 0) ∧ (β ≤ −1), together with the system of linear equalities α = 2x + y and β = x + y. The simplex algorithm both maintains a tableau and, for each variable, a current valuation and optional lower and upper bounds. At all times, the simplex tableau contains a system of linear equalities equivalent to this system, such that the variables are partitioned into those (basic variables) occurring (each alone) on the left side and those occurring on the right side. The nonbasic variables are assigned one of their bounds, or at least a value between these bounds. The simplex algorithm tries to fit each basic variable within its bounds; if one does not fit, it makes it non-basic and assigns to it the bound that was exceeded, and selects a formerly non-basic variable to make it basic, through a pivoting operation maintaining the equivalence of the system of equalities. The algorithm stops when either a candidate solution fitting all bounds is found, either one equation in the simplex tableau can be shown to have no solution using interval arithmetic from the bounds of the variables (the interval obtained from the right hand side does not intersect that of the basic variable on the left hand side). A pivot selection ordering is used to ensure that the algorithm always terminates. Theory propagation may be performed by noticing that the current tableau implies that some literals are satisfied. This system is turned into a system of equations (\"tableau\") and a system of inequalities on the variables: The variables on the left of the equal signs are deemed \"nonbasic\" and those on the right are \"basic\". The simplex algorithm performs pivoting steps on the tableau, akin to those of Gaussian eliminations, until a tableau such as this one is reached: Now consider the first equation (e =). By interval analysis, knowing c ≤ 18 and d ≥ −2, −7/16c − 1/16d ≤ 8. Yet e ≥ 20, thus the system has no solution. These coefficients 7/16 and 1/16 can be applied to the original inequalities constraining c and d, with coefficient 1 for that defining e, and the resulting inequalities are summed into a trivially false one: By reading nonzero coefficients off the conflicting line of the simplex tableau, one gets a minimal set of contradictory constraints: d + 1 constraints, corresponding to the nonbasic variable and the basic variables with nonzero multipliers, where d is the dimension of the space. These multipliers may be presented as an unsatisfiability witness to an independent proof checker. Most SMT solvers implement the simplex algorithm using rational arithmetic. In most cases arising from verification problems, rational arithmetic can be performed using machine integers, without need for going into extended precision arithmetic [57] . A common implementation trick is to use a datatype containing a machine-integer (numerator , denominator ) pair or a pointer to an extended precision rational.  This approach is however very inefficient in the rare cases where the solver goes a lot into extended precision: the size of numerators and denominators grows fast. This is why it was proposed to perform linear programming in floating-point arithmetic BIB1609240 BIB5542629 BIB18627277  . BIB117942539 Because the results of floating-point computations cannot be immediately trusted, some checking is needed. One idea is not to recover floating-point numeric information, but the final partition between basic and nonbasic variables BIB5542629 BIB18627277  ; once this partition is known, the tableau is uniquely defined and can be computed by plain linear arithmetic -Gaussian elimination, or better algorithms, including multimodular [66, ch. 7] or p-adic approaches. 6 It is then easy to check the alleged conflicting line, in exact precision. In some cases, linear arithmetic reasoning may be used to prove the unsatisfiability of polynomial problems. One approach is to expand polynomials and consider all monomials as independent variables (e.g. xy 2 is replaced by a fresh unknown v xy 2 ). A refinement BIB13975448 is to consider lemmas stating that if two polynomials are nonnegative, then so is their product: e.g. 7 Because the set of such products has size exponential in the maximal degree, heuristics are used to pick the most promising ones. Experiments have shown this approach to be competitive, even with a rudimentary and sub-optimal connection between linear SMT-solver and nonlinear reasoning. Some earlier solvers (e.g. CVC3) solver linear real arithmetic by FourierMotzkin elimination  . This approach is generally not considered efficient, since Fourier-Motzkin elimination tends to generate many redundant constraints, which then may need to be eliminated by linear programming, which defeats the purpose of avoiding using the simplex algorithm. Assume variables x 1 , . . . , x n have been assigned values v(x 1 ), . . . , v(x n ) in the current branch of the search, and that two atoms x n+1 ≤ a and x n+1 ≥ b, where a and b are linear combinations of variables other than x n+1 , have been assigned to t, such that b > a in the assignment v; then it is impossible to pick a value for x n+1 in that assignment. In fact, it is impossible to pick a value for it in any assignment such that b > a. Assignments that conflict for the same reason are eliminated by a FourierMotzkin elimination  elementary step, valid for all x 1 , . . . , x n+1 : Example 7. Consider Ex. 5 with n = 3. The solver has clauses x i − t i ≤ 2, But then, there is no way to assign t 3 , because of the current assignment x 2 → 0 and the inequalities t 3 − x 2 ≤ 3 and t 3 ≥ 16. The solver then learns by Fourier-Motzkin: (20) which may in fact be immediately simplified by resolution with the original clause t 3 ≥ 16 to yield ¬(t 3 − x 2 ≤ 3) ∨ x 2 ≥ 13. The assignment to x 2 is retracted. But then, there is no way to assign x 2 , because of the current assignment t 2 → 0 and the inequality x 2 −t 2 ≤ 2. The solver then learns by Fourier-Motzkin: The truth assignment to t 3 − x 2 ≤ 3 is retracted. At this point, the solver has t 0 → 0, By similar reasoning in that branch, the solver derives t 3 − x 2 ≤ 3 ∨ t 2 ≥ 11. By resolution between the outcomes of both branches, one gets t 2 ≥ 11. By similar reasoning, one gets t 1 ≥ 6 and then t 0 ≥ 1, but then there is no satisfying assignment to t 0 . The problem has no solution. In contrast to the exponential behavior of DPLL(T) on Ex. 5, MCSAT has linear behavior: each branch of each individual disjunction is explored only once, and the whole disjunction is then summarized by an extra atom. The dynamic generation of new atoms by MCSAT, as opposed to DPLL(T), creates two issues. i) If infinitely many new atoms may be generated, termination is no longer ensured. One can ensure termination by restricting the generation of new atoms to a finite basis (this basis of course depends on the original formula); this is the case for instance if the numeric variables x 1 , . . . , x n are always assigned in the same order, thus the generated new atoms are results of Fourier-Motzkin elimination of x n , then of x n−1 etc. down to x 2 . 9 In practice, the interest of being able to choose variable ordering trumps the desire to prove termination. ii) Since many new atoms and clauses are generated, some garbage collection must be applied, as with learned clauses in a CDCL solver. Implementation-wise, note that, like a clause in CDCL, a linear inequality is processed only when all variables except for one are assigned. Similar to two watched literals per clause, one can apply two watched variables per inequality.",
+    "source_ids": [
+      "117942539",
+      "12576417",
+      "13975448",
+      "1609240",
+      "18627277",
+      "29180149",
+      "53739754",
+      "5542629"
+    ],
+    "citations": [
+      {
+        "source_id": "117942539",
+        "title": "Algorithms in Real Algebraic Geometry",
+        "citing_sentences": [
+          "Instead, it could use ideas related to those employed in effective quantifier elimination over real closed fields (see, e.g., [1] ) and in recent upper bounds on topological complexity of definable sets [6] .",
+          "We use the following algorithm (see Basu et al. 1997 Basu et al. , 2003 as a basic building block.",
+          "where k is the number of distinct polynomials in the defining formula (this is a relaxed form of Basu's bound, for a more precise description see [1, 2] .)",
+          "The situation is not much better when considering the reals since, although the problem is decidable as it was shown for the first-order theory of real closed f ields by Tarski, using the related algorithms in practice is unfeasible due to their complexity (see [5] for a recent account).",
+          "The polynomial Sres k (t, x) = k i=0 sr k,i x i is known as the k-th subresultant polynomial of R and I with respect to x and it coincides with the gcd of R and I over the roots of r k (see [12] ).",
+          ". . , ϕ i−1 )}, where ext denotes the extension to R . Since for all t in (0, 1], f (t) is in B, ϕ is in ext(B, R ) by [10, Prop.",
+          "where Ψ(x 1 , x 2 , .",
+          "Step 2 Using Algorithm 11.1 in [9] (Elimination), compute a family of polynomials A Q ⊂ R[Z 1 , .",
+          "For details on this construction, see [2, 11, 13, 18, 24] .",
+          "Finally, applying Cauchy bound (see [1] ).",
+          "In particular, a hyperring homomorphism from a field K to S is the same thing as an ordering on K. This observation allows one to reformulate the notion of real spectrum [BPR06, Mar96] in terms of hyperrings, and provides an interesting lens through which to view the analogy between Berkovich spaces and real spectra.",
+          "It is a well-known fact from the theory of real closed fields [4] that the set of valid analytical formulas so defined is decidable.",
+          "See [4] , and [12] for recent research results and additional citations.",
+          "The semialgebraic Sard theorem [7, Theorem 5 .57] imply that there is an open dense subset",
+          "For more on semialgebraic sets and real algebraic geometry see [5] .",
+          "As mentioned before, our results are based on the decidability of the equivalence of these automata and, moreover, on the decidability of the theory of real ordered fields [2, 6, 20] .",
+          "where I 1 , I 2 and I 3 denote the identity matrices which size is the length of Σ (1) , Σ (2) and Σ (3) respectively and, if we index the columns of I 1 , I 2 and I 3 withΣ (1) ,Σ (2) andΣ (3) :",
+          "Assuming that integer operations take unit time, the results of [5] then gives an O(|γ|(s + m + 1) r (max(d, 2)) O(r) ) algorithm to decide consistency of γ † which concludes the proof of the corollary .",
+          "There is a large body of research in this area (see [3] for background).",
+          "5 The result is more generally true for differentiable functions that are homogeneous of even degree.",
+          "A closed and bounded semi-algebraic set S ⊂ R k is semi-algebraically triangulable (see (BPR03) ), and we denote by H i (S) the i-th simplicial cohomology group of S with rational coefficients.",
+          "Proposition 8 LetP (t, U, y) be as in (9) .",
+          "To complete the proof, apply [5, Lemma 3.21 ] that states that in this setting (γ a semialgebraic continuous",
+          "Effective quantifier elimination algorithm ( [4] , Ch."
+        ]
+      },
+      {
+        "source_id": "12576417",
+        "title": "A Fast Linear-Arithmetic Solver for DPLL(T",
+        "citing_sentences": [
+          "For SMT-solving, our analyzer uses Yices [9] or Microsoft Z3 [8] through their C API.",
+          "A DPLL(T ) [26] solver like Z3 lazily finds propositionally satisfiable disjuncts (conjunctions of atoms) from a given formula ϕ, and uses a (theory) T -solver to decide the satisfiability of the atoms (in our case linear constraints) [24] .",
+          "The resulting constraint is solved using SAT modulo linear (integer or real) arithmetic [14] , i.e. satisfiability of quantifier-free boolean combinations of linear equalities, inequalities and disequalities.",
+          "It is is written in C++ and interfaces to the SMT solver Yices [23] which also supports MAX-SMT.",
+          "Theory Solvers Z3 uses a linear arithmetic solver based on the algorithm used in Yices [9] .",
+          "Examples of such decision procedures include Yices, SVC, CVC Lite,UCLID [9, 3, 2, 13] .",
+          "When a symbolic executor encounters a conditional whose guard depends on a symbolic variable, it invokes a theorem prover (e.g., an SMT solver such as Z3 [8] , Yices [9] , or STP [12] ) to determine which branches are feasible.",
+          "We have implemented our search strategies in CREST, a prototype test generation tool for C. CREST uses CIL [10] to instrument C source files and to extract control-flow graphs, and Yices [11] to solve path constraints.",
+          "stinger finds 48 (for NanoXML) and 82 (for Antlr) cases that would be problematic for our decision procedure of choice [6] .",
+          "Our solver for linear arithmetic is based on a variant of the Simplex approach [10] .",
+          "The simplex algorithm, including the pivot strategy, is implemented straight from [6, 5] .",
+          "The second component takes the ∃ formula and creates a Yices [8] formula over bit-vectors.",
+          "Any request to solve a constraint is handled by Green through the following four steps: (1) slicing: it removes pre-solved irrelevant sub-constraints; (2) canonization: it converts a constraint into normal form; (3) reusing: it queries the solution store for reuse; if a reusable result is not retrieved, (4) translation: the constraint is translated into the input format required by the chosen constraint solver (such as CVC3 [18] , Z3, Yices [19] , or Choco), which is then invoked to solve the constraint from scratch.",
+          "The algorithm is implemented in OCaml 3.10.2; it uses Yices 1.0.27 [21, 22] for computing models for SAT modulo linear real arithmetic formulas; for solving the occurring linear programming problems it uses QSOpt-Exact 2.5.6 [3, 23] , an exact arithmetic version of QSOpt.",
+          "As far as (1) is concerned, the problem of handling disequalities can be reduced to that of strict inequalities, since one can preprocess the input formula by splitting equalities into conjunctions of non-strict inequalities and disequalities into disjunctions of strict inequalities, which works very well in practice [DdM06b] .",
+          "A better idea [20, 12] is to let the SAT solver handle this case-splittings, and only when it is necessary.",
+          "The satisfiability of a quantifier-free formula of first-order linear arithmetic over the reals is usually decided by a \"dpll(t)\" [21] combination of a propositional solver and a decision procedure for conjunctions of linear inequalities based on the simplex algorithm [18, 17] ."
+        ]
+      },
+      {
+        "source_id": "13975448",
+        "title": "Polyhedral Approximation of Multivariate Polynomials Using Handelman's Theorem",
+        "citing_sentences": [
+          "A linearization procedure based on Handelman representation of polynomials [16] has also been implemented in the VPL [23] ."
+        ]
+      },
+      {
+        "source_id": "1609240",
+        "title": "SAT modulo the theory of linear arithmetic: Exact, inexact and commercial solvers",
+        "citing_sentences": [
+          "Faure et al. have experimented with using commercial, floating-point SMT solvers such as CPLEX 8 inside an SMT solver [8] ."
+        ]
+      },
+      {
+        "source_id": "18627277",
+        "title": "On using floating-point computations to help an exact linear arithmetic decision procedure",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "29180149",
+        "title": "Theory of Linear and Integer Programming.",
+        "citing_sentences": [
+          "a 1j x j ; (9) a 11 a 11 : (10) Multiply (8) and (10) by x 1 and combine each left{hand side of (7), (8) with each right{hand side of (9), (10) Since the converse S 2 S 1 is also true (see the proof of the subsequent theorem) one ends up with S 1 = S 2 , where in S 2 the entry a 11 is replaced by the bounds a 11 ; a 11 of the given interval a] 11 .",
+          "By applying the extreme point theory [26] , it is clear that there exists an optimal solution for (7) which maps every task to the PU type that has the minimum static and dynamic power consumption .",
+          "Two further, conceptually related approaches are aspeed [35] and MIPSAT [59] , which compute (parallel) algorithm schedules by taking advantage of the modeling and solving capacities of Answer Set Programming (ASP [10, 25] ) and Mixed Integer Programming (MIP; [61, 64] ), respectively.",
+          "Expansion of this larger network is much better computed using optimization theory (see, e.g., Dantzig and Cottle 1963; Schrijver 1998; Boyd and Vandenberghe 2004; Clack et al. 2015) , which identifies strategies likely to result in the optimal results but does not directly test each possible configuration.",
+          "For a proof we refer to [7] .",
+          "For cases where the reachable set is a lattice, we provide in Lemma 8 explicitly a finite set of generators, such that steering on the lattice is reduced to solving a linear Diophantine equation, which can be done in polynomial time (see, e.g., [31] ).",
+          "To construct such half-space interpolant, we utilize Farkas' lemma [29] :",
+          "There otherwise exist many excellent textbooks on the simplex algorithm [2, 15] , though these seldom discuss the specifics of implementations in exact precision or incremental use.",
+          "Because the boundaries of the feasible regions are determined by pairs of points on the expanded grid, the new points can be chosen to have polynomial size (because solutions to linear programs have polynomial size as shown in Theorem 10.1 of [15] ).",
+          "This idea of using modular arithmetic was described in the work of Hu [5] , Domich, Kannan, and Trotter [2] , and Schrijver [17] , although they suggested using the determinant of the lattice as the modulus and worked only with square matrices.",
+          "Otherwise, solving (27) yields a suboptimal solution, optimal among all solutions Δθ such that HΔθ ∞ ≤ M . In principle a sufficiently large M can be found to ensure that the big M method indeed provides the optimal solution to (5) [41] .",
+          "By the MinkowskiWeyl theorem [37] , we can represent a flow vector f k ∈ P as",
+          "[25] , δ is bounded by n n/2 ·∆ n A , where ∆ A is, as before, an upper bound on the absolute values of the entries of A."
+        ]
+      },
+      {
+        "source_id": "53739754",
+        "title": "Linear Programming 1: Introduction",
+        "citing_sentences": [
+          "Peak-to-Average-Ratio (PAR) demand from the grid can be found using (44) and solved using simplex method [23, 24] :",
+          "The objective function and constraints are linear, therefore the problem can be solved by existing Integer Linear Programming (ILP) solvers such as simplex algorithm (Dantzig and Thapa, 1997) .",
+          "Consider a linear program with constraint equations Cx = c where C ∈ R m×n , c ∈ R m and rank(C) = m. It can be written as Bx B + Nx N = c where B is an invertible matrix and x B , x N are vectors of basic and nonbasic variables, respectively [4] ."
+        ]
+      },
+      {
+        "source_id": "5542629",
+        "title": "Leveraging linear and mixed integer programming for SMT",
+        "citing_sentences": [
+          "Another direction is to provide better soundness guarantees without harming performance, for example by using floating-point arithmetic to first solve the problem and then replaying the solution using precise arithmetic [16] , or by producing externallycheckable proofs of correctness [14] ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Linear Integer Arithmetic",
+    "text": "In the case of linear integer arithmetic, the scheme generally used is the same as the one generally used for integer linear programming: the solver first attempts solving the rational relaxation of the problem (nonstrict inequalities are kept, strict inequalities x < e are rewritten as x ≤ e − 1). If there is no solution over the rationals, there is no integer solution. If a rational solution is found, and has only integral coefficients (say, (x, y, z) = (0, 1, 2)), then the problem is decided. If the proposed solution has non-integral coefficients (say, (x, y, z) = ( 1 3 , 0, 1)), then it is excluded by a constraint removing not only that spurious solution but a whole chunk of them. Traditional approaches include i) branch-and-bound [63, Sec. 24.1]: add a lemma excluding one segment of non-integral values of the fractional unknowns (here, x ≤ 0 ∨ x ≥ 1); branching is however not guaranteed to 4 e.g. ZArith https://forge.ocamlcore.org/projects/zarith BIB117942539 The performance with linear programming solvers meant for large industrial instances was however disappointing BIB1609240 , due to overhead. Closer integration is needed. BIB41802054 As implemented in e.g. Linbox (http://www.linalg.org/ ), IML (https://cs.uwaterloo.ca/~astorjoh/iml.html) BIB7380429 and SageMath (http://www.sagemath.org/). BIB32422648 One can in fact prove a form of completeness of that approach when the problem contains linear constraints defining a bounded polyhedron, and one nonlinear constraint: if such a problem is unsatisfiable, then this can be proved by going to a sufficiently high degree of products. This follows from Krivine-Handelman's theorem BIB59380062 43] . terminate in general BIB5542629 . ii) Gomory cuts BIB29180149 Ch. 23] iii) branch-and-cut  , a combination of both of the above iv) cuts from proofs or extended branches BIB43656024 , which can generate e.g. x ≤ z ∨ x ≥ z + 1. The full integer linear decision procedure can be encapsulated and only export theory lemmas and theory propagation, just as the rational linear procedure, or export the branching lemma to the SMT solver, as a learned clause, so as to allow propositional reasoning over it. An alternative to linear programming plus branching and/or cuts is Pugh's Omega test BIB3174094 , which may also be used to simplify constraints. This test is based on Fourier-Motzkin elimination  , with the twist that, due to divisibility constraints, it may need to enumerate cases up to the least common multiple of the divisors.",
+    "source_ids": [
+      "117942539",
+      "1609240",
+      "29180149",
+      "3174094",
+      "32422648",
+      "41802054",
+      "43656024",
+      "5542629",
+      "59380062",
+      "7380429"
+    ],
+    "citations": [
+      {
+        "source_id": "117942539",
+        "title": "Algorithms in Real Algebraic Geometry",
+        "citing_sentences": [
+          "Instead, it could use ideas related to those employed in effective quantifier elimination over real closed fields (see, e.g., [1] ) and in recent upper bounds on topological complexity of definable sets [6] .",
+          "We use the following algorithm (see Basu et al. 1997 Basu et al. , 2003 as a basic building block.",
+          "where k is the number of distinct polynomials in the defining formula (this is a relaxed form of Basu's bound, for a more precise description see [1, 2] .)",
+          "The situation is not much better when considering the reals since, although the problem is decidable as it was shown for the first-order theory of real closed f ields by Tarski, using the related algorithms in practice is unfeasible due to their complexity (see [5] for a recent account).",
+          "The polynomial Sres k (t, x) = k i=0 sr k,i x i is known as the k-th subresultant polynomial of R and I with respect to x and it coincides with the gcd of R and I over the roots of r k (see [12] ).",
+          ". . , ϕ i−1 )}, where ext denotes the extension to R . Since for all t in (0, 1], f (t) is in B, ϕ is in ext(B, R ) by [10, Prop.",
+          "where Ψ(x 1 , x 2 , .",
+          "Step 2 Using Algorithm 11.1 in [9] (Elimination), compute a family of polynomials A Q ⊂ R[Z 1 , .",
+          "For details on this construction, see [2, 11, 13, 18, 24] .",
+          "Finally, applying Cauchy bound (see [1] ).",
+          "In particular, a hyperring homomorphism from a field K to S is the same thing as an ordering on K. This observation allows one to reformulate the notion of real spectrum [BPR06, Mar96] in terms of hyperrings, and provides an interesting lens through which to view the analogy between Berkovich spaces and real spectra.",
+          "It is a well-known fact from the theory of real closed fields [4] that the set of valid analytical formulas so defined is decidable.",
+          "See [4] , and [12] for recent research results and additional citations.",
+          "The semialgebraic Sard theorem [7, Theorem 5 .57] imply that there is an open dense subset",
+          "For more on semialgebraic sets and real algebraic geometry see [5] .",
+          "As mentioned before, our results are based on the decidability of the equivalence of these automata and, moreover, on the decidability of the theory of real ordered fields [2, 6, 20] .",
+          "where I 1 , I 2 and I 3 denote the identity matrices which size is the length of Σ (1) , Σ (2) and Σ (3) respectively and, if we index the columns of I 1 , I 2 and I 3 withΣ (1) ,Σ (2) andΣ (3) :",
+          "Assuming that integer operations take unit time, the results of [5] then gives an O(|γ|(s + m + 1) r (max(d, 2)) O(r) ) algorithm to decide consistency of γ † which concludes the proof of the corollary .",
+          "There is a large body of research in this area (see [3] for background).",
+          "5 The result is more generally true for differentiable functions that are homogeneous of even degree.",
+          "A closed and bounded semi-algebraic set S ⊂ R k is semi-algebraically triangulable (see (BPR03) ), and we denote by H i (S) the i-th simplicial cohomology group of S with rational coefficients.",
+          "Proposition 8 LetP (t, U, y) be as in (9) .",
+          "To complete the proof, apply [5, Lemma 3.21 ] that states that in this setting (γ a semialgebraic continuous",
+          "Effective quantifier elimination algorithm ( [4] , Ch."
+        ]
+      },
+      {
+        "source_id": "1609240",
+        "title": "SAT modulo the theory of linear arithmetic: Exact, inexact and commercial solvers",
+        "citing_sentences": [
+          "Faure et al. have experimented with using commercial, floating-point SMT solvers such as CPLEX 8 inside an SMT solver [8] ."
+        ]
+      },
+      {
+        "source_id": "29180149",
+        "title": "Theory of Linear and Integer Programming.",
+        "citing_sentences": [
+          "a 1j x j ; (9) a 11 a 11 : (10) Multiply (8) and (10) by x 1 and combine each left{hand side of (7), (8) with each right{hand side of (9), (10) Since the converse S 2 S 1 is also true (see the proof of the subsequent theorem) one ends up with S 1 = S 2 , where in S 2 the entry a 11 is replaced by the bounds a 11 ; a 11 of the given interval a] 11 .",
+          "By applying the extreme point theory [26] , it is clear that there exists an optimal solution for (7) which maps every task to the PU type that has the minimum static and dynamic power consumption .",
+          "Two further, conceptually related approaches are aspeed [35] and MIPSAT [59] , which compute (parallel) algorithm schedules by taking advantage of the modeling and solving capacities of Answer Set Programming (ASP [10, 25] ) and Mixed Integer Programming (MIP; [61, 64] ), respectively.",
+          "Expansion of this larger network is much better computed using optimization theory (see, e.g., Dantzig and Cottle 1963; Schrijver 1998; Boyd and Vandenberghe 2004; Clack et al. 2015) , which identifies strategies likely to result in the optimal results but does not directly test each possible configuration.",
+          "For a proof we refer to [7] .",
+          "For cases where the reachable set is a lattice, we provide in Lemma 8 explicitly a finite set of generators, such that steering on the lattice is reduced to solving a linear Diophantine equation, which can be done in polynomial time (see, e.g., [31] ).",
+          "To construct such half-space interpolant, we utilize Farkas' lemma [29] :",
+          "There otherwise exist many excellent textbooks on the simplex algorithm [2, 15] , though these seldom discuss the specifics of implementations in exact precision or incremental use.",
+          "Because the boundaries of the feasible regions are determined by pairs of points on the expanded grid, the new points can be chosen to have polynomial size (because solutions to linear programs have polynomial size as shown in Theorem 10.1 of [15] ).",
+          "This idea of using modular arithmetic was described in the work of Hu [5] , Domich, Kannan, and Trotter [2] , and Schrijver [17] , although they suggested using the determinant of the lattice as the modulus and worked only with square matrices.",
+          "Otherwise, solving (27) yields a suboptimal solution, optimal among all solutions Δθ such that HΔθ ∞ ≤ M . In principle a sufficiently large M can be found to ensure that the big M method indeed provides the optimal solution to (5) [41] .",
+          "By the MinkowskiWeyl theorem [37] , we can represent a flow vector f k ∈ P as",
+          "[25] , δ is bounded by n n/2 ·∆ n A , where ∆ A is, as before, an upper bound on the absolute values of the entries of A."
+        ]
+      },
+      {
+        "source_id": "3174094",
+        "title": "The Omega test: a fast and practical integer programming algorithm for dependence analysis",
+        "citing_sentences": [
+          "The constraints so generated can be simplified, using path slicing techniques [15] , to reduce the cost of testing for satisfiability; our current implementation, which uses the Omega calculator [23] for satisfiability testing, does not currently do such simplifications.",
+          "General data dependence analyses [1, 2, 3] have been extensively used for Fortranlike subscripted array expressions in scientific applications.",
+          "However, they are inefficient in handling linear integer arithmetic constraints, when compared to decision procedures specifically designed for this domain, such as Omega [17] and Yices [6] .",
+          "The analyses developed by Xu et al. were based on classical theorem-proving techniques: the typestate-checking algorithm used the induction-iteration method [32] to synthesize loop invariants and Omega [22] to decide Presburger formulas.",
+          "The Omega Test is a projection-based decision procedure for LIA and employed in dependence analysis of compilers [13] .",
+          "GCD-test [2] or I-test [25] are popular examples of such analysis for array references: they can state thanks to a fast GCD computation that two references do not depend on each other, then safely consider a dependence relation exists otherwise (for instance, GCC 4.4 relies on a multi-dimensional GCD-test for production and on a more costly but exact Omega-test [30] for testing).",
+          "The details of the basic symbolic execution, which operates on concrete heap and symbolic primitives and uses off-theshelf implementations of decision procedures, such as the Omega library [28] and CVC-lite [4] , can be found elsewhere [20] .",
+          "Our implementation uses quantifer-elimination based Omega test [40] .",
+          "Most of the underlying methods, as data dependence analysis [9, 23] , transformation computation [21, 12] or code generation [16, 25] exhibit worst-case exponential complexity.",
+          "The Coq romega tactic [8] is representative of this trace-based approach: traces generated by an instrumented version of the Omega test [22] act as certificates that are validated by a reflexive checker.The drawback of this method is that instrumentation is an intrusive task and require to dig into the internals of the decision procedure.",
+          "There has been a significant body of work on dependence analysis in the polyhedral model [9, 24, 29] .",
+          "The Omega library includes a large collection of object classes to e ciently manipulate Presburger formulas; to date it has mainly been used in high-performance compilers, speci cally for dependence analysis, program transformations, and detecting redundant synchronization 16, 17] ."
+        ]
+      },
+      {
+        "source_id": "32422648",
+        "title": "Linear quantifier elimination as an abstract decision procedure",
+        "citing_sentences": [
+          "A variant that integrates elements from both Cooper's method and the Omega Test is implemented in Z3 [2] ."
+        ]
+      },
+      {
+        "source_id": "41802054",
+        "title": "Handbook of satisfiability",
+        "citing_sentences": [
+          "For the sake of completeness, we mention that the CDCL algorithm is usually complemented with heuristics that control the number of learned constraints, and restart the computation to explore different branches of the search tree (Biere et al. 2009 ).",
+          "A second approach to dealing with statistical issues would be to exploit extensions of SAT, especially Boolean optimization in terms of maximum satisfiability (MaxSAT) of propositional formulas (Biere et al., 2009) , where the task is to find a truth assignment that satisfies the maximum number of CNF clauses.",
+          "The Propositional Satisfiability Problem (SAT) is to find an assignment to a set of Boolean variables so as to satisfy a given Boolean formula, typically expressed in conjunctive normal form [4] .",
+          "As a recent development, the best non-portfolio solver in the satisfiable crafted category was incomplete (based on local search [2, Chapter 6] ).",
+          "This widespread adoption is the result of the efficiency gains made during the last decade [1] .",
+          "sat, like csp, has a variety of practical real world applications such as hardware verification, security protocol analysis, theorem proving, scheduling, routing, planning, digital circuit design [5] .",
+          "Restrictions are expressed through standard SAT clauses and pseudo-Boolean linear clauses (linear inequality with Boolean literals) [22] .",
+          "The SAT problem was the first problem shown to be NP-complete 5 , and many practical problems can be reduced to a SAT formulation [55] and solved through off-the-shelf SAT solvers.",
+          "A distinct feature of JBMC, when compared with other approaches [2, 8, 10] , is the use of Bounded Model Checking (BMC) [5] in combination with Boolean Satisfiability and Satisfiability Modulo Theories (SMT) [3] and full symbolic state-space exploration, which allows us to perform a bit-accurate verification of Java programs.",
+          "Given a transition system M, a property φ, and a bound k, BMC unrolls the system k times and translates it into a VC ψ such that ψ is satisfiable if and only if φ has a counterexample of length k or less [1] .",
+          "Since the input to cachet and relsat are logic formulas in CNF (Conjunctive Normal Form 4 ), we sketch here the feature diagram translation to CNF following the directions in [8] .",
+          "see [15, 42, 46] ) and SMT-solvers (e.g.",
+          "In this paper, we provide an exact inference algorithm based on using a general-purpose Boolean constraint solver (Biere et al., 2009; Gebser et al., 2011) , and demonstrate that it is orders of magnitudes faster than the current state-of-the-art method by Plis et al. (2015b) .",
+          "For more information see for example Biere et al. [7] , Dutertre and de Moura [22] , and Kroening and Strichman [42] .",
+          "Satisfiability (SAT) [5] solvers are tools that decide if a boolean formula over a set X of boolean variables can be true under some assignment α on the boolean variables, i. e., a mapping α : X → {TRUE, FALSE}.",
+          "Solving MaxSAT problem amounts to finding a variable assignment that maximizes the number of satisfied clauses in a CNF formula [20] .",
+          "For instance, the OCL expression Set{1,2,3}->collect(i|i*i) would yield the intermediate relation [ [1, 1] , [2, 4] , [3, 9] ].",
+          "When targeting SAT, most effort has focussed on constructing performant encodings (i.e. translations into SAT) of classes of constraints such as the allDifferent or arithmetic constraints [53, 69, 29, 63, 67] .",
+          "When targeting SAT, most effort has focussed on constructing performant encodings (i.e. translations into SAT) of classes of constraints such as the allDifferent or arithmetic constraints [53, 69, 29, 63, 67] .",
+          "The particular scenarios focus on the partial MaxSAT (PMS) problem [10] ."
+        ]
+      },
+      {
+        "source_id": "43656024",
+        "title": "Cuts from Proofs: A Complete and Practical Technique for Solving Linear Inequalities over Integers",
+        "citing_sentences": [
+          "So for the integer case, our solver may introduce extended branches [8] , which are just branches of the DPLL engine on newly introduced literals."
+        ]
+      },
+      {
+        "source_id": "5542629",
+        "title": "Leveraging linear and mixed integer programming for SMT",
+        "citing_sentences": [
+          "Another direction is to provide better soundness guarantees without harming performance, for example by using floating-point arithmetic to first solve the problem and then replaying the solution using precise arithmetic [16] , or by producing externallycheckable proofs of correctness [14] ."
+        ]
+      },
+      {
+        "source_id": "59380062",
+        "title": "Representing polynomials by positive linear functions on compact convex polyhedra",
+        "citing_sentences": [
+          "A linearization procedure based on Handelman representation of polynomials [16] has also been implemented in the VPL [23] .",
+          "Theorem 1 (Handelman, 1988 ) Let P = { C 1 ≥ 0, . . . , C p ≥ 0 } be a polytope where each C i is an affine form over x = (x 1 , ."
+        ]
+      },
+      {
+        "source_id": "7380429",
+        "title": "A BLAS based C library for exact linear algebra on integer matrices",
+        "citing_sentences": []
+      }
+    ]
+  },
+  {
+    "section": "Exponential Behavior Due to Limited Predicate Vocabulary",
+    "text": "Example 5. Let n > 0 be a constant integer. Let (t i ) 0≤i≤n , (x i ) 0≤i<n and (y i ) 0≤i<n be real unknowns (or rational or integer). Let These formulas are known as \"diamond formulas\" since they correspond to paths in a difference graph composed of \"diamonds\": To a human, it is obvious that D i ⇒ t i+1 ≤ t i + 5 and thus P n is unsatisfiable. A DPLL(T) solver, however, proceeds by elimination of contradictory conjunctions of atoms from the original formula. Any contradictory conjunction of atoms from P n must include a conjunction of the form There are an exponential number of such conjunctions, and a DPLL(T) solver has to block them by theory lemmas one by one. In other words, the proof system used by a DPLL(T) solver is sufficient to prove that a \"diamond formula\" is unsolvable, but needs exponential proofs for doing so. Any pure DPLL(T) solver, whatever its heuristics and implementation, must thereof run in exponential time on this family of formulas. This motivated the study of algorithms capable of inferring lemmas involving new atoms (Sec. 3.2). Diamond formulas are simplifications of formulas occurring in e.g. worstcase execution time and scheduling applications. The solution proposed in BIB704180 was to pre-compute upper bounds t j − t i ≤ B ij on the difference of arrival times between i and j (or, equivalently, the total time spent in the program between i and j) and conjoin these bounds to the problems. These bounds are logically implied by the original problem, and thus the set of solutions (valid execution traces with timings) does not change; but the resulting formula is considerably more tractable. The lemmas t j − t i ≤ B ij and t k − t j ≤ B ik allow the solver to avoid exploring many combinations of paths i → j and j → k: for instance, if one searches for a path such that t k − t i ≥ 100, it is known that t k − t j ≤ 40, and the solver explores a path i → j such that t j − t i ≤ 42 on this path, then the solver can immediately cut the search without exploring the paths j → k in detail.",
+    "source_ids": [
+      "704180"
+    ],
+    "citations": [
+      {
+        "source_id": "704180",
+        "title": "How to compute worst-case execution time by optimization modulo theory and a clever encoding of program semantics",
+        "citing_sentences": [
+          "It has already been applied to SMT-based WCET analysis in [9] ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Uninterpreted Functions and Arrays",
+    "text": "There exists several variants of how to decide uninterpreted functions (UF) in combination with other theories [44, Ch. 4]; we shall expose only one approach here. A quantifier-free formula (e.g. f (x) = f (y) ∧ x = z + 1 ∧ z = y − 1) is rewritten so that each application of an uninterpreted function is replaced by a fresh variable (e.g. f x = f y ∧x = z + 1 ∧z = y − 1), several identical applications getting the same variable. A solution in x, y, z, f x , f y is sought. If x = y but not f x = f y in that solution, the implication x = y ⇒ f x = f y is conjoined to the problem. Again, this is a counterexample-guided refinement of the theory. , where x, y, z ∈ Z and f : Z → Z, has no solution because x = z + 1 ∧ z = y − 1 implies that x = y, and it is then impossible that f (x) = f (y). One may establish this by solving 1, 0, 0, 1) , noticing the conflict between x = y and f x = f y and conjoining x = y ⇒ f x = f y . Arrays are \"functionally updatable\" uninterpreted functions  Ch. 7] : update(f, x 0 , y 0 ) is the function mapping x = x 0 to f [x] and x 0 to y 0 .",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "Natural-Domain SMT",
+    "text": "In DPLL(T) there is a fundamental difference between propositional and other kinds of unknowns: the second are never dealt with directly during the search process. In contrast, in natural-domain SMT, one directly constrains and assigns to numeric unknowns during the search. After initial attempts BIB33275132 BIB4493873 , two main directions arose.",
+    "source_ids": [
+      "33275132",
+      "4493873"
+    ],
+    "citations": [
+      {
+        "source_id": "33275132",
+        "title": "Natural domain SMT: a preliminary assessment",
+        "citing_sentences": [
+          "4 The minimal assumption is that B must include all literals (and their negations) from the initial problem C 0 , and the theory-specific decision procedure must ensure that for any C 0 such a finite basis exists.",
+          "Notable examples of such approaches have been presented for equality logic with uninterpreted functions [3] , linear real arithmetic and difference logic [19, 51] , linear integer arithmetic [47] , nonlinear integer arithmetic [33] , and nonlinear real arithmetic [48] .",
+          "We experimented our approach for computing the worst-case execution time on benchmarks from several sources, referenced in Table 1 . nsichneu and statemate belong to the Mälardalen WCET benchmarks set [20] 13 , being the largest of the set (w.r.t."
+        ]
+      },
+      {
+        "source_id": "4493873",
+        "title": "Generalizing DPLL to Richer Logics",
+        "citing_sentences": [
+          "These are the Fourier-Motzkin variable elimination method, simplex, the interior point method (see, [7] for an overview), a recent conflict resolution method [2] and the GDPLL method [5] .",
+          "When solving a set of linear arithmetic C, Fourier-Motzkin elimination is sufficient to define the explain function, as shown in [12, 9] .",
+          "Notable examples of such approaches have been presented for equality logic with uninterpreted functions [3] , linear real arithmetic and difference logic [19, 51] , linear integer arithmetic [47] , nonlinear integer arithmetic [33] , and nonlinear real arithmetic [48] .",
+          "There have been proposals of alternative approaches to DPLL(T), where one would directly solve for the numeric values instead of solving for Booleans then turning theory lemmas into Boolean constraints [5, 12, 13, 17, 31] ; but no production solver implements them."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Abstract CDCL (ACDCL)",
+    "text": "The DPLL approach is to assign to each unknown (propositional variable) one of t, f , and \"undecided\" -that is, a non-empty subset of the set of possible values {t, f }. Initially, all variables are assigned to \"undecided\". Then, the Boolean constraint propagation phase uses each individual clause as a constraint over its literals: if all literals except for one are assigned to f , then the last one gets assigned to t. In other words, information known about some variables leads to information on other variables linked by the same constraint. If the information derived is that some variable cannot be assigned some value (\"contradiction\"), then it means the problem is unsatisfiable. In most cases, however, a contradiction cannot be derived by only the initial pass of propagation. In that case, the system picks an undecided variable and splits the search between the t and f cases. Several splits may be needed, thus the formation of a search tree. If a contradiction is derived in a branch, that branch is closed and the system backtracks to an earlier level. That approach may be extended to variables lying within an arbitrary domain D, say, the real numbers or the floating-point numbers. The system maintains for each variable an assignment to a subset of D (several types of variables may be used simultaneously, there may therefore be several D), chosen among an abstract domain 8 D ♯ of subsets of D; say, for numeric variables, D ♯ may be the set of closed intervals of D. Constraints may now constrain variables of different types, and each constraint acts as a propagator of information. For instance, if there is a constraint x = y + z, and x is currently assigned the interval [1, +∞) and y the interval  BIB7557753 , then, applying z = x − y, one can derive x ∈ [−9, +∞): the current interval for x may thus be refined. Note that, for soundness, it is not important that the information propagated should be optimally precise, as long as it contains the possible values: in the above example, it would be sound to propagate x ∈ [−9.1, +∞) -but unsound to derive xx ∈ [−8.99, +∞). In the case of interval propagation for D = R, one sound way to implement it is using floating-point interval arithmetic with directed rounding: the upper bound of an interval is rounded towards +∞, the lower bound towards −∞. ACDCL also applies clause learning, but in a more general manner than CDCL BIB7557753 Sec. 5] . Consider F △ = y = x ∧ z = x · y ∧ z ≤ −1 and a search context with x ≤ −4. Then, by interval propagation, y ≤ −4, and z ≥ 16, which contradicts z ≤ −1. CDCL-style clause learning would learn that x ≤ −4 contradicts F , and thus learn the clause ¬(x ≤ −4) ≡ x > −4. But there is a weaker reason why such choice of x contradicts F : x < 0 is sufficient to ensure contradiction; the solver can exclude a larger part of the search space by learning the clause ¬(x < 0) ≡ x ≥ 0. Generalizing the reasons for a contradiction is a form of abduction. One difficulty is that there may be no weakest generalization expressible in the abstract domain: for instance, the choices x ≥ 10 and y ≥ 10 contradict the constraint x + y < 10, but x ≥ 0 ∧ y ≥ 10, x ≥ 5 ∧ y ≥ 5 and x ≥ 10 ∧ y ≥ 0 are three incomparable generalizations of the contradiction (leading to three clauses x < 0 ∨ y < 10 etc.), which are optimal in the sense that if one fixes the interval for x (resp. y), the interval for y (resp. x) is the largest that still ensures contradiction.",
+    "source_ids": [
+      "7557753"
+    ],
+    "citations": [
+      {
+        "source_id": "7557753",
+        "title": "Deciding floating-point logic with abstract conflict driven clause learning",
+        "citing_sentences": [
+          "Floating-point arithmetic has also been formalized in an SMTlib [43] theory and SMT solvers exist which include floatingpoint decision procedures [21] , [44] .",
+          "The latest proof tools, such as CVC4, implement some bit-precise decision procedures [23] for floating-point verification conditions, but much more work is needed."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Model-Constructing Satisfiability Calculus (MCSAT)",
+    "text": "In DPLL(T) i) only propositional atoms (including Boolean unknowns) are assigned during the search ii) the set of atoms considered does not change throughout the search (this may cause exponential behavior, see Sec. 2.5 iii) when the search process, after assigning b 1 , . . . , b n concludes that it is impossible to assign a Boolean value to an atom b n+1 , it derives a learned clause over a subset of b 1 , . . . , b n that excludes the current assignment but also, hopefully, many more. In contrast, in model-constructing satisfiability calculus (MCSAT) BIB18883865 , both propositional atoms and numeric unknowns get assigned during the search, and new arithmetic predicates are generated through learning.",
+    "source_ids": [
+      "18883865"
+    ],
+    "citations": [
+      {
+        "source_id": "18883865",
+        "title": "A model-constructing satisfiability calculus",
+        "citing_sentences": [
+          "There have been proposals of alternative approaches to DPLL(T), where one would directly solve for the numeric values instead of solving for Booleans then turning theory lemmas into Boolean constraints [5, 12, 13, 17, 31] ; but no production solver implements them.",
+          "Nonlinear formulas are more challenging; some solvers implement a variant of cylindrical algebraic decomposition, a very complex and costly approach [27] ; some replace the propositional abstraction of dpll(t) by a direct search for a model [14] ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Nonlinear Arithmetic (NRA)",
+    "text": "The MCSAT approach can also be applied to polynomial real arithmetic. Again, the problem is: assuming a set of polynomial constraints over x 1 , . . . , x n , x n+1 have no solution over x n+1 for a given valuation v(x 1 ), . . . , v(x n ), how can we explain this impossibility by a system of constraints over x 1 , . . . , x n that excludes v(x 1 ), . . . , v(x n ) and hopefully many more? Jovanović and de Moura BIB117893486 proposed applying a modified version of Collin's BIB120235755 projection operator in order to perform a partial cylindrical algebraic decomposition. In that approach, known as NLSAT, one additional difficulty is that assignments to variables may refer to algebraic reals, and thus the system needs to compute to compute over algebraic reals, including as coefficients to polynomials. It is yet unknown whether this approach could benefit from using other projection operators such as Hong's  or McCallum's  . 4 Beyond Quantifier-Free Decidability",
+    "source_ids": [
+      "117893486",
+      "120235755"
+    ],
+    "citations": [
+      {
+        "source_id": "117893486",
+        "title": "Solving Non-linear Arithmetic",
+        "citing_sentences": [
+          "Notable examples of such approaches have been presented for equality logic with uninterpreted functions [3] , linear real arithmetic and difference logic [19, 51] , linear integer arithmetic [47] , nonlinear integer arithmetic [33] , and nonlinear real arithmetic [48] .",
+          "Nonlinear formulas are more challenging; some solvers implement a variant of cylindrical algebraic decomposition, a very complex and costly approach [27] ; some replace the propositional abstraction of dpll(t) by a direct search for a model [14] ."
+        ]
+      },
+      {
+        "source_id": "120235755",
+        "title": "Quantifier elimination for real closed fields by cylindrical algebraic decomposition",
+        "citing_sentences": [
+          "Many alternative decision methods were subsequently proposed; two that are significantly simpler were given by Seidenberg [30] and Cohen [8] , while the CAD algorithm [9] , apparently the first ever to be implemented, is significantly more efficient, though relatively complicated.",
+          "This problem was solved by Schwartz and Sharir [23] using Collins' method of cylindrical algebraic decomposition [9] .",
+          "quantifier elimination problems for rational/real arithmetic constraints of the second degree, where the size of each problem is linear in program description and quadratic in n. The time complexity of each problem is exponential in its size [4] .",
+          "First of all, general quantifier elimination procedures may be used to solve some polynomial inequalities [9, 10, 11] .",
+          "Note that, though the size of this decomposition is larger than the size of the arrangement, it is asymptotically smaller than the size O((nd) 2 k−1 ) = O(n 4 ) (where n is the number of quadrics, d = 2 their degree, k = 3 the dimension) of Collins' decomposition [2, 6] .",
+          "Note that computing one point in the connected components of the open set h = 0 can be done using the projection step of the cylindrical algebraic decomposition algorithm [13] .",
+          "It is not hard to check that the vectors we obtain for this case should be (2, 8) and (3, 6) , which shows that the objectives are incompatible.",
+          "For any given system of polynomial equations and inequalities, the method of cylindrical algebraic decomposition (CAD) proposed by Collins [11] and improved by Hong and others (see, e.g., [12] ) may be used to decompose the n-dimensional real space R n into finitely many cylindrically arranged regions, called cells, such that every polynomial from the given system is sign-invariant in each cell.",
+          "Collins [16] was the first to obtain a doubly exponential complexity."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Quantifier Elimination by Virtual Substitution",
+    "text": "In the case of some theories, such as linear real arithmetic, a finite sequence of instantiations can be produced such that Example 8. Consider ∀y (y ≥ x ⇒ y ≥ 1). Loos & Weisfpenning's method collects the expression to which y is compared (here, x and 1) and then substitutes them into y. For each expression e, one must also substitute e + ǫ where ǫ is infinitesimal, BIB7557753 and also substitute −∞ (equivalently, one can substitute e − ǫ for each expression, and also +∞). The result is therefore e∈{x,x+ǫ,1,1+ǫ,−∞} e ≥ x ⇒ e ≥ 1  or, after expansion and simplification, x ≥ 1. We thus have eliminated the quantifier; by recursion over the structure of a formula and starting at the leaves, we can transform any formula of linear real arithmetic into an equivalent quantifier-free formula.",
+    "source_ids": [
+      "7557753"
+    ],
+    "citations": [
+      {
+        "source_id": "7557753",
+        "title": "Deciding floating-point logic with abstract conflict driven clause learning",
+        "citing_sentences": [
+          "Floating-point arithmetic has also been formalized in an SMTlib [43] theory and SMT solvers exist which include floatingpoint decision procedures [21] , [44] .",
+          "The latest proof tools, such as CVC4, implement some bit-precise decision procedures [23] for floating-point verification conditions, but much more work is needed."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "11",
+    "text": "In these eager approaches, the size of the substitution set may grow quickly (especially for linear integer arithmetic, which may involve enumerating all cases up to the least common multiple of the divisibility constants). For this reason, lazy approaches were proposed where the substitutions are generated from counterexamples, in much the same way that learned lemmas are generated in DPLL(T) BIB32422648 BIB2100448 . For a formula A( x) ∧ ∀y B( x, y), the system first solves A( x) for a solution x 0 , then checks whether there exists y such that ¬B( x 0 , y); if so, such an y 0 is generalized into one of the possible substitutions S 1 ( x) and the system restarts by solving A( x) ∧ B( x, S 1 ( x). The process iterates until a solution is found or the substitutions accumulated block all solutions for x; termination is ensured because the set of possible symbolic substitutions is finite. Note that a full quantifier elimination is not necessary to produce a solution.",
+    "source_ids": [
+      "2100448",
+      "32422648"
+    ],
+    "citations": [
+      {
+        "source_id": "2100448",
+        "title": "Anatomy of Alternating Quantifier Satisfiability (Work in progress)",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "32422648",
+        "title": "Linear quantifier elimination as an abstract decision procedure",
+        "citing_sentences": [
+          "A variant that integrates elements from both Cooper's method and the Omega Test is implemented in Z3 [2] ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Quantifier Elimination by Projection",
+    "text": "In case a quantifier elimination, or projection, algorithm, is available for conjunctions of constraints, as happens with linear real arithmetic,  one can, given a formula ∃ y F ( x, y), find a conjunction C 1 ⇒ F , project C 1 over x as π(C 1 ), conjoin ¬π(C 1 ) to F and repeat the process (generating C 2 etc.) until the F becomes unsatisfiable BIB3264585 . i C i is then equivalent to ∃ y F . Again, this process may be made lazier, for nested quantification in particular  BIB2100448 .",
+    "source_ids": [
+      "2100448",
+      "3264585"
+    ],
+    "citations": [
+      {
+        "source_id": "2100448",
+        "title": "Anatomy of Alternating Quantifier Satisfiability (Work in progress)",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "3264585",
+        "title": "A Quantifier Elimination Algorithm for Linear Real Arithmetic",
+        "citing_sentences": [
+          "The approach used in [9, 10] is to enumerate conjunctions of literals that satisfy A ∧ B."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Instantiation Heuristics",
+    "text": "The addition of quantifiers to theories (such as linear integer arithmetic plus uninterpreted functions) may make them undecidable. This does not however deter designers of SMT solvers from attempting to have them decide as many formulas as possible. A basic approach is quantifier instantiation by E-matching. If a formula in negation normal form contains a subformula ∀x P (x), then this formula is replaced by a finite instantiation n i=1 P (v i ). The v i are extracted from the rest of the formula, possibly guided by counterexamples. This approach is not guaranteed to converge: an infinite sequence of instantiations may be produced for a given quantifier. In the case of local theories, one can however prove termination.",
+    "source_ids": [],
+    "citations": []
+  },
+  {
+    "section": "Craig Interpolation",
+    "text": "The following conjunction is satisfiable if and only if it is possible to go from a model x 0 of A to a model x n of B by a sequence of transitions (τ i ) 1≤i≤n : In program analysis, A typically expresses a precondition, ¬B a postcondition, x i the variables of the program after i instruction steps, and τ i the semantics of the i-th instruction in a sequence, and the formula is unsatisfiable if and only if B is always true after executing that sequence of instruction starting from A. A hand proof of unsatisfiability would often consist in exhibiting predicates I 1 ( x 1 ), . . . , I n−1 ( x n−1 ), such that, posing I 0 = A and I n = B, for all 0 ≤ i < n, along with proofs of these local inductiveness implications. A SMT-solver, in contrast, produces a monolithic proof of unsatisfiability of (23): it mixes variables from different x i , that is, in program analysis, from different times of the execution of the program. It is however possible to obtain instead a sequence I i satisfying (24) by post-processing that proof  BIB9894463 BIB12426670 . In any theory admitting quantifier elimination, such a sequence must exist: defines the strongest sequence of valid interpolants; the weakest is: The strongest sequence corresponds to computing exactly the sequence of sets of states reachable by τ 1 , then τ 2 • τ 1 etc. from A. Binary interpolation consists in: given A and B, produce I such that in which case, if the theory admits quantifier elimination, ∃ x 0 A( x 0 , x 1 ) and ∀ x 2 B( x 1 , x 2 ) are respectively the strongest and weakest interpolant, and any One of the main uses of Craig interpolation in program analysis is to synthesize inductive invariants, for instance by counterexample-guided abstraction refinement in predicate abstraction (CEGAR) BIB7727172 or property-guided reachability (PDR). Interpolants obtained by quantifier elimination are too specific (overfitting): for instance, strongest interpolants exactly fit the set of states reachable in 1, 2, . . . steps. It has been argued that interpolants likely to be useful as inductive invariants should be \"simple\" -short formula, with few \"magical constants\". A variety of approaches have been proposed for getting such interpolants BIB8753498 BIB15409613 BIB11496209 or to simplify existing interpolants BIB8998909 . Example 9. Consider the interpolation problem A ⇒ I, I ⇒ ¬B (Fig. 1) : SMTInterpol 14 and MathSAT 15 produce I △ = x ≤ 1 ∨ y ≤ 1. This is due to the way these tools produce interpolants from DPLL(T) proofs of unsatisfiability. On this example, a DPLL(T) solver will essentially analyze both branches of A 1 ∨A 2 . The first branch yields A 1 ⇒ ¬B. Finding I 1 such that A 1 ⇒ I 1 and I 1 ⇒ ¬B amounts to finding a separating hyperplane between these two convex polyhedra; I 1 △ = x ≤ 1 works. Similarly, I 2 such that A 1 ⇒ I 2 and I 2 ⇒ ¬B can be I 2 △ = y ≤. I 1 ∨ I 2 is then produced as interpolant. Yet, a search for a single separating hyperplane may produce x + 2y ≤ 9, or x + y ≤ 5. The second hyperplane may seem preferable according to a criterion limiting the magnitude of integer constants. It is easy to see that if one can find interpolants for arbitrary conjunctions A, B such that A ⇒ ¬B, one can find them between arbitrary quantifier-free formulas, by putting them into DNF. Because such a procedure would be needlessly costly due to disjunctive normal forms, the usual approach is to post-process a DPLL(T) proof that A( x, y)∧B( y, z) is unsatisfiable  BIB9894463 . First, interpolants are derived for all theory lemmas: each lemma expresses that a conjunction of atoms from the original formula is unsatisfiable, these atoms can thus be divided into a conjunction α of atoms from A and a conjunction β of atoms from B, and an interpolant I is derived for α ⇒ ¬β. Then, these interpolants are combined following the resolution proof of the solver. This is how the interpolants from Ex. 9 were produced by the solvers. The problem is therefore: given A( x, y) ∧ B( y, z) unsatisfiable, where A and B are conjunctions, how do we find I( y) such that A ⇒ I and I ⇒ ¬B? If the theory is linear rational arithmetic, this amounts to finding a separating hyperplane between the polyhedra A and B. Let us note Each a ′ i (resp. b i is infinitesimal; all other numbers are assumed to be real. y ≥ (x R , x ǫ ) with x ǫ > 0 and y ∈ R expresses that y > x R . Since A∧B is unsatisfiable, by Farkas' lemma, there exists an unsatisfiability witness (λ i ), (µ j ), such that Such coefficients can in fact be read off the simplex tableau from the most common way of implementing a DPLL(T) solver for linear real arithmetic, as described in Sec. 2.3. Then the following is a valid interpolant (recall that the right-hand side can contain infinitesimals, leading to >): For polynomial arithmetic, one approach replaces nonnegative reals by sumsof-squares of polynomials, and Farkas' lemma by Positivstellensatz BIB8324645 . Another difficulty is posed for certain theories, for which the solving process involves generating lemmas introducing atoms not present in the original. Consider the approaches for linear integer arithmetic described in Section 2.4: except for branch-and-bound, all can generate new constraints involving any of the unknowns, without respecting the original partition of variables. This poses a problem for interpolation: if interpolating for A(x, y) ∧ B(y, z) over linear real arithmetic, we can rely on all atomic propositions being linear inequalities either over x, y or y, z, but here, we have new atomic propositions that can involve both x, z. Special theory-dependent methods are needed to get rid of these new propositions when processing the DPLL(T) proof into an interpolant  BIB9894463 .",
+    "source_ids": [
+      "11496209",
+      "12426670",
+      "15409613",
+      "7727172",
+      "8324645",
+      "8753498",
+      "8998909",
+      "9894463"
+    ],
+    "citations": [
+      {
+        "source_id": "11496209",
+        "title": "Inferring Simple Solutions to Recursion-Free Horn Clauses via Sampling",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "12426670",
+        "title": "An interpolating theorem prover",
+        "citing_sentences": [
+          "Extending the work of [14, 22] , McMillan [17] computed interpolants of (A, B), where A and B are in the quantifier free theory of linear arithmetic, in a linear scan of the proof of unsatisfiablity of A ∧ B.",
+          "PASS uses CEGAR to obtain predicates based on the interpolant-generating theorem prover FOCI [24] .",
+          "In [13] , McMillian presented a method for deriving Craig interpolants from proofs in the quantifierfree theory of linear inequality and uninterpreted function symbols, and based on which an interpolating theorem prover was provided.",
+          "It is well known that, given an unsatisfiability proof for A ∧ B, an interpolant P can be generated in linear time [19, 17] .",
+          "From this proof we can derive a conjectured invariant of the program using Craig interpolation methods, e.g., [21, 23, 20, 10] .",
+          "A different proof-based interpolation system is given by McMillan [20] in his seminal paper on interpolation for SMT.",
+          "Additionally, we would like to make use of interpolants [46, 47] in Cogent.",
+          "In one case, To test the performance of the split prover, we compare it with the non-split interpolating prover of [11] , which uses a conventional Nelson Oppen procedure for theory reasoning.",
+          "Such inductive sequences of interpolants can be computed automatically from proofs of unsatisfiability using an appropriate interpolation procedure (see, e.g., [12] )."
+        ]
+      },
+      {
+        "source_id": "15409613",
+        "title": "Interpolants as Classifiers ⋆",
+        "citing_sentences": [
+          "They have been used for generating candidate invariants from data collected from testing [Garg et al. 2014 [Garg et al. , 2016 Sharma et al. , 2012 , for discovering intended behaviors of programs (e.g., preconditions of functions, API usages, types, and informative variable names) [Allamanis et al. 2015; Beckman and Nori 2011; Gehr et al. 2015; Katz et al. 2016; Kulkarni et al. 2016; Livshits et al. 2009; Mishne et al. 2012; Padhi et al. 2016; Raychev et al. 2015; Sankaranarayanan et al. 2008; Zhu et al. 2015 Zhu et al. , 2016 , for finding semantically similar pieces of code [David et al. 2016] , and for synthesizing programs (e.g., code completion and patch generation) [Allamanis et al. 2016; Hindle et al. 2012; Long and Rinard 2016; Raychev et al. , 2014 .",
+          "Our work is similar in flavor to, and inspired by, an interpolant generation approach of Sharma et al. [30] .",
+          "Daikon [19] uses conjunctive learning, [53, 45] use equation solving, and [55] uses SVMs: these fail to infer disjunctive invariants over inequalities."
+        ]
+      },
+      {
+        "source_id": "7727172",
+        "title": "Lazy abstraction with interpolants",
+        "citing_sentences": [
+          "adjusting the unwinding depth (for bounded model checking [2] ), refining the set of predicates (for predicate abstraction and interpolation [5, 6] ), selecting a template (for template-based analyses [7] ), applying a widening operator (for abstract interpretation based techniques [1] ), whereas the other phase usually involves a call to a decision procedure.",
+          "To this end, our implementation employs interpolation [14] to generate new predicates from spurious paths.",
+          "A sequence of interpolants may be, but is not necessarily a sequence of Craig interpolants generated from the proof of infeasibility of a counterexample (in the spirit of [13, 15, 17, 18] ).",
+          "While in [14, 15, 16] , how to apply the local property of Craig interpolants generated from a counter-example to refine the abstract model in order to exclude the spurious counter-example in CEGAR was investigated.",
+          "Furthermore, we want to extend the correctness proof to show that our scheme works with inductive sequences of interpolants [21] and tree interpolants [15] .",
+          "IVF would allow, for example CEGAR [37] , interpolation [95] , and numerical abstract domains [77] to scale to millions of lines of code.",
+          "This concept has been extended to inductive sequences of interpolants [13] ."
+        ]
+      },
+      {
+        "source_id": "8324645",
+        "title": "Generating Non-Linear Interpolants by Semidefinite Programming",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "8753498",
+        "title": "Beautiful Interpolants",
+        "citing_sentences": []
+      },
+      {
+        "source_id": "8998909",
+        "title": "Playing in the grey area of proofs",
+        "citing_sentences": [
+          "Hoder et al. [18] proposed an algorithm that produces syntactically smaller interpolants by applying transformations to refutation proofs."
+        ]
+      },
+      {
+        "source_id": "9894463",
+        "title": "Proof Tree Preserving Interpolation",
+        "citing_sentences": []
+      }
+    ]
+  },
+  {
+    "section": "Optimization",
+    "text": "Instead of finding one solution, one may wish to find a solution that maximizes (or nearly so) some function f . A simple approach is binary search: provided one can get a lower bound l and an upper bound h on the maximum f ( x * ), one queries the solver for a solution x such that f ( x) ≥ m, where m = l+h 2 ; if such a solution is found, refine the lower bound l := f ( x) and restart, otherwise h := m and restart. Proceed until l = h. This converges in finite time if f has integer value. This approach has been successfully applied to e.g. worst-case execution time problems BIB704180 . In the case of LRA (resp. LIA), optimization generalizes linear programming (resp. linear integer programming) to formulas with disjunctions. In fact, linear programming can be applied locally to a polyhedron of solutions: when a DPLL(T) solver finds a solution x of a formula F , it also finds a conjunction C of atoms such that C ⇒ F ; C defines a polyhedron and one can optimize within it, until a local optimum x l . Then one adds the constraint f ( x) > f ( x l ) and restart; the last x l found is the optimum (one can also detected unboundedness). This approach can never enumerate the same C (or subsets thereof) twice and thus must terminate. It may, however, scan an exponential number of useless C's; it may be combined with binary search for best effect BIB460470 .",
+    "source_ids": [
+      "460470",
+      "704180"
+    ],
+    "citations": [
+      {
+        "source_id": "460470",
+        "title": "Optimization in SMT with LA(Q) Cost Functions",
+        "citing_sentences": [
+          "An obvious approach is binary search [36] , maintaining an interval [l, h] containing β: take a middle point m := l+h 2 , test whether there exists a trace τ such that T (τ ) ≥ m; if so, then set l := m (or set l := T (τ ), if available) and restart, else set h := m − 1 and restart; stop when the integer interval [l, h] is reduced to a singleton."
+        ]
+      },
+      {
+        "source_id": "704180",
+        "title": "How to compute worst-case execution time by optimization modulo theory and a clever encoding of program semantics",
+        "citing_sentences": [
+          "It has already been applied to SMT-based WCET analysis in [9] ."
+        ]
+      }
+    ]
+  },
+  {
+    "section": "Conclusion",
+    "text": "Considerable progress has been made within the last 15 years on increasingly practical decision procedures for increasingly large classes of formulas, even though worst-case complexity is prohibitive, and sometimes even though the class is undecidable. BIB33275132 Major ingredients to that success were i) lazy generation of lemmas, partial projections or instantiations, guided by counterexamples (as opposed to eager exhaustive generation, often explosive) ii) generalization of counterexamples so as to learn sufficiently general blocking lemmas iii) tight integration of propositional and theory-specific reasoning. Nonlinear arithmetic reasoning (polynomials, or even transcendental functions) is still a very open question. Current approaches in SMT BIB117893486 are based on partial cylindrical algebraic decomposition BIB120235755 ; possibly methods based on critical points BIB117942539 BIB117408383 BIB15752370 could be investigated as well. There are several challenges to using computer algebra procedures inside a SMT solver. i) These procedures may not admit addition or retraction of constraints without recomputation. ii) They may compute eagerly large sets of formulas (as in conventional cylindrical algebraic decomposition). iii) They may be very complex and thus likely to contain bugs. BIB47093689 Being able to produce independently-checkable proof witnesses would help in this respect.",
+    "source_ids": [
+      "117408383",
+      "117893486",
+      "117942539",
+      "120235755",
+      "15752370",
+      "33275132",
+      "47093689"
+    ],
+    "citations": [
+      {
+        "source_id": "117408383",
+        "title": "Solving Systems of Polynomial Inequalities in Subexponential Time",
+        "citing_sentences": [
+          "We start by briefly recalling the decision problem for the existential theory of the reals [18] , that is, the problem of deciding if the set {x ∈ R n : P(x)} is non-empty, where P(x) is a predicate which is a Boolean function of atomic predicates either of the form f i (x) ≥ 0 or f j (x) > 0, the f ′ s being real polynomials.",
+          ", similarily to the results obtained in [1, 4, 7] .",
+          "There exist algorithms with single exponential complexity for this task, see [24, 25, 26, 8, 9, 10] .",
+          "[23] , [22] , [26] , [27] , [28] , [6] , [41] , [42] , [1] and ∆ produces a straight-line program in l Q which represents the coefficients of polynomials q, p 1 , .",
+          "at designing algorithms with better complexities [26] , [22] , [21] , [5] .",
+          "To compute S c in less than exponential in n time, or even just to give an upper bound on its size of order less than exponential in n, standard methods such as one in [10] , [5, Chapter 11] that treat the system (4.2)-(4.3) directly do not suffice.",
+          "In [13, 14, 15, 6, 7, 8] , the authors consider arbitrary real algebraic sets, and reduce to the study of smooth and compact real algebraic hypersurfaces, via sums of squares and infinitesimal deformations."
+        ]
+      },
+      {
+        "source_id": "117893486",
+        "title": "Solving Non-linear Arithmetic",
+        "citing_sentences": [
+          "Notable examples of such approaches have been presented for equality logic with uninterpreted functions [3] , linear real arithmetic and difference logic [19, 51] , linear integer arithmetic [47] , nonlinear integer arithmetic [33] , and nonlinear real arithmetic [48] .",
+          "Nonlinear formulas are more challenging; some solvers implement a variant of cylindrical algebraic decomposition, a very complex and costly approach [27] ; some replace the propositional abstraction of dpll(t) by a direct search for a model [14] ."
+        ]
+      },
+      {
+        "source_id": "117942539",
+        "title": "Algorithms in Real Algebraic Geometry",
+        "citing_sentences": [
+          "Instead, it could use ideas related to those employed in effective quantifier elimination over real closed fields (see, e.g., [1] ) and in recent upper bounds on topological complexity of definable sets [6] .",
+          "We use the following algorithm (see Basu et al. 1997 Basu et al. , 2003 as a basic building block.",
+          "where k is the number of distinct polynomials in the defining formula (this is a relaxed form of Basu's bound, for a more precise description see [1, 2] .)",
+          "The situation is not much better when considering the reals since, although the problem is decidable as it was shown for the first-order theory of real closed f ields by Tarski, using the related algorithms in practice is unfeasible due to their complexity (see [5] for a recent account).",
+          "The polynomial Sres k (t, x) = k i=0 sr k,i x i is known as the k-th subresultant polynomial of R and I with respect to x and it coincides with the gcd of R and I over the roots of r k (see [12] ).",
+          ". . , ϕ i−1 )}, where ext denotes the extension to R . Since for all t in (0, 1], f (t) is in B, ϕ is in ext(B, R ) by [10, Prop.",
+          "where Ψ(x 1 , x 2 , .",
+          "Step 2 Using Algorithm 11.1 in [9] (Elimination), compute a family of polynomials A Q ⊂ R[Z 1 , .",
+          "For details on this construction, see [2, 11, 13, 18, 24] .",
+          "Finally, applying Cauchy bound (see [1] ).",
+          "In particular, a hyperring homomorphism from a field K to S is the same thing as an ordering on K. This observation allows one to reformulate the notion of real spectrum [BPR06, Mar96] in terms of hyperrings, and provides an interesting lens through which to view the analogy between Berkovich spaces and real spectra.",
+          "It is a well-known fact from the theory of real closed fields [4] that the set of valid analytical formulas so defined is decidable.",
+          "See [4] , and [12] for recent research results and additional citations.",
+          "The semialgebraic Sard theorem [7, Theorem 5 .57] imply that there is an open dense subset",
+          "For more on semialgebraic sets and real algebraic geometry see [5] .",
+          "As mentioned before, our results are based on the decidability of the equivalence of these automata and, moreover, on the decidability of the theory of real ordered fields [2, 6, 20] .",
+          "where I 1 , I 2 and I 3 denote the identity matrices which size is the length of Σ (1) , Σ (2) and Σ (3) respectively and, if we index the columns of I 1 , I 2 and I 3 withΣ (1) ,Σ (2) andΣ (3) :",
+          "Assuming that integer operations take unit time, the results of [5] then gives an O(|γ|(s + m + 1) r (max(d, 2)) O(r) ) algorithm to decide consistency of γ † which concludes the proof of the corollary .",
+          "There is a large body of research in this area (see [3] for background).",
+          "5 The result is more generally true for differentiable functions that are homogeneous of even degree.",
+          "A closed and bounded semi-algebraic set S ⊂ R k is semi-algebraically triangulable (see (BPR03) ), and we denote by H i (S) the i-th simplicial cohomology group of S with rational coefficients.",
+          "Proposition 8 LetP (t, U, y) be as in (9) .",
+          "To complete the proof, apply [5, Lemma 3.21 ] that states that in this setting (γ a semialgebraic continuous",
+          "Effective quantifier elimination algorithm ( [4] , Ch."
+        ]
+      },
+      {
+        "source_id": "120235755",
+        "title": "Quantifier elimination for real closed fields by cylindrical algebraic decomposition",
+        "citing_sentences": [
+          "Many alternative decision methods were subsequently proposed; two that are significantly simpler were given by Seidenberg [30] and Cohen [8] , while the CAD algorithm [9] , apparently the first ever to be implemented, is significantly more efficient, though relatively complicated.",
+          "This problem was solved by Schwartz and Sharir [23] using Collins' method of cylindrical algebraic decomposition [9] .",
+          "quantifier elimination problems for rational/real arithmetic constraints of the second degree, where the size of each problem is linear in program description and quadratic in n. The time complexity of each problem is exponential in its size [4] .",
+          "First of all, general quantifier elimination procedures may be used to solve some polynomial inequalities [9, 10, 11] .",
+          "Note that, though the size of this decomposition is larger than the size of the arrangement, it is asymptotically smaller than the size O((nd) 2 k−1 ) = O(n 4 ) (where n is the number of quadrics, d = 2 their degree, k = 3 the dimension) of Collins' decomposition [2, 6] .",
+          "Note that computing one point in the connected components of the open set h = 0 can be done using the projection step of the cylindrical algebraic decomposition algorithm [13] .",
+          "It is not hard to check that the vectors we obtain for this case should be (2, 8) and (3, 6) , which shows that the objectives are incompatible.",
+          "For any given system of polynomial equations and inequalities, the method of cylindrical algebraic decomposition (CAD) proposed by Collins [11] and improved by Hong and others (see, e.g., [12] ) may be used to decompose the n-dimensional real space R n into finitely many cylindrically arranged regions, called cells, such that every polynomial from the given system is sign-invariant in each cell.",
+          "Collins [16] was the first to obtain a doubly exponential complexity."
+        ]
+      },
+      {
+        "source_id": "15752370",
+        "title": "Polar varieties and computation of one point in each connected component of a smooth real algebraic set",
+        "citing_sentences": [
+          "In generic coordinates, Corollary 7 in [7] shows that either W i is empty, or it is equidimensional of dimension i − 1, for i = 1, . . . , n − p. Assume that it is not empty; then, H i (a) and H i (b) are established in [33] when sing(V ) = ∅.",
+          "Recently, these results were extended to handle the case of non-compact, smooth varieties in [48, 7] .",
+          "[36, Theorem 2] )."
+        ]
+      },
+      {
+        "source_id": "33275132",
+        "title": "Natural domain SMT: a preliminary assessment",
+        "citing_sentences": [
+          "4 The minimal assumption is that B must include all literals (and their negations) from the initial problem C 0 , and the theory-specific decision procedure must ensure that for any C 0 such a finite basis exists.",
+          "Notable examples of such approaches have been presented for equality logic with uninterpreted functions [3] , linear real arithmetic and difference logic [19, 51] , linear integer arithmetic [47] , nonlinear integer arithmetic [33] , and nonlinear real arithmetic [48] .",
+          "We experimented our approach for computing the worst-case execution time on benchmarks from several sources, referenced in Table 1 . nsichneu and statemate belong to the Mälardalen WCET benchmarks set [20] 13 , being the largest of the set (w.r.t."
+        ]
+      },
+      {
+        "source_id": "47093689",
+        "title": "Frama-C: a software analysis perspective",
+        "citing_sentences": [
+          "They are integrated to the Frama-C platform [63] , which is an extensible and collaborative platform dedicated to source-code analysis of C software."
+        ]
+      }
+    ]
+  }
+]

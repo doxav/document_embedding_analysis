@@ -1,0 +1,1 @@
+The emergence of DNN based NLM indicates the feasibility of building a pure DNN based translation model. The further implementation is the def acto form of NMT in origin. This section reviews the basic concept of DNN based NMT, demonstrates a comprehensive introduction of the standard structure of the original DNN based NMT, and discusses the training and inferencing processes.

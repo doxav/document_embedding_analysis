@@ -1,0 +1,1 @@
+We describe a model checker for infinite-state sequential programs, based on Craig interpolation and the lazy abstraction paradigm. On device driver benchmarks, we observe a speedup of up to two orders of magnitude relative to a similar tool using predicate abstraction.

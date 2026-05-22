@@ -1,0 +1,1 @@
+5 -This database is a popular resource for EBM, and covers over 8,500 biomedical journals. It indexes over 29 million articles, including all that are covered by MEDLINE. It is versatile and updated fast.

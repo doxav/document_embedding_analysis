@@ -1,0 +1,1 @@
+Considering a general architecture BIB114186060 with a nonlinear system assumed to be in canonical form i.e. where uϵR is the control input and xϵ R n is the vector corresponding to the measurable states of the system. g(xt) and a(x, t) represent smooth vector fields and are known terms. Δ(xt) representing matched uncertainties is assumed to be norm bounded i.e.,

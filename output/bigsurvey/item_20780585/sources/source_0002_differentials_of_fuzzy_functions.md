@@ -1,0 +1,1 @@
+In this paper the Radstrom embedding theorem (Proc. Amer. Math. Soc. 3 (1952), 165) is generalized and is used to define the concept of the differential of a fuzzy function.

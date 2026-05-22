@@ -1,0 +1,1 @@
+Originally published in WSEAS Transactions on Systems, Volume 3, Issue 2, April 2004 (pp ::: 960-963).

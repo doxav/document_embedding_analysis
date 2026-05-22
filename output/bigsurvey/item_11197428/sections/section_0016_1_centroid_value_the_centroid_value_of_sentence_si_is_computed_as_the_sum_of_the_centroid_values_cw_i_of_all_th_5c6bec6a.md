@@ -1,0 +1,1 @@
+Using this score, the sentences are ranked and chosen from each cluster in MEAD.

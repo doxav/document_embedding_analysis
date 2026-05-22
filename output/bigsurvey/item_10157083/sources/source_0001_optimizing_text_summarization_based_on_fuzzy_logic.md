@@ -1,0 +1,1 @@
+In this paper we first analyze some state of the art methods for text summarization. We discuss what the main disadvantages of these methods are and then propose a new method using fuzzy logic. Comparisons of results show that our method beats most methods which use machine learning as their core.

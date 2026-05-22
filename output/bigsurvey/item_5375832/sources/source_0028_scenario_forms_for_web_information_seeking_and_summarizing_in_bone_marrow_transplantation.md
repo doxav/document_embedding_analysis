@@ -1,0 +1,1 @@
+This paper presents the user-centered interface of a summarization system for physicians in Bone Marrow Transplantation (BMT). It serves both retrieval and summarization, eliciting the query and presenting multi-document summaries in a situation-specific organization.

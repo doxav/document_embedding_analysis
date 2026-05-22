@@ -1,0 +1,1 @@
+For each sentence s compute the similarity between s and each other sentence s' of the document, then add up those similarity values, obtaining the raw value of this feature for s. The process is repeated for all sentences.

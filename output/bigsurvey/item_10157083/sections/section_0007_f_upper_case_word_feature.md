@@ -1,0 +1,1 @@
+Sentences containing acronyms or proper names are included.

@@ -1,0 +1,1 @@
+Sentences containing words appearing in upper case, bold, italics or Underlined fonts are usually more important.

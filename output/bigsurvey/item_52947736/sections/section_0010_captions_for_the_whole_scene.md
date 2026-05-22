@@ -1,0 +1,1 @@
+Encoder-decoder architecture, compositional architecture, attention-based, semantic-concept-based, stylized captions, novel object-based image captioning, and other deep learning network-based image captioning methods generate single or multiple captions for the whole scene.

@@ -1,0 +1,1 @@
+Usually first and last sentence of first and last paragraph of a text document are more important and are having greater chances to be included in summary.

@@ -1,0 +1,1 @@
+Two fuzzy numbers A and B are said to be completely correlated if there are q, r ∈ R, with q ̸ = 0, such that their joint possibility distribution C is defined by where

@@ -12,6 +12,16 @@ class DocWiki(Document):
     def __init__(self, source_str: str | Path, logger: Logger, output_dir: str = None):
         super().__init__(source_str, DocType.WIKI, logger, output_dir)
 
+    @staticmethod
+    def _external_reference_url(tag):
+        for link in tag.find_all("a", href=True):
+            href = link["href"].strip()
+            if href.startswith(("http://", "https://")):
+                return href
+            if href.startswith("//"):
+                return f"https:{href}"
+        return None
+
     def extract_plan_and_content(self, skip_if_exists: bool = False):
         super().generateOutputFile()
 
@@ -117,17 +127,15 @@ class DocWiki(Document):
                 ]:
                     ref_text = next_tag.get_text(strip=False)
                     content.append(ref_text)
-                    # test = next_tag.next
-                    # url = test.get("href","")
-                    # while not url.startswith("http"):
-                    #     test = test.next
-                    #     url = test.get("href","")
                     # Extract citation number if present
                     tag_id = next_tag.attrs.get('id')
                     if tag_id and '-' in tag_id:
                         try:
                             cite_num = int(tag_id.split('-')[-1])
-                            reference_mapping[cite_num] = ref_text
+                            reference_mapping[cite_num] = {
+                                "text": ref_text,
+                                "url": self._external_reference_url(next_tag),
+                            }
                         except (ValueError, IndexError):
                             pass  # Skip if ID format is unexpected
 
@@ -147,11 +155,13 @@ class DocWiki(Document):
         # Process references section
         ref_key = None
         article_dict["references"] = []
-        for citation_num, ref_text in reference_mapping.items():
+        for citation_num, ref in reference_mapping.items():
+            ref_text = ref["text"]
             if ref_text.strip():
-                article_dict["references"].append(
-                    {"resource_id": citation_num, "resource_description": ref_text}
-                )
+                entry = {"resource_id": citation_num, "resource_description": ref_text}
+                if ref.get("url"):
+                    entry["url"] = ref["url"]
+                article_dict["references"].append(entry)
             else:
                 self.getLogger().warning(
                     f"Empty reference text for citation number {citation_num}."

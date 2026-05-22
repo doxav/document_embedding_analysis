@@ -1,0 +1,596 @@
+[
+  {
+    "source_id": "102350916",
+    "path": "sources/source_0001_an_attentive_survey_of_attention_models.md",
+    "file": "sources/source_0001_an_attentive_survey_of_attention_models.md",
+    "title": "An Attentive Survey of Attention Models"
+  },
+  {
+    "source_id": "2201909",
+    "path": "sources/source_0002_massive_exploration_of_neural_machine_translation_architectures.md",
+    "file": "sources/source_0002_massive_exploration_of_neural_machine_translation_architectures.md",
+    "title": "Massive Exploration of Neural Machine Translation Architectures"
+  },
+  {
+    "source_id": "59606205",
+    "path": "sources/source_0003_attention_please_a_critical_review_of_neural_attention_models_in_natural_language_processing.md",
+    "file": "sources/source_0003_attention_please_a_critical_review_of_neural_attention_models_in_natural_language_processing.md",
+    "title": "Attention, please! A Critical Review of Neural Attention Models in Natural Language Processing"
+  },
+  {
+    "source_id": "794019",
+    "path": "sources/source_0004_moses_open_source_toolkit_for_statistical_machine_translation.md",
+    "file": "sources/source_0004_moses_open_source_toolkit_for_statistical_machine_translation.md",
+    "title": "Moses: Open Source Toolkit for Statistical Machine Translation"
+  },
+  {
+    "source_id": "12639289",
+    "path": "sources/source_0005_recurrent_continuous_translation_models.md",
+    "file": "sources/source_0005_recurrent_continuous_translation_models.md",
+    "title": "Recurrent Continuous Translation Models"
+  },
+  {
+    "source_id": "13858533",
+    "path": "sources/source_0006_neural_versus_phrase_based_machine_translation_quality_a_case_study.md",
+    "file": "sources/source_0006_neural_versus_phrase_based_machine_translation_quality_a_case_study.md",
+    "title": "Neural versus Phrase-Based Machine Translation Quality: a Case Study"
+  },
+  {
+    "source_id": "16538528",
+    "path": "sources/source_0007_opennmt_open_source_toolkit_for_neural_machine_translation.md",
+    "file": "sources/source_0007_opennmt_open_source_toolkit_for_neural_machine_translation.md",
+    "title": "OpenNMT: Open-Source Toolkit for Neural Machine Translation"
+  },
+  {
+    "source_id": "3603249",
+    "path": "sources/source_0008_google_s_neural_machine_translation_system_bridging_the_gap_between_human_and_machine_translation.md",
+    "file": "sources/source_0008_google_s_neural_machine_translation_system_bridging_the_gap_between_human_and_machine_translation.md",
+    "title": "Google's Neural Machine Translation System: Bridging the Gap between Human and Machine Translation"
+  },
+  {
+    "source_id": "60590857",
+    "path": "sources/source_0009_learning_recursive_distributed_representations_for_holistic_computation.md",
+    "file": "sources/source_0009_learning_recursive_distributed_representations_for_holistic_computation.md",
+    "title": "Learning Recursive Distributed Representations for Holistic Computation"
+  },
+  {
+    "source_id": "11509296",
+    "path": "sources/source_0010_fast_and_adaptive_online_training_of_feature_rich_translation_models.md",
+    "file": "sources/source_0010_fast_and_adaptive_online_training_of_feature_rich_translation_models.md",
+    "title": "Fast and Adaptive Online Training of Feature-Rich Translation Models"
+  },
+  {
+    "source_id": "1174898",
+    "path": "sources/source_0011_topic_modeling_beyond_bag_of_words.md",
+    "file": "sources/source_0011_topic_modeling_beyond_bag_of_words.md",
+    "title": "Topic modeling: beyond bag-of-words"
+  },
+  {
+    "source_id": "1541597",
+    "path": "sources/source_0012_a_hierarchical_bayesian_language_model_based_on_pitman_yor_processes.md",
+    "file": "sources/source_0012_a_hierarchical_bayesian_language_model_based_on_pitman_yor_processes.md",
+    "title": "A Hierarchical Bayesian Language Model Based On Pitman-Yor Processes"
+  },
+  {
+    "source_id": "17048224",
+    "path": "sources/source_0013_recurrent_neural_network_based_language_model.md",
+    "file": "sources/source_0013_recurrent_neural_network_based_language_model.md",
+    "title": "Recurrent neural network based language model"
+  },
+  {
+    "source_id": "1998416",
+    "path": "sources/source_0014_effective_approaches_to_attention_based_neural_machine_translation.md",
+    "file": "sources/source_0014_effective_approaches_to_attention_based_neural_machine_translation.md",
+    "title": "Effective Approaches to Attention-based Neural Machine Translation"
+  },
+  {
+    "source_id": "207041403",
+    "path": "sources/source_0015_continuous_space_language_models.md",
+    "file": "sources/source_0015_continuous_space_language_models.md",
+    "title": "Continuous space language models"
+  },
+  {
+    "source_id": "207763512",
+    "path": "sources/source_0016_imagenet_classification_with_deep_convolutional_neural_networks.md",
+    "file": "sources/source_0016_imagenet_classification_with_deep_convolutional_neural_networks.md",
+    "title": "ImageNet classification with deep convolutional neural networks"
+  },
+  {
+    "source_id": "2479536",
+    "path": "sources/source_0017_a_simple_and_effective_hierarchical_phrase_reordering_model.md",
+    "file": "sources/source_0017_a_simple_and_effective_hierarchical_phrase_reordering_model.md",
+    "title": "A Simple and Effective Hierarchical Phrase Reordering Model"
+  },
+  {
+    "source_id": "2852525",
+    "path": "sources/source_0018_a_neural_probabilistic_language_model.md",
+    "file": "sources/source_0018_a_neural_probabilistic_language_model.md",
+    "title": "A Neural Probabilistic Language Model"
+  },
+  {
+    "source_id": "3065236",
+    "path": "sources/source_0019_decoding_with_large_scale_neural_language_models_improves_translation.md",
+    "file": "sources/source_0019_decoding_with_large_scale_neural_language_models_improves_translation.md",
+    "title": "Decoding with Large-Scale Neural Language Models Improves Translation"
+  },
+  {
+    "source_id": "351666",
+    "path": "sources/source_0020_natural_language_processing_almost_from_scratch.md",
+    "file": "sources/source_0020_natural_language_processing_almost_from_scratch.md",
+    "title": "Natural Language Processing (almost) from Scratch"
+  },
+  {
+    "source_id": "453615",
+    "path": "sources/source_0021_end_to_end_continuous_speech_recognition_using_attention_based_recurrent_nn_first_results.md",
+    "file": "sources/source_0021_end_to_end_continuous_speech_recognition_using_attention_based_recurrent_nn_first_results.md",
+    "title": "End-to-end Continuous Speech Recognition using Attention-based Recurrent NN: First Results"
+  },
+  {
+    "source_id": "5201925",
+    "path": "sources/source_0022_empirical_evaluation_of_gated_recurrent_neural_networks_on_sequence_modeling.md",
+    "file": "sources/source_0022_empirical_evaluation_of_gated_recurrent_neural_networks_on_sequence_modeling.md",
+    "title": "Empirical Evaluation of Gated Recurrent Neural Networks on Sequence Modeling"
+  },
+  {
+    "source_id": "5467830",
+    "path": "sources/source_0023_decoder_integration_and_expected_bleu_training_for_recurrent_neural_network_language_models.md",
+    "file": "sources/source_0023_decoder_integration_and_expected_bleu_training_for_recurrent_neural_network_language_models.md",
+    "title": "Decoder Integration and Expected BLEU Training for Recurrent Neural Network Language Models"
+  },
+  {
+    "source_id": "7417943",
+    "path": "sources/source_0024_fast_and_robust_neural_network_joint_models_for_statistical_machine_translation.md",
+    "file": "sources/source_0024_fast_and_robust_neural_network_joint_models_for_statistical_machine_translation.md",
+    "title": "Fast and Robust Neural Network Joint Models for Statistical Machine Translation"
+  },
+  {
+    "source_id": "8264008",
+    "path": "sources/source_0025_a_general_language_model_for_information_retrieval.md",
+    "file": "sources/source_0025_a_general_language_model_for_information_retrieval.md",
+    "title": "A general language model for information retrieval"
+  },
+  {
+    "source_id": "8608051",
+    "path": "sources/source_0026_continuous_space_translation_models_for_phrase_based_statistical_machine_translation.md",
+    "file": "sources/source_0026_continuous_space_translation_models_for_phrase_based_statistical_machine_translation.md",
+    "title": "Continuous Space Translation Models for Phrase-Based Statistical Machine Translation"
+  },
+  {
+    "source_id": "5590763",
+    "path": "sources/source_0027_learning_phrase_representations_using_rnn_encoder_decoder_for_statistical_machine_translation.md",
+    "file": "sources/source_0027_learning_phrase_representations_using_rnn_encoder_decoder_for_statistical_machine_translation.md",
+    "title": "Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation"
+  },
+  {
+    "source_id": "770011",
+    "path": "sources/source_0028_recursive_distributed_representations.md",
+    "file": "sources/source_0028_recursive_distributed_representations.md",
+    "title": "Recursive distributed representations"
+  },
+  {
+    "source_id": "11212020",
+    "path": "sources/source_0029_neural_machine_translation_by_jointly_learning_to_align_and_translate.md",
+    "file": "sources/source_0029_neural_machine_translation_by_jointly_learning_to_align_and_translate.md",
+    "title": "Neural Machine Translation by Jointly Learning to Align and Translate"
+  },
+  {
+    "source_id": "13756489",
+    "path": "sources/source_0030_attention_is_all_you_need.md",
+    "file": "sources/source_0030_attention_is_all_you_need.md",
+    "title": "Attention Is All You Need"
+  },
+  {
+    "source_id": "7961699",
+    "path": "sources/source_0031_sequence_to_sequence_learning_with_neural_networks.md",
+    "file": "sources/source_0031_sequence_to_sequence_learning_with_neural_networks.md",
+    "title": "Sequence to Sequence Learning with Neural Networks"
+  },
+  {
+    "source_id": "11250862",
+    "path": "sources/source_0032_can_active_memory_replace_attention.md",
+    "file": "sources/source_0032_can_active_memory_replace_attention.md",
+    "title": "Can Active Memory Replace Attention?"
+  },
+  {
+    "source_id": "12462234",
+    "path": "sources/source_0033_outrageously_large_neural_networks_the_sparsely_gated_mixture_of_experts_layer.md",
+    "file": "sources/source_0033_outrageously_large_neural_networks_the_sparsely_gated_mixture_of_experts_layer.md",
+    "title": "Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer"
+  },
+  {
+    "source_id": "13895969",
+    "path": "sources/source_0034_neural_machine_translation_in_linear_time.md",
+    "file": "sources/source_0034_neural_machine_translation_in_linear_time.md",
+    "title": "Neural Machine Translation in Linear Time"
+  },
+  {
+    "source_id": "2009318",
+    "path": "sources/source_0035_neural_gpus_learn_algorithms.md",
+    "file": "sources/source_0035_neural_gpus_learn_algorithms.md",
+    "title": "Neural GPUs Learn Algorithms"
+  },
+  {
+    "source_id": "3508167",
+    "path": "sources/source_0036_depthwise_separable_convolutions_for_neural_machine_translation.md",
+    "file": "sources/source_0036_depthwise_separable_convolutions_for_neural_machine_translation.md",
+    "title": "Depthwise Separable Convolutions for Neural Machine Translation"
+  },
+  {
+    "source_id": "3648736",
+    "path": "sources/source_0037_convolutional_sequence_to_sequence_learning.md",
+    "file": "sources/source_0037_convolutional_sequence_to_sequence_learning.md",
+    "title": "Convolutional Sequence to Sequence Learning"
+  },
+  {
+    "source_id": "447679",
+    "path": "sources/source_0038_encoding_source_language_with_convolutional_neural_network_for_machine_translation.md",
+    "file": "sources/source_0038_encoding_source_language_with_convolutional_neural_network_for_machine_translation.md",
+    "title": "Encoding Source Language with Convolutional Neural Network for Machine Translation"
+  },
+  {
+    "source_id": "6728280",
+    "path": "sources/source_0039_a_convolutional_encoder_model_for_neural_machine_translation.md",
+    "file": "sources/source_0039_a_convolutional_encoder_model_for_neural_machine_translation.md",
+    "title": "A Convolutional Encoder Model for Neural Machine Translation"
+  },
+  {
+    "source_id": "8586038",
+    "path": "sources/source_0040_deep_recurrent_models_with_fast_forward_connections_for_neural_machine_translation.md",
+    "file": "sources/source_0040_deep_recurrent_models_with_fast_forward_connections_for_neural_machine_translation.md",
+    "title": "Deep Recurrent Models with Fast-Forward Connections for Neural Machine Translation"
+  },
+  {
+    "source_id": "9134916",
+    "path": "sources/source_0041_variational_neural_machine_translation.md",
+    "file": "sources/source_0041_variational_neural_machine_translation.md",
+    "title": "Variational Neural Machine Translation"
+  },
+  {
+    "source_id": "1915014",
+    "path": "sources/source_0042_long_short_term_memory.md",
+    "file": "sources/source_0042_long_short_term_memory.md",
+    "title": "Long Short-Term Memory"
+  },
+  {
+    "source_id": "206457500",
+    "path": "sources/source_0043_learning_long_term_dependencies_with_gradient_descent_is_difficult.md",
+    "file": "sources/source_0043_learning_long_term_dependencies_with_gradient_descent_is_difficult.md",
+    "title": "Learning Long-Term Dependencies with Gradient Descent is Difficult"
+  },
+  {
+    "source_id": "22973057",
+    "path": "sources/source_0044_deep_neural_machine_translation_with_linear_associative_unit.md",
+    "file": "sources/source_0044_deep_neural_machine_translation_with_linear_associative_unit.md",
+    "title": "Deep Neural Machine Translation with Linear Associative Unit"
+  },
+  {
+    "source_id": "53083789",
+    "path": "sources/source_0045_simplifying_neural_machine_translation_with_addition_subtraction_twin_gated_recurrent_networks.md",
+    "file": "sources/source_0045_simplifying_neural_machine_translation_with_addition_subtraction_twin_gated_recurrent_networks.md",
+    "title": "Simplifying Neural Machine Translation with Addition-Subtraction Twin-Gated Recurrent Networks"
+  },
+  {
+    "source_id": "7386147",
+    "path": "sources/source_0046_on_multiplicative_integration_with_recurrent_neural_networks.md",
+    "file": "sources/source_0046_on_multiplicative_integration_with_recurrent_neural_networks.md",
+    "title": "On Multiplicative Integration with Recurrent Neural Networks"
+  },
+  {
+    "source_id": "1957433",
+    "path": "sources/source_0047_glove_global_vectors_for_word_representation.md",
+    "file": "sources/source_0047_glove_global_vectors_for_word_representation.md",
+    "title": "Glove: Global Vectors for Word Representation"
+  },
+  {
+    "source_id": "5959482",
+    "path": "sources/source_0048_efficient_estimation_of_word_representations_in_vector_space.md",
+    "file": "sources/source_0048_efficient_estimation_of_word_representations_in_vector_space.md",
+    "title": "Efficient Estimation of Word Representations in Vector Space"
+  },
+  {
+    "source_id": "7478738",
+    "path": "sources/source_0049_linguistic_regularities_in_continuous_space_word_representations.md",
+    "file": "sources/source_0049_linguistic_regularities_in_continuous_space_word_representations.md",
+    "title": "Linguistic Regularities in Continuous Space Word Representations"
+  },
+  {
+    "source_id": "146843",
+    "path": "sources/source_0050_modeling_coverage_for_neural_machine_translation.md",
+    "file": "sources/source_0050_modeling_coverage_for_neural_machine_translation.md",
+    "title": "Modeling Coverage for Neural Machine Translation"
+  },
+  {
+    "source_id": "1697424",
+    "path": "sources/source_0051_generating_sequences_with_recurrent_neural_networks.md",
+    "file": "sources/source_0051_generating_sequences_with_recurrent_neural_networks.md",
+    "title": "Generating Sequences With Recurrent Neural Networks"
+  },
+  {
+    "source_id": "17194112",
+    "path": "sources/source_0052_sequence_transduction_with_recurrent_neural_networks.md",
+    "file": "sources/source_0052_sequence_transduction_with_recurrent_neural_networks.md",
+    "title": "Sequence Transduction with Recurrent Neural Networks"
+  },
+  {
+    "source_id": "384994",
+    "path": "sources/source_0053_a_hierarchical_phrase_based_model_for_statistical_machine_translation.md",
+    "file": "sources/source_0053_a_hierarchical_phrase_based_model_for_statistical_machine_translation.md",
+    "title": "A Hierarchical Phrase-Based Model For Statistical Machine Translation"
+  },
+  {
+    "source_id": "14909391",
+    "path": "sources/source_0054_neural_machine_translation_with_recurrent_attention_modeling.md",
+    "file": "sources/source_0054_neural_machine_translation_with_recurrent_attention_modeling.md",
+    "title": "Neural Machine Translation with Recurrent Attention Modeling"
+  },
+  {
+    "source_id": "18193214",
+    "path": "sources/source_0055_supervised_attentions_for_neural_machine_translation.md",
+    "file": "sources/source_0055_supervised_attentions_for_neural_machine_translation.md",
+    "title": "Supervised Attentions for Neural Machine Translation"
+  },
+  {
+    "source_id": "1964946",
+    "path": "sources/source_0056_incorporating_structural_alignment_biases_into_an_attentional_neural_translation_model.md",
+    "file": "sources/source_0056_incorporating_structural_alignment_biases_into_an_attentional_neural_translation_model.md",
+    "title": "Incorporating Structural Alignment Biases into an Attentional Neural Translation Model"
+  },
+  {
+    "source_id": "3935945",
+    "path": "sources/source_0057_agreement_based_joint_training_for_bidirectional_attention_based_neural_machine_translation.md",
+    "file": "sources/source_0057_agreement_based_joint_training_for_bidirectional_attention_based_neural_machine_translation.md",
+    "title": "Agreement-based Joint Training for Bidirectional Attention-based Neural Machine Translation"
+  },
+  {
+    "source_id": "2863491",
+    "path": "sources/source_0058_on_using_very_large_target_vocabulary_for_neural_machine_translation.md",
+    "file": "sources/source_0058_on_using_very_large_target_vocabulary_for_neural_machine_translation.md",
+    "title": "On Using Very Large Target Vocabulary for Neural Machine Translation"
+  },
+  {
+    "source_id": "10097073",
+    "path": "sources/source_0059_a_scalable_hierarchical_distributed_language_model.md",
+    "file": "sources/source_0059_a_scalable_hierarchical_distributed_language_model.md",
+    "title": "A scalable hierarchical distributed language model"
+  },
+  {
+    "source_id": "1114678",
+    "path": "sources/source_0060_neural_machine_translation_of_rare_words_with_subword_units.md",
+    "file": "sources/source_0060_neural_machine_translation_of_rare_words_with_subword_units.md",
+    "title": "Neural Machine Translation of Rare Words with Subword Units"
+  },
+  {
+    "source_id": "17801406",
+    "path": "sources/source_0061_towards_zero_unknown_word_in_neural_machine_translation.md",
+    "file": "sources/source_0061_towards_zero_unknown_word_in_neural_machine_translation.md",
+    "title": "Towards zero unknown word in neural machine translation"
+  },
+  {
+    "source_id": "969555",
+    "path": "sources/source_0062_pointing_the_unknown_words.md",
+    "file": "sources/source_0062_pointing_the_unknown_words.md",
+    "title": "Pointing the Unknown Words"
+  },
+  {
+    "source_id": "10086161",
+    "path": "sources/source_0063_incorporating_discrete_translation_lexicons_into_neural_machine_translation.md",
+    "file": "sources/source_0063_incorporating_discrete_translation_lexicons_into_neural_machine_translation.md",
+    "title": "Incorporating Discrete Translation Lexicons into Neural Machine Translation"
+  },
+  {
+    "source_id": "10509498",
+    "path": "sources/source_0064_fully_character_level_neural_machine_translation_without_explicit_segmentation.md",
+    "file": "sources/source_0064_fully_character_level_neural_machine_translation_without_explicit_segmentation.md",
+    "title": "Fully Character-Level Neural Machine Translation without Explicit Segmentation"
+  },
+  {
+    "source_id": "1245593",
+    "path": "sources/source_0065_addressing_the_rare_word_problem_in_neural_machine_translation.md",
+    "file": "sources/source_0065_addressing_the_rare_word_problem_in_neural_machine_translation.md",
+    "title": "Addressing the Rare Word Problem in Neural Machine Translation"
+  },
+  {
+    "source_id": "13495961",
+    "path": "sources/source_0066_a_character_level_decoder_without_explicit_segmentation_for_neural_machine_translation.md",
+    "file": "sources/source_0066_a_character_level_decoder_without_explicit_segmentation_for_neural_machine_translation.md",
+    "title": "A Character-Level Decoder without Explicit Segmentation for Neural Machine Translation"
+  },
+  {
+    "source_id": "1371374",
+    "path": "sources/source_0067_vocabulary_manipulation_for_neural_machine_translation.md",
+    "file": "sources/source_0067_vocabulary_manipulation_for_neural_machine_translation.md",
+    "title": "Vocabulary Manipulation for Neural Machine Translation"
+  },
+  {
+    "source_id": "13972671",
+    "path": "sources/source_0068_achieving_open_vocabulary_neural_machine_translation_with_hybrid_word_character_models.md",
+    "file": "sources/source_0068_achieving_open_vocabulary_neural_machine_translation_with_hybrid_word_character_models.md",
+    "title": "Achieving Open Vocabulary Neural Machine Translation with Hybrid Word-Character Models"
+  },
+  {
+    "source_id": "15022745",
+    "path": "sources/source_0069_quick_training_of_probabilistic_neural_nets_by_importance_sampling_aistats.md",
+    "file": "sources/source_0069_quick_training_of_probabilistic_neural_nets_by_importance_sampling_aistats.md",
+    "title": "Quick training of probabilistic neural nets by importance sampling. AISTATS"
+  },
+  {
+    "source_id": "1689426",
+    "path": "sources/source_0070_finding_function_in_form_compositional_character_models_for_open_vocabulary_word_representation.md",
+    "file": "sources/source_0070_finding_function_in_form_compositional_character_models_for_open_vocabulary_word_representation.md",
+    "title": "Finding Function in Form: Compositional Character Models for Open Vocabulary Word Representation"
+  },
+  {
+    "source_id": "1712853",
+    "path": "sources/source_0071_character_based_neural_machine_translation.md",
+    "file": "sources/source_0071_character_based_neural_machine_translation.md",
+    "title": "Character-based Neural Machine Translation"
+  },
+  {
+    "source_id": "22320655",
+    "path": "sources/source_0072_japanese_and_korean_voice_search.md",
+    "file": "sources/source_0072_japanese_and_korean_voice_search.md",
+    "title": "Japanese and Korean voice search"
+  },
+  {
+    "source_id": "4410027",
+    "path": "sources/source_0073_handling_homographs_in_neural_machine_translation.md",
+    "file": "sources/source_0073_handling_homographs_in_neural_machine_translation.md",
+    "title": "Handling Homographs in Neural Machine Translation"
+  },
+  {
+    "source_id": "5799549",
+    "path": "sources/source_0074_character_based_neural_machine_translation.md",
+    "file": "sources/source_0074_character_based_neural_machine_translation.md",
+    "title": "Character-based Neural Machine Translation"
+  },
+  {
+    "source_id": "6633369",
+    "path": "sources/source_0075_a_fast_and_simple_algorithm_for_training_neural_probabilistic_language_models.md",
+    "file": "sources/source_0075_a_fast_and_simple_algorithm_for_training_neural_probabilistic_language_models.md",
+    "title": "A Fast and Simple Algorithm for Training Neural Probabilistic Language Models"
+  },
+  {
+    "source_id": "686481",
+    "path": "sources/source_0076_character_aware_neural_language_models.md",
+    "file": "sources/source_0076_character_aware_neural_language_models.md",
+    "title": "Character-Aware Neural Language Models"
+  },
+  {
+    "source_id": "8174613",
+    "path": "sources/source_0077_incorporating_copying_mechanism_in_sequence_to_sequence_learning.md",
+    "file": "sources/source_0077_incorporating_copying_mechanism_in_sequence_to_sequence_learning.md",
+    "title": "Incorporating Copying Mechanism in Sequence-to-Sequence Learning"
+  },
+  {
+    "source_id": "9147661",
+    "path": "sources/source_0078_adaptive_importance_sampling_to_accelerate_training_of_a_neural_probabilistic_language_model.md",
+    "file": "sources/source_0078_adaptive_importance_sampling_to_accelerate_training_of_a_neural_probabilistic_language_model.md",
+    "title": "Adaptive Importance Sampling to Accelerate Training of a Neural Probabilistic Language Model"
+  },
+  {
+    "source_id": "16119010",
+    "path": "sources/source_0079_language_modeling_with_gated_convolutional_networks.md",
+    "file": "sources/source_0079_language_modeling_with_gated_convolutional_networks.md",
+    "title": "Language Modeling with Gated Convolutional Networks"
+  },
+  {
+    "source_id": "206594692",
+    "path": "sources/source_0080_deep_residual_learning_for_image_recognition.md",
+    "file": "sources/source_0080_deep_residual_learning_for_image_recognition.md",
+    "title": "Deep Residual Learning for Image Recognition"
+  },
+  {
+    "source_id": "593493",
+    "path": "sources/source_0081_revisiting_distributed_synchronous_sgd.md",
+    "file": "sources/source_0081_revisiting_distributed_synchronous_sgd.md",
+    "title": "Revisiting Distributed Synchronous SGD"
+  },
+  {
+    "source_id": "8142135",
+    "path": "sources/source_0082_pixel_recurrent_neural_networks.md",
+    "file": "sources/source_0082_pixel_recurrent_neural_networks.md",
+    "title": "Pixel Recurrent Neural Networks"
+  },
+  {
+    "source_id": "8495258",
+    "path": "sources/source_0083_a_decomposable_attention_model_for_natural_language_inference.md",
+    "file": "sources/source_0083_a_decomposable_attention_model_for_natural_language_inference.md",
+    "title": "A Decomposable Attention Model for Natural Language Inference"
+  },
+  {
+    "source_id": "167217367",
+    "path": "sources/source_0084_revisiting_low_resource_neural_machine_translation_a_case_study.md",
+    "file": "sources/source_0084_revisiting_low_resource_neural_machine_translation_a_case_study.md",
+    "title": "Revisiting Low-Resource Neural Machine Translation: A Case Study"
+  },
+  {
+    "source_id": "174799399",
+    "path": "sources/source_0085_learning_deep_transformer_models_for_machine_translation.md",
+    "file": "sources/source_0085_learning_deep_transformer_models_for_machine_translation.md",
+    "title": "Learning Deep Transformer Models for Machine Translation"
+  },
+  {
+    "source_id": "203591420",
+    "path": "sources/source_0086_on_the_use_of_bert_for_neural_machine_translation.md",
+    "file": "sources/source_0086_on_the_use_of_bert_for_neural_machine_translation.md",
+    "title": "On the use of BERT for Neural Machine Translation"
+  },
+  {
+    "source_id": "2782776",
+    "path": "sources/source_0087_learning_to_translate_in_real_time_with_neural_machine_translation.md",
+    "file": "sources/source_0087_learning_to_translate_in_real_time_with_neural_machine_translation.md",
+    "title": "Learning to Translate in Real-time with Neural Machine Translation"
+  },
+  {
+    "source_id": "3515219",
+    "path": "sources/source_0088_unsupervised_neural_machine_translation.md",
+    "file": "sources/source_0088_unsupervised_neural_machine_translation.md",
+    "title": "Unsupervised Neural Machine Translation"
+  },
+  {
+    "source_id": "3626819",
+    "path": "sources/source_0089_deep_contextualized_word_representations.md",
+    "file": "sources/source_0089_deep_contextualized_word_representations.md",
+    "title": "Deep contextualized word representations"
+  },
+  {
+    "source_id": "3725815",
+    "path": "sources/source_0090_self_attention_with_relative_position_representations.md",
+    "file": "sources/source_0090_self_attention_with_relative_position_representations.md",
+    "title": "Self-Attention with Relative Position Representations"
+  },
+  {
+    "source_id": "52074346",
+    "path": "sources/source_0091_training_deeper_neural_machine_translation_models_with_transparent_attention.md",
+    "file": "sources/source_0091_training_deeper_neural_machine_translation_models_with_transparent_attention.md",
+    "title": "Training Deeper Neural Machine Translation Models with Transparent Attention"
+  },
+  {
+    "source_id": "52967399",
+    "path": "sources/source_0092_bert_pre_training_of_deep_bidirectional_transformers_for_language_understanding.md",
+    "file": "sources/source_0092_bert_pre_training_of_deep_bidirectional_transformers_for_language_understanding.md",
+    "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding"
+  },
+  {
+    "source_id": "5758868",
+    "path": "sources/source_0093_dual_learning_for_machine_translation.md",
+    "file": "sources/source_0093_dual_learning_for_machine_translation.md",
+    "title": "Dual Learning for Machine Translation"
+  },
+  {
+    "source_id": "59523610",
+    "path": "sources/source_0094_the_evolved_transformer.md",
+    "file": "sources/source_0094_the_evolved_transformer.md",
+    "title": "The Evolved Transformer"
+  },
+  {
+    "source_id": "6359641",
+    "path": "sources/source_0095_multi_way_multilingual_neural_machine_translation_with_a_shared_attention_mechanism.md",
+    "file": "sources/source_0095_multi_way_multilingual_neural_machine_translation_with_a_shared_attention_mechanism.md",
+    "title": "Multi-Way, Multilingual Neural Machine Translation with a Shared Attention Mechanism"
+  },
+  {
+    "source_id": "7857444",
+    "path": "sources/source_0096_sequence_to_sequence_models_can_directly_translate_foreign_speech.md",
+    "file": "sources/source_0096_sequence_to_sequence_models_can_directly_translate_foreign_speech.md",
+    "title": "Sequence-to-Sequence Models Can Directly Translate Foreign Speech"
+  },
+  {
+    "source_id": "85500074",
+    "path": "sources/source_0097_pre_trained_language_model_representations_for_language_generation.md",
+    "file": "sources/source_0097_pre_trained_language_model_representations_for_language_generation.md",
+    "title": "Pre-trained language model representations for language generation"
+  },
+  {
+    "source_id": "8822680",
+    "path": "sources/source_0098_six_challenges_for_neural_machine_translation.md",
+    "file": "sources/source_0098_six_challenges_for_neural_machine_translation.md",
+    "title": "Six Challenges for Neural Machine Translation"
+  },
+  {
+    "source_id": "9768369",
+    "path": "sources/source_0099_exploiting_cross_sentence_context_for_neural_machine_translation.md",
+    "file": "sources/source_0099_exploiting_cross_sentence_context_for_neural_machine_translation.md",
+    "title": "Exploiting Cross-Sentence Context for Neural Machine Translation"
+  }
+]

@@ -1,0 +1,1 @@
+We present the first large-scale, corpus based verification of the seminal work of Dowty on the notion of thematic proto-roles. Our results demonstrate both the need for and the feasibility of a property-based annotation scheme of semantic relationships, as opposed to the currently dominant notion of categorical roles.

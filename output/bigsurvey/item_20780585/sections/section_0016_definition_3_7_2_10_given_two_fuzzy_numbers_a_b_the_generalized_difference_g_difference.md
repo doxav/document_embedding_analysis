@@ -1,0 +1,1 @@
+A ⊖ g B = C is the fuzzy number C with α-levels

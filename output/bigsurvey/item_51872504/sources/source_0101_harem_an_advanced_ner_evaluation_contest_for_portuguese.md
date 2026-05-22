@@ -1,0 +1,1 @@
+In this paper we provide an overview of the first evaluation contest for named entity recognition in Portuguese, HAREM, which features several original traits and provided the first state of the art for the field in Portuguese, as well as a public-domain evaluation architecture.

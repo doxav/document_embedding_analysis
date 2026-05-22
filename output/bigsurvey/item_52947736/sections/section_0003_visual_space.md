@@ -1,0 +1,1 @@
+The bulk of the image captioning methods use visual space for generating captions. These methods are discussed in Section 3.2 to Section 3.5.

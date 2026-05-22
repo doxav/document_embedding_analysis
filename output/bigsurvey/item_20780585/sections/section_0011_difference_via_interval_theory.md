@@ -1,0 +1,1 @@
+Initially we present the fuzzy differences arising from the interval theory.  Standard difference can also be called Minkowski difference. In BIB126100901 , the author proposed an arithmetic called CIA. For that goal, he redefined intervals as functions with real values, that is, an interval [a
