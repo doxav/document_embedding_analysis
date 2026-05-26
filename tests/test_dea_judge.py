@@ -246,6 +246,41 @@ def test_parse_fenced_json():
     assert result["status"] == "ok"
 
 
+def test_parse_strips_thinking_block_before_json():
+    raw = '''<think>
+I should reason about the schema before answering.
+{"partial": "object inside thinking should be ignored"}
+</think>
+{
+  "qualitative_assessment": "Partial.",
+  "keep": [],
+  "problems": [],
+  "uncertainties": []
+}
+'''
+
+    result = _parse_judge_response(raw)
+
+    assert result["status"] == "ok"
+    assert result["qualitative_assessment"] == "Partial."
+
+
+def test_parse_extracts_result_json_from_surrounding_text():
+    raw = '''Here is the evaluation:
+{
+  "qualitative_assessment": "Usable.",
+  "keep": [],
+  "problems": [],
+  "uncertainties": []
+}
+Done.'''
+
+    result = _parse_judge_response(raw)
+
+    assert result["status"] == "ok"
+    assert result["qualitative_assessment"] == "Usable."
+
+
 def test_parse_invalid_json_returns_error():
     result = _parse_judge_response("not json")
 

@@ -1,0 +1,45 @@
+services:
+  owui-bridge:
+    build: .
+    image: promptfoo-openwebui-dea:latest
+    network_mode: host
+    working_dir: /workspace/promptfoo_openwebui_dea
+    env_file:
+      - .env
+    environment:
+      DEA_REPO_ROOT: /workspace/document_embedding_analysis
+      PROMPTFOO_PYTHON: /workspace/.venv/bin/python
+      OPENWEBUI_FILE_CACHE_PATH: /workspace/promptfoo_openwebui_dea/.cache/openwebui_file_cache.json
+      HF_HOME: /workspace/promptfoo_openwebui_dea/.cache/huggingface
+    command: >-
+      bash -lc "./scripts/bootstrap_repo_env.sh && /workspace/.venv/bin/python -m uvicorn api.openwebui_bridge:app --host ${OWUI_BRIDGE_HOST:-0.0.0.0} --port ${OWUI_BRIDGE_PORT:-8001}"
+    volumes:
+      - .:/workspace/promptfoo_openwebui_dea
+      - ${DEA_REPO_PATH}:/workspace/document_embedding_analysis
+      - promptfoo_dea_venv:/workspace/.venv
+      - promptfoo_dea_cache:/workspace/promptfoo_openwebui_dea/.cache
+
+  promptfoo:
+    build: .
+    image: promptfoo-openwebui-dea:latest
+    network_mode: host
+    working_dir: /workspace/promptfoo_openwebui_dea
+    env_file:
+      - .env
+    environment:
+      DEA_REPO_ROOT: /workspace/document_embedding_analysis
+      PROMPTFOO_PYTHON: /workspace/.venv/bin/python
+      OPENWEBUI_FILE_CACHE_PATH: /workspace/promptfoo_openwebui_dea/.cache/openwebui_file_cache.json
+      PROMPTFOO_DISABLE_TELEMETRY: "1"
+      HF_HOME: /workspace/promptfoo_openwebui_dea/.cache/huggingface
+    volumes:
+      - .:/workspace/promptfoo_openwebui_dea
+      - ${DEA_REPO_PATH}:/workspace/document_embedding_analysis
+      - promptfoo_dea_venv:/workspace/.venv
+      - promptfoo_dea_cache:/workspace/promptfoo_openwebui_dea/.cache
+    stdin_open: true
+    tty: true
+
+volumes:
+  promptfoo_dea_venv:
+  promptfoo_dea_cache:

@@ -1,0 +1,2 @@
+scripts/promptfoo_openwebui_eval/datasets/*.csv -whitespace
+scripts/promptfoo_openwebui_eval/datasets/**/*.csv -whitespace

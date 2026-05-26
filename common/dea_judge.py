@@ -497,11 +497,30 @@ def _build_judge_prompt(
 
 
 def _extract_json_text(raw: str) -> str:
-    stripped = raw.strip()
-    fenced = re.match(r"^```(?:json)?\s*(.*?)\s*```$", stripped, flags=re.DOTALL | re.IGNORECASE)
+    text = raw.strip()
+    fenced = re.match(r"^```(?:json)?\s*(.*?)\s*```$", text, flags=re.DOTALL | re.IGNORECASE)
     if fenced:
-        return fenced.group(1).strip()
-    return stripped
+        text = fenced.group(1).strip()
+
+    for tag in ("think", "thinking", "analysis", "reasoning"):
+        text = re.sub(rf"<{tag}\b[^>]*>.*?</{tag}>", "", text, flags=re.DOTALL | re.IGNORECASE).strip()
+
+    decoder = json.JSONDecoder()
+    fallback = None
+    for match in re.finditer(r"\{", text):
+        try:
+            parsed, end = decoder.raw_decode(text[match.start():])
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(parsed, dict):
+            continue
+        candidate = text[match.start(): match.start() + end]
+        if REQUIRED_KEYS.issubset(parsed.keys()):
+            return candidate
+        if fallback is None:
+            fallback = candidate
+
+    return fallback or text
 
 
 def _validate_judge_output(parsed: Any) -> bool:
