@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from typing import Any
 
@@ -497,11 +498,30 @@ def _build_judge_prompt(
 
 
 def _extract_json_text(raw: str) -> str:
-    stripped = raw.strip()
-    fenced = re.match(r"^```(?:json)?\s*(.*?)\s*```$", stripped, flags=re.DOTALL | re.IGNORECASE)
+    text = raw.strip()
+    fenced = re.match(r"^```(?:json)?\s*(.*?)\s*```$", text, flags=re.DOTALL | re.IGNORECASE)
     if fenced:
-        return fenced.group(1).strip()
-    return stripped
+        text = fenced.group(1).strip()
+
+    for tag in ("think", "thinking", "analysis", "reasoning"):
+        text = re.sub(rf"<{tag}\b[^>]*>.*?</{tag}>", "", text, flags=re.DOTALL | re.IGNORECASE).strip()
+
+    decoder = json.JSONDecoder()
+    fallback = None
+    for match in re.finditer(r"\{", text):
+        try:
+            parsed, end = decoder.raw_decode(text[match.start():])
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(parsed, dict):
+            continue
+        candidate = text[match.start(): match.start() + end]
+        if REQUIRED_KEYS.issubset(parsed.keys()):
+            return candidate
+        if fallback is None:
+            fallback = candidate
+
+    return fallback or text
 
 
 def _validate_judge_output(parsed: Any) -> bool:
@@ -604,17 +624,42 @@ def _parse_judge_response(raw: str) -> dict:
     }
 
 
+def _extra_body_from_env(env_var: str = "DEA_JUDGE_EXTRA_BODY_JSON") -> dict[str, Any] | None:
+    """Load an optional OpenAI-compatible extra_body payload for DEA judge calls."""
+    raw = os.environ.get(env_var, "").strip()
+    if not raw:
+        return None
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"{env_var} must contain a JSON object.") from exc
+    if not isinstance(payload, dict):
+        raise ValueError(f"{env_var} must contain a JSON object.")
+    return payload
+
+
+def _chat_completion_kwargs(*, prompt: str, system_message: str, model: str | None) -> dict[str, Any]:
+    """Build common OpenAI-compatible chat completion kwargs."""
+    kwargs: dict[str, Any] = {
+        "model": model,
+        "temperature": 0,
+        "messages": [
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": prompt},
+        ],
+    }
+    extra_body = _extra_body_from_env()
+    if extra_body:
+        kwargs["extra_body"] = extra_body
+    return kwargs
+
+
 def _call_llm_once(*, prompt: str, system_message: str, model: str | None, client=None, lm=None) -> str:
     if lm is not None:
         raw = lm([{"role": "user", "content": prompt}], temperature=0)
     elif client is not None:
         raw = client.chat.completions.create(
-            model=model,
-            temperature=0,
-            messages=[
-                {"role": "system", "content": system_message},
-                {"role": "user", "content": prompt},
-            ],
+            **_chat_completion_kwargs(prompt=prompt, system_message=system_message, model=model)
         ).choices[0].message.content
     elif model is not None:
         from openai import OpenAI
@@ -631,12 +676,7 @@ def _call_llm_once(*, prompt: str, system_message: str, model: str | None, clien
             raw = getattr(response, "output_text", "")
         else:
             raw = client.chat.completions.create(
-                model=model,
-                temperature=0,
-                messages=[
-                    {"role": "system", "content": system_message},
-                    {"role": "user", "content": prompt},
-                ],
+                **_chat_completion_kwargs(prompt=prompt, system_message=system_message, model=model)
             ).choices[0].message.content
     else:
         raise ValueError("no judge model/client/lm available")

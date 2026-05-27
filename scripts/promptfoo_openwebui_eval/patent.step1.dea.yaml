@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: patent step1 dea evaluation
+commandLineOptions:
+  envPath:
+    - .env
+
+providers:
+  - echo
+
+prompts:
+  - '{{candidate_answer}}'
+
+tests: file://./datasets/patent/step1.csv
+
+defaultTest:
+  assert:
+    - type: javascript
+      metric: has_candidate_answer
+      threshold: 1
+      value: |
+        (output || '').trim().length > 0 ? 1 : 0
+
+    - type: javascript
+      metric: dynamic_concision_guard
+      threshold: 1
+      value: |
+        const maxRaw = context.vars.max_chars;
+        const minRaw = context.vars.min_chars;
+        const maxChars = Number(maxRaw || 0);
+        const minChars = Number(minRaw || 0);
+        if (!maxChars && !minChars) {
+          return { pass: true, score: 1, reason: 'No min_chars or max_chars provided' };
+        }
+        const len = output.length;
+        const aboveMin = minChars ? len >= minChars : true;
+        const belowMax = maxChars ? len <= maxChars : true;
+        const pass = aboveMin && belowMax;
+        let score = 1;
+        if (!pass && maxChars && len > maxChars) {
+          score = Math.max(0, Math.min(1, maxChars / Math.max(len, 1)));
+        } else if (!pass && minChars && len < minChars) {
+          score = Math.max(0, Math.min(1, len / Math.max(minChars, 1)));
+        }
+        return {
+          pass,
+          score,
+          reason: `Output length ${len}; expected ${minChars || 'no min'}-${maxChars || 'no max'} chars`,
+        };
+
+    - type: python
+      metric: dea_score
+      threshold: 0.70
+      value: file://./assertions/dea_metrics.py
+      config:
+        planWeight: 0.30
+        contentWeight: 0.45
+        resourceWeight: 0.15
+        rougeWeight: 0.10
+        overallMin: 0.70
+        planMin: 0.00
+        contentMin: 0.00
+        resourceMin: 0.00
+        useDeaJudge: true

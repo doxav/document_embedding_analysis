@@ -66,3 +66,11 @@ data/multilexsum/*
 #!output/bigsurvey/README.md
 #output/multilexsum/*
 #!output/multilexsum/README.md
+
+# Local Promptfoo/OpenWebUI evaluation artifacts.
+scripts/promptfoo_openwebui_eval/.env
+scripts/promptfoo_openwebui_eval/.cache/
+scripts/promptfoo_openwebui_eval/results/
+scripts/promptfoo_openwebui_eval/temp/
+scripts/promptfoo_openwebui_eval/**/__pycache__/
+scripts/promptfoo_openwebui_eval/**/*.py[cod]

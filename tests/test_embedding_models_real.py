@@ -92,3 +92,46 @@ def test_document_structure_legacy_nomic_short_name_maps_exactly_not_by_substrin
 
     assert legacy.embedding_model_name == HUGGINGFACE_EMBEDDING_PATH
     assert v15.embedding_model_name == "nomic-ai/nomic-embed-text-v1.5"
+
+
+@pytest.mark.parametrize(
+    "model_name",
+    ["text-embedding-3-small", "openai/text-embedding-3-small"],
+)
+def test_document_structure_routes_text_embedding_models_to_openai_backend(
+    monkeypatch: pytest.MonkeyPatch,
+    model_name: str,
+) -> None:
+    seen: dict[str, str] = {}
+
+    class FakeOpenAIEmbeddings:
+        def __init__(self, *, model: str) -> None:
+            seen["model"] = model
+
+        def embed_query(self, _text: str) -> list[float]:
+            return [0.1, 0.2, 0.3]
+
+    class FailingHuggingFaceEmbeddings:
+        def __init__(self, **_kwargs) -> None:
+            raise AssertionError("HuggingFace backend should not be used")
+
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    monkeypatch.setattr(
+        "common.env.IR_CPS_TechSynthesis.env.OpenAIEmbeddings",
+        FakeOpenAIEmbeddings,
+    )
+    monkeypatch.setattr(
+        "common.env.IR_CPS_TechSynthesis.env.HuggingFaceEmbeddings",
+        FailingHuggingFaceEmbeddings,
+    )
+    DocumentStructure.embedding_model_cls = None
+    DocumentStructure.embedding_model_cls_name = None
+
+    document = DocumentStructure(
+        synthesis_type="test",
+        initial_goal="test",
+        embedding_model_name=model_name,
+    )
+
+    assert seen["model"] == model_name
+    assert document.embedding_size == 3

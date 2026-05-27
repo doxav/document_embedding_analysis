@@ -1,0 +1,237 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: patent step3 llm_judge evaluation
+commandLineOptions:
+  envPath:
+    - .env
+
+providers:
+  - id: http
+    config:
+      url: 'http://127.0.0.1:8001/generate'
+      method: POST
+      headers:
+        Content-Type: application/json
+      body:
+        task_id: '{{task_id}}'
+        dataset: '{{dataset}}'
+        title: '{{title}}'
+        abstract: '{{abstract}}'
+        instruction: '{{instruction}}'
+        request_prompt: '{{prompt}}'
+        source_paths_json: '{{source_paths_json}}'
+        kb_ids_json: '{{kb_ids_json}}'
+        openwebui_pipe_model: '{{openwebui_pipe_model}}'
+        tool_parameters_json: '{{tool_parameters_json}}'
+        summarizer_model_id: '{{summarizer_model_id}}'
+        algorithm: '{{algorithm}}'
+        target_length: '{{target_length}}'
+        structure: '{{structure}}'
+        generation_temperature: '{{generation_temperature}}'
+        generation_top_p: '{{generation_top_p}}'
+        generation_max_tokens: '{{generation_max_tokens}}'
+        openwebui_extra_instructions: '{{openwebui_extra_instructions}}'
+      transformResponse: 'json.output'
+
+prompts:
+  - '{{request_prompt}}'
+
+tests: file://./datasets/patent/step3.csv
+
+defaultTest:
+  assert:
+    - type: javascript
+      metric: has_candidate_answer
+      threshold: 1
+      value: |
+        (output || '').trim().length > 0 ? 1 : 0
+
+    - type: javascript
+      metric: dynamic_concision_guard
+      threshold: 1
+      value: |
+        const maxRaw = context.vars.max_chars;
+        const minRaw = context.vars.min_chars;
+        const maxChars = Number(maxRaw || 0);
+        const minChars = Number(minRaw || 0);
+        if (!maxChars && !minChars) {
+          return { pass: true, score: 1, reason: 'No min_chars or max_chars provided' };
+        }
+        const len = output.length;
+        const aboveMin = minChars ? len >= minChars : true;
+        const belowMax = maxChars ? len <= maxChars : true;
+        const pass = aboveMin && belowMax;
+        let score = 1;
+        if (!pass && maxChars && len > maxChars) {
+          score = Math.max(0, Math.min(1, maxChars / Math.max(len, 1)));
+        } else if (!pass && minChars && len < minChars) {
+          score = Math.max(0, Math.min(1, len / Math.max(minChars, 1)));
+        }
+        return {
+          pass,
+          score,
+          reason: `Output length ${len}; expected ${minChars || 'no min'}-${maxChars || 'no max'} chars`,
+        };
+
+    - type: javascript
+      metric: optional_required_terms
+      threshold: 1
+      value: |
+        const raw = context.vars.required_terms || '';
+        if (!String(raw).trim()) {
+          return { pass: true, score: 1, reason: 'No required_terms provided' };
+        }
+        let terms;
+        try {
+          const parsed = JSON.parse(raw);
+          terms = Array.isArray(parsed) ? parsed : [];
+        } catch (_) {
+          terms = String(raw).split(/\r?\n|,|;/).map(x => x.trim()).filter(Boolean);
+        }
+        const lower = output.toLowerCase();
+        const missing = terms.filter(term => !lower.includes(String(term).toLowerCase()));
+        return {
+          pass: missing.length === 0,
+          score: terms.length ? (terms.length - missing.length) / terms.length : 1,
+          reason: missing.length ? `Missing required terms: ${missing.join(', ')}` : 'All required terms found',
+        };
+
+    - type: javascript
+      metric: optional_forbidden_terms
+      threshold: 1
+      value: |
+        const raw = context.vars.forbidden_terms || '';
+        if (!String(raw).trim()) {
+          return { pass: true, score: 1, reason: 'No forbidden_terms provided' };
+        }
+        let terms;
+        try {
+          const parsed = JSON.parse(raw);
+          terms = Array.isArray(parsed) ? parsed : [];
+        } catch (_) {
+          terms = String(raw).split(/\r?\n|,|;/).map(x => x.trim()).filter(Boolean);
+        }
+        const lower = output.toLowerCase();
+        const found = terms.filter(term => lower.includes(String(term).toLowerCase()));
+        return {
+          pass: found.length === 0,
+          score: found.length === 0 ? 1 : 0,
+          reason: found.length ? `Forbidden terms found: ${found.join(', ')}` : 'No forbidden terms found',
+        };
+
+    - type: context-faithfulness
+      metric: gold_bounded_claim_support
+      threshold: 0.85
+      weight: 3
+      provider: "openai:chat:{{ env.OPENAI_MODEL | default('qwen-laptop-dea:latest') }}"
+
+    - type: factuality
+      metric: factuality_vs_gold
+      value: '{{gold_summary}}'
+      threshold: 0.82
+      weight: 3
+      provider: "openai:chat:{{ env.OPENAI_MODEL | default('qwen-laptop-dea:latest') }}"
+
+    - type: llm-rubric
+      metric: topical_alignment
+      threshold: 0.80
+      weight: 3
+      provider: "openai:chat:{{ env.OPENAI_MODEL | default('qwen-laptop-dea:latest') }}"
+      value: |
+        Evaluate whether the candidate answers the exact topical request.
+
+        User request:
+        {{request_prompt}}
+
+        Gold summary:
+        {{gold_summary}}
+
+        Candidate summary:
+        {{output}}
+
+        High score:
+        - focuses on the requested task and scope;
+        - preserves the topical emphasis rather than replacing it with a broad generic summary;
+        - stays faithful to the gold summary's intended focus.
+
+        Low score:
+        - summarizes too broadly;
+        - adds unrelated background;
+        - ignores the requested emphasis.
+
+    - type: llm-rubric
+      metric: gold_coverage
+      threshold: 0.78
+      weight: 4
+      provider: "openai:chat:{{ env.OPENAI_MODEL | default('qwen-laptop-dea:latest') }}"
+      value: |
+        Compare the candidate summary to the gold summary.
+
+        Gold summary:
+        {{gold_summary}}
+
+        Candidate summary:
+        {{output}}
+
+        Give credit for paraphrases.
+        Penalize missing material points, changed entities, changed numbers,
+        changed dates, changed constraints, lost caveats, or changed scope.
+        Do not require identical wording or ordering.
+
+    - type: llm-rubric
+      metric: non_invention_vs_gold
+      threshold: 0.76
+      weight: 3
+      provider: "openai:chat:{{ env.OPENAI_MODEL | default('qwen-laptop-dea:latest') }}"
+      value: |
+        Check whether the candidate introduces specific claims not present in the gold summary.
+
+        Gold summary:
+        {{gold_summary}}
+
+        Candidate summary:
+        {{output}}
+
+        Penalize invented or overstated details, including:
+        - obligations
+        - technical conclusions
+        - inconsistencies
+        - dates
+        - figures
+        - named entities
+        - causal links
+        - constraints
+        - exceptions
+
+        Ignore harmless rewording and generic connective language.
+
+    - type: llm-rubric
+      metric: optional_fact_coverage
+      threshold: 0.82
+      weight: 2
+      provider: "openai:chat:{{ env.OPENAI_MODEL | default('qwen-laptop-dea:latest') }}"
+      value: |
+        Evaluate the optional fact checklist.
+
+        Optional facts to check:
+        {{facts_to_check}}
+
+        Gold summary:
+        {{gold_summary}}
+
+        Candidate summary:
+        {{output}}
+
+        If facts_to_check is empty or missing, return a perfect score.
+
+        Otherwise:
+        - give credit for paraphrases;
+        - penalize omissions;
+        - penalize changed numbers, dates, entities, polarity, constraints, and caveats;
+        - do not require exact wording.
+
+    - type: similar
+      metric: semantic_similarity_tripwire
+      value: '{{gold_summary}}'
+      threshold: 0.80
+      weight: 1
+      provider: "openai:embeddings:{{ env.OPENAI_EMBEDDING_MODEL | default('text-embedding-3-large') }}"

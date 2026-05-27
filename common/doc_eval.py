@@ -970,7 +970,7 @@ def DEA_evaluation(
         # explicit override
         if embedding_backend == "openai":
             return {
-                "model": OPENAI_EMBEDDING_MODEL_NAME,
+                "model": embedding_model_name or OPENAI_EMBEDDING_MODEL_NAME,
                 "embed_id": "1",
                 "query_prefix": "",
             }
@@ -1319,8 +1319,11 @@ def evaluate_document(
     print("\nROUGE Scores (precision, recall, F1):")
     for metric, scores in article_metrics.get("rouge_scores", {}).items():
         print(f"{metric}:")
-        for score_type, value in scores.items():
-            print(f"  {score_type}: {value:.2f}")
+        if isinstance(scores, dict):
+            for score_type, value in scores.items():
+                print(f"  {score_type}: {value:.2f}")
+        else:
+            print(f"  value: {scores:.2f}")
 
     dea_judge = {
         "status": "skipped",

@@ -38,6 +38,16 @@ from bs4 import BeautifulSoup
 # Placeholder classes for the technical synthesis environment
 ##############################################################################################################
 
+
+def _uses_openai_embedding_backend(model_name: str) -> bool:
+    """Return whether an embedding model should be routed to the OpenAI-compatible client."""
+    normalized = str(model_name or "").strip()
+    return (
+        normalized == "text-embedding-ada-002"
+        or normalized.startswith("text-embedding-")
+        or normalized.startswith("openai/text-embedding-")
+    )
+
 class UnifiedVectorDB: # Mockup of real UnifiedVectorDB
     """
     A simple dictionary-based replacement for UnifiedVectorDB.
@@ -196,10 +206,10 @@ class DocumentStructure:
         )
 
         if needs_new_model:
-            if resolved_model_name == "text-embedding-ada-002":
+            if _uses_openai_embedding_backend(resolved_model_name):
                 if not os.getenv("OPENAI_API_KEY"):
                     raise ValueError(
-                        "OpenAI API key is required for OpenAI ada-002 model."
+                        "OPENAI_API_KEY is required for OpenAI-compatible embedding models."
                     )
                 self.embedding_model = OpenAIEmbeddings(model=resolved_model_name)
             else:
