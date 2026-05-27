@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import re
+import sys
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -101,9 +102,21 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
+def raise_csv_field_size_limit() -> None:
+    """Allow generated Promptfoo CSV rows to contain embedded source documents."""
+    limit = sys.maxsize
+    while True:
+        try:
+            csv.field_size_limit(limit)
+            return
+        except OverflowError:
+            limit //= 10
+
+
 def read_csv_rows(path: Path) -> list[dict[str, str]]:
     if not path.exists():
         return []
+    raise_csv_field_size_limit()
     with path.open("r", encoding="utf-8", newline="") as f:
         return list(csv.DictReader(f))
 

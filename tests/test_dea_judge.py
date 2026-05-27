@@ -441,6 +441,52 @@ def test_run_dea_judge_calls_llm_once():
     assert result["problems"][0]["main_impact"] == "plan"
 
 
+def test_run_dea_judge_passes_openai_extra_body_from_env(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("DEA_JUDGE_EXTRA_BODY_JSON", '{"reasoning": {"enabled": false}}')
+    response = json.dumps({
+        "qualitative_assessment": "The document is acceptable.",
+        "keep": [],
+        "problems": [],
+        "uncertainties": [],
+    })
+    client = FakeJudgeClient(response)
+
+    result = run_dea_judge(
+        document_content="# Candidate",
+        solution=None,
+        content_type="markdown",
+        dea_scores={},
+        article_metrics={},
+        prometheus_scores={},
+        writehere_scores={},
+        model="fake",
+        client=client,
+    )
+
+    assert result["status"] == "ok"
+    assert client.calls[0]["extra_body"] == {"reasoning": {"enabled": False}}
+
+
+def test_run_dea_judge_rejects_invalid_extra_body_env(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("DEA_JUDGE_EXTRA_BODY_JSON", "[]")
+    client = FakeJudgeClient("{}")
+
+    result = run_dea_judge(
+        document_content="# Candidate",
+        solution=None,
+        content_type="markdown",
+        dea_scores={},
+        article_metrics={},
+        prometheus_scores={},
+        writehere_scores={},
+        model="fake",
+        client=client,
+    )
+
+    assert result["status"] == "error"
+    assert "DEA_JUDGE_EXTRA_BODY_JSON must contain a JSON object" in result["error"]
+
+
 def test_run_dea_judge_skips_without_llm():
     result = run_dea_judge(
         document_content="# Candidate",

@@ -970,7 +970,7 @@ def DEA_evaluation(
         # explicit override
         if embedding_backend == "openai":
             return {
-                "model": OPENAI_EMBEDDING_MODEL_NAME,
+                "model": embedding_model_name or OPENAI_EMBEDDING_MODEL_NAME,
                 "embed_id": "1",
                 "query_prefix": "",
             }

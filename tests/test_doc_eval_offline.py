@@ -166,6 +166,50 @@ def test_dea_evaluation_skip_env_returns_empty():
     assert scores == {}
 
 
+def test_dea_evaluation_openai_backend_respects_embedding_model_override(monkeypatch, tmp_path) -> None:
+    seen = {}
+
+    class FakeSynthesisManager:
+        def GetFromMarkdown(self, content: str) -> None:
+            seen["content"] = content
+
+        def get_distance_to_targetJSON(self) -> dict:
+            return {}
+
+    class FakeEnvironment:
+        id = "fake-env"
+        synthesis_manager = FakeSynthesisManager()
+
+        def reset(self) -> None:
+            seen["reset"] = True
+
+        def get_score(self) -> dict:
+            return {"status": "computed", "plan_embedding_similarity": 1.0}
+
+    class FakeEnvironmentManager:
+        def __init__(self, **kwargs) -> None:
+            seen.update(kwargs)
+
+        def get_environment(self) -> FakeEnvironment:
+            return FakeEnvironment()
+
+    monkeypatch.setattr("common.doc_eval.EnvironmentManager", FakeEnvironmentManager)
+    sol = _sample_solution()
+    sol["target_file_path"] = str(tmp_path / "target.json")
+
+    scores = DEA_evaluation(
+        "candidate content",
+        sol,
+        embedding_backend="openai",
+        embedding_model_name="text-embedding-3-small",
+    )
+
+    assert seen["embedding_model_name"] == "text-embedding-3-small"
+    assert seen["embedding_model_query_prefix"] == ""
+    assert seen["content"] == "candidate content"
+    assert scores["plan_embedding_similarity"] == 1.0
+
+
 def test_evaluate_document_with_solution_uses_markdown_reference():
     sol = _sample_solution()
     result = evaluate_document(

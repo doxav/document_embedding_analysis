@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from typing import Any
 
@@ -623,17 +624,42 @@ def _parse_judge_response(raw: str) -> dict:
     }
 
 
+def _extra_body_from_env(env_var: str = "DEA_JUDGE_EXTRA_BODY_JSON") -> dict[str, Any] | None:
+    """Load an optional OpenAI-compatible extra_body payload for DEA judge calls."""
+    raw = os.environ.get(env_var, "").strip()
+    if not raw:
+        return None
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"{env_var} must contain a JSON object.") from exc
+    if not isinstance(payload, dict):
+        raise ValueError(f"{env_var} must contain a JSON object.")
+    return payload
+
+
+def _chat_completion_kwargs(*, prompt: str, system_message: str, model: str | None) -> dict[str, Any]:
+    """Build common OpenAI-compatible chat completion kwargs."""
+    kwargs: dict[str, Any] = {
+        "model": model,
+        "temperature": 0,
+        "messages": [
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": prompt},
+        ],
+    }
+    extra_body = _extra_body_from_env()
+    if extra_body:
+        kwargs["extra_body"] = extra_body
+    return kwargs
+
+
 def _call_llm_once(*, prompt: str, system_message: str, model: str | None, client=None, lm=None) -> str:
     if lm is not None:
         raw = lm([{"role": "user", "content": prompt}], temperature=0)
     elif client is not None:
         raw = client.chat.completions.create(
-            model=model,
-            temperature=0,
-            messages=[
-                {"role": "system", "content": system_message},
-                {"role": "user", "content": prompt},
-            ],
+            **_chat_completion_kwargs(prompt=prompt, system_message=system_message, model=model)
         ).choices[0].message.content
     elif model is not None:
         from openai import OpenAI
@@ -650,12 +676,7 @@ def _call_llm_once(*, prompt: str, system_message: str, model: str | None, clien
             raw = getattr(response, "output_text", "")
         else:
             raw = client.chat.completions.create(
-                model=model,
-                temperature=0,
-                messages=[
-                    {"role": "system", "content": system_message},
-                    {"role": "user", "content": prompt},
-                ],
+                **_chat_completion_kwargs(prompt=prompt, system_message=system_message, model=model)
             ).choices[0].message.content
     else:
         raise ValueError("no judge model/client/lm available")

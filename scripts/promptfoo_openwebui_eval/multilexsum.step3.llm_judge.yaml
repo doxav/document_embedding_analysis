@@ -122,20 +122,20 @@ defaultTest:
       metric: gold_bounded_claim_support
       threshold: 0.85
       weight: 3
-      provider: openai:chat:qwen-laptop-dea:latest
+      provider: "openai:chat:{{ env.OPENAI_MODEL | default('qwen-laptop-dea:latest') }}"
 
     - type: factuality
       metric: factuality_vs_gold
       value: '{{gold_summary}}'
       threshold: 0.82
       weight: 3
-      provider: openai:chat:qwen-laptop-dea:latest
+      provider: "openai:chat:{{ env.OPENAI_MODEL | default('qwen-laptop-dea:latest') }}"
 
     - type: llm-rubric
       metric: topical_alignment
       threshold: 0.80
       weight: 3
-      provider: openai:chat:qwen-laptop-dea:latest
+      provider: "openai:chat:{{ env.OPENAI_MODEL | default('qwen-laptop-dea:latest') }}"
       value: |
         Evaluate whether the candidate answers the exact topical request.
 
@@ -162,7 +162,7 @@ defaultTest:
       metric: gold_coverage
       threshold: 0.78
       weight: 4
-      provider: openai:chat:qwen-laptop-dea:latest
+      provider: "openai:chat:{{ env.OPENAI_MODEL | default('qwen-laptop-dea:latest') }}"
       value: |
         Compare the candidate summary to the gold summary.
 
@@ -181,7 +181,7 @@ defaultTest:
       metric: non_invention_vs_gold
       threshold: 0.76
       weight: 3
-      provider: openai:chat:qwen-laptop-dea:latest
+      provider: "openai:chat:{{ env.OPENAI_MODEL | default('qwen-laptop-dea:latest') }}"
       value: |
         Check whether the candidate introduces specific claims not present in the gold summary.
 
@@ -208,7 +208,7 @@ defaultTest:
       metric: optional_fact_coverage
       threshold: 0.82
       weight: 2
-      provider: openai:chat:qwen-laptop-dea:latest
+      provider: "openai:chat:{{ env.OPENAI_MODEL | default('qwen-laptop-dea:latest') }}"
       value: |
         Evaluate the optional fact checklist.
 
@@ -234,3 +234,4 @@ defaultTest:
       value: '{{gold_summary}}'
       threshold: 0.80
       weight: 1
+      provider: "openai:embeddings:{{ env.OPENAI_EMBEDDING_MODEL | default('text-embedding-3-large') }}"

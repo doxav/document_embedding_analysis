@@ -1,15 +1,16 @@
 # Promptfoo OpenWebUI/Ollama Evaluation Bundle
 
-This directory contains a local evaluation harness for `document_embedding_analysis`.
+This directory contains a local evaluation harness of summarization tools using `document_embedding_analysis` and PromptFoo (we test it on OpenWebUI model/pipe with a specific tool).
 It turns the repository's generated dataset outputs into Promptfoo test cases, runs
 candidate generation through a local bridge, and scores answers with either:
 
 - repository-native DEA metrics and the DEA qualitative judge;
-- Promptfoo model-graded assertions served by local Ollama.
+- Promptfoo model-graded assertions served by any OpenAI-compatible endpoint.
 
-The default path is fully local: Docker runs Promptfoo and the bridge, Ollama serves
-`qwen-laptop:latest` on the host, and the OpenAI-compatible API points to
-`http://127.0.0.1:11434/v1`. Do not use the public OpenAI API for this setup.
+For the summarization task being evaluated, the bridge should call OpenWebUI so
+the selected summarization pipe/tool is exercised. Direct Ollama/vLLM/OpenRouter
+or OpenAI-compatible calls are for judges, embeddings, or non-tool baselines.
+The default generation pipe is `summarizer---kohaku-OR`.
 
 ## Table Of Contents
 
@@ -36,19 +37,23 @@ scoring path. The `*.dea.yaml` configs call `common.doc_eval.evaluate_document`
 through `assertions/dea_metrics.py`. These configs keep `skip_dea=False` and
 enable `useDeaJudge=true`.
 
-**DEA qualitative judge** is the optional LLM part of DEA evaluation. In this
-bundle it uses local Ollama through the OpenAI-compatible client. The configured
-judge model is `qwen-laptop-dea:latest`, a local Ollama alias based on
-`qwen-laptop:latest` but configured to return strict JSON.
+**DEA qualitative judge** is the optional LLM part of DEA evaluation. It uses
+the OpenAI-compatible client, so the same config shape works with Ollama, vLLM,
+OpenRouter, or OpenAI. Set `OPENAI_BASE_URL`, `OPENAI_API_KEY`, and
+`DEA_JUDGE_MODEL`. Some OpenAI-compatible providers need extra request fields;
+set `DEA_JUDGE_EXTRA_BODY_JSON` to a JSON object for those cases.
 
 **LLM judge** means Promptfoo's model-graded assertions such as
 `llm-rubric`, `factuality`, and `context-faithfulness`. The `*.llm_judge.yaml`
-configs also point to local Ollama, not the public OpenAI API.
+configs use `openai:chat:{{ env.OPENAI_MODEL }}`. Point that environment at
+Ollama, vLLM, OpenRouter, or OpenAI as needed. The `similar` assertion uses an
+embedding provider, so set `OPENAI_EMBEDDING_MODEL` when the endpoint requires a
+provider-prefixed embedding model name.
 
 **OpenWebUI bridge** is `api/openwebui_bridge.py`, a small FastAPI service that
-receives Promptfoo rows and calls either OpenWebUI or Ollama. The default
-`GENERATION_BACKEND=ollama` calls Ollama directly. `GENERATION_BACKEND=openwebui`
-uses OpenWebUI upload and chat endpoints.
+receives Promptfoo rows and calls either OpenWebUI or Ollama. Use
+`GENERATION_BACKEND=openwebui` for the summarization pipe/tool under test. Use
+`GENERATION_BACKEND=ollama` only for direct-model generation baselines.
 
 **MQS evaluation dataset** means the `MQS_evaluation_dataset.jsonl` files
 created by the repository importers under `output/bigsurvey` and
@@ -100,7 +105,7 @@ Important columns:
 | `source_paths_json` | JSON-encoded list of repository-relative source files |
 | `kb_ids_json` | JSON-encoded OpenWebUI knowledge-base ids/names for `<kb_list>` |
 | `source_document_mode` | Whether source files are provided or only open-retrieval references exist |
-| `openwebui_pipe_model` | OpenWebUI model or pipe model id used by Step 2/3 generation |
+| `openwebui_pipe_model` | OpenWebUI model or pipe model id used by Step 2/3 generation; current OpenRouter-backed pipe is `summarizer---kohaku-OR` |
 | `tool_parameters_json` | Extra JSON object copied into `<tool_parameters>` |
 | `summarizer_model_id`, `algorithm`, `target_length`, `structure` | Common pipe/tool parameters copied into `<tool_parameters>` |
 | `generation_temperature`, `generation_top_p`, `generation_max_tokens` | HTTP generation options sent to OpenWebUI or Ollama |
@@ -139,10 +144,18 @@ repository's JSON/JSONL files under `output/`.
 
 Scoring strategies:
 
+Note on providers: the `echo` provider tells Promptfoo to use the CSV `candidate_answer` column
+as the model output (no external model call). This is the intended behaviour for Step 1,
+where `step1.csv` already contains baseline answers, and for Step 2 offline evaluation,
+where generation is performed separately (producing `step2_output.csv`) and Promptfoo then
+evaluates those generated answers by echoing them. For live generation (Step 3) Promptfoo
+uses the HTTP bridge provider to call the configured backend.
+
+
 | Strategy | YAML suffix | What it checks |
 |---|---|---|
 | DEA | `.dea.yaml` | Native DEA plan/content/resource scores, ROUGE/entity metrics, and DEA judge |
-| LLM judge | `.llm_judge.yaml` | Promptfoo's model-graded assertions using local Ollama |
+| LLM judge | `.llm_judge.yaml` | Promptfoo's model-graded assertions using the configured OpenAI-compatible endpoint |
 
 ## OpenWebUI Prompt And Valve Parameters
 
@@ -197,13 +210,14 @@ pipe/tool, for example:
 Use `kb_ids_json` for knowledge bases:
 
 ```json
-["kb-lit-review", {"id": "kb-cases", "name": "Case law KB"}]
+["patch_examples", {"id": "kb-cases", "name": "Case law KB"}]
 ```
 
 When `GENERATION_BACKEND=openwebui`, local files from `source_paths_json` are
 uploaded to OpenWebUI and their resulting file ids are inserted into
-`<files_list>`. When `GENERATION_BACKEND=ollama`, the bridge bypasses OpenWebUI
-and appends trimmed source text directly to the Ollama prompt instead.
+`<files_list>`. This is the correct mode for testing the summarization
+pipe/tool. When `GENERATION_BACKEND=ollama`, the bridge bypasses OpenWebUI and
+appends trimmed source text directly to the Ollama prompt instead.
 
 ## Setup
 
@@ -224,14 +238,64 @@ Required values:
 ```bash
 DEA_REPO_PATH=/absolute/path/to/document_embedding_analysis
 DEA_REPO_ROOT=/workspace/document_embedding_analysis
-GENERATION_BACKEND=ollama
-OLLAMA_BASE_URL=http://127.0.0.1:11434
-OPENAI_BASE_URL=http://127.0.0.1:11434/v1
-OPENAI_API_KEY=ollama-local
-OPENAI_MODEL=qwen-laptop-dea:latest
+GENERATION_BACKEND=openwebui
+OPENWEBUI_BASE_URL=http://127.0.0.1:8080
+OPENWEBUI_API_KEY=<local-openwebui-api-key>
+OPENWEBUI_PIPE_MODEL=summarizer---kohaku-OR
 DEA_USE_JUDGE=true
-DEA_JUDGE_MODEL=qwen-laptop-dea:latest
 ```
+
+Choose one OpenAI-compatible evaluation endpoint:
+
+| Backend | `OPENAI_BASE_URL` | `OPENAI_API_KEY` | `OPENAI_MODEL` / `DEA_JUDGE_MODEL` |
+|---|---|---|---|
+| Ollama | `http://127.0.0.1:11434/v1` | any non-empty value | local model, for example `qwen-laptop-dea:latest` |
+| vLLM | `http://127.0.0.1:8000/v1` | local token or dummy value | served model id |
+| OpenRouter | `https://openrouter.ai/api/v1` | OpenRouter key from your shell or `.env` | for example `qwen/qwen3.6-35b-a3b` |
+| OpenAI | `https://api.openai.com/v1` | OpenAI key from your shell or `.env` | OpenAI model id |
+
+For OpenRouter Qwen reasoning models that return reasoning separately from
+message content, disable reasoning for JSON judge calls:
+
+```bash
+OPENAI_MODEL=qwen/qwen3.6-35b-a3b
+OPENAI_EMBEDDING_MODEL=openai/text-embedding-3-small
+DEA_JUDGE_MODEL=qwen/qwen3.6-35b-a3b
+DEA_JUDGE_EXTRA_BODY_JSON='{"reasoning":{"enabled":false}}'
+```
+
+For Promptfoo's own `llm-rubric`, `factuality`, and
+`context-faithfulness` assertions, the equivalent setting lives in the
+assertion provider config:
+
+```yaml
+provider:
+  id: "openai:chat:{{ env.OPENAI_MODEL }}"
+  config:
+    showThinking: false
+    passthrough:
+      reasoning:
+        enabled: false
+```
+
+Native DEA embeddings are controlled separately:
+
+```bash
+DEA_EMBEDDING_BACKEND=hf        # deterministic local default
+DEA_EMBEDDING_MODEL=
+```
+
+Keep native DEA embeddings aligned with the embeddings used to create the DEA
+dataset. Do not switch an existing DEA dataset from `hf` to an OpenAI-compatible
+embedding backend unless you intentionally regenerate the dataset embeddings;
+otherwise scores are not comparable and regeneration can be costly. Set
+`DEA_EMBEDDING_BACKEND=openai` only for a dataset built for that embedding
+backend, when the selected `OPENAI_BASE_URL` supports `/embeddings` and
+`DEA_EMBEDDING_MODEL` is an embedding model. A chat model such as
+`qwen/qwen3.6-35b-a3b` is not an embedding model unless that provider explicitly
+exposes it through `/embeddings`.
+For OpenRouter, a valid embedding model id uses a provider prefix, for example
+`openai/text-embedding-3-small`.
 
 This Compose file uses Linux `network_mode: host`, because local Ollama is
 normally bound to `127.0.0.1:11434`. With host networking, container
@@ -260,7 +324,7 @@ curl http://127.0.0.1:8001/healthz
 Expected health shape:
 
 ```json
-{"ok":true,"backend":"ollama","base_url":"http://127.0.0.1:8080","ollama_base_url":"http://127.0.0.1:11434"}
+{"ok":true,"backend":"openwebui","base_url":"http://127.0.0.1:8080","ollama_base_url":"http://127.0.0.1:11434"}
 ```
 
 If your shell does not yet have the Docker group activated, wrap Docker commands:
@@ -315,7 +379,7 @@ Parameter flags can be added to any `build_promptfoo_csvs.py` call:
 --target-length long
 --structure "sectioned literature review"
 --tool-parameters-json '{"emit_diagnostics": false}'
---kb-id kb-lit-review
+--kb-id patch_examples
 ```
 
 Those values are written into the generated CSV rows and later become
@@ -378,10 +442,10 @@ docker compose run --rm promptfoo bash -lc \
 | Docker permission denied | Run the command inside `newgrp docker` |
 | Promptfoo says no tests loaded | Generate the required `datasets/<dataset>/<step>.csv` file |
 | DEA assertion cannot find files | Check `DEA_REPO_PATH`, `DEA_REPO_ROOT`, and `dea_solution_path` in the CSV |
-| OpenAI API connection error | Confirm `OPENAI_BASE_URL=http://127.0.0.1:11434/v1` inside the container |
-| LLM judge returns invalid JSON | Confirm `DEA_JUDGE_MODEL=qwen-laptop-dea:latest` and recreate the Ollama alias |
+| OpenAI-compatible API connection error | Confirm `OPENAI_BASE_URL`, `OPENAI_API_KEY`, and model env vars inside the container |
+| LLM judge returns invalid JSON | Use a judge-capable model and check `OPENAI_MODEL` / `DEA_JUDGE_MODEL`; for reasoning models, set provider-specific JSON such as `DEA_JUDGE_EXTRA_BODY_JSON='{"reasoning":{"enabled":false}}'` |
 | Step 3 cannot reach bridge | Use `http://127.0.0.1:8001/generate` with host networking |
-| OpenWebUI path fails | Use `GENERATION_BACKEND=ollama` first; OpenWebUI also needs a valid API key and pipe model |
+| OpenWebUI path fails | Check `GENERATION_BACKEND=openwebui`, `OPENWEBUI_API_KEY`, and the selected pipe model |
 
 Run repository tests from the repo root:
 
