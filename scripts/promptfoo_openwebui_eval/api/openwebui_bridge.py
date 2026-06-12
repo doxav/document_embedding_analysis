@@ -8,15 +8,41 @@ if str(BUNDLE_ROOT) not in _sys.path:
     _sys.path.insert(0, str(BUNDLE_ROOT))
 
 import os
+import time
+import uuid
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from fastapi import FastAPI, HTTPException
 
 from lib.bundle_common import as_bool, build_openwebui_user_prompt, load_text, parse_jsonish, resolve_repo_path, trim_text
-from lib.openwebui_client import OllamaClient, OpenWebUIClient
+from lib.openwebui_client import OpenAIEndpointClient, OpenWebUIClient
 
 app = FastAPI(title="OpenWebUI generation bridge")
+
+FORWARDED_BRIDGE_KEYS = (
+    "source_paths_json",
+    "kb_ids_json",
+    "tool_parameters_json",
+    "summarizer_model_id",
+    "algorithm",
+    "target_length",
+    "structure",
+    "openwebui_extra_instructions",
+)
+
+GENERATION_OPTIONS: tuple[tuple[str, str, Callable[[Any], int | float]], ...] = (
+    ("generation_temperature", "temperature", float),
+    ("generation_top_p", "top_p", float),
+    ("generation_max_tokens", "max_tokens", lambda value: int(float(value))),
+)
+
+OPENAI_OPTION_ALIASES: tuple[tuple[str, str, Callable[[Any], int | float]], ...] = (
+    ("temperature", "generation_temperature", float),
+    ("top_p", "generation_top_p", float),
+    ("max_tokens", "generation_max_tokens", lambda value: int(float(value))),
+    ("max_completion_tokens", "generation_max_tokens", lambda value: int(float(value))),
+)
 
 
 @app.get("/healthz")
@@ -25,15 +51,15 @@ def healthz() -> dict[str, Any]:
         "ok": True,
         "backend": os.environ.get("GENERATION_BACKEND", "openwebui"),
         "base_url": os.environ.get("OPENWEBUI_BASE_URL", ""),
-        "ollama_base_url": os.environ.get("OLLAMA_BASE_URL", ""),
+        "openai_endpoint_base_url": os.environ.get("OPENAI_ENDPOINT_BASE_URL") or os.environ.get("OPENAI_BASE_URL", ""),
     }
 
 
 def _source_context(local_paths: list[Path]) -> str:
     if not local_paths:
         return ""
-    max_total = int(os.environ.get("OLLAMA_MAX_SOURCE_CHARS", "60000"))
-    max_each = int(os.environ.get("OLLAMA_MAX_SOURCE_FILE_CHARS", "6000"))
+    max_total = int(os.environ.get("OPENAI_ENDPOINT_MAX_SOURCE_CHARS", "60000"))
+    max_each = int(os.environ.get("OPENAI_ENDPOINT_MAX_SOURCE_FILE_CHARS", "6000"))
     parts: list[str] = []
     used = 0
     for path in local_paths:
@@ -48,6 +74,119 @@ def _source_context(local_paths: list[Path]) -> str:
     if not parts:
         return ""
     return "Source documents:\n\n" + "\n\n".join(parts)
+
+
+def _message_content_to_text(content: Any) -> str:
+    """Convert OpenAI chat message content into plain text for the bridge."""
+    if content is None:
+        return ""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts: list[str] = []
+        for item in content:
+            if not isinstance(item, dict):
+                continue
+            text = item.get("text")
+            if isinstance(text, str):
+                parts.append(text)
+                continue
+            nested_content = item.get("content")
+            if isinstance(nested_content, str):
+                parts.append(nested_content)
+        return "\n".join(part for part in parts if part.strip())
+    raise HTTPException(
+        status_code=400,
+        detail="message content must be a string or a list of text parts",
+    )
+
+
+def _openai_messages_to_prompt(messages: Any) -> str:
+    """Build a single bridge prompt from OpenAI chat messages."""
+    if not isinstance(messages, list) or not messages:
+        raise HTTPException(status_code=400, detail="messages must be a non-empty list")
+
+    blocks: list[tuple[str, str]] = []
+    for index, message in enumerate(messages):
+        if not isinstance(message, dict):
+            raise HTTPException(status_code=400, detail=f"messages[{index}] must be an object")
+        role = str(message.get("role") or "").strip()
+        if not role:
+            raise HTTPException(status_code=400, detail=f"messages[{index}].role is required")
+        text = _message_content_to_text(message.get("content")).strip()
+        if text:
+            blocks.append((role, text))
+
+    if not blocks:
+        raise HTTPException(status_code=400, detail="messages must contain at least one text content")
+    if len(blocks) == 1 and blocks[0][0] == "user":
+        return blocks[0][1]
+    return "\n\n".join(f"{role}: {text}" for role, text in blocks)
+
+
+def _copy_numeric_option(source: dict[str, Any], destination: dict[str, Any], source_key: str, destination_key: str, caster: Callable[[Any], int | float]) -> None:
+    """Validate and copy a supported generation option into bridge payload fields."""
+    if source_key not in source or source[source_key] is None:
+        return
+    try:
+        value = caster(source[source_key])
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=400, detail=f"{source_key} must be numeric")
+    destination[destination_key] = str(value)
+
+
+def _bridge_payload_from_openai(payload: dict[str, Any]) -> dict[str, Any]:
+    """Translate a non-streaming OpenAI chat completion request to bridge payload."""
+    model = str(payload.get("model") or "").strip()
+    if not model:
+        raise HTTPException(status_code=400, detail="model is required")
+    if as_bool(payload.get("stream"), False):
+        raise HTTPException(status_code=400, detail="stream=true is not supported by this bridge")
+
+    bridge_payload: dict[str, Any] = {
+        "openwebui_pipe_model": model,
+        "request_prompt": _openai_messages_to_prompt(payload.get("messages")),
+    }
+    for key in FORWARDED_BRIDGE_KEYS:
+        if key in payload:
+            bridge_payload[key] = payload[key]
+
+    for source_key, destination_key, caster in OPENAI_OPTION_ALIASES:
+        _copy_numeric_option(payload, bridge_payload, source_key, destination_key, caster)
+    return bridge_payload
+
+
+def _extra_payload(vars_dict: dict[str, Any]) -> dict[str, Any]:
+    extra_payload: dict[str, Any] = {}
+    for src_key, dst_key, caster in GENERATION_OPTIONS:
+        raw = str(vars_dict.get(src_key) or "").strip()
+        if raw:
+            try:
+                extra_payload[dst_key] = caster(raw)
+            except (TypeError, ValueError):
+                pass
+    return extra_payload
+
+
+@app.post("/v1/chat/completions")
+def openai_chat_completions(payload: dict[str, Any]) -> dict[str, Any]:
+    """Return a minimal OpenAI-compatible chat completion through the bridge."""
+    bridge_payload = _bridge_payload_from_openai(payload)
+    result = generate(bridge_payload)
+    model = str(bridge_payload["openwebui_pipe_model"])
+    return {
+        "id": f"chatcmpl-{uuid.uuid4().hex}",
+        "object": "chat.completion",
+        "created": int(time.time()),
+        "model": model,
+        "choices": [
+            {
+                "index": 0,
+                "message": {"role": "assistant", "content": str(result.get("output") or "")},
+                "finish_reason": "stop",
+            }
+        ],
+    }
 
 
 @app.post("/generate")
@@ -65,36 +204,27 @@ def generate(payload: dict[str, Any]) -> dict[str, Any]:
             else:
                 missing_paths.append(str(path_str))
 
-        extra_payload: dict[str, Any] = {}
-        for src_key, dst_key, caster in (
-            ("generation_temperature", "temperature", float),
-            ("generation_top_p", "top_p", float),
-            ("generation_max_tokens", "max_tokens", lambda x: int(float(x))),
-        ):
-            raw = str(vars_dict.get(src_key) or "").strip()
-            if raw:
-                try:
-                    extra_payload[dst_key] = caster(raw)
-                except Exception:
-                    pass
+        extra_payload = _extra_payload(vars_dict)
 
         backend = os.environ.get("GENERATION_BACKEND", "openwebui").strip().lower()
-        if backend == "ollama":
+        if backend == "openai_endpoint":
             user_prompt = build_openwebui_user_prompt(vars_dict, file_ids=None)
             context = _source_context(local_paths)
             if context:
                 user_prompt = f"{user_prompt}\n\n{context}"
             model = (
-                os.environ.get("OLLAMA_MODEL", "").strip()
-                or str(vars_dict.get("openwebui_pipe_model") or "").strip()
-                or "qwen-laptop:latest"
+                str(vars_dict.get("openwebui_pipe_model") or "").strip()
+                or os.environ.get("OPENAI_ENDPOINT_MODEL", "").strip()
+                or os.environ.get("OPENAI_MODEL", "").strip()
             )
-            result = OllamaClient().chat(model=model, user_prompt=user_prompt, extra_payload=extra_payload or None)
+            if not model:
+                raise RuntimeError("OpenAI endpoint model is not set")
+            result = OpenAIEndpointClient().chat(model=model, user_prompt=user_prompt, extra_payload=extra_payload or None)
             return {
                 "output": result["output"],
                 "file_ids": [],
                 "missing_paths": missing_paths,
-                "backend": "ollama",
+                "backend": "openai_endpoint",
             }
 
         client = OpenWebUIClient()

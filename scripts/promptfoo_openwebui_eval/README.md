@@ -1,4 +1,4 @@
-# Promptfoo OpenWebUI/Ollama Evaluation Bundle
+# Promptfoo OpenWebUI/OpenAI Endpoint Evaluation Bundle
 
 This directory contains a local evaluation harness of summarization tools using `document_embedding_analysis` and PromptFoo (we test it on OpenWebUI model/pipe with a specific tool).
 It turns the repository's generated dataset outputs into Promptfoo test cases, runs
@@ -8,8 +8,8 @@ candidate generation through a local bridge, and scores answers with either:
 - Promptfoo model-graded assertions served by any OpenAI-compatible endpoint.
 
 For the summarization task being evaluated, the bridge should call OpenWebUI so
-the selected summarization pipe/tool is exercised. Direct Ollama/vLLM/OpenRouter
-or OpenAI-compatible calls are for judges, embeddings, or non-tool baselines.
+the selected summarization pipe/tool is exercised. Direct OpenAI-compatible
+endpoint calls are for judges, embeddings, or non-tool baselines.
 The default generation pipe is `summarizer---kohaku-OR`.
 
 ## Table Of Contents
@@ -38,22 +38,24 @@ through `assertions/dea_metrics.py`. These configs keep `skip_dea=False` and
 enable `useDeaJudge=true`.
 
 **DEA qualitative judge** is the optional LLM part of DEA evaluation. It uses
-the OpenAI-compatible client, so the same config shape works with Ollama, vLLM,
-OpenRouter, or OpenAI. Set `OPENAI_BASE_URL`, `OPENAI_API_KEY`, and
+the OpenAI-compatible client, so the same config shape works with local
+OpenAI-compatible endpoints, vLLM, OpenRouter, or OpenAI. Set
+`OPENAI_BASE_URL`, `OPENAI_API_KEY`, and
 `DEA_JUDGE_MODEL`. Some OpenAI-compatible providers need extra request fields;
 set `DEA_JUDGE_EXTRA_BODY_JSON` to a JSON object for those cases.
 
 **LLM judge** means Promptfoo's model-graded assertions such as
 `llm-rubric`, `factuality`, and `context-faithfulness`. The `*.llm_judge.yaml`
 configs use `openai:chat:{{ env.OPENAI_MODEL }}`. Point that environment at
-Ollama, vLLM, OpenRouter, or OpenAI as needed. The `similar` assertion uses an
-embedding provider, so set `OPENAI_EMBEDDING_MODEL` when the endpoint requires a
-provider-prefixed embedding model name.
+an OpenAI-compatible local endpoint, vLLM, OpenRouter, or OpenAI as needed. The
+`similar` assertion uses an embedding provider, so set `OPENAI_EMBEDDING_MODEL`
+when the endpoint requires a provider-prefixed embedding model name.
 
 **OpenWebUI bridge** is `api/openwebui_bridge.py`, a small FastAPI service that
-receives Promptfoo rows and calls either OpenWebUI or Ollama. Use
-`GENERATION_BACKEND=openwebui` for the summarization pipe/tool under test. Use
-`GENERATION_BACKEND=ollama` only for direct-model generation baselines.
+receives Promptfoo rows and calls either OpenWebUI or an OpenAI-compatible
+endpoint. Use `GENERATION_BACKEND=openwebui` for the summarization pipe/tool
+under test. Use `GENERATION_BACKEND=openai_endpoint` only for direct-model
+generation baselines.
 
 **MQS evaluation dataset** means the `MQS_evaluation_dataset.jsonl` files
 created by the repository importers under `output/bigsurvey` and
@@ -67,7 +69,7 @@ created by the repository importers under `output/bigsurvey` and
 | `*.step*.llm_judge.yaml` | Promptfoo configs for local model-graded scoring | yes |
 | `api/openwebui_bridge.py` | FastAPI bridge for Step 2 and Step 3 generation | yes |
 | `assertions/dea_metrics.py` | Promptfoo Python assertion wrapping `evaluate_document` | yes |
-| `lib/*.py` | Shared CSV, path, OpenWebUI, and Ollama helpers | yes |
+| `lib/*.py` | Shared CSV, path, OpenWebUI, and OpenAI endpoint helpers | yes |
 | `scripts/*.py` | Bootstrap, CSV generation, and answer generation scripts | yes |
 | `ollama/Modelfile.qwen-laptop-dea` | Local JSON-judge Ollama model configuration | yes |
 | `datasets/` | Generated Promptfoo CSV fixtures | yes |
@@ -108,7 +110,7 @@ Important columns:
 | `openwebui_pipe_model` | OpenWebUI model or pipe model id used by Step 2/3 generation; current OpenRouter-backed pipe is `summarizer---kohaku-OR` |
 | `tool_parameters_json` | Extra JSON object copied into `<tool_parameters>` |
 | `summarizer_model_id`, `algorithm`, `target_length`, `structure` | Common pipe/tool parameters copied into `<tool_parameters>` |
-| `generation_temperature`, `generation_top_p`, `generation_max_tokens` | HTTP generation options sent to OpenWebUI or Ollama |
+| `generation_temperature`, `generation_top_p`, `generation_max_tokens` | HTTP generation options sent to OpenWebUI or an OpenAI-compatible endpoint |
 | `candidate_answer` | Answer being evaluated; present in Step 1 and Step 2 output |
 | `min_chars`, `max_chars` | Dynamic length guard derived from the reference |
 
@@ -216,8 +218,9 @@ Use `kb_ids_json` for knowledge bases:
 When `GENERATION_BACKEND=openwebui`, local files from `source_paths_json` are
 uploaded to OpenWebUI and their resulting file ids are inserted into
 `<files_list>`. This is the correct mode for testing the summarization
-pipe/tool. When `GENERATION_BACKEND=ollama`, the bridge bypasses OpenWebUI and
-appends trimmed source text directly to the Ollama prompt instead.
+pipe/tool. When `GENERATION_BACKEND=openai_endpoint`, the bridge bypasses
+OpenWebUI and appends trimmed source text directly to the endpoint prompt
+instead.
 
 ## Setup
 
@@ -324,7 +327,7 @@ curl http://127.0.0.1:8001/healthz
 Expected health shape:
 
 ```json
-{"ok":true,"backend":"openwebui","base_url":"http://127.0.0.1:8080","ollama_base_url":"http://127.0.0.1:11434"}
+{"ok":true,"backend":"openwebui","base_url":"http://127.0.0.1:8080","openai_endpoint_base_url":"http://127.0.0.1:11434/v1"}
 ```
 
 If your shell does not yet have the Docker group activated, wrap Docker commands:

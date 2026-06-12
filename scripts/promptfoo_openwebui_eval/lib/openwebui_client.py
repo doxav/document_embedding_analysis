@@ -8,7 +8,39 @@ from typing import Any
 
 import requests
 
-from lib.bundle_common import file_sha256
+from lib.bundle_common import file_sha256, trim_text
+
+
+def _extract_chat_text(payload: dict[str, Any], source_name: str) -> str:
+    """Extract assistant text from OpenAI-compatible and OpenWebUI responses."""
+    choices = payload.get("choices")
+    if isinstance(choices, list) and choices:
+        first = choices[0]
+        message = first.get("message")
+        if isinstance(message, dict):
+            content = message.get("content")
+            if isinstance(content, str):
+                return content
+            if isinstance(content, list):
+                return "\n".join(
+                    str(item.get("text") or item.get("content") or "")
+                    for item in content
+                    if isinstance(item, dict) and (item.get("text") or item.get("content"))
+                ).strip()
+        if first.get("text"):
+            return str(first["text"])
+    for key in ("response", "output", "content"):
+        if payload.get(key):
+            return str(payload[key])
+    raise RuntimeError(f"Could not extract completion text from {source_name} response")
+
+
+def _first_choice_message(payload: dict[str, Any]) -> dict[str, Any]:
+    choices = payload.get("choices")
+    if not isinstance(choices, list) or not choices:
+        return {}
+    message = choices[0].get("message")
+    return message if isinstance(message, dict) else {}
 
 
 class OpenWebUIClient:
@@ -22,6 +54,7 @@ class OpenWebUIClient:
         self.cache_path = Path(cache_env)
         self.cache_path.parent.mkdir(parents=True, exist_ok=True)
         self.cache = self._load_cache()
+        self._knowledge_collections_cache: dict[str, list[str]] = {}
 
     def _headers(self, json_mode: bool = True) -> dict[str, str]:
         headers: dict[str, str] = {"Accept": "application/json"}
@@ -80,40 +113,129 @@ class OpenWebUIClient:
 
     @staticmethod
     def _extract_text_from_response(payload: dict[str, Any]) -> str:
-        choices = payload.get("choices")
-        if isinstance(choices, list) and choices:
-            first = choices[0]
-            message = first.get("message")
-            if isinstance(message, dict):
-                content = message.get("content")
-                if isinstance(content, str):
-                    return content
-                if isinstance(content, list):
-                    parts: list[str] = []
-                    for item in content:
-                        if isinstance(item, dict):
-                            text = item.get("text") or item.get("content") or ""
-                            if text:
-                                parts.append(str(text))
-                        elif item:
-                            parts.append(str(item))
-                    return "\n".join(parts).strip()
-            if first.get("text"):
-                return str(first["text"])
-        for key in ("response", "output", "content"):
-            if payload.get(key):
-                return str(payload[key])
-        raise RuntimeError(f"Could not extract completion text from OpenWebUI response: {payload}")
+        return _extract_chat_text(payload, "OpenWebUI")
+
+    def _post_chat_completion(self, payload: dict[str, Any]) -> dict[str, Any]:
+        response = requests.post(
+            f"{self.base_url}/api/chat/completions",
+            headers=self._headers(json_mode=True),
+            json=payload,
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        return response.json()
+
+    def _model_knowledge_collections(self, model: str) -> list[str]:
+        configured = [item.strip() for item in os.environ.get("OPENWEBUI_KNOWLEDGE_COLLECTIONS", "").split(",") if item.strip()]
+        if configured:
+            return configured
+        if model in self._knowledge_collections_cache:
+            return self._knowledge_collections_cache[model]
+
+        collections: list[str] = []
+        try:
+            response = requests.get(f"{self.base_url}/api/models", headers=self._headers(json_mode=False), timeout=self.timeout)
+            response.raise_for_status()
+            items = response.json().get("data", [])
+            for item in items:
+                if isinstance(item, dict) and item.get("id") == model:
+                    knowledge = ((item.get("info") or {}).get("meta") or {}).get("knowledge") or []
+                    collections = [str(entry["id"]) for entry in knowledge if isinstance(entry, dict) and entry.get("id")]
+                    break
+        except Exception:
+            collections = []
+        if not collections:
+            response = requests.get(f"{self.base_url}/api/v1/knowledge/", headers=self._headers(json_mode=False), timeout=self.timeout)
+            response.raise_for_status()
+            payload = response.json()
+            items = payload if isinstance(payload, list) else payload.get("items", [])
+            collections = [str(item["id"]) for item in items if isinstance(item, dict) and item.get("id")]
+
+        self._knowledge_collections_cache[model] = collections
+        return collections
+
+    def _query_knowledge_files(self, model: str, arguments: str) -> str:
+        params = json.loads(arguments or "{}")
+        query = str(params.get("query") or "").strip()
+        if not query:
+            raise ValueError("query_knowledge_files requires a non-empty query")
+        count = max(1, min(int(params.get("count") or params.get("k") or 5), 20))
+        collections = self._model_knowledge_collections(model)
+        if not collections:
+            return json.dumps({"results": [], "error": "No knowledge collections available."}, ensure_ascii=False)
+
+        response = requests.post(
+            f"{self.base_url}/api/v1/retrieval/query/collection",
+            headers=self._headers(json_mode=True),
+            json={"collection_names": collections, "query": query, "k": count},
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        return json.dumps(self._format_knowledge_results(response.json(), count), ensure_ascii=False)
+
+    @staticmethod
+    def _format_knowledge_results(payload: dict[str, Any], count: int) -> dict[str, Any]:
+        max_chars = int(os.environ.get("OPENWEBUI_TOOL_RESULT_MAX_CHARS", "1200"))
+        documents = payload.get("documents") or []
+        metadatas = payload.get("metadatas") or []
+        distances = payload.get("distances") or []
+        results: list[dict[str, Any]] = []
+        doc_rows = documents if documents and isinstance(documents[0], list) else [documents]
+        meta_rows = metadatas if metadatas and isinstance(metadatas[0], list) else [metadatas]
+        distance_rows = distances if distances and isinstance(distances[0], list) else [distances]
+        for row_index, row in enumerate(doc_rows):
+            for item_index, document in enumerate(row or []):
+                meta = (meta_rows[row_index][item_index] if row_index < len(meta_rows) and item_index < len(meta_rows[row_index]) else {}) or {}
+                distance = distance_rows[row_index][item_index] if row_index < len(distance_rows) and item_index < len(distance_rows[row_index]) else None
+                results.append({"content": trim_text(str(document), max_chars), "metadata": meta, "distance": distance})
+                if len(results) >= count:
+                    return {"results": results}
+        return {"results": results}
+
+    def _execute_tool_call(self, model: str, tool_call: dict[str, Any]) -> str:
+        function = tool_call.get("function") or {}
+        name = function.get("name")
+        try:
+            if name == "query_knowledge_files":
+                return self._query_knowledge_files(model, str(function.get("arguments") or "{}"))
+            return json.dumps({"error": f"Unsupported tool: {name}"}, ensure_ascii=False)
+        except Exception as exc:
+            return json.dumps({"error": f"{name} failed: {exc}"}, ensure_ascii=False)
+
+    @staticmethod
+    def _assistant_tool_message(message: dict[str, Any]) -> dict[str, Any]:
+        return {"role": "assistant", "content": message.get("content"), "tool_calls": message.get("tool_calls") or []}
 
     def chat(self, *, model: str, user_prompt: str, files_payload: list[dict[str, str]] | None = None, extra_payload: dict[str, Any] | None = None, trigger_outlet: bool = False) -> dict[str, Any]:
-        payload: dict[str, Any] = {"model": model, "messages": [{"role": "user", "content": user_prompt}], "stream": False}
+        messages: list[dict[str, Any]] = [{"role": "user", "content": user_prompt}]
+        payload: dict[str, Any] = {"model": model, "messages": messages, "stream": False}
         if files_payload:
             payload["files"] = files_payload
         if extra_payload:
             payload.update(extra_payload)
-        response = requests.post(f"{self.base_url}/api/chat/completions", headers=self._headers(json_mode=True), json=payload, timeout=self.timeout)
-        response.raise_for_status()
-        data = response.json()
+
+        max_tool_rounds = int(os.environ.get("OPENWEBUI_MAX_TOOL_CALL_ROUNDS", "8"))
+        data: dict[str, Any] = {}
+        for _ in range(max_tool_rounds + 1):
+            payload["messages"] = messages
+            data = self._post_chat_completion(payload)
+            message = _first_choice_message(data)
+            tool_calls = message.get("tool_calls") or []
+            if not tool_calls:
+                break
+            messages.append(self._assistant_tool_message(message))
+            messages.extend(
+                {
+                    "role": "tool",
+                    "tool_call_id": str(tool_call.get("id") or ""),
+                    "content": self._execute_tool_call(model, tool_call),
+                }
+                for tool_call in tool_calls
+                if isinstance(tool_call, dict)
+            )
+        else:
+            raise RuntimeError(f"OpenWebUI exceeded {max_tool_rounds} tool-call rounds")
+
         text = self._extract_text_from_response(data)
         if trigger_outlet:
             completed_payload = {"model": model, "messages": [{"role": "user", "content": user_prompt}, {"role": "assistant", "content": text}]}
@@ -124,34 +246,41 @@ class OpenWebUIClient:
         return {"output": text, "raw": data}
 
 
-class OllamaClient:
-    def __init__(self, base_url: str | None = None, timeout: int = 600) -> None:
-        self.base_url = (base_url or os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434")).rstrip("/")
+class OpenAIEndpointClient:
+    def __init__(self, base_url: str | None = None, api_key: str | None = None, timeout: int = 600) -> None:
+        self.base_url = (
+            base_url
+            or os.environ.get("OPENAI_ENDPOINT_BASE_URL")
+            or os.environ.get("OPENAI_BASE_URL")
+            or "http://127.0.0.1:11434/v1"
+        ).rstrip("/")
+        self.api_key = api_key or os.environ.get("OPENAI_ENDPOINT_API_KEY") or os.environ.get("OPENAI_API_KEY", "")
         self.timeout = timeout
+
+    def _headers(self) -> dict[str, str]:
+        headers = {"Accept": "application/json", "Content-Type": "application/json"}
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
+        return headers
 
     @staticmethod
     def _extract_text_from_response(payload: dict[str, Any]) -> str:
-        message = payload.get("message")
-        if isinstance(message, dict) and message.get("content"):
-            return str(message["content"])
-        if payload.get("response"):
-            return str(payload["response"])
-        raise RuntimeError(f"Could not extract completion text from Ollama response: {payload}")
+        return _extract_chat_text(payload, "OpenAI endpoint")
 
     def chat(self, *, model: str, user_prompt: str, extra_payload: dict[str, Any] | None = None) -> dict[str, Any]:
-        options: dict[str, Any] = {}
-        if extra_payload:
-            for src, dst in (("temperature", "temperature"), ("top_p", "top_p"), ("max_tokens", "num_predict")):
-                if src in extra_payload:
-                    options[dst] = extra_payload[src]
         payload: dict[str, Any] = {
             "model": model,
             "messages": [{"role": "user", "content": user_prompt}],
             "stream": False,
         }
-        if options:
-            payload["options"] = options
-        response = requests.post(f"{self.base_url}/api/chat", json=payload, timeout=self.timeout)
+        if extra_payload:
+            payload.update(extra_payload)
+        response = requests.post(
+            f"{self.base_url}/chat/completions",
+            headers=self._headers(),
+            json=payload,
+            timeout=self.timeout,
+        )
         response.raise_for_status()
         data = response.json()
         return {"output": self._extract_text_from_response(data), "raw": data}
