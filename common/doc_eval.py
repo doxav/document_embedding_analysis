@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import json, re, sys, logging, time
+import copy, json, re, sys, logging, time
 from pathlib import Path
 from typing import Dict, Any, Optional, Union
 try:
@@ -953,6 +953,148 @@ def _split_dea_scores_and_status(raw_scores: dict | None, default_status: str) -
     return scores, status
 
 
+def _embedding_id_for_model(model_name: str | None) -> str:
+    """Return the DEA embedding suffix used by the current synthesis environment."""
+    return "1" if model_name == "text-embedding-ada-002" else "2"
+
+
+def _mean_vectors(vectors: Sequence[Sequence[float]]) -> list[float]:
+    """Return the coordinate-wise mean for equal-length embedding vectors."""
+    if not vectors:
+        raise ValueError("Cannot compute a mean embedding from an empty vector list.")
+    width = len(vectors[0])
+    if width == 0 or any(len(vector) != width for vector in vectors):
+        raise ValueError("Embedding vectors must be non-empty and have the same length.")
+    return [
+        sum(float(vector[index]) for vector in vectors) / len(vectors)
+        for index in range(width)
+    ]
+
+
+def _has_dea_target_embeddings(target: dict[str, Any], embedding_id: str) -> bool:
+    """Return whether a DEA target JSON already contains the embeddings needed for scoring."""
+    plan = target.get("plan")
+    if not isinstance(plan, list) or not plan:
+        return False
+    section_label = f"section_embedding_{embedding_id}"
+    content_label = f"content_embedding_{embedding_id}"
+    resource_label = f"resource_embedding_{embedding_id}"
+    plan_label = f"plan_embedding_{embedding_id}"
+    if plan_label not in target:
+        return False
+    if any(
+        not isinstance(section, dict)
+        or section_label not in section
+        or content_label not in section
+        for section in plan
+    ):
+        return False
+    resources = target.get("resources", []) or []
+    return all(
+        isinstance(resource, dict) and resource_label in resource
+        for resource in resources
+    )
+
+
+def _load_embedded_dea_target(path: Path, embedding_id: str) -> dict[str, Any] | None:
+    """Load a target JSON only when it is already compatible with native DEA scoring."""
+    if path.suffix.lower() != ".json" or not path.exists():
+        return None
+    try:
+        target = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return target if isinstance(target, dict) and _has_dea_target_embeddings(target, embedding_id) else None
+
+
+def _resource_embedding_text(resource: dict[str, Any]) -> str:
+    """Build a stable text representation for a bibliography/resource embedding."""
+    for key in ("resource_description", "description", "title", "resource", "reference", "text"):
+        value = str(resource.get(key) or "").strip()
+        if value:
+            return value
+    return json.dumps(resource, ensure_ascii=False, sort_keys=True)
+
+
+def _build_embedded_dea_target(
+    solution: dict[str, Any],
+    *,
+    embedding_id: str,
+    embedding_model_name: str,
+    embed_text,
+) -> dict[str, Any]:
+    """Return a DEA target JSON with target plan/resource embeddings filled in."""
+    target = copy.deepcopy(solution)
+    plan = target.get("plan")
+    if not isinstance(plan, list) or not plan:
+        raise ValueError("DEA solution must contain a non-empty 'plan' list.")
+
+    section_label = f"section_embedding_{embedding_id}"
+    content_label = f"content_embedding_{embedding_id}"
+    resource_label = f"resource_embedding_{embedding_id}"
+    plan_label = f"plan_embedding_{embedding_id}"
+
+    for index, section in enumerate(plan, start=1):
+        if not isinstance(section, dict):
+            raise ValueError("DEA solution plan entries must be JSON objects.")
+        title = str(section.get("section") or section.get("title") or f"Section {index}").strip()
+        content = str(section.get("content") or section.get("text") or " ").strip() or " "
+        section["section_id"] = section.get("section_id") or index
+        section["section"] = title or f"Section {index}"
+        section["content"] = content
+        section.setdefault("resources_used", [])
+        section[section_label] = embed_text(section["section"])
+        section[content_label] = embed_text(content)
+
+    resources = target.get("resources", []) or []
+    if not isinstance(resources, list):
+        raise ValueError("DEA solution 'resources' must be a list when provided.")
+    for index, resource in enumerate(resources, start=1):
+        if not isinstance(resource, dict):
+            raise ValueError("DEA solution resource entries must be JSON objects.")
+        resource["resource_id"] = resource.get("resource_id") or resource.get("id") or index
+        resource[resource_label] = embed_text(_resource_embedding_text(resource))
+
+    section_mean = _mean_vectors([section[section_label] for section in plan])
+    content_mean = _mean_vectors([section[content_label] for section in plan])
+    target[plan_label] = _mean_vectors([section_mean, content_mean])
+    target[f"embedding{embedding_id}_model"] = embedding_model_name
+    return target
+
+
+def _prepare_dea_target_file(
+    solution: dict[str, Any],
+    target_file_path: str | None,
+    *,
+    embedding_id: str,
+    embedding_model_name: str,
+    embed_text,
+) -> str:
+    """Return a DEA-compatible target JSON path, embedding text-only targets when needed."""
+    if target_file_path:
+        existing_target = _load_embedded_dea_target(Path(target_file_path), embedding_id)
+        if existing_target is not None:
+            return target_file_path
+
+    # MDS imports may point target_file_path at full_text.md and keep the DEA
+    # plan/resources text-only. Native DEA scoring needs a JSON target with
+    # target embeddings, so create a temporary compatible target on demand.
+    embedded_target = (
+        copy.deepcopy(solution)
+        if _has_dea_target_embeddings(solution, embedding_id)
+        else _build_embedded_dea_target(
+            solution,
+            embedding_id=embedding_id,
+            embedding_model_name=embedding_model_name,
+            embed_text=embed_text,
+        )
+    )
+    tmp_dir = Path(tempfile.mkdtemp(prefix="dea_target_"))
+    tmp_path = tmp_dir / "target.json"
+    tmp_path.write_text(json.dumps(embedded_target), encoding="utf-8")
+    return str(tmp_path)
+
+
 def DEA_evaluation(
     content: str,
     solution: dict | None = None,
@@ -1014,13 +1156,6 @@ def DEA_evaluation(
         embed_cfg["model"] = HUGGINGFACE_EMBEDDING_PATH
 
     target_file_path = solution.get("target_file_path")
-    if not target_file_path:
-        tmp_dir = Path(tempfile.mkdtemp(prefix="dea_target_"))
-        tmp_dir.mkdir(parents=True, exist_ok=True)
-        tmp_path = tmp_dir / "target.json"
-        tmp_path.write_text(json.dumps(solution), encoding="utf-8")
-        target_file_path = str(tmp_path)
-        solution["target_file_path"] = target_file_path
 
     context = solution.get("context", None) or solution.get("abstract", None)
     if not context:
@@ -1037,6 +1172,17 @@ def DEA_evaluation(
         embedding_model_query_prefix=embed_cfg["query_prefix"],
     ).get_environment()
     env.reset()
+    embedding_id = _embedding_id_for_model(getattr(env.document, "embedding_model_name", embed_cfg["model"]))
+    target_file_path = _prepare_dea_target_file(
+        solution,
+        target_file_path,
+        embedding_id=embedding_id,
+        embedding_model_name=getattr(env.document, "embedding_model_name", embed_cfg["model"]),
+        embed_text=env.document.get_embedding,
+    )
+    solution["target_file_path"] = target_file_path
+    env.target_file_path = target_file_path
+    env.synthesis_manager.target_file_path = target_file_path
 
     # Process LaTeX file
     try:

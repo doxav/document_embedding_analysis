@@ -179,6 +179,14 @@ def test_dea_evaluation_openai_backend_respects_embedding_model_override(monkeyp
     class FakeEnvironment:
         id = "fake-env"
         synthesis_manager = FakeSynthesisManager()
+        document = type(
+            "FakeDocument",
+            (),
+            {
+                "embedding_model_name": "text-embedding-3-small",
+                "get_embedding": staticmethod(lambda text: [float(len(text)), 1.0]),
+            },
+        )()
 
         def reset(self) -> None:
             seen["reset"] = True
@@ -208,6 +216,76 @@ def test_dea_evaluation_openai_backend_respects_embedding_model_override(monkeyp
     assert seen["embedding_model_query_prefix"] == ""
     assert seen["content"] == "candidate content"
     assert scores["plan_embedding_similarity"] == 1.0
+
+
+def test_dea_evaluation_embeds_text_only_target_solution(monkeypatch, tmp_path: Path) -> None:
+    seen: dict[str, object] = {}
+
+    class FakeDocument:
+        embedding_model_name = "nomic-ai/nomic-embed-text-v1"
+
+        def get_embedding(self, text: str) -> list[float]:
+            return [float(len(text)), 1.0]
+
+    class FakeSynthesisManager:
+        def __init__(self) -> None:
+            self.target_file_path = ""
+
+        def GetFromMarkdown(self, content: str) -> None:
+            seen["candidate"] = content
+
+        def get_distance_to_targetJSON(self) -> dict:
+            return {}
+
+    class FakeEnvironment:
+        id = "fake-env"
+
+        def __init__(self) -> None:
+            self.document = FakeDocument()
+            self.synthesis_manager = FakeSynthesisManager()
+
+        def reset(self) -> None:
+            seen["reset"] = True
+
+        def get_score(self) -> dict:
+            target_path = Path(self.synthesis_manager.target_file_path)
+            target = json.loads(target_path.read_text(encoding="utf-8"))
+            seen["target"] = target
+            return {
+                "status": "computed",
+                "plan_embedding_similarity": 0.9,
+                "plan_contents_embedding_similarity": 0.8,
+                "content_length_ratio_to_target": 0.5,
+            }
+
+    class FakeEnvironmentManager:
+        def __init__(self, **kwargs) -> None:
+            seen["manager_kwargs"] = kwargs
+
+        def get_environment(self) -> FakeEnvironment:
+            return FakeEnvironment()
+
+    markdown_target = tmp_path / "full_text.md"
+    markdown_target.write_text("# Target", encoding="utf-8")
+    monkeypatch.setattr("common.doc_eval.EnvironmentManager", FakeEnvironmentManager)
+    solution = {
+        "id": "demo",
+        "title": "Demo",
+        "context": "Context",
+        "target_file_path": str(markdown_target),
+        "plan": [{"section": "Intro", "content": "Target section text."}],
+        "resources": [{"resource_id": 1, "resource_description": "Reference"}],
+    }
+
+    scores = DEA_evaluation("## Intro\nCandidate text.", solution, embedding_backend="hf")
+
+    assert scores["plan_embedding_similarity"] == 0.9
+    assert seen["candidate"] == "## Intro\nCandidate text."
+    target = seen["target"]
+    assert target["plan_embedding_2"]
+    assert target["plan"][0]["section_embedding_2"]
+    assert target["plan"][0]["content_embedding_2"]
+    assert target["resources"][0]["resource_embedding_2"]
 
 
 def test_evaluate_document_with_solution_uses_markdown_reference():

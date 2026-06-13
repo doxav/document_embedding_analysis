@@ -31,7 +31,24 @@ def _load_solution(context) -> dict[str, Any]:
         path = (repo_root / path).resolve()
     if not path.exists():
         raise FileNotFoundError(path)
-    return json.loads(path.read_text(encoding="utf-8"))
+    solution = json.loads(path.read_text(encoding="utf-8"))
+    _resolve_solution_local_target_path(solution, path)
+    return solution
+
+
+def _resolve_solution_local_target_path(solution: dict[str, Any], solution_path: Path) -> None:
+    """Resolve solution-local target paths before native DEA opens them."""
+    target_file_path = str(solution.get("target_file_path") or "").strip()
+    if not target_file_path:
+        return
+    target_path = Path(target_file_path)
+    if target_path.is_absolute():
+        return
+    repo_root = Path(os.environ.get("DEA_REPO_ROOT", "")).resolve()
+    for candidate in (solution_path.parent / target_path, repo_root / target_path):
+        if candidate.exists():
+            solution["target_file_path"] = str(candidate.resolve())
+            return
 
 
 def _numeric(value: Any) -> float | None:
@@ -69,6 +86,19 @@ def _pick(scores: dict[str, Any], keys: list[str]) -> float | None:
             if value is not None:
                 return value
     return None
+
+
+def _ratio_alignment(value: Any) -> float | None:
+    """Convert a target ratio into a 0-1 closeness score around 1.0."""
+    ratio = _numeric(value)
+    if ratio is None:
+        return None
+    return _clamp(1.0 - min(abs(ratio - 1.0), 1.0))
+
+
+def _safe_score_name(key: str) -> str:
+    """Return a PromptFoo-friendly named score key."""
+    return "dea_" + "".join(ch if ch.isalnum() else "_" for ch in key).strip("_").lower()
 
 
 def _clamp(value: float | None) -> float | None:
@@ -115,6 +145,7 @@ def get_assert(output: str, context):
         }
 
     dea_scores = result.get("dea_evaluation_scores", {}) or {}
+    dea_status_value = str(dea_status.get("status", "unknown"))
     article_metrics = result.get("article_metrics", {}) or {}
     rouge_scores = article_metrics.get("rouge_scores", {}) or {}
     rouge_l = (
@@ -172,11 +203,23 @@ def get_assert(output: str, context):
             ],
         )
     )
+    length_alignment = _ratio_alignment(
+        _pick(
+            dea_scores,
+            [
+                "content_length_ratio_to_target",
+                "global_content_length_ratio_to_target",
+                "sections contents length (top:1, <1:too short, >1:too long)",
+                "global_sections contents length (top:1, <1:too short, >1:too long)",
+            ],
+        )
+    )
 
     weights = {
         "plan": float(config.get("planWeight", 0.30)),
         "content": float(config.get("contentWeight", 0.45)),
         "resources": float(config.get("resourceWeight", 0.15)),
+        "length": float(config.get("lengthWeight", 0.0)),
         "rouge_l": float(config.get("rougeWeight", 0.10)),
     }
 
@@ -184,6 +227,7 @@ def get_assert(output: str, context):
         "plan": plan,
         "content": content,
         "resources": resources,
+        "length": length_alignment,
         "rouge_l": rouge_l_f,
     }
     weighted_terms = {
@@ -205,25 +249,31 @@ def get_assert(output: str, context):
     plan_min = float(config.get("planMin", 0.0))
     content_min = float(config.get("contentMin", 0.0))
     resource_min = float(config.get("resourceMin", 0.0))
+    length_min = float(config.get("lengthMin", 0.0))
     overall_min = float(config.get("overallMin", 0.70))
 
     hard_fail_reasons = []
+    if dea_status_value != "computed":
+        hard_fail_reasons.append(f"dea_status {dea_status_value} != computed")
     if plan is not None and plan < plan_min:
         hard_fail_reasons.append(f"plan {plan:.3f} < {plan_min:.3f}")
     if content is not None and content < content_min:
         hard_fail_reasons.append(f"content {content:.3f} < {content_min:.3f}")
     if resources is not None and resources < resource_min:
         hard_fail_reasons.append(f"resources {resources:.3f} < {resource_min:.3f}")
+    if length_alignment is not None and length_alignment < length_min:
+        hard_fail_reasons.append(f"length {length_alignment:.3f} < {length_min:.3f}")
 
     dea_judge = result.get("dea_judge", {}) or {}
     dea_judge_status = str(dea_judge.get("status", "skipped"))
     dea_judge_problem_count = float(len(dea_judge.get("problems", []) or []))
 
     named_scores = {
-        "dea_status_ok": 1.0 if dea_status.get("status") not in {"error"} else 0.0,
+        "dea_status_ok": 1.0 if dea_status_value == "computed" else 0.0,
         "plan": plan if plan is not None else 0.0,
         "content": content if content is not None else 0.0,
         "resources": resources if resources is not None else 0.0,
+        "length_alignment": length_alignment if length_alignment is not None else 0.0,
         "rouge_l_f": rouge_l_f if rouge_l_f is not None else 0.0,
         "entity_recall": entity_recall if entity_recall is not None else 0.0,
         "citation_count": citation_count,
@@ -236,6 +286,7 @@ def get_assert(output: str, context):
         numeric = _numeric(value)
         if numeric is not None:
             named_scores.setdefault(str(key), float(numeric))
+            named_scores.setdefault(_safe_score_name(str(key)), float(numeric))
 
     pass_result = (not hard_fail_reasons) and composite >= overall_min
 
@@ -243,9 +294,10 @@ def get_assert(output: str, context):
         f"plan={plan:.3f}" if plan is not None else "plan=n/a",
         f"content={content:.3f}" if content is not None else "content=n/a",
         f"resources={resources:.3f}" if resources is not None else "resources=n/a",
+        f"length={length_alignment:.3f}" if length_alignment is not None else "length=n/a",
         f"rouge_l_f={rouge_l_f:.3f}" if rouge_l_f is not None else "rouge_l_f=n/a",
         f"score={composite:.3f}",
-        f"dea_status={dea_status.get('status', 'unknown')}",
+        f"dea_status={dea_status_value}",
         f"judge_status={dea_judge_status}",
     ]
     if hard_fail_reasons:

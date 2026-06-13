@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -18,6 +19,16 @@ def _load_generate_candidate_csv_module():
     """Load the generation CLI module without requiring scripts/ to be a package."""
     module_path = BUNDLE_ROOT / "scripts" / "generate_candidate_csv.py"
     spec = importlib.util.spec_from_file_location("generate_candidate_csv", module_path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _load_dea_metrics_module():
+    """Load the DEA assertion module without requiring assertions/ to be a package."""
+    module_path = BUNDLE_ROOT / "assertions" / "dea_metrics.py"
+    spec = importlib.util.spec_from_file_location("dea_metrics", module_path)
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -217,3 +228,33 @@ def test_generate_csv_http_errors_include_response_body() -> None:
 
     assert "500 Server Error" in str(exc_info.value)
     assert "OpenWebUI timed out" in str(exc_info.value)
+
+
+def test_dea_metrics_resolves_solution_local_target_path(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    module = _load_dea_metrics_module()
+    solution_dir = tmp_path / "item"
+    solution_dir.mkdir()
+    target = solution_dir / "full_text.md"
+    target.write_text("# Target", encoding="utf-8")
+    solution = {
+        "title": "Demo",
+        "context": "Context",
+        "target_file_path": "full_text.md",
+        "plan": [],
+        "resources": [],
+    }
+    solution_path = solution_dir / "dea_solution.json"
+    solution_path.write_text(json.dumps(solution), encoding="utf-8")
+    monkeypatch.setenv("DEA_REPO_ROOT", str(tmp_path))
+
+    loaded = module._load_solution({"vars": {"dea_solution_path": str(solution_path)}})
+
+    assert loaded["target_file_path"] == str(target.resolve())
+
+
+def test_dea_metrics_length_alignment_uses_ratio_closeness() -> None:
+    module = _load_dea_metrics_module()
+
+    assert module._ratio_alignment(1.0) == 1.0
+    assert module._ratio_alignment(0.25) == 0.25
+    assert module._ratio_alignment(1.5) == 0.5

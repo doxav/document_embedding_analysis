@@ -35,7 +35,18 @@ test-case variables.
 **DEA**, or Document Embedding Analysis, is the repository's native document
 scoring path. The `*.dea.yaml` configs call `common.doc_eval.evaluate_document`
 through `assertions/dea_metrics.py`. These configs keep `skip_dea=False` and
-enable `useDeaJudge=true`.
+enable `useDeaJudge=true`. The assertion exposes Promptfoo named scores for
+plan similarity, content similarity, resource/bibliography similarity,
+ROUGE-L, entity recall, citation count, length alignment, the composite DEA
+score, and raw native DEA metrics under `dea_*` names.
+
+For source-provided MDS datasets such as BigSurvey and MultiLexSum, the
+imported `dea_solution.json` may contain a text-only `plan`/`resources` target
+and a `target_file_path` pointing to `full_text.md`. During evaluation the
+native DEA path resolves solution-local target paths and creates a temporary
+embedded DEA target JSON when the saved target lacks DEA embeddings. This keeps
+generated datasets lightweight while still allowing plan/content/resource and
+length-ratio scoring.
 
 **DEA qualitative judge** is the optional LLM part of DEA evaluation. It uses
 the OpenAI-compatible client, so the same config shape works with local
@@ -156,7 +167,7 @@ uses the HTTP bridge provider to call the configured backend.
 
 | Strategy | YAML suffix | What it checks |
 |---|---|---|
-| DEA | `.dea.yaml` | Native DEA plan/content/resource scores, ROUGE/entity metrics, and DEA judge |
+| DEA | `.dea.yaml` | Native DEA plan/content/resource scores, length alignment, ROUGE/entity metrics, and DEA judge |
 | LLM judge | `.llm_judge.yaml` | Promptfoo's model-graded assertions using the configured OpenAI-compatible endpoint |
 
 ## OpenWebUI Prompt And Valve Parameters
@@ -264,6 +275,16 @@ message content, disable reasoning for JSON judge calls:
 OPENAI_MODEL=qwen/qwen3.6-35b-a3b
 OPENAI_EMBEDDING_MODEL=openai/text-embedding-3-small
 DEA_JUDGE_MODEL=qwen/qwen3.6-35b-a3b
+DEA_JUDGE_EXTRA_BODY_JSON='{"reasoning":{"enabled":false}}'
+```
+
+For a lower-latency hosted DEA judge, use the same OpenRouter endpoint with
+the flash model:
+
+```bash
+OPENAI_BASE_URL=https://openrouter.ai/api/v1
+OPENAI_MODEL=qwen/qwen3.6-flash
+DEA_JUDGE_MODEL=qwen/qwen3.6-flash
 DEA_JUDGE_EXTRA_BODY_JSON='{"reasoning":{"enabled":false}}'
 ```
 
@@ -460,6 +481,7 @@ docker compose run --rm promptfoo bash -lc \
 | Docker permission denied | Run the command inside `newgrp docker` |
 | Promptfoo says no tests loaded | Generate the required `datasets/<dataset>/<step>.csv` file |
 | DEA assertion cannot find files | Check `DEA_REPO_PATH`, `DEA_REPO_ROOT`, and `dea_solution_path` in the CSV |
+| DEA shows only ROUGE-L | Check the assertion reason for `dea_status`; `computed` means native plan/content/resource metrics ran, while `empty` or `error` means the DEA target could not be scored |
 | OpenAI-compatible API connection error | Confirm `OPENAI_BASE_URL`, `OPENAI_API_KEY`, and model env vars inside the container |
 | LLM judge returns invalid JSON | Use a judge-capable model and check `OPENAI_MODEL` / `DEA_JUDGE_MODEL`; for reasoning models, set provider-specific JSON such as `DEA_JUDGE_EXTRA_BODY_JSON='{"reasoning":{"enabled":false}}'` |
 | Step 3 cannot reach bridge | Use `http://127.0.0.1:8001/generate` with host networking |
