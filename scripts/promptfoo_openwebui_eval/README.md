@@ -393,11 +393,26 @@ Create Step 2 generated answers for one deterministic row:
 ```bash
 docker compose run --rm promptfoo bash -lc '
   source /workspace/.venv/bin/activate
-  python ./scripts/generate_openwebui_csv.py \
+  python ./scripts/generate_candidate_csv.py \
     --input ./datasets/bigsurvey/step2_input.csv \
     --output ./datasets/bigsurvey/step2_output.csv \
     --bridge-url http://127.0.0.1:8001/generate \
     --limit 1 --overwrite
+'
+```
+
+For large multi-file rows, raise both the bridge OpenWebUI timeout and the
+generator request timeout. The generator writes completed rows incrementally,
+so partial outputs are preserved if a later row fails:
+
+```bash
+OPENWEBUI_TIMEOUT_SECONDS=2400 docker compose up owui-bridge
+docker compose run --rm promptfoo bash -lc '
+  BRIDGE_REQUEST_TIMEOUT_SECONDS=2400 /workspace/.venv/bin/python ./scripts/generate_candidate_csv.py \
+    --input ./datasets/bigsurvey/step2_input.csv \
+    --output ./datasets/bigsurvey/step2_output.csv \
+    --bridge-url http://127.0.0.1:8001/generate \
+    --limit 3 --overwrite
 '
 ```
 

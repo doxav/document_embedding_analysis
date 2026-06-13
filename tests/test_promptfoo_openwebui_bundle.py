@@ -1,7 +1,9 @@
+import importlib.util
 import sys
 from pathlib import Path
 
 import pytest
+import requests
 
 
 BUNDLE_ROOT = Path(__file__).resolve().parents[1] / "scripts" / "promptfoo_openwebui_eval"
@@ -9,7 +11,17 @@ if str(BUNDLE_ROOT) not in sys.path:
     sys.path.insert(0, str(BUNDLE_ROOT))
 
 from lib.bundle_common import build_openwebui_user_prompt, read_csv_rows, write_csv_rows
-from lib.openwebui_client import OpenWebUIClient
+from lib.openwebui_client import OpenAIEndpointClient, OpenWebUIClient
+
+
+def _load_generate_candidate_csv_module():
+    """Load the generation CLI module without requiring scripts/ to be a package."""
+    module_path = BUNDLE_ROOT / "scripts" / "generate_candidate_csv.py"
+    spec = importlib.util.spec_from_file_location("generate_candidate_csv", module_path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def test_openwebui_prompt_includes_tool_file_and_kb_blocks():
@@ -137,6 +149,21 @@ def test_openai_endpoint_backend_uses_generic_client(monkeypatch: pytest.MonkeyP
     assert captured_payload["extra_payload"] == {"temperature": 0.2}
 
 
+def test_clients_use_configured_request_timeouts(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("OPENWEBUI_TIMEOUT_SECONDS", "1800")
+    monkeypatch.setenv("OPENAI_ENDPOINT_TIMEOUT_SECONDS", "1200")
+
+    openwebui_client = OpenWebUIClient(
+        base_url="http://openwebui.test",
+        api_key="token",
+        cache_path=tmp_path / "openwebui-file-cache.json",
+    )
+    endpoint_client = OpenAIEndpointClient(base_url="http://endpoint.test/v1", api_key="token")
+
+    assert openwebui_client.timeout == 1800
+    assert endpoint_client.timeout == 1200
+
+
 def test_openwebui_client_completes_tool_call_loop(monkeypatch: pytest.MonkeyPatch) -> None:
     client = OpenWebUIClient(base_url="http://openwebui.test", api_key="token")
     posted_payloads: list[dict[str, object]] = []
@@ -176,3 +203,17 @@ def test_openwebui_client_completes_tool_call_loop(monkeypatch: pytest.MonkeyPat
         "tool_call_id": "call-1",
         "content": '{"results":[{"content":"fact"}]}',
     }
+
+
+def test_generate_csv_http_errors_include_response_body() -> None:
+    module = _load_generate_candidate_csv_module()
+    response = requests.Response()
+    response.status_code = 500
+    response.url = "http://bridge.test/generate"
+    response._content = b'{"detail":"OpenWebUI timed out"}'
+
+    with pytest.raises(requests.HTTPError) as exc_info:
+        module._raise_for_status(response)
+
+    assert "500 Server Error" in str(exc_info.value)
+    assert "OpenWebUI timed out" in str(exc_info.value)

@@ -11,6 +11,20 @@ import requests
 from lib.bundle_common import file_sha256, trim_text
 
 
+def _env_int(name: str, default: int) -> int:
+    """Return a positive integer environment setting."""
+    raw = os.environ.get(name, "").strip()
+    if not raw:
+        return default
+    try:
+        value = int(raw)
+    except ValueError as exc:
+        raise RuntimeError(f"{name} must be an integer") from exc
+    if value <= 0:
+        raise RuntimeError(f"{name} must be positive")
+    return value
+
+
 def _extract_chat_text(payload: dict[str, Any], source_name: str) -> str:
     """Extract assistant text from OpenAI-compatible and OpenWebUI responses."""
     choices = payload.get("choices")
@@ -44,12 +58,12 @@ def _first_choice_message(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 class OpenWebUIClient:
-    def __init__(self, base_url: str | None = None, api_key: str | None = None, cache_path: str | Path | None = None, timeout: int = 600) -> None:
+    def __init__(self, base_url: str | None = None, api_key: str | None = None, cache_path: str | Path | None = None, timeout: int | None = None) -> None:
         self.base_url = (base_url or os.environ.get("OPENWEBUI_BASE_URL", "")).rstrip("/")
         self.api_key = api_key or os.environ.get("OPENWEBUI_API_KEY", "")
         if not self.base_url:
             raise RuntimeError("OPENWEBUI_BASE_URL is not set")
-        self.timeout = timeout
+        self.timeout = timeout if timeout is not None else _env_int("OPENWEBUI_TIMEOUT_SECONDS", 600)
         cache_env = cache_path or os.environ.get("OPENWEBUI_FILE_CACHE_PATH", "/tmp/openwebui_file_cache.json")
         self.cache_path = Path(cache_env)
         self.cache_path.parent.mkdir(parents=True, exist_ok=True)
@@ -94,9 +108,10 @@ class OpenWebUIClient:
         self._save_cache()
         return str(file_id)
 
-    def wait_for_processing(self, file_id: str, timeout: int = 300, poll_seconds: float = 2.0) -> None:
+    def wait_for_processing(self, file_id: str, timeout: int | None = None, poll_seconds: float = 2.0) -> None:
+        processing_timeout = timeout if timeout is not None else _env_int("OPENWEBUI_FILE_PROCESS_TIMEOUT_SECONDS", 300)
         start = time.time()
-        while time.time() - start < timeout:
+        while time.time() - start < processing_timeout:
             response = requests.get(f"{self.base_url}/api/v1/files/{file_id}/process/status", headers=self._headers(json_mode=False), timeout=self.timeout)
             response.raise_for_status()
             payload = response.json()
@@ -247,7 +262,7 @@ class OpenWebUIClient:
 
 
 class OpenAIEndpointClient:
-    def __init__(self, base_url: str | None = None, api_key: str | None = None, timeout: int = 600) -> None:
+    def __init__(self, base_url: str | None = None, api_key: str | None = None, timeout: int | None = None) -> None:
         self.base_url = (
             base_url
             or os.environ.get("OPENAI_ENDPOINT_BASE_URL")
@@ -255,7 +270,7 @@ class OpenAIEndpointClient:
             or "http://127.0.0.1:11434/v1"
         ).rstrip("/")
         self.api_key = api_key or os.environ.get("OPENAI_ENDPOINT_API_KEY") or os.environ.get("OPENAI_API_KEY", "")
-        self.timeout = timeout
+        self.timeout = timeout if timeout is not None else _env_int("OPENAI_ENDPOINT_TIMEOUT_SECONDS", 600)
 
     def _headers(self) -> dict[str, str]:
         headers = {"Accept": "application/json", "Content-Type": "application/json"}
