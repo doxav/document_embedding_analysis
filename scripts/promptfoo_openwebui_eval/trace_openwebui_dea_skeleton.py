@@ -27,12 +27,11 @@ external builder command (for example ``build_promptfoo_csvs.py`` or another
 Promptfoo-oriented dataset preparation script).
 
 Notes / limitations:
-- The current OpenWebUI bridge in ``scripts/promptfoo_openwebui_eval`` posts one
-  user message to ``/api/chat/completions`` and forwards only a subset of model
-  parameters (temperature/top_p/max_tokens). It does not forward a native system
-  message today. For ``OpenWebUIModel`` the trainable system prompt is therefore
-  applied with a prompt-wrapping strategy by default, while also being written to
-  row fields that a future bridge revision may consume natively.
+- The current OpenWebUI bridge forwards per-call system prompts and generation
+  parameters without mutating shared OpenWebUI model settings. For strict model
+  behavior constraints, ``OpenWebUIModel`` can still wrap the system prompt into
+  the user prompt because some models treat native system prompts as guidance
+  rather than a hard output contract.
 - The currently uploaded ``large_thematic_summarizer`` tool exposes only a
   subset of its runtime controls via method arguments / UserValves. Per-call
   optimization of admin-only valves is not guaranteed unless the tool/pipe is
@@ -52,7 +51,7 @@ import sys
 import tempfile
 import time
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Callable, Iterable, Mapping, Sequence
 
 import requests
 
@@ -77,7 +76,9 @@ except Exception:  # pragma: no cover - standalone fallback
 # Trace / NewTrace experimental
 from opto import trace
 from opto.optimizers import OptoPrime
+from opto.trainer.algorithms.algorithm import Trainer
 from opto.trainer.guide import Guide
+from opto.trainer.loader import DataLoader
 from opto.trainer.objectives import ObjectiveConfig, apply_minimize, weighted_scalarize
 
 
@@ -87,7 +88,22 @@ from opto.trainer.objectives import ObjectiveConfig, apply_minimize, weighted_sc
 
 ALGORITHMS = {"raptor", "dtcrs", "kohaku", "lightrag"}
 LENGTHS = {"short", "medium", "long"}
-MODEL_PROMPT_MODES = {"wrapped", "bridge_field", "none"}
+MODEL_PROMPT_MODES = {"wrapped", "bridge_field", "both", "none"}
+GENERATION_MODES = {"bridge", "prepared_rows"}
+OPTIMIZATION_METHODS = {
+    "direct_dea",
+    "direct_dea_judge",
+    "direct_llm_judge",
+    "step2_promptfoo",
+    "step3_promptfoo",
+}
+TOOL_MODEL_IDS_BY_ALGORITHM = {
+    "dtcrs": "summarizer---dtcrs",
+    "kohaku": "summarizer---kohaku",
+    "kohaku_openrouter": "summarizer---kohaku-OR",
+    "lightrag": "summarizer---lightrag",
+    "raptor": "summarizer---raptor",
+}
 TOOL_EXPOSED_PER_CALL_KEYS = {
     # Current uploaded tool: method args and UserValves that can plausibly be
     # influenced per call through the common pipe.
@@ -104,6 +120,7 @@ TOOL_EXPOSED_PER_CALL_KEYS = {
     "enable_map_reduce",
     "max_concurrent_llm_calls",
     "diagnostic_status",
+    "emit_diagnostics",
 }
 REFERENCE_FIELD_CANDIDATES = (
     "gold_summary",
@@ -124,6 +141,40 @@ PROMPT_FIELD_CANDIDATES = (
     "instruction",
     "title",
 )
+DEFAULT_OBJECTIVE_WEIGHTS = {
+    "score": 1.0,
+    "execution_duration_score": 0.15,
+    "llm_calls_score": 0.05,
+    "tool_calls_score": 0.03,
+}
+DEFAULT_MINIMIZE_METRICS = (
+    "execution_duration_s",
+    "duration_s",
+    "latency_s",
+    "llm_calls",
+    "llm_rounds",
+    "tool_calls",
+)
+QUALITY_OBJECTIVE_KEYS = {
+    "score",
+    "dea_score",
+    "dea_composite",
+    "plan",
+    "content",
+    "resources",
+    "length_alignment",
+    "rouge_l_f",
+    "promptfoo_score",
+    "judge_score",
+}
+RUNTIME_OBJECTIVE_SCORE_KEYS = {
+    "execution_duration_score",
+    "duration_score",
+    "latency_score",
+    "llm_calls_score",
+    "llm_rounds_score",
+    "tool_calls_score",
+}
 
 
 # ---------------------------------------------------------------------------
@@ -210,10 +261,103 @@ def mean_dict(dicts: Sequence[Mapping[str, float]]) -> dict[str, float]:
     return out
 
 
+def row_batches(rows: Sequence[Mapping[str, Any]], batch_size: int) -> list[list[dict[str, Any]]]:
+    """Group rows into deterministic optimization batches."""
+    if batch_size <= 0:
+        raise ValueError("batch_size must be positive")
+    normalized = [dict(row) for row in rows]
+    return [normalized[i : i + batch_size] for i in range(0, len(normalized), batch_size)]
+
+
+def task_ids(rows: Sequence[Mapping[str, Any]]) -> list[str]:
+    """Return stable identifiers for reporting a row batch."""
+    ids: list[str] = []
+    for index, row in enumerate(rows, start=1):
+        ids.append(str(row.get("task_id") or row.get("id") or index))
+    return ids
+
+
+def trace_metrics(outputs: Sequence[Mapping[str, Any]]) -> dict[str, float]:
+    """Aggregate runtime metrics from bridge responses for optimization."""
+    latencies = [float(item.get("latency_s") or 0.0) for item in outputs]
+    rounds = []
+    tool_calls = []
+    reasoning_chars = []
+    for item in outputs:
+        trace_data = ((item.get("raw_response") or {}).get("trace") or {}) if isinstance(item.get("raw_response"), dict) else {}
+        trace_rounds = trace_data.get("rounds") or []
+        trace_tools = trace_data.get("tool_calls") or []
+        rounds.append(float(len(trace_rounds)))
+        tool_calls.append(float(len(trace_tools)))
+        total_reasoning = 0
+        for round_item in trace_rounds:
+            message = (round_item or {}).get("message") or {}
+            for key in ("reasoning", "reasoning_content", "thinking"):
+                total_reasoning += len(str(message.get(key) or ""))
+        reasoning_chars.append(float(total_reasoning))
+    metrics: dict[str, float] = {}
+    if latencies:
+        duration_s = sum(latencies) / len(latencies)
+        duration_score = 1.0 / (1.0 + duration_s)
+        metrics["execution_duration_s"] = duration_s
+        metrics["execution_duration_score"] = duration_score
+        metrics["duration_s"] = duration_s
+        metrics["duration_score"] = duration_score
+        metrics["latency_s"] = duration_s
+        metrics["latency_score"] = duration_score
+    if rounds:
+        llm_calls = sum(rounds) / len(rounds)
+        llm_calls_score = 1.0 / (1.0 + llm_calls)
+        metrics["llm_calls"] = llm_calls
+        metrics["llm_calls_score"] = llm_calls_score
+        metrics["llm_rounds"] = llm_calls
+        metrics["llm_rounds_score"] = llm_calls_score
+    if tool_calls:
+        metrics["tool_calls"] = sum(tool_calls) / len(tool_calls)
+        metrics["tool_calls_score"] = 1.0 / (1.0 + metrics["tool_calls"])
+    if reasoning_chars:
+        metrics["reasoning_chars"] = sum(reasoning_chars) / len(reasoning_chars)
+    return metrics
+
+
+def total_duration_metrics(duration_s: float) -> dict[str, float]:
+    """Return normalized metrics for the full optimization step runtime."""
+    safe_duration = max(0.0, float(duration_s))
+    return {
+        "execution_duration_s": safe_duration,
+        "execution_duration_score": 1.0 / (1.0 + safe_duration),
+        "optimization_step_duration_s": safe_duration,
+        "optimization_step_duration_score": 1.0 / (1.0 + safe_duration),
+    }
+
+
+def merge_step_runtime_metrics(score_dict: Mapping[str, float], duration_s: float) -> dict[str, float]:
+    """Add full-step runtime and finite no-call defaults without hiding bridge traces."""
+    merged = dict(score_dict)
+    merged.update(total_duration_metrics(duration_s))
+    # Step 3 live PromptFoo may not expose bridge traces; keep the default
+    # objective finite while preserving real call counts when traces exist.
+    merged.setdefault("llm_calls", 0.0)
+    merged.setdefault("llm_calls_score", 1.0)
+    merged.setdefault("llm_rounds", merged["llm_calls"])
+    merged.setdefault("llm_rounds_score", merged["llm_calls_score"])
+    merged.setdefault("tool_calls", 0.0)
+    merged.setdefault("tool_calls_score", 1.0)
+    return merged
+
+
 def clamp01(value: float | None) -> float | None:
     if value is None:
         return None
     return max(0.0, min(1.0, float(value)))
+
+
+def _ratio_alignment(value: Any) -> float | None:
+    """Score a ratio by closeness to 1.0, capped to the 0-1 optimization range."""
+    ratio = numeric(value)
+    if ratio is None:
+        return None
+    return clamp01(1.0 - min(abs(ratio - 1.0), 1.0))
 
 
 def numeric(value: Any) -> float | None:
@@ -510,12 +654,17 @@ def apply_model_params_to_row(
             current["openwebui_system_prompt"],
             derive_request_prompt(current),
         )
+        current["openwebui_system_prompt"] = ""
     elif prompt_mode == "bridge_field":
-        # Future bridge mode: keep the request prompt untouched, rely on the row
-        # field if the bridge is later extended to emit a native system message.
         current["request_prompt"] = derive_request_prompt(current)
+    elif prompt_mode == "both":
+        current["request_prompt"] = wrap_request_with_system_prompt(
+            current["openwebui_system_prompt"],
+            derive_request_prompt(current),
+        )
     else:
         current["request_prompt"] = derive_request_prompt(current)
+        current["openwebui_system_prompt"] = ""
 
     if not keep_existing_tool_fields:
         current["tool_parameters_json"] = "{}"
@@ -539,10 +688,10 @@ def apply_model_params_to_row(
 # ---------------------------------------------------------------------------
 
 
-def bridge_generate(row: Mapping[str, Any], bridge_url: str) -> tuple[str, float, dict[str, Any]]:
+def bridge_generate(row: Mapping[str, Any], bridge_url: str, timeout_seconds: int = 1800) -> tuple[str, float, dict[str, Any]]:
     payload = {k: v for k, v in dict(row).items() if not str(k).startswith("__metadata:")}
     t0 = time.time()
-    response = requests.post(bridge_url, json=payload, timeout=1800)
+    response = requests.post(bridge_url, json=payload, timeout=timeout_seconds)
     response.raise_for_status()
     data = response.json()
     return str(data.get("output") or "").strip(), time.time() - t0, data
@@ -552,13 +701,14 @@ def generate_batch_via_bridge(
     rows: Sequence[Mapping[str, Any]],
     *,
     bridge_url: str,
-    row_transformer,
+    row_transformer: Callable[[Mapping[str, Any]], dict[str, Any]],
+    timeout_seconds: int = 1800,
 ) -> list[dict[str, Any]]:
     outputs: list[dict[str, Any]] = []
     total = len(rows)
     for idx, raw_row in enumerate(rows, start=1):
         active_row = row_transformer(raw_row)
-        answer, latency_s, raw = bridge_generate(active_row, bridge_url)
+        answer, latency_s, raw = bridge_generate(active_row, bridge_url, timeout_seconds)
         current = dict(active_row)
         current["candidate_answer"] = answer
         current["generated_latency_s"] = latency_s
@@ -573,6 +723,29 @@ def generate_batch_via_bridge(
             }
         )
         print(f"[{idx}/{total}] generated {current.get('task_id') or current.get('id') or idx}")
+    return outputs
+
+
+def prepare_batch_rows(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    row_transformer: Callable[[Mapping[str, Any]], dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Prepare rows for external live generation without calling the bridge."""
+    outputs: list[dict[str, Any]] = []
+    for idx, raw_row in enumerate(rows, start=1):
+        active_row = row_transformer(raw_row)
+        answer = str(active_row.get("candidate_answer") or "").strip()
+        outputs.append(
+            {
+                "row": active_row,
+                "candidate_answer": answer,
+                "latency_s": 0.0,
+                "raw_response": {"trace": {"mode": "prepared_rows", "message_count": 0, "rounds": [], "tool_calls": []}},
+                "row_index": idx - 1,
+                "task_id": active_row.get("task_id") or active_row.get("id") or idx,
+            }
+        )
     return outputs
 
 
@@ -656,6 +829,17 @@ def evaluate_candidate_with_dea(row: Mapping[str, Any], output: str, *, use_dea_
             ],
         )
     )
+    length_alignment = _ratio_alignment(
+        pick(
+            dea_scores,
+            [
+                "content_length_ratio_to_target",
+                "global_content_length_ratio_to_target",
+                "sections contents length (top:1, <1:too short, >1:too long)",
+                "global_sections contents length (top:1, <1:too short, >1:too long)",
+            ],
+        )
+    )
 
     weights = {"plan": 0.30, "content": 0.45, "resources": 0.15, "rouge_l": 0.10}
     available = {"plan": plan, "content": content, "resources": resources, "rouge_l": rouge_l_f}
@@ -674,6 +858,7 @@ def evaluate_candidate_with_dea(row: Mapping[str, Any], output: str, *, use_dea_
         "plan": plan if plan is not None else 0.0,
         "content": content if content is not None else 0.0,
         "resources": resources if resources is not None else 0.0,
+        "length_alignment": length_alignment if length_alignment is not None else 0.0,
         "rouge_l_f": rouge_l_f if rouge_l_f is not None else 0.0,
         "entity_recall": entity_recall if entity_recall is not None else 0.0,
         "citation_count": citation_count,
@@ -690,6 +875,7 @@ def evaluate_candidate_with_dea(row: Mapping[str, Any], output: str, *, use_dea_
         f"plan={plan:.3f}" if plan is not None else "plan=n/a",
         f"content={content:.3f}" if content is not None else "content=n/a",
         f"resources={resources:.3f}" if resources is not None else "resources=n/a",
+        f"length={length_alignment:.3f}" if length_alignment is not None else "length=n/a",
         f"rouge_l_f={rouge_l_f:.3f}" if rouge_l_f is not None else "rouge_l_f=n/a",
         f"score={composite:.3f}",
         f"dea_status={dea_status.get('status', 'unknown')}",
@@ -716,6 +902,7 @@ def aggregate_dea_batch(outputs: Sequence[Mapping[str, Any]], *, use_dea_judge: 
         reasons.append((named.get("dea_composite", named.get("dea_score", 0.0)), row.get("task_id"), scored.get("reason", "")))
     batch = mean_dict(per_row)
     batch.setdefault("score", batch.get("dea_composite", batch.get("dea_score", 0.0)))
+    batch.update(trace_metrics(outputs))
     worst = sorted(reasons, key=lambda x: x[0])[:3]
     feedback = "\n".join(
         f"- task_id={task_id}: score={score:.3f} | {reason}"
@@ -781,13 +968,14 @@ def parse_promptfoo_result_json(result_path: Path) -> tuple[dict[str, float], st
     return batch, feedback or "Promptfoo batch evaluation completed."
 
 
-def evaluate_batch_with_promptfoo(
-    outputs: Sequence[Mapping[str, Any]],
+def run_promptfoo_eval_rows(
+    rows: Sequence[Mapping[str, Any]],
     *,
     promptfoo_config: Path,
     promptfoo_eval_cmd: str,
     working_dir: Path | None = None,
     artifact_dir: Path | None = None,
+    csv_name: str = "candidate_rows.csv",
 ) -> tuple[dict[str, float], str, dict[str, str]]:
     if not promptfoo_eval_cmd:
         raise RuntimeError("Promptfoo evaluation mode requires --promptfoo-eval-cmd")
@@ -796,9 +984,8 @@ def evaluate_batch_with_promptfoo(
     artifact_dir = artifact_dir or Path(tempfile.mkdtemp(prefix="trace_promptfoo_eval_"))
     artifact_dir.mkdir(parents=True, exist_ok=True)
 
-    csv_path = artifact_dir / "candidate_rows.csv"
+    csv_path = artifact_dir / csv_name
     result_json = artifact_dir / "promptfoo_result.json"
-    rows = [dict(item["row"], candidate_answer=item["candidate_answer"]) for item in outputs]
     write_csv_rows(csv_path, rows)
 
     command = promptfoo_eval_cmd.format(
@@ -807,7 +994,9 @@ def evaluate_batch_with_promptfoo(
         result_json=shlex.quote(str(result_json)),
         workdir=shlex.quote(str(workdir)),
     )
+    t0 = time.time()
     proc = run_shell(command, cwd=workdir)
+    promptfoo_duration_s = time.time() - t0
     if proc.returncode != 0:
         raise RuntimeError(
             f"Promptfoo command failed ({proc.returncode}).\nCOMMAND: {command}\nSTDOUT:\n{proc.stdout}\nSTDERR:\n{proc.stderr}"
@@ -824,10 +1013,51 @@ def evaluate_batch_with_promptfoo(
             )
 
     score_dict, feedback = parse_promptfoo_result_json(result_json)
-    latencies = [float(item.get("latency_s") or 0.0) for item in outputs]
-    if latencies:
-        score_dict["latency_s"] = sum(latencies) / len(latencies)
+    score_dict["promptfoo_duration_s"] = promptfoo_duration_s
+    score_dict["promptfoo_duration_score"] = 1.0 / (1.0 + promptfoo_duration_s)
     return score_dict, feedback, {"csv": str(csv_path), "result_json": str(result_json)}
+
+
+def evaluate_batch_with_promptfoo(
+    outputs: Sequence[Mapping[str, Any]],
+    *,
+    promptfoo_config: Path,
+    promptfoo_eval_cmd: str,
+    working_dir: Path | None = None,
+    artifact_dir: Path | None = None,
+) -> tuple[dict[str, float], str, dict[str, str]]:
+    rows = [dict(item["row"], candidate_answer=item["candidate_answer"]) for item in outputs]
+    score_dict, feedback, artifacts = run_promptfoo_eval_rows(
+        rows,
+        promptfoo_config=promptfoo_config,
+        promptfoo_eval_cmd=promptfoo_eval_cmd,
+        working_dir=working_dir,
+        artifact_dir=artifact_dir,
+        csv_name="step2_candidate_rows.csv",
+    )
+    score_dict.update(trace_metrics(outputs))
+    return score_dict, feedback, artifacts
+
+
+def evaluate_batch_with_promptfoo_live(
+    outputs: Sequence[Mapping[str, Any]],
+    *,
+    promptfoo_config: Path,
+    promptfoo_eval_cmd: str,
+    working_dir: Path | None = None,
+    artifact_dir: Path | None = None,
+) -> tuple[dict[str, float], str, dict[str, str]]:
+    rows = [dict(item["row"]) for item in outputs]
+    score_dict, feedback, artifacts = run_promptfoo_eval_rows(
+        rows,
+        promptfoo_config=promptfoo_config,
+        promptfoo_eval_cmd=promptfoo_eval_cmd,
+        working_dir=working_dir,
+        artifact_dir=artifact_dir,
+        csv_name="step3_live_rows.csv",
+    )
+    score_dict.update(total_duration_metrics(score_dict["promptfoo_duration_s"]))
+    return score_dict, feedback, artifacts
 
 
 # ---------------------------------------------------------------------------
@@ -938,7 +1168,7 @@ Optional context:
 {context}
 
 Return strict JSON only with this schema:
-{"score": 0.0, "feedback": "...", "metrics": {"correctness": 0.0, "faithfulness": 0.0, "coverage": 0.0}}
+{{"score": 0.0, "feedback": "...", "metrics": {{"correctness": 0.0, "faithfulness": 0.0, "coverage": 0.0}}}}
 
 Rules:
 - For QA tasks, correctness should dominate.
@@ -995,6 +1225,7 @@ def aggregate_llm_judge_batch(
         reasons.append((metrics["judge_score"], row.get("task_id"), str(parsed.get("feedback") or "")))
     batch = mean_dict(per_row)
     batch.setdefault("score", batch.get("judge_score", 0.0))
+    batch.update(trace_metrics(outputs))
     worst = sorted(reasons, key=lambda x: x[0])[:3]
     feedback = "\n".join(
         f"- task_id={task_id}: score={score:.3f} | {reason}"
@@ -1020,6 +1251,8 @@ class BatchEvaluationGuide(Guide):
         judge_base_url: str = "",
         judge_api_key: str = "",
         judge_model: str = "",
+        judge_timeout_seconds: int = 600,
+        judge_extra_body: Mapping[str, Any] | None = None,
         judge_system_prompt: str = DEFAULT_LLM_JUDGE_SYSTEM_PROMPT,
         judge_prompt_template: str = DEFAULT_LLM_JUDGE_PROMPT,
         artifact_dir: str = "",
@@ -1030,6 +1263,7 @@ class BatchEvaluationGuide(Guide):
         self.promptfoo_eval_cmd = promptfoo_eval_cmd
         self.promptfoo_workdir = promptfoo_workdir
         self.artifact_dir = artifact_dir
+        self.last_artifacts: dict[str, str] = {}
         self._judge_client = None
         self.judge_system_prompt = judge_system_prompt
         self.judge_prompt_template = judge_prompt_template
@@ -1038,7 +1272,8 @@ class BatchEvaluationGuide(Guide):
                 base_url=judge_base_url,
                 api_key=judge_api_key,
                 model=judge_model,
-                extra_body=parse_jsonish(os.environ.get("DEA_JUDGE_EXTRA_BODY_JSON"), default={}) or {},
+                timeout=judge_timeout_seconds,
+                extra_body=judge_extra_body or {},
             )
 
     def _evaluate_outputs(self, outputs: Sequence[Mapping[str, Any]]) -> tuple[dict[str, float], str]:
@@ -1052,6 +1287,17 @@ class BatchEvaluationGuide(Guide):
                 working_dir=Path(self.promptfoo_workdir) if self.promptfoo_workdir else Path.cwd(),
                 artifact_dir=Path(self.artifact_dir) if self.artifact_dir else None,
             )
+            self.last_artifacts = _artifacts
+            return score_dict, feedback
+        if self.mode == "promptfoo_step3":
+            score_dict, feedback, _artifacts = evaluate_batch_with_promptfoo_live(
+                outputs,
+                promptfoo_config=Path(self.promptfoo_config),
+                promptfoo_eval_cmd=self.promptfoo_eval_cmd,
+                working_dir=Path(self.promptfoo_workdir) if self.promptfoo_workdir else Path.cwd(),
+                artifact_dir=Path(self.artifact_dir) if self.artifact_dir else None,
+            )
+            self.last_artifacts = _artifacts
             return score_dict, feedback
         if self.mode == "llm_judge":
             return aggregate_llm_judge_batch(
@@ -1091,10 +1337,16 @@ class OpenWebUISummarizerAgent:
         bridge_url: str,
         target_model_id: str,
         strict_exposed_keys: bool = False,
-    ):
+        include_bridge_trace: bool = True,
+        generation_mode: str = "bridge",
+        bridge_timeout_seconds: int = 1800,
+    ) -> None:
         self.bridge_url = bridge_url
         self.target_model_id = target_model_id
         self.strict_exposed_keys = strict_exposed_keys
+        self.include_bridge_trace = include_bridge_trace
+        self.generation_mode = generation_mode if generation_mode in GENERATION_MODES else "bridge"
+        self.bridge_timeout_seconds = bridge_timeout_seconds
         self.param_json = trace.node(initial_param_json, trainable=True)
 
     @trace.bundle(trainable=True)
@@ -1120,9 +1372,12 @@ class OpenWebUISummarizerAgent:
             if warnings:
                 active_row["trace_tool_param_warnings"] = " | ".join(warnings)
             active_row["openwebui_target_kind"] = "tool"
+            active_row["openwebui_include_trace"] = str(self.include_bridge_trace).lower()
             return active_row
 
-        return generate_batch_via_bridge(rows, bridge_url=self.bridge_url, row_transformer=_row_transformer)
+        if self.generation_mode == "prepared_rows":
+            return prepare_batch_rows(rows, row_transformer=_row_transformer)
+        return generate_batch_via_bridge(rows, bridge_url=self.bridge_url, row_transformer=_row_transformer, timeout_seconds=self.bridge_timeout_seconds)
 
     def __call__(self, rows: list[dict[str, Any]]):
         safe_json = self.build_param_json(self.param_json)
@@ -1148,11 +1403,17 @@ class OpenWebUIModel:
         target_model_id: str,
         prompt_mode: str = "wrapped",
         keep_existing_tool_fields: bool = False,
-    ):
+        include_bridge_trace: bool = True,
+        generation_mode: str = "bridge",
+        bridge_timeout_seconds: int = 1800,
+    ) -> None:
         self.bridge_url = bridge_url
         self.target_model_id = target_model_id
         self.prompt_mode = prompt_mode if prompt_mode in MODEL_PROMPT_MODES else "wrapped"
         self.keep_existing_tool_fields = keep_existing_tool_fields
+        self.include_bridge_trace = include_bridge_trace
+        self.generation_mode = generation_mode if generation_mode in GENERATION_MODES else "bridge"
+        self.bridge_timeout_seconds = bridge_timeout_seconds
         self.system_prompt = trace.node(initial_system_prompt, trainable=True)
         self.param_json = trace.node(initial_param_json, trainable=True)
 
@@ -1174,7 +1435,7 @@ class OpenWebUIModel:
         params = json.loads(param_json)
 
         def _row_transformer(row: Mapping[str, Any]) -> dict[str, Any]:
-            return apply_model_params_to_row(
+            active_row = apply_model_params_to_row(
                 row,
                 system_prompt,
                 params,
@@ -1182,8 +1443,12 @@ class OpenWebUIModel:
                 prompt_mode=self.prompt_mode,
                 keep_existing_tool_fields=self.keep_existing_tool_fields,
             )
+            active_row["openwebui_include_trace"] = str(self.include_bridge_trace).lower()
+            return active_row
 
-        return generate_batch_via_bridge(rows, bridge_url=self.bridge_url, row_transformer=_row_transformer)
+        if self.generation_mode == "prepared_rows":
+            return prepare_batch_rows(rows, row_transformer=_row_transformer)
+        return generate_batch_via_bridge(rows, bridge_url=self.bridge_url, row_transformer=_row_transformer, timeout_seconds=self.bridge_timeout_seconds)
 
     def __call__(self, rows: list[dict[str, Any]]):
         safe_prompt = self.build_system_prompt(self.system_prompt)
@@ -1199,6 +1464,53 @@ class OpenWebUIModel:
 def scalarize(score_dict: Mapping[str, float], config: ObjectiveConfig) -> float:
     minimized = apply_minimize(dict(score_dict), config.minimize)
     return float(weighted_scalarize(minimized, config.weights, config.missing_value))
+
+
+def build_objective_config(args: argparse.Namespace) -> ObjectiveConfig:
+    """Build an objective that always balances answer quality and execution cost."""
+    raw_weights = parse_jsonish(args.weights, default=None)
+    if not isinstance(raw_weights, dict) or not raw_weights:
+        raise ValueError("--weights must be a non-empty JSON object")
+
+    weights: dict[str, float] = {}
+    for key, value in raw_weights.items():
+        try:
+            weight = float(value)
+        except Exception as exc:
+            raise ValueError(f"Objective weight for `{key}` must be numeric") from exc
+        if weight < 0:
+            raise ValueError(f"Objective weight for `{key}` must be non-negative")
+        weights[str(key)] = weight
+
+    # Keep quality and runtime visible in the ObjectiveConfig even when callers
+    # pass a narrow custom weights JSON for one DEA sub-metric.
+    if not QUALITY_OBJECTIVE_KEYS.intersection(weights):
+        weights["score"] = DEFAULT_OBJECTIVE_WEIGHTS["score"]
+    if not RUNTIME_OBJECTIVE_SCORE_KEYS.intersection(weights):
+        weights["execution_duration_score"] = DEFAULT_OBJECTIVE_WEIGHTS["execution_duration_score"]
+
+    minimize = set(str(item) for item in (args.minimize or []))
+    minimize.update(DEFAULT_MINIMIZE_METRICS)
+    return ObjectiveConfig(
+        mode=args.objective_mode,
+        weights=weights,
+        minimize=frozenset(minimize),
+        tie_break="weighted",
+        scalarize_dict="weighted",
+        score_key="score",
+    )
+
+
+def objective_config_to_dict(config: ObjectiveConfig) -> dict[str, Any]:
+    """Serialize objective settings for result artifacts."""
+    return {
+        "mode": config.mode,
+        "weights": dict(config.weights),
+        "minimize": sorted(config.minimize),
+        "tie_break": config.tie_break,
+        "scalarize_dict": config.scalarize_dict,
+        "score_key": config.score_key,
+    }
 
 
 def dominates_vector(a: Mapping[str, float], b: Mapping[str, float], minimize: frozenset[str]) -> bool:
@@ -1232,6 +1544,195 @@ def update_pareto_front(front: list[dict[str, Any]], snapshot: dict[str, Any], c
     return kept
 
 
+def numeric_score_dict(score_dict: Mapping[str, Any]) -> dict[str, float]:
+    """Keep only finite numeric score values for scalarization and artifacts."""
+    out: dict[str, float] = {}
+    for key, value in score_dict.items():
+        if isinstance(value, bool):
+            out[str(key)] = 1.0 if value else 0.0
+        elif isinstance(value, (int, float)) and math.isfinite(float(value)):
+            out[str(key)] = float(value)
+    return out
+
+
+def current_agent_state(agent: Any) -> dict[str, str]:
+    """Return trainable parameter state in a stable artifact shape."""
+    param_json = str(getattr(agent, "param_json", None).data) if hasattr(agent, "param_json") else ""
+    system_prompt = str(getattr(agent, "system_prompt", None).data) if hasattr(agent, "system_prompt") else ""
+    return {
+        "param_json": param_json,
+        "tool_param_json": param_json if isinstance(agent, OpenWebUISummarizerAgent) else "",
+        "model_param_json": param_json if isinstance(agent, OpenWebUIModel) else "",
+        "system_prompt": system_prompt,
+    }
+
+
+def output_trace_records(outputs: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    """Extract compact per-row trace records without duplicating full answers."""
+    records: list[dict[str, Any]] = []
+    for item in outputs:
+        raw_response = item.get("raw_response") if isinstance(item.get("raw_response"), dict) else {}
+        records.append(
+            {
+                "task_id": item.get("task_id"),
+                "row_index": item.get("row_index"),
+                "latency_s": item.get("latency_s"),
+                "answer_chars": len(str(item.get("candidate_answer") or "")),
+                "trace": raw_response.get("trace") if isinstance(raw_response, dict) else {},
+            }
+        )
+    return records
+
+
+def save_step_artifacts(
+    artifact_dir: Path,
+    snapshot: Mapping[str, Any],
+    outputs: Sequence[Mapping[str, Any]],
+) -> None:
+    """Persist one optimization step with candidates and bridge traces."""
+    artifact_dir.mkdir(parents=True, exist_ok=True)
+    step = int(snapshot.get("global_step") or 0)
+    prefix = f"step_{step:04d}_epoch_{int(snapshot.get('epoch') or 0):03d}_batch_{int(snapshot.get('batch_index') or 0):03d}"
+    write_csv_rows(
+        artifact_dir / f"{prefix}.candidates.csv",
+        [dict(item["row"], candidate_answer=item["candidate_answer"]) for item in outputs],
+    )
+    write_text(artifact_dir / f"{prefix}.traces.json", json.dumps(output_trace_records(outputs), indent=2, ensure_ascii=False))
+    write_text(artifact_dir / f"{prefix}.summary.json", json.dumps(snapshot, indent=2, ensure_ascii=False))
+
+
+class NoOpOptimizer:
+    """Optimizer adapter for generation/evaluation calibration runs."""
+
+    def zero_feedback(self) -> None:
+        return None
+
+    def backward(self, target: Any, feedback: Any) -> None:
+        return None
+
+    def step(self) -> dict[str, Any]:
+        return {}
+
+
+class TraceBatchTrainer(Trainer):
+    """Train a Trace agent on row batches and keep PromptFoo/DEA feedback artifacts."""
+
+    def __init__(
+        self,
+        agent: Any,
+        optimizer: Any,
+        *,
+        objective_config: ObjectiveConfig,
+        artifact_dir: Path | None = None,
+        optimize_target: str = "",
+        eval_backend: str = "",
+        optimization_method: str = "",
+        optimizer_mode: str = "optoprime",
+        logger: Any = None,
+    ) -> None:
+        super().__init__(agent, logger=logger)
+        self.optimizer = optimizer
+        self.objective_config = objective_config
+        self.artifact_dir = artifact_dir
+        self.optimize_target = optimize_target
+        self.eval_backend = eval_backend
+        self.optimization_method = optimization_method
+        self.optimizer_mode = optimizer_mode
+        self.history: list[dict[str, Any]] = []
+        self.pareto_front: list[dict[str, Any]] = []
+        self.best_weighted: dict[str, Any] | None = None
+
+    def _run_batch(
+        self,
+        *,
+        guide: BatchEvaluationGuide,
+        rows: list[dict[str, Any]],
+        epoch: int,
+        batch_index: int,
+        global_step: int,
+    ) -> dict[str, Any]:
+        t0 = time.time()
+        try:
+            target = self.agent(rows)
+            outputs = target.data
+            if not isinstance(outputs, list):
+                raise RuntimeError(f"Agent returned {type(outputs).__name__}, expected list of generated rows")
+            score_dict_raw, feedback = guide.get_feedback(rows, outputs, rows)
+            score_dict = numeric_score_dict(score_dict_raw)
+            # Full runtime covers generation plus DEA/PromptFoo/judge work.
+            score_dict = merge_step_runtime_metrics(score_dict, time.time() - t0)
+            scalar_score = scalarize(score_dict, self.objective_config)
+        except trace.ExecutionError as e:
+            target = e.exception_node
+            outputs = []
+            score_dict = numeric_score_dict(merge_step_runtime_metrics({}, time.time() - t0))
+            score_dict.setdefault("score", 0.0)
+            scalar_score = 0.0
+            feedback = target.create_feedback("full")
+
+        self.optimizer.zero_feedback()
+        self.optimizer.backward(target, feedback)
+        self.optimizer.step()
+
+        snapshot = {
+            "epoch": epoch,
+            "batch_index": batch_index,
+            "global_step": global_step,
+            "batch_size": len(rows),
+            "batch_task_ids": task_ids(rows),
+            "optimize_target": self.optimize_target,
+            "eval_backend": self.eval_backend,
+            "optimization_method": self.optimization_method,
+            "optimizer_mode": self.optimizer_mode,
+            "objective_config": objective_config_to_dict(self.objective_config),
+            "mean_scores": score_dict,
+            "scalar_objective": scalar_score,
+            "feedback": trim_text(str(feedback), limit=4000),
+            "current_state": current_agent_state(self.agent),
+            "evaluation_artifacts": dict(getattr(guide, "last_artifacts", {}) or {}),
+        }
+        self.history.append(snapshot)
+        if self.artifact_dir is not None:
+            save_step_artifacts(self.artifact_dir, snapshot, outputs)
+        print(json.dumps(snapshot, ensure_ascii=False))
+
+        if self.best_weighted is None or scalar_score > self.best_weighted["scalar_objective"]:
+            self.best_weighted = snapshot
+        if self.objective_config.mode == "pareto":
+            self.pareto_front = update_pareto_front(self.pareto_front, snapshot, self.objective_config)
+        return snapshot
+
+    def train(
+        self,
+        guide: BatchEvaluationGuide,
+        train_dataset: Mapping[str, Sequence[list[dict[str, Any]]]],
+        num_threads: int | None = None,
+        **kwargs: Any,
+    ) -> dict[str, Any]:
+        """Run optimization over deterministic row batches for each epoch."""
+        num_epochs = int(kwargs.get("num_epochs", 1))
+        shuffle_batches = bool(kwargs.get("shuffle_batches", False))
+        global_step = 0
+        for epoch in range(num_epochs):
+            loader = DataLoader(dict(train_dataset), batch_size=1, randomize=shuffle_batches, shuffle=shuffle_batches)
+            for batch_index, (xs, _infos) in enumerate(loader):
+                rows = [dict(row) for row in xs[0]]
+                self._run_batch(
+                    guide=guide,
+                    rows=rows,
+                    epoch=epoch,
+                    batch_index=batch_index,
+                    global_step=global_step,
+                )
+                global_step += 1
+        return {
+            "objective_config": objective_config_to_dict(self.objective_config),
+            "best_weighted": self.best_weighted,
+            "pareto_front": self.pareto_front if self.objective_config.mode == "pareto" else [],
+            "history": self.history,
+        }
+
+
 # ---------------------------------------------------------------------------
 # CLI / orchestration
 # ---------------------------------------------------------------------------
@@ -1251,6 +1752,15 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-rows", type=int, default=5)
 
     # Target selection
+    parser.add_argument(
+        "--optimization-method",
+        choices=sorted(OPTIMIZATION_METHODS),
+        default="",
+        help=(
+            "High-level method preset. step2_promptfoo generates via bridge then evaluates offline; "
+            "step3_promptfoo lets PromptFoo perform live bridge generation; direct_dea_judge uses native DEA with its LLM judge."
+        ),
+    )
     parser.add_argument("--optimize-target", choices=["tool", "model"], default="tool")
     parser.add_argument(
         "--target-model-id",
@@ -1258,6 +1768,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
         help="OpenWebUI model id to hit through the bridge. For tool mode this is usually a pipe model id. For model mode this can be a workspace model or a base model id.",
     )
     parser.add_argument("--bridge-url", default="http://127.0.0.1:8001/generate")
+    parser.add_argument("--bridge-timeout-seconds", type=int, default=int(os.environ.get("BRIDGE_REQUEST_TIMEOUT_SECONDS", "1800")))
+    parser.add_argument("--generation-mode", choices=sorted(GENERATION_MODES), default="bridge")
+    parser.add_argument("--disable-bridge-trace", action="store_true", help="Do not request trace/timing metadata from the bridge.")
 
     # Tool target init
     parser.add_argument("--initial-tool-params-json", default="")
@@ -1271,7 +1784,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--model-keep-existing-tool-fields", action="store_true")
 
     # Evaluation
-    parser.add_argument("--eval-backend", choices=["dea", "promptfoo", "llm_judge"], default="dea")
+    parser.add_argument("--eval-backend", choices=["dea", "promptfoo", "promptfoo_step3", "llm_judge"], default="dea")
     parser.add_argument("--use-dea-judge", action="store_true")
     parser.add_argument("--promptfoo-config", default="")
     parser.add_argument(
@@ -1286,6 +1799,8 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--judge-base-url", default=os.environ.get("OPENAI_BASE_URL", ""))
     parser.add_argument("--judge-api-key", default=os.environ.get("OPENAI_API_KEY", ""))
     parser.add_argument("--judge-model", default=os.environ.get("OPENAI_MODEL", ""))
+    parser.add_argument("--judge-timeout-seconds", type=int, default=int(os.environ.get("DEA_JUDGE_TIMEOUT_SECONDS", "600")))
+    parser.add_argument("--judge-extra-body-json", default=os.environ.get("DEA_JUDGE_EXTRA_BODY_JSON", ""))
     parser.add_argument("--judge-system-prompt", default="")
     parser.add_argument("--judge-system-prompt-file", default="")
     parser.add_argument("--judge-prompt-template", default="")
@@ -1293,14 +1808,92 @@ def build_arg_parser() -> argparse.ArgumentParser:
 
     # Optimization / objective
     parser.add_argument("--num-epochs", type=int, default=6)
+    parser.add_argument("--batch-size", type=int, default=3, help="Number of examples per optimization feedback batch.")
+    parser.add_argument("--shuffle-batches", action="store_true")
+    parser.add_argument("--optimizer-mode", choices=["optoprime", "noop"], default="optoprime")
+    parser.add_argument("--optimizer-max-tokens", type=int, default=1024, help="Max tokens for OptoPrime optimizer suggestions.")
     parser.add_argument("--objective-mode", choices=["weighted", "pareto"], default="weighted")
-    parser.add_argument("--weights", required=True, help="JSON dict of objective weights used for scalarization / reporting")
-    parser.add_argument("--minimize", nargs="*", default=[])
+    parser.add_argument(
+        "--weights",
+        default=json.dumps(DEFAULT_OBJECTIVE_WEIGHTS),
+        help=(
+            "JSON dict of objective weights. Defaults include quality score plus normalized runtime costs. "
+            "Use detailed DEA keys such as plan/content/resources/length_alignment when needed."
+        ),
+    )
+    parser.add_argument("--minimize", nargs="*", default=list(DEFAULT_MINIMIZE_METRICS))
 
     # Artifacts
     parser.add_argument("--artifact-dir", default="")
     parser.add_argument("--output-json", default="")
     return parser
+
+
+def apply_optimization_method(args: argparse.Namespace) -> None:
+    """Map high-level experiment methods to generation and evaluation modes."""
+    if args.optimization_method == "direct_dea":
+        args.eval_backend = "dea"
+        args.use_dea_judge = False
+        args.generation_mode = "bridge"
+    elif args.optimization_method == "direct_dea_judge":
+        args.eval_backend = "dea"
+        args.use_dea_judge = True
+        args.generation_mode = "bridge"
+    elif args.optimization_method == "direct_llm_judge":
+        args.eval_backend = "llm_judge"
+        args.generation_mode = "bridge"
+    elif args.optimization_method == "step2_promptfoo":
+        args.eval_backend = "promptfoo"
+        args.generation_mode = "bridge"
+    elif args.optimization_method == "step3_promptfoo":
+        args.eval_backend = "promptfoo_step3"
+        args.generation_mode = "prepared_rows"
+    else:
+        if args.eval_backend == "promptfoo_step3":
+            args.optimization_method = "step3_promptfoo"
+            args.generation_mode = "prepared_rows"
+        elif args.eval_backend == "promptfoo":
+            args.optimization_method = "step2_promptfoo"
+        elif args.eval_backend == "llm_judge":
+            args.optimization_method = "direct_llm_judge"
+        else:
+            args.optimization_method = "direct_dea_judge" if args.use_dea_judge else "direct_dea"
+
+
+def validate_runtime_args(args: argparse.Namespace) -> None:
+    """Fail early for incompatible method/runtime settings."""
+    if args.batch_size <= 0:
+        raise ValueError("--batch-size must be positive")
+    if args.max_rows <= 0:
+        raise ValueError("--max-rows must be positive")
+    if args.judge_timeout_seconds <= 0:
+        raise ValueError("--judge-timeout-seconds must be positive")
+    if args.optimizer_max_tokens <= 0:
+        raise ValueError("--optimizer-max-tokens must be positive")
+    if args.bridge_timeout_seconds <= 0:
+        raise ValueError("--bridge-timeout-seconds must be positive")
+    if args.eval_backend in {"promptfoo", "promptfoo_step3"}:
+        if not args.promptfoo_config:
+            raise ValueError("--promptfoo-config is required for PromptFoo evaluation modes")
+        if not args.promptfoo_eval_cmd:
+            raise ValueError("--promptfoo-eval-cmd is required for PromptFoo evaluation modes")
+    if args.eval_backend == "llm_judge" and not args.judge_model:
+        raise ValueError("--judge-model or OPENAI_MODEL is required for --eval-backend llm_judge")
+    if args.generation_mode == "prepared_rows" and args.eval_backend != "promptfoo_step3":
+        raise ValueError("prepared_rows generation mode is only valid with step3_promptfoo/promptfoo_step3")
+
+
+def build_training_dataset(rows: Sequence[Mapping[str, Any]], batch_size: int) -> dict[str, list[list[dict[str, Any]]]]:
+    """Build the Trace trainer dataset where one sample is one row batch."""
+    batches = row_batches(rows, batch_size)
+    return {"inputs": batches, "infos": batches}
+
+
+def build_optimizer(args: argparse.Namespace, agent: Any) -> Any:
+    """Create the configured optimizer adapter for training or calibration."""
+    if args.optimizer_mode == "noop":
+        return NoOpOptimizer()
+    return OptoPrime(agent.parameters(), max_tokens=args.optimizer_max_tokens)
 
 
 def default_tool_params_from_rows(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
@@ -1336,6 +1929,9 @@ def build_agent(args, rows: list[dict[str, Any]]):
             args.bridge_url,
             args.target_model_id,
             strict_exposed_keys=args.strict_exposed_tool_params,
+            include_bridge_trace=not args.disable_bridge_trace,
+            generation_mode=args.generation_mode,
+            bridge_timeout_seconds=args.bridge_timeout_seconds,
         )
 
     system_prompt = load_optional_text(args.initial_system_prompt_file or args.initial_system_prompt)
@@ -1349,12 +1945,18 @@ def build_agent(args, rows: list[dict[str, Any]]):
         target_model_id=args.target_model_id,
         prompt_mode=args.model_prompt_mode,
         keep_existing_tool_fields=args.model_keep_existing_tool_fields,
+        include_bridge_trace=not args.disable_bridge_trace,
+        generation_mode=args.generation_mode,
+        bridge_timeout_seconds=args.bridge_timeout_seconds,
     )
 
 
 def build_guide(args) -> BatchEvaluationGuide:
     judge_system = load_optional_text(args.judge_system_prompt_file or args.judge_system_prompt) or DEFAULT_LLM_JUDGE_SYSTEM_PROMPT
     judge_template = load_optional_text(args.judge_prompt_file or args.judge_prompt_template) or DEFAULT_LLM_JUDGE_PROMPT
+    judge_extra_body = parse_jsonish(args.judge_extra_body_json, default={}) or {}
+    if not isinstance(judge_extra_body, dict):
+        raise ValueError("--judge-extra-body-json must be a JSON object")
     return BatchEvaluationGuide(
         mode=args.eval_backend,
         use_dea_judge=args.use_dea_judge,
@@ -1364,28 +1966,19 @@ def build_guide(args) -> BatchEvaluationGuide:
         judge_base_url=args.judge_base_url,
         judge_api_key=args.judge_api_key,
         judge_model=args.judge_model,
+        judge_timeout_seconds=args.judge_timeout_seconds,
+        judge_extra_body=judge_extra_body,
         judge_system_prompt=judge_system,
         judge_prompt_template=judge_template,
         artifact_dir=args.artifact_dir,
     )
 
 
-def save_epoch_artifacts(
-    artifact_dir: Path,
-    epoch: int,
-    outputs: Sequence[Mapping[str, Any]],
-    snapshot: Mapping[str, Any],
-) -> None:
-    artifact_dir.mkdir(parents=True, exist_ok=True)
-    csv_path = artifact_dir / f"epoch_{epoch:03d}.candidates.csv"
-    write_csv_rows(csv_path, [dict(item["row"], candidate_answer=item["candidate_answer"]) for item in outputs])
-    json_path = artifact_dir / f"epoch_{epoch:03d}.summary.json"
-    write_text(json_path, json.dumps(snapshot, indent=2, ensure_ascii=False))
-
-
 def main() -> int:
     parser = build_arg_parser()
     args = parser.parse_args()
+    apply_optimization_method(args)
+    validate_runtime_args(args)
 
     input_csv = Path(args.input_csv).resolve()
     maybe_build_input_csv(input_csv, args.build_input_csv_cmd or None, force=args.force_build_input_csv)
@@ -1395,71 +1988,28 @@ def main() -> int:
     if not args.target_model_id:
         raise SystemExit("--target-model-id is required (pipe model id or workspace/base model id)")
 
-    objective_config = ObjectiveConfig(
-        mode=args.objective_mode,
-        weights=json.loads(args.weights),
-        minimize=frozenset(args.minimize),
-        tie_break="weighted",
-    )
+    objective_config = build_objective_config(args)
 
     artifact_dir = Path(args.artifact_dir).resolve() if args.artifact_dir else None
     agent = build_agent(args, rows)
-    optimizer = OptoPrime(agent.parameters())
+    optimizer = build_optimizer(args, agent)
     guide = build_guide(args)
-
-    history: list[dict[str, Any]] = []
-    pareto_front: list[dict[str, Any]] = []
-    best_weighted: dict[str, Any] | None = None
-
-    for epoch in range(args.num_epochs):
-        try:
-            target = agent(rows)
-            outputs = target.data
-            if not isinstance(outputs, list):
-                raise RuntimeError(f"Agent returned {type(outputs).__name__}, expected list of generated rows")
-            score_dict = guide.get_score_dict(rows, outputs, rows)
-            score_dict = {str(k): float(v) for k, v in score_dict.items() if isinstance(v, (int, float))}
-            scalar_score = scalarize(score_dict, objective_config)
-            _score_dict, feedback = guide.get_feedback(rows, outputs, rows)
-        except trace.ExecutionError as e:
-            target = e.exception_node
-            outputs = []
-            score_dict = {"score": 0.0}
-            scalar_score = 0.0
-            feedback = target.create_feedback("full")
-
-        optimizer.zero_feedback()
-        optimizer.backward(target, feedback)
-        optimizer.step()
-
-        current_state = {
-            "tool_param_json": str(getattr(agent, "param_json", None).data) if hasattr(agent, "param_json") else "",
-            "system_prompt": str(getattr(agent, "system_prompt", None).data) if hasattr(agent, "system_prompt") else "",
-        }
-        snapshot = {
-            "epoch": epoch,
-            "optimize_target": args.optimize_target,
-            "eval_backend": args.eval_backend,
-            "mean_scores": score_dict,
-            "scalar_objective": scalar_score,
-            "current_state": current_state,
-        }
-        history.append(snapshot)
-        if artifact_dir is not None:
-            save_epoch_artifacts(artifact_dir, epoch, outputs, snapshot)
-        print(json.dumps(snapshot, ensure_ascii=False))
-
-        if best_weighted is None or scalar_score > best_weighted["scalar_objective"]:
-            best_weighted = snapshot
-
-        if args.objective_mode == "pareto":
-            pareto_front = update_pareto_front(pareto_front, snapshot, objective_config)
-
-    payload = {
-        "best_weighted": best_weighted,
-        "pareto_front": pareto_front if args.objective_mode == "pareto" else [],
-        "history": history,
-    }
+    trainer = TraceBatchTrainer(
+        agent,
+        optimizer,
+        objective_config=objective_config,
+        artifact_dir=artifact_dir,
+        optimize_target=args.optimize_target,
+        eval_backend=args.eval_backend,
+        optimization_method=args.optimization_method,
+        optimizer_mode=args.optimizer_mode,
+    )
+    payload = trainer.train(
+        guide,
+        build_training_dataset(rows, args.batch_size),
+        num_epochs=args.num_epochs,
+        shuffle_batches=args.shuffle_batches,
+    )
     if args.output_json:
         write_text(Path(args.output_json), json.dumps(payload, indent=2, ensure_ascii=False))
     else:

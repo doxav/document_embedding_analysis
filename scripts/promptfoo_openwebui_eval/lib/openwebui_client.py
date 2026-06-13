@@ -57,6 +57,16 @@ def _first_choice_message(payload: dict[str, Any]) -> dict[str, Any]:
     return message if isinstance(message, dict) else {}
 
 
+def _message_trace(message: dict[str, Any]) -> dict[str, Any]:
+    """Return the assistant fields useful for debugging tools and reasoning."""
+    trace: dict[str, Any] = {}
+    for key in ("role", "content", "reasoning", "reasoning_content", "thinking", "tool_calls"):
+        value = message.get(key)
+        if value not in (None, "", []):
+            trace[key] = value
+    return trace
+
+
 class OpenWebUIClient:
     def __init__(self, base_url: str | None = None, api_key: str | None = None, cache_path: str | Path | None = None, timeout: int | None = None) -> None:
         self.base_url = (base_url or os.environ.get("OPENWEBUI_BASE_URL", "")).rstrip("/")
@@ -221,8 +231,21 @@ class OpenWebUIClient:
     def _assistant_tool_message(message: dict[str, Any]) -> dict[str, Any]:
         return {"role": "assistant", "content": message.get("content"), "tool_calls": message.get("tool_calls") or []}
 
-    def chat(self, *, model: str, user_prompt: str, files_payload: list[dict[str, str]] | None = None, extra_payload: dict[str, Any] | None = None, trigger_outlet: bool = False) -> dict[str, Any]:
-        messages: list[dict[str, Any]] = [{"role": "user", "content": user_prompt}]
+    def chat(
+        self,
+        *,
+        model: str,
+        user_prompt: str,
+        system_prompt: str | None = None,
+        files_payload: list[dict[str, str]] | None = None,
+        extra_payload: dict[str, Any] | None = None,
+        trigger_outlet: bool = False,
+        include_trace: bool = False,
+    ) -> dict[str, Any]:
+        messages: list[dict[str, Any]] = []
+        if system_prompt and system_prompt.strip():
+            messages.append({"role": "system", "content": system_prompt.strip()})
+        messages.append({"role": "user", "content": user_prompt})
         payload: dict[str, Any] = {"model": model, "messages": messages, "stream": False}
         if files_payload:
             payload["files"] = files_payload
@@ -230,24 +253,52 @@ class OpenWebUIClient:
             payload.update(extra_payload)
 
         max_tool_rounds = int(os.environ.get("OPENWEBUI_MAX_TOOL_CALL_ROUNDS", "8"))
+        started_at = time.monotonic()
+        trace: dict[str, Any] = {"rounds": [], "tool_calls": []}
         data: dict[str, Any] = {}
-        for _ in range(max_tool_rounds + 1):
+        for round_index in range(max_tool_rounds + 1):
             payload["messages"] = messages
+            round_started_at = time.monotonic()
             data = self._post_chat_completion(payload)
+            round_duration = time.monotonic() - round_started_at
             message = _first_choice_message(data)
+            if include_trace:
+                trace["rounds"].append(
+                    {
+                        "round": round_index,
+                        "duration_seconds": round(round_duration, 6),
+                        "message": _message_trace(message),
+                    }
+                )
             tool_calls = message.get("tool_calls") or []
             if not tool_calls:
                 break
             messages.append(self._assistant_tool_message(message))
-            messages.extend(
-                {
-                    "role": "tool",
-                    "tool_call_id": str(tool_call.get("id") or ""),
-                    "content": self._execute_tool_call(model, tool_call),
-                }
-                for tool_call in tool_calls
-                if isinstance(tool_call, dict)
-            )
+            for tool_call in tool_calls:
+                if not isinstance(tool_call, dict):
+                    continue
+                tool_started_at = time.monotonic()
+                tool_result = self._execute_tool_call(model, tool_call)
+                tool_duration = time.monotonic() - tool_started_at
+                messages.append(
+                    {
+                        "role": "tool",
+                        "tool_call_id": str(tool_call.get("id") or ""),
+                        "content": tool_result,
+                    }
+                )
+                if include_trace:
+                    function = tool_call.get("function") or {}
+                    trace["tool_calls"].append(
+                        {
+                            "round": round_index,
+                            "id": str(tool_call.get("id") or ""),
+                            "name": str(function.get("name") or ""),
+                            "arguments": str(function.get("arguments") or ""),
+                            "duration_seconds": round(tool_duration, 6),
+                            "result": trim_text(tool_result, _env_int("OPENWEBUI_TRACE_TOOL_RESULT_MAX_CHARS", 4000)),
+                        }
+                    )
         else:
             raise RuntimeError(f"OpenWebUI exceeded {max_tool_rounds} tool-call rounds")
 
@@ -258,7 +309,12 @@ class OpenWebUIClient:
                 requests.post(f"{self.base_url}/api/chat/completed", headers=self._headers(json_mode=True), json=completed_payload, timeout=self.timeout)
             except Exception:
                 pass
-        return {"output": text, "raw": data}
+        result = {"output": text, "raw": data}
+        if include_trace:
+            trace["total_duration_seconds"] = round(time.monotonic() - started_at, 6)
+            trace["message_count"] = len(messages)
+            result["trace"] = trace
+        return result
 
 
 class OpenAIEndpointClient:

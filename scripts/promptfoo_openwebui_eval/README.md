@@ -20,6 +20,7 @@ The default generation pipe is `summarizer---kohaku-OR`.
 - [CSV Versus JSON Or YAML](#csv-versus-json-or-yaml)
 - [Evaluation Steps](#evaluation-steps)
 - [OpenWebUI Prompt And Valve Parameters](#openwebui-prompt-and-valve-parameters)
+- [Trace Optimization Experiments](#trace-optimization-experiments)
 - [Setup](#setup)
 - [Generate Local CSVs](#generate-local-csvs)
 - [Run Evaluations](#run-evaluations)
@@ -172,9 +173,10 @@ uses the HTTP bridge provider to call the configured backend.
 
 ## OpenWebUI Prompt And Valve Parameters
 
-The bridge sends one user message to OpenWebUI. It does not add a separate
-system message. The user message is built by `build_openwebui_user_prompt` from
-CSV row values and has this shape:
+For OpenWebUI generation, the bridge builds the user message with
+`build_openwebui_user_prompt` from CSV row values. It can also forward a
+per-call native system message through `openwebui_system_prompt`; this does not
+mutate shared OpenWebUI model settings. The user message has this shape:
 
 ```text
 <request_prompt text>
@@ -220,6 +222,10 @@ pipe/tool, for example:
 {"emit_diagnostics": false, "summary_structure": "sectioned literature review"}
 ```
 
+The bridge can only guarantee that these values are forwarded into the request
+row and prompt. The selected OpenWebUI pipe/tool must expose the corresponding
+method argument or valve for the value to affect execution.
+
 Use `kb_ids_json` for knowledge bases:
 
 ```json
@@ -232,6 +238,134 @@ uploaded to OpenWebUI and their resulting file ids are inserted into
 pipe/tool. When `GENERATION_BACKEND=openai_endpoint`, the bridge bypasses
 OpenWebUI and appends trimmed source text directly to the endpoint prompt
 instead.
+
+Set `openwebui_include_trace=true` to ask the bridge to return tool-call,
+round, reasoning, and timing metadata separately from `output`. Promptfoo Step 3
+currently transforms the HTTP response to `json.output`, so bridge trace is
+available from direct bridge generation and Step 2-style optimization artifacts;
+Step 3 live Promptfoo runs still report Promptfoo command duration.
+
+## Trace Optimization Experiments
+
+`trace_openwebui_dea_skeleton.py` is the experimental optimization harness. It
+optimizes either:
+
+| Target | What changes |
+|---|---|
+| `--optimize-target tool` | Per-call tool/pipe parameters such as `algorithm`, `target_length`, `structure`, `instruction`, and exposed summarizer limits |
+| `--optimize-target model` | Per-call system prompt plus generation params such as temperature, top-p, and max tokens |
+
+Use the algorithm-specific OpenWebUI pipe models when benchmarking the tool;
+they avoid relying on a separate model call to select the summarization
+algorithm:
+
+| Algorithm path | OpenWebUI model id |
+|---|---|
+| DTCRS | `summarizer---dtcrs` |
+| Kohaku | `summarizer---kohaku` |
+| Kohaku via OpenRouter-backed pipe | `summarizer---kohaku-OR` |
+| LightRAG | `summarizer---lightrag` |
+| RAPTOR | `summarizer---raptor` |
+
+Supported optimization methods:
+
+| Method | Generation path | Evaluation path | Trace availability |
+|---|---|---|---|
+| `direct_dea` | bridge | native DEA without DEA judge | bridge trace + total runtime |
+| `direct_dea_judge` | bridge | native DEA with DEA LLM judge | bridge trace + total runtime |
+| `direct_llm_judge` | bridge | custom OpenAI-compatible JSON judge | bridge trace + total runtime |
+| `step2_promptfoo` | bridge first | Promptfoo offline eval on generated CSV | bridge trace + Promptfoo result artifact |
+| `step3_promptfoo` | Promptfoo live HTTP provider | Promptfoo live eval | Promptfoo result artifact + command runtime |
+
+The trainer batches rows before optimization. The default `--batch-size 3`
+means each optimization feedback step uses three examples, which is slower than
+single-row tuning but less likely to overfit one document package.
+
+The default objective optimizes one global quality score plus normalized runtime
+costs. For DEA, `score` is the composite DEA score; you can replace it with
+detailed DEA keys such as `plan`, `content`, `resources`, or
+`length_alignment` through `--weights`. Every run also records raw
+`execution_duration_s`; bridge-traced runs can additionally record `llm_calls`
+and `tool_calls`, so later objectives can trade quality against number of
+steps/calls without changing the artifact schema.
+
+Useful runtime controls:
+
+| Flag | Purpose |
+|---|---|
+| `--bridge-timeout-seconds` | Caps each bridge generation request |
+| `--judge-timeout-seconds` | Caps each custom LLM-judge request |
+| `--judge-extra-body-json` | Sends provider-specific judge options, for example `{"max_tokens": 256}` or OpenRouter reasoning controls |
+| `--optimizer-max-tokens` | Caps `OptoPrime` suggestion size |
+| `--optimizer-mode noop` | Runs generation/evaluation/artifact calibration without asking an optimizer LLM to update parameters |
+
+Current live calibration on this machine showed:
+
+| Check | Result |
+|---|---|
+| Local OpenWebUI bridge generation with `qwen-laptop:latest` | Works and returns trace metadata |
+| Tool pipe generation with `summarizer---*` models | Reaches OpenWebUI, then fails while the configured upstream OpenRouter key is over its total limit |
+| Three-row local CPU/Ollama optimization with judge or optimizer LLM | Functionally reachable but too slow for smoke runs; use hosted judge/optimizer models or `--optimizer-mode noop` for calibration |
+
+Example direct DEA-judge optimization over the first three BigSurvey rows:
+
+```bash
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate humanllm
+DEA_REPO_ROOT="$PWD" python scripts/promptfoo_openwebui_eval/trace_openwebui_dea_skeleton.py \
+  --input-csv scripts/promptfoo_openwebui_eval/datasets/bigsurvey/step2_input.csv \
+  --max-rows 3 \
+  --batch-size 3 \
+  --num-epochs 1 \
+  --optimization-method direct_dea_judge \
+  --optimize-target tool \
+  --target-model-id summarizer---kohaku \
+  --artifact-dir scripts/promptfoo_openwebui_eval/results/trace_kohaku_direct_dea_judge
+```
+
+Example Step 2 Promptfoo optimization:
+
+```bash
+python scripts/promptfoo_openwebui_eval/trace_openwebui_dea_skeleton.py \
+  --input-csv scripts/promptfoo_openwebui_eval/datasets/bigsurvey/step2_input.csv \
+  --max-rows 3 \
+  --batch-size 3 \
+  --num-epochs 1 \
+  --optimization-method step2_promptfoo \
+  --optimize-target tool \
+  --target-model-id summarizer---kohaku \
+  --promptfoo-config bigsurvey.step2.dea.yaml \
+  --promptfoo-workdir scripts/promptfoo_openwebui_eval \
+  --promptfoo-eval-cmd "promptfoo eval -c {config} -t {csv} --output {result_json} --no-progress-bar" \
+  --artifact-dir scripts/promptfoo_openwebui_eval/results/trace_kohaku_step2_promptfoo
+```
+
+The companion notebook `trace_openwebui_dea_experiments.ipynb` builds plan and
+result tables for smoke, method-matrix, algorithm-grid, and calibration
+profiles. To verify the optimization plumbing without local inference or
+external API calls, run the deterministic calibration profile:
+
+```bash
+RUN_OPENWEBUI_TRACE_EXPERIMENTS=1 \
+TRACE_EXPERIMENT_PROFILE=offline_calibration \
+jupyter nbconvert --to notebook --execute --inplace \
+  scripts/promptfoo_openwebui_eval/trace_openwebui_dea_experiments.ipynb
+```
+
+That profile uses fake Promptfoo scores but real Trace trainer execution,
+batch-of-3 artifacts, parameter tables, and timing collection.
+
+Implementation evidence:
+
+| Requirement | Evidence |
+|---|---|
+| Model parameter optimization | `OpenWebUIModel`, model trainer tests, `offline_model_step3_calibration` notebook profile |
+| Tool parameter optimization | `OpenWebUISummarizerAgent`, forwarding tests, `offline_tool_step3_calibration` notebook profile |
+| Step 2 optimization | Bridge-generation plus offline Promptfoo trainer test with `step2_candidate_rows.csv` |
+| Step 3 optimization | Prepared live-row Promptfoo trainer test and notebook calibration artifacts |
+| Direct DEA judge | Native DEA guide test verifies `use_dea_judge=true` forwarding |
+| Batch-of-3 training | Trace trainer tests and notebook runs use `--batch-size 3` |
+| Trace and feedback | Step artifacts persist candidates, traces, summaries, feedback, scores, params, and durations |
 
 ## Setup
 

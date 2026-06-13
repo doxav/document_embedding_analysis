@@ -29,6 +29,9 @@ FORWARDED_BRIDGE_KEYS = (
     "target_length",
     "structure",
     "openwebui_extra_instructions",
+    "openwebui_system_prompt",
+    "openwebui_include_trace",
+    "include_trace",
 )
 
 GENERATION_OPTIONS: tuple[tuple[str, str, Callable[[Any], int | float]], ...] = (
@@ -101,12 +104,13 @@ def _message_content_to_text(content: Any) -> str:
     )
 
 
-def _openai_messages_to_prompt(messages: Any) -> str:
-    """Build a single bridge prompt from OpenAI chat messages."""
+def _openai_messages_to_bridge_parts(messages: Any) -> tuple[str, str]:
+    """Split OpenAI chat messages into native system and request prompts."""
     if not isinstance(messages, list) or not messages:
         raise HTTPException(status_code=400, detail="messages must be a non-empty list")
 
-    blocks: list[tuple[str, str]] = []
+    system_blocks: list[str] = []
+    prompt_blocks: list[tuple[str, str]] = []
     for index, message in enumerate(messages):
         if not isinstance(message, dict):
             raise HTTPException(status_code=400, detail=f"messages[{index}] must be an object")
@@ -114,14 +118,26 @@ def _openai_messages_to_prompt(messages: Any) -> str:
         if not role:
             raise HTTPException(status_code=400, detail=f"messages[{index}].role is required")
         text = _message_content_to_text(message.get("content")).strip()
-        if text:
-            blocks.append((role, text))
+        if not text:
+            continue
+        if role == "system":
+            system_blocks.append(text)
+        else:
+            prompt_blocks.append((role, text))
 
-    if not blocks:
+    if not prompt_blocks:
         raise HTTPException(status_code=400, detail="messages must contain at least one text content")
-    if len(blocks) == 1 and blocks[0][0] == "user":
-        return blocks[0][1]
-    return "\n\n".join(f"{role}: {text}" for role, text in blocks)
+    if len(prompt_blocks) == 1 and prompt_blocks[0][0] == "user":
+        request_prompt = prompt_blocks[0][1]
+    else:
+        request_prompt = "\n\n".join(f"{role}: {text}" for role, text in prompt_blocks)
+    return "\n\n".join(system_blocks), request_prompt
+
+
+def _openai_messages_to_prompt(messages: Any) -> str:
+    """Build a single bridge prompt from OpenAI chat messages."""
+    _system_prompt, request_prompt = _openai_messages_to_bridge_parts(messages)
+    return request_prompt
 
 
 def _copy_numeric_option(source: dict[str, Any], destination: dict[str, Any], source_key: str, destination_key: str, caster: Callable[[Any], int | float]) -> None:
@@ -143,10 +159,13 @@ def _bridge_payload_from_openai(payload: dict[str, Any]) -> dict[str, Any]:
     if as_bool(payload.get("stream"), False):
         raise HTTPException(status_code=400, detail="stream=true is not supported by this bridge")
 
+    system_prompt, request_prompt = _openai_messages_to_bridge_parts(payload.get("messages"))
     bridge_payload: dict[str, Any] = {
         "openwebui_pipe_model": model,
-        "request_prompt": _openai_messages_to_prompt(payload.get("messages")),
+        "request_prompt": request_prompt,
     }
+    if system_prompt:
+        bridge_payload["openwebui_system_prompt"] = system_prompt
     for key in FORWARDED_BRIDGE_KEYS:
         if key in payload:
             bridge_payload[key] = payload[key]
@@ -207,6 +226,8 @@ def generate(payload: dict[str, Any]) -> dict[str, Any]:
         extra_payload = _extra_payload(vars_dict)
 
         backend = os.environ.get("GENERATION_BACKEND", "openwebui").strip().lower()
+        include_trace = as_bool(vars_dict.get("openwebui_include_trace") or vars_dict.get("include_trace"), False)
+
         if backend == "openai_endpoint":
             user_prompt = build_openwebui_user_prompt(vars_dict, file_ids=None)
             context = _source_context(local_paths)
@@ -240,15 +261,20 @@ def generate(payload: dict[str, Any]) -> dict[str, Any]:
         result = client.chat(
             model=model,
             user_prompt=user_prompt,
+            system_prompt=str(vars_dict.get("openwebui_system_prompt") or "").strip(),
             files_payload=files_payload,
             extra_payload=extra_payload or None,
             trigger_outlet=as_bool(os.environ.get("OPENWEBUI_TRIGGER_OUTLET"), False),
+            include_trace=include_trace,
         )
-        return {
+        response = {
             "output": result["output"],
             "file_ids": file_ids,
             "missing_paths": missing_paths,
             "backend": "openwebui",
         }
+        if include_trace:
+            response["trace"] = result.get("trace", {})
+        return response
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
