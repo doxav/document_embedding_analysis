@@ -189,6 +189,14 @@ def test_openai_endpoint_backend_uses_generic_client(monkeypatch: pytest.MonkeyP
             "openwebui_pipe_model": "qwen3527b",
             "request_prompt": "Find facts in the knowledge base.",
             "generation_temperature": "0.2",
+            "openwebui_model_params_json": json.dumps(
+                {
+                    "model_extra_payload_json": {
+                        "frequency_penalty": 0.2,
+                        "think": True,
+                    }
+                }
+            ),
         }
     )
 
@@ -196,7 +204,33 @@ def test_openai_endpoint_backend_uses_generic_client(monkeypatch: pytest.MonkeyP
     assert result["output"] == "endpoint answer"
     assert captured_payload["model"] == "qwen3527b"
     assert captured_payload["user_prompt"] == "Find facts in the knowledge base."
-    assert captured_payload["extra_payload"] == {"temperature": 0.2}
+    assert captured_payload["extra_payload"] == {"temperature": 0.2, "frequency_penalty": 0.2, "think": True}
+
+
+def test_bridge_model_extra_payload_is_configurable_and_validated() -> None:
+    fastapi = pytest.importorskip("fastapi")
+    from api import openwebui_bridge
+
+    payload = openwebui_bridge._extra_payload(
+        {
+            "generation_temperature": "0.2",
+            "openwebui_model_params_json": json.dumps(
+                {
+                    "model_extra_payload_json": {
+                        "temperature": 0.4,
+                        "frequency_penalty": 0.1,
+                        "thinking": {"enabled": False},
+                    }
+                }
+            ),
+        }
+    )
+
+    assert payload == {"temperature": 0.4, "frequency_penalty": 0.1, "thinking": {"enabled": False}}
+    with pytest.raises(fastapi.HTTPException) as exc_info:
+        openwebui_bridge._extra_payload({"openwebui_model_params_json": '{"model_extra_payload_json": ["bad"]}'})
+    assert exc_info.value.status_code == 400
+    assert exc_info.value.detail == "model_extra_payload_json must be a JSON object"
 
 
 def test_openwebui_backend_passes_system_prompt_and_trace_flag(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -464,6 +498,34 @@ def test_trace_default_objective_uses_single_global_quality_score() -> None:
     assert config.weights["tool_calls_score"] > 0
 
 
+def test_trace_model_extra_payload_json_is_preserved_and_validated() -> None:
+    module = _load_trace_module()
+
+    params = module.sanitize_model_params(
+        {
+            "generation_temperature": "0.1",
+            "generation_max_tokens": "128",
+            "model_extra_payload_json": '{"frequency_penalty": 0.2, "think": true}',
+        }
+    )
+    row = module.apply_model_params_to_row(
+        {"task_id": "model-extra", "request_prompt": "Summarize."},
+        "Use strict evidence.",
+        params,
+        target_model_id="qwen-laptop:latest",
+        prompt_mode="bridge_field",
+    )
+    encoded = json.loads(row["openwebui_model_params_json"])
+
+    assert params["model_extra_payload_json"] == {"frequency_penalty": 0.2, "think": True}
+    assert encoded["model_extra_payload_json"] == {"frequency_penalty": 0.2, "think": True}
+    assert row["generation_temperature"] == 0.1
+    assert row["generation_max_tokens"] == 128
+    assert row["openwebui_system_prompt"] == "Use strict evidence."
+    with pytest.raises(ValueError, match="model_extra_payload_json must be a JSON object"):
+        module.sanitize_model_params({"model_extra_payload_json": '["bad"]'})
+
+
 def test_trace_direct_dea_exposes_length_alignment(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     module = _load_trace_module()
     import common.doc_eval as doc_eval
@@ -663,7 +725,14 @@ def test_trace_promptfoo_step3_live_uses_prepared_rows(monkeypatch: pytest.Monke
 
     monkeypatch.setattr(module, "run_shell", fake_run_shell)
     outputs = module.prepare_batch_rows(
-        [{"task_id": "live-1", "request_prompt": "Summarize."}],
+        [
+            {
+                "task_id": "live-1",
+                "prompt": "Summarize.",
+                "attack_category": "prompt-injection",
+                "expected": "No policy bypass.",
+            }
+        ],
         row_transformer=lambda row: dict(row, openwebui_pipe_model="summarizer---kohaku"),
     )
 
@@ -679,7 +748,34 @@ def test_trace_promptfoo_step3_live_uses_prepared_rows(monkeypatch: pytest.Monke
     assert scores["promptfoo_score"] == pytest.approx(0.72)
     assert scores["execution_duration_s"] >= 0
     assert Path(artifacts["csv"]).name == "step3_live_rows.csv"
+    live_rows = read_csv_rows(tmp_path / "step3_live_rows.csv")
+    assert live_rows[0]["attack_category"] == "prompt-injection"
+    assert live_rows[0]["expected"] == "No policy bypass."
     assert "Promptfoo summary score parsed" in feedback
+
+
+def test_trace_promptfoo_csv_writer_preserves_custom_vars(tmp_path: Path) -> None:
+    module = _load_trace_module()
+    csv_path = tmp_path / "custom_promptfoo_rows.csv"
+
+    module.write_csv_rows(
+        csv_path,
+        [
+            {
+                "task_id": "custom-1",
+                "question": "Answer using the provided policy.",
+                "attack_category": "red-team",
+                "policy": "Reject credential extraction.",
+                "expected": "Refusal.",
+            }
+        ],
+    )
+
+    rows = read_csv_rows(csv_path)
+    assert rows[0]["question"] == "Answer using the provided policy."
+    assert rows[0]["attack_category"] == "red-team"
+    assert rows[0]["policy"] == "Reject credential extraction."
+    assert rows[0]["expected"] == "Refusal."
 
 
 def test_trace_batch_trainer_runs_step3_batch_and_writes_artifacts(
@@ -898,7 +994,15 @@ def test_trace_batch_trainer_runs_step2_bridge_then_offline_promptfoo(
         optimizer_mode="noop",
     )
 
-    rows = [{"task_id": f"step2-row-{index}", "request_prompt": "Summarize."} for index in range(1, 4)]
+    rows = [
+        {
+            "task_id": f"step2-row-{index}",
+            "request_prompt": "Summarize.",
+            "attack_category": "red-team" if index == 1 else "summarization",
+            "expected": f"reference answer {index}",
+        }
+        for index in range(1, 4)
+    ]
     payload = trainer.train(guide, module.build_training_dataset(rows, batch_size=3), num_epochs=1)
 
     assert len(bridge_rows) == 3
@@ -916,6 +1020,8 @@ def test_trace_batch_trainer_runs_step2_bridge_then_offline_promptfoo(
         "generated answer for step2-row-2",
         "generated answer for step2-row-3",
     ]
+    assert offline_rows[0]["attack_category"] == "red-team"
+    assert offline_rows[0]["expected"] == "reference answer 1"
 
 
 def test_trace_default_llm_judge_prompt_formats_literal_json_schema() -> None:

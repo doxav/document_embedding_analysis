@@ -10,7 +10,8 @@ candidate generation through a local bridge, and scores answers with either:
 For the summarization task being evaluated, the bridge should call OpenWebUI so
 the selected summarization pipe/tool is exercised. Direct OpenAI-compatible
 endpoint calls are for judges, embeddings, or non-tool baselines.
-The default generation pipe is `summarizer---kohaku-OR`.
+Set the generation model or pipe with `OPENWEBUI_PIPE_MODEL`; example pipe ids
+below are setup-specific.
 
 ## Table Of Contents
 
@@ -18,7 +19,7 @@ The default generation pipe is `summarizer---kohaku-OR`.
 - [Directory Layout](#directory-layout)
 - [Generated CSV Datasets](#generated-csv-datasets)
 - [CSV Versus JSON Or YAML](#csv-versus-json-or-yaml)
-- [Evaluation Steps](#evaluation-steps)
+- [Evaluation Processes](#evaluation-processes)
 - [OpenWebUI Prompt And Valve Parameters](#openwebui-prompt-and-valve-parameters)
 - [Trace Optimization Experiments](#trace-optimization-experiments)
 - [Setup](#setup)
@@ -79,7 +80,7 @@ created by the repository importers under `output/bigsurvey` and
 |---|---|---|
 | `*.step*.dea.yaml` | Promptfoo configs for DEA scoring | yes |
 | `*.step*.llm_judge.yaml` | Promptfoo configs for local model-graded scoring | yes |
-| `api/openwebui_bridge.py` | FastAPI bridge for Step 2 and Step 3 generation | yes |
+| `api/openwebui_bridge.py` | FastAPI bridge for Offline and Online Process generation | yes |
 | `assertions/dea_metrics.py` | Promptfoo Python assertion wrapping `evaluate_document` | yes |
 | `lib/*.py` | Shared CSV, path, OpenWebUI, and OpenAI endpoint helpers | yes |
 | `scripts/*.py` | Bootstrap, CSV generation, and answer generation scripts | yes |
@@ -104,9 +105,9 @@ The generated CSV names are:
 | File | Meaning |
 |---|---|
 | `step1.csv` | Offline evaluation rows with a simple baseline `candidate_answer` already filled |
-| `step2_input.csv` | Generation input rows with empty `candidate_answer` |
-| `step2_output.csv` | Generated answers from Step 2, then evaluated offline |
-| `step3.csv` | Live Promptfoo generation rows; Promptfoo calls the bridge during evaluation |
+| `step2_input.csv` | Offline Process generation input rows with empty `candidate_answer` |
+| `step2_output.csv` | Offline Process generated answers, then evaluated by Promptfoo |
+| `step3.csv` | Online Process rows; Promptfoo calls the bridge during evaluation |
 
 Important columns:
 
@@ -119,11 +120,12 @@ Important columns:
 | `source_paths_json` | JSON-encoded list of repository-relative source files |
 | `kb_ids_json` | JSON-encoded OpenWebUI knowledge-base ids/names for `<kb_list>` |
 | `source_document_mode` | Whether source files are provided or only open-retrieval references exist |
-| `openwebui_pipe_model` | OpenWebUI model or pipe model id used by Step 2/3 generation; current OpenRouter-backed pipe is `summarizer---kohaku-OR` |
+| `openwebui_pipe_model` | OpenWebUI model or pipe model id used by Offline/Online Process generation; setup-specific, for example `summarizer---kohaku` |
 | `tool_parameters_json` | Extra JSON object copied into `<tool_parameters>` |
 | `summarizer_model_id`, `algorithm`, `target_length`, `structure` | Common pipe/tool parameters copied into `<tool_parameters>` |
 | `generation_temperature`, `generation_top_p`, `generation_max_tokens` | HTTP generation options sent to OpenWebUI or an OpenAI-compatible endpoint |
-| `candidate_answer` | Answer being evaluated; present in Step 1 and Step 2 output |
+| `openwebui_model_params_json` | JSON model-optimization parameters; may include `model_extra_payload_json` for provider-specific request fields |
+| `candidate_answer` | Answer being evaluated; present in Step 1 and Offline Process output |
 | `min_chars`, `max_chars` | Dynamic length guard derived from the reference |
 
 The usual local row counts from the current setup are:
@@ -148,22 +150,26 @@ be more readable for hand-authored cases. For this bundle, CSV is a pragmatic
 Promptfoo interop format, while the canonical dataset outputs remain the
 repository's JSON/JSONL files under `output/`.
 
-## Evaluation Steps
+## Evaluation Processes
 
-| Step | What happens | Promptfoo provider | CSV file |
-|---|---|---|---|
-| Step 1 | Evaluate an existing baseline answer | `echo` | `step1.csv` |
-| Step 2 | Generate answers first, then evaluate them offline | generation script, then `echo` | `step2_input.csv` -> `step2_output.csv` |
-| Step 3 | Promptfoo performs live generation and scoring in one run | HTTP bridge | `step3.csv` |
+The old Step names remain in filenames and CLI values for compatibility, but
+the workflow is easier to reason about with process names:
+
+| Process | Compatibility name | What happens | Promptfoo provider | CSV file |
+|---|---|---|---|---|
+| Baseline Evaluation | Step 1 | Evaluate an existing baseline answer | `echo` | `step1.csv` |
+| Offline Process | Step 2 / `step2_promptfoo` | Trace or a generation script calls OpenWebUI first, saves `candidate_answer`, then Promptfoo evaluates the saved CSV | generation script or Trace bridge first, then `echo` | `step2_input.csv` -> `step2_output.csv` or temporary `step2_candidate_rows.csv` |
+| Online Process | Step 3 / `step3_promptfoo` | Promptfoo calls the OpenWebUI bridge live and scores the returned output in one run | HTTP bridge | `step3.csv` or temporary `step3_live_rows.csv` |
 
 Scoring strategies:
 
-Note on providers: the `echo` provider tells Promptfoo to use the CSV `candidate_answer` column
-as the model output (no external model call). This is the intended behaviour for Step 1,
-where `step1.csv` already contains baseline answers, and for Step 2 offline evaluation,
-where generation is performed separately (producing `step2_output.csv`) and Promptfoo then
-evaluates those generated answers by echoing them. For live generation (Step 3) Promptfoo
-uses the HTTP bridge provider to call the configured backend.
+Note on providers: the `echo` provider tells Promptfoo to use the CSV
+`candidate_answer` column as the model output (no external model call). This is
+the intended behaviour for Baseline Evaluation, where `step1.csv` already
+contains baseline answers, and for the Offline Process, where generation is
+performed separately and Promptfoo then evaluates those generated answers by
+echoing them. For the Online Process, Promptfoo uses the HTTP bridge provider
+to call the configured backend.
 
 
 | Strategy | YAML suffix | What it checks |
@@ -240,10 +246,11 @@ OpenWebUI and appends trimmed source text directly to the endpoint prompt
 instead.
 
 Set `openwebui_include_trace=true` to ask the bridge to return tool-call,
-round, reasoning, and timing metadata separately from `output`. Promptfoo Step 3
-currently transforms the HTTP response to `json.output`, so bridge trace is
-available from direct bridge generation and Step 2-style optimization artifacts;
-Step 3 live Promptfoo runs still report Promptfoo command duration.
+round, reasoning, and timing metadata separately from `output`. Online Process
+Promptfoo configs commonly transform the HTTP response to `json.output`, so
+bridge trace is available from direct bridge generation and Offline Process
+optimization artifacts; Online Process Promptfoo runs still report Promptfoo
+command duration.
 
 ## Trace Optimization Experiments
 
@@ -253,7 +260,27 @@ optimizes either:
 | Target | What changes |
 |---|---|
 | `--optimize-target tool` | Per-call tool/pipe parameters such as `algorithm`, `target_length`, `structure`, `instruction`, and exposed summarizer limits |
-| `--optimize-target model` | Per-call system prompt plus generation params such as temperature, top-p, and max tokens |
+| `--optimize-target model` | Per-call system prompt plus generation params such as temperature, top-p, max tokens, and configurable provider-specific payload fields |
+
+For model optimization, `generation_temperature`, `generation_top_p`, and
+`generation_max_tokens` are convenience aliases. Additional model/provider
+parameters are configured through `model_extra_payload_json` inside
+`--initial-model-params-json`; the bridge merges that object into the
+OpenWebUI/OpenAI-compatible request payload after the convenience aliases:
+
+```json
+{
+  "generation_temperature": 0.2,
+  "generation_max_tokens": 4096,
+  "model_extra_payload_json": {
+    "frequency_penalty": 0.2,
+    "think": true
+  }
+}
+```
+
+Those extra keys are provider-specific. The bridge forwards them, but the
+selected OpenWebUI model or pipe may ignore keys it does not support.
 
 Use the algorithm-specific OpenWebUI pipe models when benchmarking the tool;
 they avoid relying on a separate model call to select the summarization
@@ -269,13 +296,26 @@ algorithm:
 
 Supported optimization methods:
 
-| Method | Generation path | Evaluation path | Trace availability |
-|---|---|---|---|
-| `direct_dea` | bridge | native DEA without DEA judge | bridge trace + total runtime |
-| `direct_dea_judge` | bridge | native DEA with DEA LLM judge | bridge trace + total runtime |
-| `direct_llm_judge` | bridge | custom OpenAI-compatible JSON judge | bridge trace + total runtime |
-| `step2_promptfoo` | bridge first | Promptfoo offline eval on generated CSV | bridge trace + Promptfoo result artifact |
-| `step3_promptfoo` | Promptfoo live HTTP provider | Promptfoo live eval | Promptfoo result artifact + command runtime |
+| User-facing process | Method | Generation path | Evaluation path | Trace availability |
+|---|---|---|---|---|
+| Direct DEA | `direct_dea` | bridge | native DEA without DEA judge | bridge trace + total runtime |
+| Direct DEA judge | `direct_dea_judge` | bridge | native DEA with DEA LLM judge | bridge trace + total runtime |
+| Direct LLM judge | `direct_llm_judge` | bridge | custom OpenAI-compatible JSON judge | bridge trace + total runtime |
+| Offline Process | `step2_promptfoo` | bridge first | Promptfoo eval on generated CSV | bridge trace + Promptfoo result artifact |
+| Online Process | `step3_promptfoo` | Promptfoo live HTTP provider | Promptfoo live eval | Promptfoo result artifact + command runtime |
+
+Promptfoo does not have to use DEA metrics. For custom Promptfoo configs,
+red-team checks, JavaScript/Python assertions, or model-graded assertions, keep
+the same Trace process and point `--promptfoo-config` at your config. The
+temporary CSV preserves custom columns such as `expected`, `reference`,
+`attack_category`, `policy`, or rubric fields. A custom CSV only needs one
+prompt-like column (`request_prompt`, `prompt`, `question`, `input`, `query`,
+or `instruction`) plus whatever variables your Promptfoo assertions require.
+For JSON/JSONL datasets, use `--build-input-csv-cmd` with `{output_csv}` to
+materialize the CSV before training. If a Promptfoo or red-team command writes
+a different report shape, wrap it with an adapter command that writes
+`{result_json}` containing a top-level `score` or nested row records with
+`score` and optional `namedScores`.
 
 The trainer batches rows before optimization. The default `--batch-size 3`
 means each optimization feedback step uses three examples, which is slower than
@@ -323,7 +363,7 @@ DEA_REPO_ROOT="$PWD" python scripts/promptfoo_openwebui_eval/trace_openwebui_dea
   --artifact-dir scripts/promptfoo_openwebui_eval/results/trace_kohaku_direct_dea_judge
 ```
 
-Example Step 2 Promptfoo optimization:
+Example Offline Process Promptfoo optimization:
 
 ```bash
 python scripts/promptfoo_openwebui_eval/trace_openwebui_dea_skeleton.py \
@@ -340,9 +380,13 @@ python scripts/promptfoo_openwebui_eval/trace_openwebui_dea_skeleton.py \
   --artifact-dir scripts/promptfoo_openwebui_eval/results/trace_kohaku_step2_promptfoo
 ```
 
-The companion notebook `trace_openwebui_dea_experiments.ipynb` builds plan and
-result tables for smoke, method-matrix, algorithm-grid, and calibration
-profiles. To verify the optimization plumbing without local inference or
+The companion notebook `trace_openwebui_dea_experiments.ipynb` is the guided
+how-to for non-expert optimization runs. It has recipes for model-only system
+prompt runs, sampling params, configurable extra model params, tool-only runs,
+generic Promptfoo Offline/Online Process runs, method-matrix runs,
+algorithm-grid runs, and offline calibration. It also includes a separate model
+optimization example cell that shows the exact Offline Process command without
+executing it. To verify the optimization plumbing without local inference or
 external API calls, run the deterministic calibration profile:
 
 ```bash
@@ -359,10 +403,11 @@ Implementation evidence:
 
 | Requirement | Evidence |
 |---|---|
-| Model parameter optimization | `OpenWebUIModel`, model trainer tests, `offline_model_step3_calibration` notebook profile |
-| Tool parameter optimization | `OpenWebUISummarizerAgent`, forwarding tests, `offline_tool_step3_calibration` notebook profile |
-| Step 2 optimization | Bridge-generation plus offline Promptfoo trainer test with `step2_candidate_rows.csv` |
-| Step 3 optimization | Prepared live-row Promptfoo trainer test and notebook calibration artifacts |
+| Model parameter optimization | `OpenWebUIModel`, model trainer tests, `offline_model_calibration` notebook artifact |
+| Tool parameter optimization | `OpenWebUISummarizerAgent`, forwarding tests, `offline_tool_calibration` notebook artifact |
+| Offline Process optimization | Bridge-generation plus Promptfoo trainer test with `step2_candidate_rows.csv` |
+| Online Process optimization | Prepared live-row Promptfoo trainer test and notebook calibration artifacts |
+| Generic Promptfoo variables | Tests verify custom CSV columns survive Offline and Online Process CSV generation |
 | Direct DEA judge | Native DEA guide test verifies `use_dea_judge=true` forwarding |
 | Batch-of-3 training | Trace trainer tests and notebook runs use `--batch-size 3` |
 | Trace and feedback | Step artifacts persist candidates, traces, summaries, feedback, scores, params, and durations |
@@ -389,7 +434,7 @@ DEA_REPO_ROOT=/workspace/document_embedding_analysis
 GENERATION_BACKEND=openwebui
 OPENWEBUI_BASE_URL=http://127.0.0.1:8080
 OPENWEBUI_API_KEY=<local-openwebui-api-key>
-OPENWEBUI_PIPE_MODEL=summarizer---kohaku-OR
+OPENWEBUI_PIPE_MODEL=summarizer---kohaku
 DEA_USE_JUDGE=true
 ```
 
@@ -543,7 +588,7 @@ Parameter flags can be added to any `build_promptfoo_csvs.py` call:
 Those values are written into the generated CSV rows and later become
 `<tool_parameters>` and `<kb_list>` blocks in the OpenWebUI user message.
 
-Create Step 2 generated answers for one deterministic row:
+Create Offline Process generated answers for one deterministic row:
 
 ```bash
 docker compose run --rm promptfoo bash -lc '
@@ -587,21 +632,21 @@ docker compose run --rm promptfoo bash -lc \
   "promptfoo eval -c ./arxiv.step1.llm_judge.yaml --filter-first-n 1 --no-progress-bar"
 ```
 
-Full Step 1 DEA for a dataset:
+Full Baseline Evaluation DEA for a dataset:
 
 ```bash
 docker compose run --rm promptfoo bash -lc \
   "promptfoo eval -c ./bigsurvey.step1.dea.yaml --no-progress-bar"
 ```
 
-Step 2 offline evaluation after generation:
+Offline Process evaluation after generation:
 
 ```bash
 docker compose run --rm promptfoo bash -lc \
   "promptfoo eval -c ./bigsurvey.step2.dea.yaml --no-progress-bar"
 ```
 
-Step 3 live evaluation through the bridge:
+Online Process live evaluation through the bridge:
 
 ```bash
 docker compose run --rm promptfoo bash -lc \
@@ -618,7 +663,7 @@ docker compose run --rm promptfoo bash -lc \
 | DEA shows only ROUGE-L | Check the assertion reason for `dea_status`; `computed` means native plan/content/resource metrics ran, while `empty` or `error` means the DEA target could not be scored |
 | OpenAI-compatible API connection error | Confirm `OPENAI_BASE_URL`, `OPENAI_API_KEY`, and model env vars inside the container |
 | LLM judge returns invalid JSON | Use a judge-capable model and check `OPENAI_MODEL` / `DEA_JUDGE_MODEL`; for reasoning models, set provider-specific JSON such as `DEA_JUDGE_EXTRA_BODY_JSON='{"reasoning":{"enabled":false}}'` |
-| Step 3 cannot reach bridge | Use `http://127.0.0.1:8001/generate` with host networking |
+| Online Process cannot reach bridge | Use `http://127.0.0.1:8001/generate` with host networking |
 | OpenWebUI path fails | Check `GENERATION_BACKEND=openwebui`, `OPENWEBUI_API_KEY`, and the selected pipe model |
 
 Run repository tests from the repo root:

@@ -184,6 +184,16 @@ def _extra_payload(vars_dict: dict[str, Any]) -> dict[str, Any]:
                 extra_payload[dst_key] = caster(raw)
             except (TypeError, ValueError):
                 pass
+    raw_model_params = parse_jsonish(vars_dict.get("openwebui_model_params_json"), default={}) or {}
+    if not isinstance(raw_model_params, dict):
+        raise HTTPException(status_code=400, detail="openwebui_model_params_json must be a JSON object")
+    raw_extra = raw_model_params.get("model_extra_payload_json", {})
+    model_extra = parse_jsonish(raw_extra, default=raw_extra) if isinstance(raw_extra, str) else raw_extra
+    if model_extra:
+        if not isinstance(model_extra, dict):
+            raise HTTPException(status_code=400, detail="model_extra_payload_json must be a JSON object")
+        # User-configured provider/model-specific payload keys are applied last.
+        extra_payload.update(model_extra)
     return extra_payload
 
 
@@ -276,5 +286,7 @@ def generate(payload: dict[str, Any]) -> dict[str, Any]:
         if include_trace:
             response["trace"] = result.get("trace", {})
         return response
+    except HTTPException:
+        raise
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))

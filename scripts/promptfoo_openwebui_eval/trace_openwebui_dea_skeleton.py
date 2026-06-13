@@ -335,7 +335,7 @@ def merge_step_runtime_metrics(score_dict: Mapping[str, float], duration_s: floa
     """Add full-step runtime and finite no-call defaults without hiding bridge traces."""
     merged = dict(score_dict)
     merged.update(total_duration_metrics(duration_s))
-    # Step 3 live PromptFoo may not expose bridge traces; keep the default
+    # Online Process PromptFoo may not expose bridge traces; keep the default
     # objective finite while preserving real call counts when traces exist.
     merged.setdefault("llm_calls", 0.0)
     merged.setdefault("llm_calls_score", 1.0)
@@ -569,6 +569,11 @@ def sanitize_model_params(params: Mapping[str, Any]) -> dict[str, Any]:
     if "stop_sequences" in out and not isinstance(out["stop_sequences"], list):
         parsed = parse_jsonish(out["stop_sequences"], default=[])
         out["stop_sequences"] = parsed if isinstance(parsed, list) else []
+    if "model_extra_payload_json" in out:
+        extra_payload = parse_jsonish(out["model_extra_payload_json"], default=out["model_extra_payload_json"])
+        if not isinstance(extra_payload, dict):
+            raise ValueError("model_extra_payload_json must be a JSON object")
+        out["model_extra_payload_json"] = extra_payload
     return out
 
 
@@ -1757,8 +1762,8 @@ def build_arg_parser() -> argparse.ArgumentParser:
         choices=sorted(OPTIMIZATION_METHODS),
         default="",
         help=(
-            "High-level method preset. step2_promptfoo generates via bridge then evaluates offline; "
-            "step3_promptfoo lets PromptFoo perform live bridge generation; direct_dea_judge uses native DEA with its LLM judge."
+            "High-level method preset. step2_promptfoo is the Offline Process: generate through the bridge, then evaluate with PromptFoo. "
+            "step3_promptfoo is the Online Process: let PromptFoo call the bridge live. direct_dea_judge uses native DEA with its LLM judge."
         ),
     )
     parser.add_argument("--optimize-target", choices=["tool", "model"], default="tool")
