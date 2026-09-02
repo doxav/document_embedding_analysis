@@ -21,6 +21,8 @@ providers:
         source_paths_json: '{{source_paths_json}}'
         kb_ids_json: '{{kb_ids_json}}'
         openwebui_pipe_model: '{{openwebui_pipe_model}}'
+        openwebui_tool_ids_json: '{{openwebui_tool_ids_json}}'
+        openwebui_include_trace: '{{openwebui_include_trace}}'
         tool_parameters_json: '{{tool_parameters_json}}'
         summarizer_model_id: '{{summarizer_model_id}}'
         algorithm: '{{algorithm}}'
@@ -30,7 +32,7 @@ providers:
         generation_top_p: '{{generation_top_p}}'
         generation_max_tokens: '{{generation_max_tokens}}'
         openwebui_extra_instructions: '{{openwebui_extra_instructions}}'
-      transformResponse: 'json.output'
+      transformResponse: file://./scripts/promptfoo_response.js
 
 prompts:
   - '{{request_prompt}}'

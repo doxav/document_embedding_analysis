@@ -12,14 +12,53 @@ BUNDLE_ROOT = Path(__file__).resolve().parents[1] / "scripts" / "promptfoo_openw
 if str(BUNDLE_ROOT) not in sys.path:
     sys.path.insert(0, str(BUNDLE_ROOT))
 
-from lib.bundle_common import build_openwebui_user_prompt, read_csv_rows, write_csv_rows
+from lib.bundle_common import build_openwebui_user_prompt, file_sha256, read_csv_rows, write_csv_rows
 from lib.openwebui_client import OpenAIEndpointClient, OpenWebUIClient
+
+
+def _response(status_code: int, payload: dict[str, object] | None = None) -> requests.Response:
+    """Build a small requests response for HTTP client unit tests."""
+    response = requests.Response()
+    response.status_code = status_code
+    response._content = json.dumps(payload or {}).encode("utf-8")
+    response.url = "http://openwebui.test/mock"
+    return response
 
 
 def _load_generate_candidate_csv_module():
     """Load the generation CLI module without requiring scripts/ to be a package."""
     module_path = BUNDLE_ROOT / "scripts" / "generate_candidate_csv.py"
     spec = importlib.util.spec_from_file_location("generate_candidate_csv", module_path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _load_export_promptfoo_results_module():
+    """Load the Promptfoo artifact exporter without requiring scripts/ to be a package."""
+    module_path = BUNDLE_ROOT / "scripts" / "export_promptfoo_results.py"
+    spec = importlib.util.spec_from_file_location("export_promptfoo_results", module_path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _load_run_benchmark_batch_module():
+    """Load the reproducible benchmark batch runner."""
+    module_path = BUNDLE_ROOT / "scripts" / "run_benchmark_batch.py"
+    spec = importlib.util.spec_from_file_location("run_benchmark_batch", module_path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _load_setup_openwebui_module():
+    """Load the OpenWebUI setup CLI without requiring scripts/ to be a package."""
+    module_path = BUNDLE_ROOT / "scripts" / "setup_openwebui.py"
+    spec = importlib.util.spec_from_file_location("setup_openwebui", module_path)
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -231,6 +270,12 @@ def test_bridge_model_extra_payload_is_configurable_and_validated() -> None:
         openwebui_bridge._extra_payload({"openwebui_model_params_json": '{"model_extra_payload_json": ["bad"]}'})
     assert exc_info.value.status_code == 400
     assert exc_info.value.detail == "model_extra_payload_json must be a JSON object"
+    with pytest.raises(fastapi.HTTPException) as reserved_exc:
+        openwebui_bridge._extra_payload(
+            {"openwebui_model_params_json": '{"model_extra_payload_json":{"stream":true}}'}
+        )
+    assert reserved_exc.value.status_code == 400
+    assert reserved_exc.value.detail == "model_extra_payload_json cannot override reserved fields: stream"
 
 
 def test_openwebui_backend_passes_system_prompt_and_trace_flag(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -250,6 +295,7 @@ def test_openwebui_backend_passes_system_prompt_and_trace_flag(monkeypatch: pyte
             user_prompt: str,
             system_prompt: str | None = None,
             files_payload: list[dict[str, str]] | None = None,
+            tool_ids: object = None,
             extra_payload: dict[str, object] | None = None,
             trigger_outlet: bool = False,
             include_trace: bool = False,
@@ -259,6 +305,7 @@ def test_openwebui_backend_passes_system_prompt_and_trace_flag(monkeypatch: pyte
                     "model": model,
                     "user_prompt": user_prompt,
                     "system_prompt": system_prompt,
+                    "tool_ids": tool_ids,
                     "extra_payload": extra_payload,
                     "include_trace": include_trace,
                 }
@@ -282,6 +329,7 @@ def test_openwebui_backend_passes_system_prompt_and_trace_flag(monkeypatch: pyte
     assert result["trace"] == {"rounds": []}
     assert captured_payload["model"] == "qwen3527b"
     assert captured_payload["system_prompt"] == "Answer with a strict marker."
+    assert captured_payload["tool_ids"] is None
     assert captured_payload["include_trace"] is True
     assert captured_payload["extra_payload"] == {"temperature": 0.2}
 
@@ -335,7 +383,7 @@ def test_openwebui_client_completes_tool_call_loop(monkeypatch: pytest.MonkeyPat
     monkeypatch.setattr(client, "_post_chat_completion", fake_post_chat_completion)
     monkeypatch.setattr(client, "_execute_tool_call", fake_execute_tool_call)
 
-    result = client.chat(model="qwen3527b", user_prompt="Find energy facts.", include_trace=True)
+    result = client.chat(model="qwen3527b", user_prompt="Find energy facts.", tool_ids=[], include_trace=True)
 
     assert result["output"] == "final facts"
     assert len(executed_tool_calls) == 1
@@ -374,6 +422,7 @@ def test_openwebui_client_sends_system_prompt_and_traces_reasoning(monkeypatch: 
         model="qwen3527b",
         system_prompt="Always answer SYSTEM_PROOF.",
         user_prompt="What is 2+2?",
+        tool_ids=[],
         include_trace=True,
     )
 
@@ -381,6 +430,437 @@ def test_openwebui_client_sends_system_prompt_and_traces_reasoning(monkeypatch: 
     assert posted_payloads[0]["messages"][1] == {"role": "user", "content": "What is 2+2?"}
     assert result["output"] == "SYSTEM_PROOF"
     assert result["trace"]["rounds"][0]["message"]["reasoning_content"] == "short private reasoning trace"
+
+
+def test_openwebui_client_forwards_explicit_tool_ids_and_accumulates_usage(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = OpenWebUIClient(base_url="http://openwebui.test", api_key="token")
+    calls: list[dict[str, object]] = []
+
+    def fake_chat_with_server_tools(**kwargs: object) -> dict[str, object]:
+        calls.append(kwargs)
+        return {
+            "output": "done",
+            "trace": {"usage": {"prompt_tokens": 11, "completion_tokens": 4, "total_tokens": 15}},
+        }
+
+    monkeypatch.setattr(client, "_chat_with_server_tools", fake_chat_with_server_tools)
+
+    result = client.chat(
+        model="model-with-tool",
+        user_prompt="Run the audit.",
+        tool_ids=["contradiction_auditor"],
+        include_trace=True,
+    )
+
+    assert calls[0]["tool_ids"] == ["contradiction_auditor"]
+    assert result["trace"]["usage"] == {
+        "prompt_tokens": 11,
+        "completion_tokens": 4,
+        "total_tokens": 15,
+    }
+
+
+def test_openwebui_client_extracts_final_persisted_message() -> None:
+    module = importlib.import_module("lib.openwebui_client")
+
+    text = module._stored_output_text(
+        [
+            {"type": "message", "content": [{"type": "output_text", "text": "Calling the tool."}]},
+            {"type": "function_call_output", "output": [{"type": "output_text", "text": "tool result"}]},
+            {"type": "message", "content": [{"type": "output_text", "text": "final answer"}]},
+        ]
+    )
+
+    assert text == "final answer"
+
+
+def test_openwebui_client_falls_back_to_tool_output() -> None:
+    module = importlib.import_module("lib.openwebui_client")
+
+    text = module._stored_output_text(
+        [{"type": "function_call_output", "output": [{"type": "output_text", "text": "tool result"}]}]
+    )
+
+    assert text == "tool result"
+
+
+def test_openwebui_client_rejects_reserved_model_extra() -> None:
+    client = OpenWebUIClient(base_url="http://openwebui.test", api_key="token")
+
+    with pytest.raises(RuntimeError, match="reserved fields: stream"):
+        client.chat(model="model", user_prompt="Hello", tool_ids=[], extra_payload={"stream": True})
+
+
+def test_openwebui_client_rejects_invalid_tool_ids() -> None:
+    client = OpenWebUIClient(base_url="http://openwebui.test", api_key="token")
+
+    with pytest.raises(RuntimeError, match="list of non-empty strings"):
+        client.resolve_tool_ids("model", {"bad": "shape"})
+
+
+def test_openwebui_client_reuses_existing_cached_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    source = tmp_path / "source.md"
+    source.write_text("content", encoding="utf-8")
+    client = OpenWebUIClient(base_url="http://openwebui.test", api_key="token", cache_path=tmp_path / "cache.json")
+    client.cache = {file_sha256(source): {"file_id": "existing-id"}}
+    monkeypatch.setattr(requests, "get", lambda *args, **kwargs: _response(200, {"id": "existing-id"}))
+    monkeypatch.setattr(requests, "post", lambda *args, **kwargs: pytest.fail("cached file should not be uploaded"))
+
+    assert client.upload_file(source, wait=False) == "existing-id"
+
+
+def test_openwebui_client_reuploads_stale_cached_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    source = tmp_path / "source.md"
+    source.write_text("content", encoding="utf-8")
+    client = OpenWebUIClient(base_url="http://openwebui.test", api_key="token", cache_path=tmp_path / "cache.json")
+    client.cache = {file_sha256(source): {"file_id": "stale-id"}}
+    posted_urls: list[str] = []
+    monkeypatch.setattr(requests, "get", lambda *args, **kwargs: _response(404))
+
+    def fake_post(url: str, **kwargs: object) -> requests.Response:
+        posted_urls.append(url)
+        return _response(200, {"id": "fresh-id"})
+
+    monkeypatch.setattr(requests, "post", fake_post)
+
+    assert client.upload_file(source, wait=False) == "fresh-id"
+    assert posted_urls == ["http://openwebui.test/api/v1/files/?process=true&process_in_background=false"]
+
+
+def test_openwebui_client_surfaces_cached_file_validation_error(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "source.md"
+    source.write_text("content", encoding="utf-8")
+    client = OpenWebUIClient(base_url="http://openwebui.test", api_key="token", cache_path=tmp_path / "cache.json")
+    client.cache = {file_sha256(source): {"file_id": "cached-id"}}
+    monkeypatch.setattr(requests, "get", lambda *args, **kwargs: _response(500))
+
+    with pytest.raises(requests.HTTPError, match="500 Server Error"):
+        client.upload_file(source, wait=False)
+
+
+def test_setup_resolves_tools_prefixed_path(tmp_path: Path) -> None:
+    module = _load_setup_openwebui_module()
+    tools_root = tmp_path / "openwebui-tools"
+    tool_path = tools_root / "comparator" / "audit.py"
+    tool_path.parent.mkdir(parents=True)
+    tool_path.write_text('"""id: audit\nname: Audit\ndescription: Demo\n"""\n', encoding="utf-8")
+
+    resolved = module.resolve_tool_path("tools/comparator/audit.py", tools_root, tmp_path / "repo")
+    tool_id, name, description = module.tool_identity(tool_path.read_text(encoding="utf-8"), resolved)
+
+    assert resolved == tool_path.resolve()
+    assert (tool_id, name, description) == ("audit", "Audit", "Demo")
+
+
+def test_setup_local_env_treats_none_endpoint_as_missing(tmp_path: Path) -> None:
+    module = _load_setup_openwebui_module()
+    parent_env = tmp_path / ".env"
+    local_env = tmp_path / "openwebui_docker" / ".env"
+    parent_env.write_text("OPENWEBUI_BASE_URL=none\nOPENAI_API_KEY=provider-secret\n", encoding="utf-8")
+
+    module.prepare_local_env(parent_env, local_env)
+
+    parent = module.read_env_file(parent_env)
+    local = module.read_env_file(local_env)
+    assert parent["OPENWEBUI_BASE_URL"] == "http://127.0.0.1:8080"
+    assert parent["OPENWEBUI_MANAGED"] == "true"
+    assert local["OPENROUTER_API_KEY"] == "provider-secret"
+    assert local["OWI_LLM_MODEL_ID"] == "deepseek/deepseek-v4-flash-0731"
+    assert local_env.stat().st_mode & 0o777 == 0o600
+
+
+def test_setup_model_uses_request_reasoning_controls(monkeypatch: pytest.MonkeyPatch) -> None:
+    module = _load_setup_openwebui_module()
+    admin = module.OpenWebUIAdmin("http://openwebui.test")
+    requests_seen: list[tuple[str, str, dict[str, object]]] = []
+
+    def fake_request(method: str, path: str, **kwargs: object) -> requests.Response:
+        requests_seen.append((method, path, kwargs))
+        response = requests.Response()
+        if method == "GET":
+            response.status_code = 404
+            response._content = b'{}'
+        else:
+            response.status_code = 200
+            response._content = b'{}'
+        return response
+
+    monkeypatch.setattr(admin, "_request", fake_request)
+
+    admin.ensure_model("audit-model", "deepseek/model", "audit_tool")
+
+    create_payload = requests_seen[1][2]["json"]
+    assert create_payload["meta"]["toolIds"] == ["audit_tool"]
+    assert create_payload["params"]["reasoning"] == {"enabled": False, "effort": "low"}
+    assert "audit_tool" in create_payload["params"]["system"]
+    assert "MUST call" in create_payload["params"]["system"]
+    assert "default_enabled" not in create_payload["params"]["reasoning"]
+
+
+def test_setup_tool_valves_merge_existing_values(monkeypatch: pytest.MonkeyPatch) -> None:
+    module = _load_setup_openwebui_module()
+    admin = module.OpenWebUIAdmin("http://openwebui.test")
+    posted: dict[str, object] = {}
+
+    def fake_request(method: str, path: str, **kwargs: object) -> requests.Response:
+        response = requests.Response()
+        response.status_code = 200
+        if method == "GET":
+            response._content = b'{"algorithm":"dtcrs","target_language":"en"}'
+        else:
+            posted.update(kwargs["json"])
+            response._content = json.dumps(kwargs["json"]).encode()
+        return response
+
+    monkeypatch.setattr(admin, "_request", fake_request)
+
+    updated = admin.update_tool_valves("summarizer", {"algorithm": "kohaku"})
+
+    assert posted == {"algorithm": "kohaku", "target_language": "en"}
+    assert updated["algorithm"] == "kohaku"
+
+
+def test_setup_tool_updates_changed_existing_content(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    module = _load_setup_openwebui_module()
+    tool_path = tmp_path / "audit.py"
+    content = '"""id: audit\nname: Audit\ndescription: Current\n"""\n'
+    tool_path.write_text(content, encoding="utf-8")
+    admin = module.OpenWebUIAdmin("http://openwebui.test")
+    requests_seen: list[tuple[str, str, dict[str, object]]] = []
+
+    def fake_request(method: str, path: str, **kwargs: object) -> requests.Response:
+        requests_seen.append((method, path, kwargs))
+        if method == "GET":
+            return _response(
+                200,
+                {
+                    "id": "audit",
+                    "name": "Audit",
+                    "content": "old content",
+                    "meta": {"description": "Old", "custom": True},
+                    "access_grants": [{"permission": "read"}],
+                },
+            )
+        return _response(200)
+
+    monkeypatch.setattr(admin, "_request", fake_request)
+
+    assert admin.ensure_tool(tool_path) == "audit"
+    assert requests_seen[1][0:2] == ("POST", "/api/v1/tools/id/audit/update")
+    payload = requests_seen[1][2]["json"]
+    assert payload["content"] == content
+    assert payload["meta"] == {"description": "Current", "custom": True}
+    assert payload["access_grants"] == [{"permission": "read"}]
+
+
+def test_setup_tool_skips_unchanged_existing_content(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    module = _load_setup_openwebui_module()
+    tool_path = tmp_path / "audit.py"
+    content = '"""id: audit\nname: Audit\ndescription: Current\n"""\n'
+    tool_path.write_text(content, encoding="utf-8")
+    admin = module.OpenWebUIAdmin("http://openwebui.test")
+    requests_seen: list[tuple[str, str, dict[str, object]]] = []
+
+    def fake_request(method: str, path: str, **kwargs: object) -> requests.Response:
+        requests_seen.append((method, path, kwargs))
+        return _response(
+            200,
+            {
+                "id": "audit",
+                "name": "Audit",
+                "content": content,
+                "meta": {"description": "Current"},
+                "access_grants": [],
+            },
+        )
+
+    monkeypatch.setattr(admin, "_request", fake_request)
+
+    assert admin.ensure_tool(tool_path) == "audit"
+    assert [(method, path) for method, path, _ in requests_seen] == [
+        ("GET", "/api/v1/tools/id/audit")
+    ]
+
+
+def test_setup_tool_valves_exact_replacement(monkeypatch: pytest.MonkeyPatch) -> None:
+    module = _load_setup_openwebui_module()
+    admin = module.OpenWebUIAdmin("http://openwebui.test")
+    posted: dict[str, object] = {}
+
+    def fake_request(method: str, path: str, **kwargs: object) -> requests.Response:
+        posted.update(kwargs["json"])
+        return _response(200, kwargs["json"])
+
+    monkeypatch.setattr(admin, "_request", fake_request)
+
+    updated = admin.set_tool_valves("summarizer", {"algorithm": "raptor"})
+
+    assert posted == {"algorithm": "raptor"}
+    assert updated == posted
+
+
+def test_generate_csv_extracts_trace_metrics() -> None:
+    module = _load_generate_candidate_csv_module()
+
+    metrics = module.extract_generation_metrics(
+        {
+            "trace": {
+                "usage": {"prompt_tokens": 12, "completion_tokens": 8, "total_tokens": 20, "cost": 0.004},
+                "rounds": [{}, {}],
+                "tool_calls": [{}],
+            }
+        },
+        1.25,
+    )
+
+    assert metrics == {
+        "generation_duration_seconds": "1.250000",
+        "generation_prompt_tokens": "12",
+        "generation_completion_tokens": "8",
+        "generation_total_tokens": "20",
+        "generation_cost": "0.004",
+        "generation_llm_requests": "2",
+        "generation_tool_calls": "1",
+    }
+
+
+def test_generate_csv_extracts_zero_metrics_without_trace() -> None:
+    module = _load_generate_candidate_csv_module()
+
+    metrics = module.extract_generation_metrics({}, 0.5)
+
+    assert metrics["generation_total_tokens"] == "0"
+    assert metrics["generation_llm_requests"] == "0"
+    assert metrics["generation_tool_calls"] == "0"
+
+
+def test_generate_csv_writes_safe_markdown_document(tmp_path: Path) -> None:
+    module = _load_generate_candidate_csv_module()
+
+    document_path = module.write_generated_document(tmp_path, "case/one", 1, "# Summary")
+
+    assert document_path == tmp_path / "case_one.md"
+    assert document_path.read_text(encoding="utf-8") == "# Summary\n"
+
+
+def test_generate_csv_prefers_unique_benchmark_artifact_id() -> None:
+    module = _load_generate_candidate_csv_module()
+
+    assert module._artifact_stem({"task_id": "same", "benchmark_id": "config/task/r2"}, 1) == "config_task_r2"
+
+
+def test_generate_csv_resume_reuses_only_completed_rows() -> None:
+    module = _load_generate_candidate_csv_module()
+    input_rows = [
+        {"benchmark_id": "one", "candidate_answer": ""},
+        {"benchmark_id": "two", "candidate_answer": ""},
+    ]
+    completed_rows = [{"benchmark_id": "one", "candidate_answer": "done", "generation_total_tokens": "12"}]
+
+    merged = module.merge_resume_rows(input_rows, completed_rows)
+
+    assert merged[0]["candidate_answer"] == "done"
+    assert merged[0]["generation_total_tokens"] == "12"
+    assert merged[1] == input_rows[1]
+
+
+def test_generate_csv_resume_rejects_duplicate_ids() -> None:
+    module = _load_generate_candidate_csv_module()
+
+    with pytest.raises(ValueError, match="duplicate row id"):
+        module.merge_resume_rows(
+            [{"benchmark_id": "one"}],
+            [{"benchmark_id": "one"}, {"benchmark_id": "one"}],
+        )
+
+
+def test_benchmark_batch_expands_repetitions_and_forces_short_target() -> None:
+    module = _load_run_benchmark_batch_module()
+
+    rows = module.build_benchmark_rows(
+        [{"task_id": "case-1", "candidate_answer": "old"}, {"task_id": "case-2"}],
+        label="step1_raptor",
+        repetitions=3,
+        valves={"algorithm": "raptor"},
+        request_overrides={"structure": "thematic"},
+    )
+
+    assert len(rows) == 6
+    assert [row["benchmark_repeat"] for row in rows] == [1, 1, 2, 2, 3, 3]
+    assert len({row["benchmark_id"] for row in rows}) == 6
+    assert all(row["target_length"] == "short" and row["candidate_answer"] == "" for row in rows)
+
+
+def test_benchmark_batch_rejects_non_short_target() -> None:
+    module = _load_run_benchmark_batch_module()
+
+    with pytest.raises(ValueError, match="fixed to short"):
+        module.build_benchmark_rows(
+            [{"task_id": "case-1"}],
+            label="invalid",
+            repetitions=1,
+            valves={"algorithm": "dtcrs"},
+            request_overrides={"target_length": "long"},
+        )
+
+
+def test_benchmark_batch_summarizes_quality_and_speed() -> None:
+    module = _load_run_benchmark_batch_module()
+    base = {
+        "config_id": "c1",
+        "algorithm": "dtcrs",
+        "parameters_json": "{}",
+        "task_id": "a",
+        "passed": False,
+        "judge_ran": 1,
+        "generation_seconds": 10,
+        "total_tokens": 100,
+        "cost": 0.1,
+        "output_chars": 1000,
+        "dea_score": 0.6,
+        "plan": 0.7,
+        "content": 0.8,
+        "resources": 0,
+        "length_alignment": 0.5,
+        "rouge_l_f": 0.2,
+    }
+    second = {**base, "task_id": "b", "generation_seconds": 20, "dea_score": 0.8}
+
+    summary = module.summarize_records([base, second])
+
+    assert summary["mean_generation_seconds"] == 15
+    assert summary["mean_dea_score"] == pytest.approx(0.7)
+    assert summary["tasks"] == 2
+
+
+def test_benchmark_batch_merges_recovered_promptfoo_row() -> None:
+    module = _load_run_benchmark_batch_module()
+    primary = {"results": {"results": [{"vars": {"benchmark_id": "one"}, "score": 0.0}]}}
+    recovery = {"results": {"results": [{"vars": {"benchmark_id": "one"}, "score": 0.75}]}}
+
+    merged = module.merge_promptfoo_results(primary, recovery)
+
+    assert merged["results"]["results"][0]["score"] == 0.75
+    assert primary["results"]["results"][0]["score"] == 0.0
+
+
+def test_benchmark_batch_rejects_unknown_recovery_row() -> None:
+    module = _load_run_benchmark_batch_module()
+
+    with pytest.raises(ValueError, match="unknown benchmark ids"):
+        module.merge_promptfoo_results(
+            {"results": {"results": [{"vars": {"benchmark_id": "one"}}]}},
+            {"results": {"results": [{"vars": {"benchmark_id": "two"}}]}},
+        )
 
 
 def test_generate_csv_http_errors_include_response_body() -> None:
@@ -395,6 +875,44 @@ def test_generate_csv_http_errors_include_response_body() -> None:
 
     assert "500 Server Error" in str(exc_info.value)
     assert "OpenWebUI timed out" in str(exc_info.value)
+
+
+def test_export_promptfoo_results_writes_document_and_summary_record(tmp_path: Path) -> None:
+    module = _load_export_promptfoo_results_module()
+    input_path = tmp_path / "promptfoo.json"
+    input_path.write_text(
+        json.dumps(
+            {
+                "results": {
+                    "results": [
+                        {
+                            "vars": {"dataset": "Big Survey", "task_id": "task/1", "target_length": "short"},
+                            "success": False,
+                            "score": 0.66,
+                            "namedScores": {"dea_score": 0.66},
+                            "response": {"output": "# Generated", "tokenUsage": {"total": 10}},
+                        }
+                    ]
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    records = module.export_results(input_path, tmp_path / "documents")
+
+    assert records[0]["target_length"] == "short"
+    assert records[0]["named_scores"] == {"dea_score": 0.66}
+    assert (tmp_path / "documents" / "Big_Survey_task_1.md").read_text(encoding="utf-8") == "# Generated\n"
+
+
+def test_export_promptfoo_results_rejects_invalid_shape(tmp_path: Path) -> None:
+    module = _load_export_promptfoo_results_module()
+    input_path = tmp_path / "promptfoo.json"
+    input_path.write_text("{}", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="results.results"):
+        module.export_results(input_path, tmp_path / "documents")
 
 
 def test_dea_metrics_resolves_solution_local_target_path(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

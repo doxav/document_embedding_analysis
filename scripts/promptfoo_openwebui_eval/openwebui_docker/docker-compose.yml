@@ -1,0 +1,39 @@
+services:
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:v0.10.2
+    container_name: promptfoo-openwebui-v0.10.2
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${OPENWEBUI_PORT:-8080}:8080"
+    environment:
+      ENABLE_OLLAMA_API: "false"
+      ENABLE_OPENAI_API: "true"
+      OPENAI_API_BASE_URL: ${OWI_LLM_BASE_URL:-https://openrouter.ai/api/v1}
+      OPENAI_API_KEY: ${OPENROUTER_API_KEY}
+      OPENAI_API_CONFIGS: '{"0":{"enable":true,"model_ids":["${OWI_LLM_MODEL_ID:-deepseek/deepseek-v4-flash-0731}"]}}'
+      WEBUI_AUTH: "true"
+      ENABLE_SIGNUP: "false"
+      ENABLE_API_KEYS: "true"
+      WEBUI_ADMIN_EMAIL: ${OWI_ADMIN_EMAIL}
+      WEBUI_ADMIN_PASSWORD: ${OWI_ADMIN_PASSWORD}
+      WEBUI_ADMIN_NAME: Promptfoo Admin
+      WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY}
+      RESET_CONFIG_ON_START: "true"
+      ANONYMIZED_TELEMETRY: "false"
+      DO_NOT_TRACK: "true"
+      SCARF_NO_ANALYTICS: "true"
+    volumes:
+      - openwebui_data:/app/backend/data
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=5)"
+      interval: 5s
+      timeout: 6s
+      retries: 60
+      start_period: 20s
+
+volumes:
+  openwebui_data:

@@ -196,6 +196,8 @@ def _promptfoo_row_from_mqs_record(record: dict[str, Any], dataset: str, args) -
         "forbidden_terms": "",
         "candidate_content_type": "markdown",
         "openwebui_pipe_model": args.pipe_model,
+        "openwebui_tool_ids_json": json.dumps(args.tool_ids, ensure_ascii=False),
+        "openwebui_include_trace": "true",
         "tool_parameters_json": json.dumps(args.tool_parameters_value, ensure_ascii=False),
         "summarizer_model_id": args.summarizer_model_id or "",
         "algorithm": args.algorithm or "",
@@ -298,6 +300,8 @@ def _promptfoo_row_from_dea_solution(solution_path: Path, dataset: str, args) ->
         "forbidden_terms": "",
         "candidate_content_type": "markdown",
         "openwebui_pipe_model": args.pipe_model,
+        "openwebui_tool_ids_json": json.dumps(args.tool_ids, ensure_ascii=False),
+        "openwebui_include_trace": "true",
         "tool_parameters_json": json.dumps(args.tool_parameters_value, ensure_ascii=False),
         "summarizer_model_id": args.summarizer_model_id or "",
         "algorithm": args.algorithm or "",
@@ -351,6 +355,13 @@ def main() -> int:
     parser.add_argument("--facts-limit", type=int, default=12)
     parser.add_argument("--pipe-model", default=os.environ.get("OPENWEBUI_PIPE_MODEL", "summarizer---kohaku"))
     parser.add_argument("--tool-parameters-json", default="", help="JSON object copied into the <tool_parameters> block.")
+    parser.add_argument(
+        "--tool-id",
+        dest="tool_ids",
+        action="append",
+        default=[],
+        help="OpenWebUI tool id to enable for each request; repeat for multiple tools.",
+    )
     parser.add_argument("--kb-id", action="append", default=[], help="Repeatable OpenWebUI knowledge-base id/name copied into <kb_list>.")
     parser.add_argument("--kb-ids-json", default="", help="JSON list/object copied into the <kb_list> block.")
     parser.add_argument("--summarizer-model-id", default="")

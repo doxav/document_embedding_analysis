@@ -23,6 +23,7 @@ app = FastAPI(title="OpenWebUI generation bridge")
 FORWARDED_BRIDGE_KEYS = (
     "source_paths_json",
     "kb_ids_json",
+    "openwebui_tool_ids_json",
     "tool_parameters_json",
     "summarizer_model_id",
     "algorithm",
@@ -192,6 +193,13 @@ def _extra_payload(vars_dict: dict[str, Any]) -> dict[str, Any]:
     if model_extra:
         if not isinstance(model_extra, dict):
             raise HTTPException(status_code=400, detail="model_extra_payload_json must be a JSON object")
+        reserved_keys = {"chat_id", "files", "id", "messages", "model", "stream", "tool_ids", "user_message"}
+        conflicts = sorted(reserved_keys.intersection(model_extra))
+        if conflicts:
+            raise HTTPException(
+                status_code=400,
+                detail=f"model_extra_payload_json cannot override reserved fields: {', '.join(conflicts)}",
+            )
         # User-configured provider/model-specific payload keys are applied last.
         extra_payload.update(model_extra)
     return extra_payload
@@ -273,6 +281,7 @@ def generate(payload: dict[str, Any]) -> dict[str, Any]:
             user_prompt=user_prompt,
             system_prompt=str(vars_dict.get("openwebui_system_prompt") or "").strip(),
             files_payload=files_payload,
+            tool_ids=parse_jsonish(vars_dict.get("openwebui_tool_ids_json"), default=None),
             extra_payload=extra_payload or None,
             trigger_outlet=as_bool(os.environ.get("OPENWEBUI_TRIGGER_OUTLET"), False),
             include_trace=include_trace,

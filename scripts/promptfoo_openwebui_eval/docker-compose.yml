@@ -11,8 +11,9 @@ services:
       PROMPTFOO_PYTHON: /workspace/.venv/bin/python
       OPENWEBUI_FILE_CACHE_PATH: /workspace/promptfoo_openwebui_dea/.cache/openwebui_file_cache.json
       HF_HOME: /workspace/promptfoo_openwebui_dea/.cache/huggingface
+      PYTHONPATH: /workspace/document_embedding_analysis:/workspace/promptfoo_openwebui_dea
     command: >-
-      bash -lc "./scripts/bootstrap_repo_env.sh && /workspace/.venv/bin/python -m uvicorn api.openwebui_bridge:app --host ${OWUI_BRIDGE_HOST:-0.0.0.0} --port ${OWUI_BRIDGE_PORT:-8001}"
+      bash -lc "./scripts/bootstrap_repo_env.sh --runtime && /workspace/.venv/bin/python -m uvicorn api.openwebui_bridge:app --host ${OWUI_BRIDGE_HOST:-0.0.0.0} --port ${OWUI_BRIDGE_PORT:-8001}"
     volumes:
       - .:/workspace/promptfoo_openwebui_dea
       - ${DEA_REPO_PATH}:/workspace/document_embedding_analysis
@@ -32,6 +33,7 @@ services:
       OPENWEBUI_FILE_CACHE_PATH: /workspace/promptfoo_openwebui_dea/.cache/openwebui_file_cache.json
       PROMPTFOO_DISABLE_TELEMETRY: "1"
       HF_HOME: /workspace/promptfoo_openwebui_dea/.cache/huggingface
+      PYTHONPATH: /workspace/document_embedding_analysis:/workspace/promptfoo_openwebui_dea
     volumes:
       - .:/workspace/promptfoo_openwebui_dea
       - ${DEA_REPO_PATH}:/workspace/document_embedding_analysis

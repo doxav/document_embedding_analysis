@@ -17,6 +17,8 @@ below are setup-specific.
 
 - [Main Concepts](#main-concepts)
 - [Directory Layout](#directory-layout)
+- [Scripts Reference](scripts/README.md)
+- [Results Index](results/README.md)
 - [Generated CSV Datasets](#generated-csv-datasets)
 - [CSV Versus JSON Or YAML](#csv-versus-json-or-yaml)
 - [Evaluation Processes](#evaluation-processes)
@@ -84,6 +86,7 @@ created by the repository importers under `output/bigsurvey` and
 | `assertions/dea_metrics.py` | Promptfoo Python assertion wrapping `evaluate_document` | yes |
 | `lib/*.py` | Shared CSV, path, OpenWebUI, and OpenAI endpoint helpers | yes |
 | `scripts/*.py` | Bootstrap, CSV generation, and answer generation scripts | yes |
+| `openwebui_docker/` | Managed OpenWebUI v0.10.2 compose and safe env template | yes |
 | `ollama/Modelfile.qwen-laptop-dea` | Local JSON-judge Ollama model configuration | yes |
 | `datasets/` | Generated Promptfoo CSV fixtures | yes |
 | `results/` | Generated Promptfoo result JSONs | no |
@@ -121,6 +124,8 @@ Important columns:
 | `kb_ids_json` | JSON-encoded OpenWebUI knowledge-base ids/names for `<kb_list>` |
 | `source_document_mode` | Whether source files are provided or only open-retrieval references exist |
 | `openwebui_pipe_model` | OpenWebUI model or pipe model id used by Offline/Online Process generation; setup-specific, for example `summarizer---kohaku` |
+| `openwebui_tool_ids_json` | JSON list of OpenWebUI tool ids enabled for this request |
+| `openwebui_include_trace` | Requests timing, usage, and tool-call trace metadata from the bridge |
 | `tool_parameters_json` | Extra JSON object copied into `<tool_parameters>` |
 | `summarizer_model_id`, `algorithm`, `target_length`, `structure` | Common pipe/tool parameters copied into `<tool_parameters>` |
 | `generation_temperature`, `generation_top_p`, `generation_max_tokens` | HTTP generation options sent to OpenWebUI or an OpenAI-compatible endpoint |
@@ -212,7 +217,8 @@ bridge is compatible with its documented control tags:
 | `<files_list>` | Uploaded ids resolved from `source_paths_json` | OpenWebUI file ids passed to the pipe/tool |
 | `<kb_list>` | `kb_ids_json` | OpenWebUI knowledge-base ids/names passed as vector collection candidates |
 
-Typed columns override same-named keys from `tool_parameters_json`:
+Typed columns override same-named keys from `tool_parameters_json` in the
+request prompt:
 
 | CSV column / env fallback | Sent parameter |
 |---|---|
@@ -230,7 +236,11 @@ pipe/tool, for example:
 
 The bridge can only guarantee that these values are forwarded into the request
 row and prompt. The selected OpenWebUI pipe/tool must expose the corresponding
-method argument or valve for the value to affect execution.
+function argument for the value to affect a call. Persistent Valves are changed
+through OpenWebUI provisioning instead. In particular,
+`summarize/thematic_summary_v5b.py` version 0.7+ exposes `instruction`,
+`target_length`, and `structure` per call, while `algorithm` is an admin/user
+Valve. See the [scripts reference](scripts/README.md#parameters-what-changes-where).
 
 Use `kb_ids_json` for knowledge bases:
 
@@ -246,11 +256,11 @@ OpenWebUI and appends trimmed source text directly to the endpoint prompt
 instead.
 
 Set `openwebui_include_trace=true` to ask the bridge to return tool-call,
-round, reasoning, and timing metadata separately from `output`. Online Process
-Promptfoo configs commonly transform the HTTP response to `json.output`, so
-bridge trace is available from direct bridge generation and Offline Process
-optimization artifacts; Online Process Promptfoo runs still report Promptfoo
-command duration.
+round, usage, cost, and timing metadata separately from `output`. The Step 3
+configs use `scripts/promptfoo_response.js`, so Promptfoo receives exact
+OpenWebUI-reported envelope token usage, cost, provider duration, and tool-call
+metadata. OpenWebUI does not include a tool's private internal LLM calls in that
+usage object.
 
 ## Trace Optimization Experiments
 
@@ -282,9 +292,9 @@ OpenWebUI/OpenAI-compatible request payload after the convenience aliases:
 Those extra keys are provider-specific. The bridge forwards them, but the
 selected OpenWebUI model or pipe may ignore keys it does not support.
 
-Use the algorithm-specific OpenWebUI pipe models when benchmarking the tool;
-they avoid relying on a separate model call to select the summarization
-algorithm:
+The following algorithm-specific pipe ids are legacy/setup-specific examples.
+For a standalone tool from `openwebui-tools`, prefer a dedicated custom model
+and set the tool's persistent algorithm Valve explicitly:
 
 | Algorithm path | OpenWebUI model id |
 |---|---|
@@ -339,13 +349,17 @@ Useful runtime controls:
 | `--optimizer-max-tokens` | Caps `OptoPrime` suggestion size |
 | `--optimizer-mode noop` | Runs generation/evaluation/artifact calibration without asking an optimizer LLM to update parameters |
 
-Current live calibration on this machine showed:
+Current live validation on this machine showed:
 
 | Check | Result |
 |---|---|
-| Local OpenWebUI bridge generation with `qwen-laptop:latest` | Works and returns trace metadata |
-| Tool pipe generation with `summarizer---*` models | Reaches OpenWebUI, then fails while the configured upstream OpenRouter key is over its total limit |
-| Three-row local CPU/Ollama optimization with judge or optimizer LLM | Functionally reachable but too slow for smoke runs; use hosted judge/optimizer models or `--optimizer-mode noop` for calibration |
+| Managed OpenWebUI `v0.10.2` | Authentication, base-model inference, and API-key creation pass |
+| Default contradiction model/tool | Real persisted-thread call on two attachments passes |
+| Thematic summarizer on BigSurvey | Direct bridge and live Promptfoo generation pass with exactly one tool call |
+| Thematic summarizer on MultiLexSum | Direct bridge generation and offline Promptfoo DEA scoring pass operationally on one 5-file task |
+| Current one-task quality threshold | Long DEA `0.6853`; short DEA `0.6664`; both below configured `0.70` |
+
+See [the current result report](results/bigsurvey_thematic_20260901_180831/README.md).
 
 Example direct DEA-judge optimization over the first three BigSurvey rows:
 
@@ -420,23 +434,34 @@ Run commands from this directory unless stated otherwise:
 cd scripts/promptfoo_openwebui_eval
 ```
 
-Create local environment settings:
+Create local environment settings and edit only the ignored `.env`:
 
 ```bash
 cp .env.example .env
 ```
 
-Required values:
+At minimum set repository/tool paths and an OpenRouter key. Use
+`OPENWEBUI_BASE_URL=none` to exercise the managed OpenWebUI path:
 
 ```bash
 DEA_REPO_PATH=/absolute/path/to/document_embedding_analysis
 DEA_REPO_ROOT=/workspace/document_embedding_analysis
 GENERATION_BACKEND=openwebui
-OPENWEBUI_BASE_URL=http://127.0.0.1:8080
-OPENWEBUI_API_KEY=<local-openwebui-api-key>
-OPENWEBUI_PIPE_MODEL=summarizer---kohaku
+OPENWEBUI_BASE_URL=none
+OPENWEBUI_TOOLS_ROOT=/absolute/path/to/openwebui-tools
+OWI_DEFAULT_TOOL=tools/comparator/contradiction_auditor.py
+OWI_BASE_MODEL_ID=deepseek/deepseek-v4-flash-0731
+OWI_DEFAULT_MODEL_ID=dea-contradiction-auditor
+OPENROUTER_API_KEY=<openrouter-key>
 DEA_USE_JUDGE=true
 ```
+
+If a reachable `OPENWEBUI_BASE_URL` is supplied, the bootstrap uses it and
+does not create a container. If the value is absent/`none`, it reports that no
+endpoint was provided and starts the exact
+`ghcr.io/open-webui/open-webui:v0.10.2` image from
+`openwebui_docker/docker-compose.yml`. Managed credentials are copied or
+generated in `openwebui_docker/.env`, which is mode `0600` and ignored by Git.
 
 Choose one OpenAI-compatible evaluation endpoint:
 
@@ -504,30 +529,31 @@ This Compose file uses Linux `network_mode: host`, because local Ollama is
 normally bound to `127.0.0.1:11434`. With host networking, container
 `127.0.0.1` is the host loopback.
 
-Create the local JSON-judge Ollama alias:
+Optional: create the local JSON-judge Ollama alias when using Ollama instead of
+OpenRouter for evaluation:
 
 ```bash
 ollama create qwen-laptop-dea:latest -f ./ollama/Modelfile.qwen-laptop-dea
 ```
 
-Build and bootstrap the container:
+Run the complete bootstrap. It installs/checks dependencies, selects managed or
+supplied OpenWebUI, provisions the default tool and custom model, tests
+authentication/inference/tool execution, builds the bridge, and tests it:
 
 ```bash
-DOCKER_BUILDKIT=0 docker build -t promptfoo-openwebui-dea:latest .
-docker compose run --rm promptfoo bash -lc "./scripts/bootstrap_repo_env.sh"
+./scripts/bootstrap_repo_env.sh --full
 ```
 
-Start the bridge:
+The bridge is already running after a successful full bootstrap. Verify it:
 
 ```bash
-docker compose up -d owui-bridge
 curl http://127.0.0.1:8001/healthz
 ```
 
 Expected health shape:
 
 ```json
-{"ok":true,"backend":"openwebui","base_url":"http://127.0.0.1:8080","openai_endpoint_base_url":"http://127.0.0.1:11434/v1"}
+{"ok":true,"backend":"openwebui","base_url":"http://127.0.0.1:8080","openai_endpoint_base_url":"https://openrouter.ai/api/v1"}
 ```
 
 If your shell does not yet have the Docker group activated, wrap Docker commands:
@@ -581,6 +607,7 @@ Parameter flags can be added to any `build_promptfoo_csvs.py` call:
 --algorithm kohaku
 --target-length long
 --structure "sectioned literature review"
+--tool-id large_thematic_summarizer
 --tool-parameters-json '{"emit_diagnostics": false}'
 --kb-id patch_examples
 ```
@@ -597,7 +624,9 @@ docker compose run --rm promptfoo bash -lc '
     --input ./datasets/bigsurvey/step2_input.csv \
     --output ./datasets/bigsurvey/step2_output.csv \
     --bridge-url http://127.0.0.1:8001/generate \
-    --limit 1 --overwrite
+    --limit 1 --overwrite \
+    --responses-dir ./results/my_run/responses \
+    --documents-dir ./results/my_run/documents
 '
 ```
 
@@ -653,6 +682,10 @@ docker compose run --rm promptfoo bash -lc \
   "promptfoo eval -c ./bigsurvey.step3.dea.yaml --filter-first-n 1 --no-progress-bar"
 ```
 
+Export Promptfoo outputs and compact score summaries with
+`scripts/export_promptfoo_results.py`; complete commands are in the
+[scripts reference](scripts/README.md#live-and-offline-promptfoo).
+
 ## Troubleshooting
 
 | Symptom | Check |
@@ -665,13 +698,13 @@ docker compose run --rm promptfoo bash -lc \
 | LLM judge returns invalid JSON | Use a judge-capable model and check `OPENAI_MODEL` / `DEA_JUDGE_MODEL`; for reasoning models, set provider-specific JSON such as `DEA_JUDGE_EXTRA_BODY_JSON='{"reasoning":{"enabled":false}}'` |
 | Online Process cannot reach bridge | Use `http://127.0.0.1:8001/generate` with host networking |
 | OpenWebUI path fails | Check `GENERATION_BACKEND=openwebui`, `OPENWEBUI_API_KEY`, and the selected pipe model |
+| A recreated OpenWebUI reports an attached file as missing | Current clients validate cached file ids and re-upload stale entries; restart an old bridge image after updating |
+| Large multi-file tool times out at 600 s | Set `OPENWEBUI_TIMEOUT_SECONDS=2400` in `.env`, restart `owui-bridge`, and set `BRIDGE_REQUEST_TIMEOUT_SECONDS=2400` for direct generation |
 
 Run repository tests from the repo root:
 
 ```bash
-source ~/miniconda3/etc/profile.d/conda.sh
-conda activate humanllm
-PYTHONPATH=. pytest -q
+python3 -m pytest tests/test_promptfoo_openwebui_bundle.py -q
 ```
 
 ## Git Policy
