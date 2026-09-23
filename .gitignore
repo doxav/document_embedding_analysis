@@ -75,3 +75,12 @@ scripts/promptfoo_openwebui_eval/results/*
 scripts/promptfoo_openwebui_eval/temp/
 scripts/promptfoo_openwebui_eval/**/__pycache__/
 scripts/promptfoo_openwebui_eval/**/*.py[cod]
+
+# Local release deliveries and scratch data; reusable source belongs in scripts/.
+/strategy_a_final.patch
+/strategy_a_final_bundle/
+/temp/
+# Credential-bearing environment variants; keep documented templates versioned.
+.env.*
+!.env.example
+!.env.template

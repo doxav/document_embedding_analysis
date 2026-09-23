@@ -11,6 +11,7 @@ Run these commands from `scripts/promptfoo_openwebui_eval` unless a command says
 | `build_promptfoo_csvs.py` | Builds BigSurvey, MultiLexSum, or native DEA Promptfoo rows and their parameter columns. |
 | `generate_candidate_csv.py` | Runs generation outside Promptfoo and incrementally stores CSV metrics, raw bridge responses, and Markdown documents. |
 | `export_promptfoo_results.py` | Exports Promptfoo outputs to Markdown and writes a compact JSON score summary. |
+| `export_reviewed_episodes.py` | Offline selection of reviewed TRAIN successes/failures with at least one accepted solution per question; see [contract and usage](../REVIEWED_EPISODES.md). |
 | `promptfoo_response.js` | Maps a live bridge response to Promptfoo output, token usage, cost, duration, and tool-call metadata. |
 | `ensure_mds_outputs.py` | Checks or prepares the MDS dataset outputs used by the CSV builder. |
 

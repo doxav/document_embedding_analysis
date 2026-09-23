@@ -397,6 +397,16 @@ If no judge model, client, or callable is provided, the field is returned with `
 
 DEA scores can be used directly as reward signals or optimization feedback.
 
+For retrieval-augmented generation, evaluate the episode as well as the final
+document: retrieved evidence, answer grounding, tool calls, cumulative token
+usage and elapsed time. The [Promptfoo/OpenWebUI bundle](scripts/promptfoo_openwebui_eval/README.md)
+provides generation and evaluation tools; its
+[reviewed episode export](scripts/promptfoo_openwebui_eval/REVIEWED_EPISODES.md)
+keeps successes and semantic failures for TRAIN questions with an accepted
+solution. This is an offline dataset selection step, not an end-to-end capture
+or training pipeline. GPU provisioning, model training and private experiment
+artifacts remain outside this repository's evaluation scope.
+
 A common pattern is to compute all available metrics, then define a task-specific scalar objective.
 
 ```python

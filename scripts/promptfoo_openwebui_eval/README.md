@@ -707,6 +707,14 @@ Run repository tests from the repo root:
 python3 -m pytest tests/test_promptfoo_openwebui_bundle.py -q
 ```
 
+## Reviewed Agentic Episodes
+
+[Reviewed episode datasets](REVIEWED_EPISODES.md) document the offline export
+command, input contract, cumulative performance measures and remaining work.
+Use this export for already reviewed multi-turn experiments. The existing
+`export_promptfoo_results.py` continues to export ordinary Promptfoo results;
+its final-response metadata alone is not a complete training trajectory.
+
 ## Git Policy
 
 Add reusable source/configuration files:
