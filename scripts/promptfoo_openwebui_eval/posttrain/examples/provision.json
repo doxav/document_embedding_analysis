@@ -1,0 +1,8 @@
+{
+  "namespace": "sa-qa-teacher",
+  "blueprint": "REPLACE_WITH_EXISTING_WORKING_RAG_MODEL",
+  "base_model_id": "REPLACE_WITH_RECORDED_PROVIDER_MODEL",
+  "allowed_tool_ids": ["REPLACE_WITH_AUDITED_READ_ONLY_TOOL"],
+  "source_rights_reviewed": false,
+  "read_only_tools_reviewed": false
+}

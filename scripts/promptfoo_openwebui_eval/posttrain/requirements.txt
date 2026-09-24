@@ -1,0 +1,8 @@
+# Optional isolated CPU environment; Python >=3.11 for recorder timeout handling.
+-r ../requirements.txt
+httpx>=0.27,<1
+jsonschema>=4.23,<5
+python-dotenv>=1,<2
+# Optional only for `vidore --download`:
+datasets>=3,<5
+huggingface-hub>=0.30,<2

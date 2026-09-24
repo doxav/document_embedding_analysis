@@ -1,0 +1,15 @@
+{
+  "split": "train",
+  "max_cases": 1,
+  "repeats": 1,
+  "upstream_model": "REPLACE_FROM_PROVIDER_INVENTORY",
+  "bridge_url": "http://127.0.0.1:8015/generate",
+  "native_bridge_state_url": "http://127.0.0.1:8015/strategy-a/native-state",
+  "recorder_url": "http://127.0.0.1:8013",
+  "max_output_tokens": 4096,
+  "temperature": 0.6,
+  "model_extra": {
+    "reasoning": {"effort": "medium"},
+    "provider": {"require_parameters": true, "allow_fallbacks": false}
+  }
+}

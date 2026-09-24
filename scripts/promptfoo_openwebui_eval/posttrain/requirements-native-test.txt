@@ -1,0 +1,4 @@
+# Optional SDK for the dedicated Strategy A test bridge; never install in production.
+python-socketio[asyncio_client]==5.16.1
+python-engineio==4.13.1
+aiohttp==3.13.2

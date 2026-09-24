@@ -400,12 +400,13 @@ DEA scores can be used directly as reward signals or optimization feedback.
 For retrieval-augmented generation, evaluate the episode as well as the final
 document: retrieved evidence, answer grounding, tool calls, cumulative token
 usage and elapsed time. The [Promptfoo/OpenWebUI bundle](scripts/promptfoo_openwebui_eval/README.md)
-provides generation and evaluation tools; its
-[reviewed episode export](scripts/promptfoo_openwebui_eval/REVIEWED_EPISODES.md)
-keeps successes and semantic failures for TRAIN questions with an accepted
-solution. This is an offline dataset selection step, not an end-to-end capture
-or training pipeline. GPU provisioning, model training and private experiment
-artifacts remain outside this repository's evaluation scope.
+provides generation and evaluation tools. Its
+[multi-turn dataset pipeline](scripts/promptfoo_openwebui_eval/posttrain/README.md)
+records the actual provider requests after OpenWebUI enrichment, evaluates and
+reviews episodes, and exports full success/failure trajectories, SFT with or
+without captured reasoning, and preferences from identical states. ViDoRe and
+source-backed task CSVs such as BigSurvey share these contracts. GPU provisioning,
+model training and private experiment artifacts remain external consumers.
 
 A common pattern is to compute all available metrics, then define a task-specific scalar objective.
 

@@ -14,12 +14,11 @@ retrieval, grounding or the whole episode was acceptable.
 | Small deterministic fixtures already used by this bundle | Generated SFT/preference exports, model weights, adapters, caches and logs |
 | Explicit implementation gaps below | Local release patches/bundles, Axolotl/RunPod controllers and experimental worktrees |
 
-The Strategy A experiment contains additional collection, recording and training
-code outside this checkout. This commit promotes its reviewed-episode selection
-into a standalone offline command; it does not import the entire release overlay.
-Do not delete that external code or the original delivery until independently
-archived. Ignoring a directory is not a backup. Existing tracked benchmark
-fixtures and document datasets remain unchanged.
+The [multi-turn pipeline](posttrain/README.md) now includes the reusable Strategy A
+recorder, collection, grading, task adapters and SFT/preference construction.
+GPU execution and private operator campaign scripts remain external. Keep the
+original delivery and experiment archive until independently backed up. Ignoring
+a directory is not a backup. Existing benchmark fixtures remain unchanged.
 
 Use an experiment directory outside the checkout, or the ignored `results/`
 directory. Keep source attempts immutable and make each export in a new directory.
@@ -110,28 +109,25 @@ calls, and per-question outcomes. Report selected-training statistics separately
 Question paraphrases/translations from the same source group are not independent
 evaluation samples.
 
-## TODO: requirements before further integration
+## Implemented and remaining validation
 
-- [ ] Promote a minimal recorder/connector with real OpenWebUI integration tests:
-  exact post-enrichment system/user/assistant/tool messages, tool schemas, tool
-  arguments/results, final answer, model/protocol identity and per-call usage.
-  The bridge's abbreviated trace is insufficient for SFT reconstruction.
-- [ ] Validate retrieval isolation and evidence coverage for agentic KB search.
-  Test automatic attachment RAG and full-document context as separate modes.
-  A markdown ViDoRe derivative is not the official visual retrieval benchmark.
-- [ ] Add a portable catalog builder and source/license/revision manifest, with
-  document-group splits and preserved source references, so collection through
-  reviewed export is reproducible from this checkout alone.
-- [ ] Add paired SFT exports with/without captured teacher reasoning, preserving
-  tool schemas and system context. Check actual tokenizer tokens/labels and
-  masking before training; never fabricate missing reasoning or tool observations.
+- [x] Private wire recorder and native OpenWebUI transport, with multi-turn
+  integration tests using simulated transports and reconstruction of real captures.
+- [x] ViDoRe and task-CSV adapters, split-bound retrieval, reviewed catalog builder,
+  complete success/failure trajectories and paired SFT exports with/without thinking.
+- [x] Preference construction restricted to the same observed state; technical
+  incidents and manual vetoes cannot become automatic score-margin preferences.
+- [ ] Validate each new live model/tool deployment. Test automatic attachment RAG
+  and full-document context as separate modes; the collection CLI currently uses
+  agentic KB retrieval. The markdown derivative is not official visual ViDoRe.
+- [ ] Check actual training tokenizer tokens, labels, masking and context length
+  for the selected SFT variant in its external training consumer.
 - [ ] Build a fixed-protocol comparison report with pass@1, retrieval/grounding
   gates, cumulative usage (including hidden tool LLM calls), cost, failure rates
   and confidence intervals. Freeze evaluation configuration and keep test sealed.
-- [ ] Construct preference pairs only for alternatives from the exact same state.
-  Success/failure on the same question with different retrieval histories is not
-  automatically a DPO/SimPO pair. Training and its local/cloud execution stay in
-  a separate consumer of the reviewed datasets.
+- [ ] Instrument any tool-internal LLM calls before claiming complete episode costs
+  for summarization tools. The top-level provider recorder cannot observe a tool
+  that calls a different endpoint internally.
 
 Run offline regression checks from the repository root:
 

@@ -709,6 +709,11 @@ python3 -m pytest tests/test_promptfoo_openwebui_bundle.py -q
 
 ## Reviewed Agentic Episodes
 
+[The multi-turn pipeline](posttrain/README.md) provides the private wire recorder,
+native OpenWebUI transport, ViDoRe/task-CSV adapters, evaluation and reviewed SFT
+exports. It preserves system messages, tool schemas, observations, optional
+thinking and cumulative token/time usage. It does not implement a PPO trainer.
+
 [Reviewed episode datasets](REVIEWED_EPISODES.md) document the offline export
 command, input contract, cumulative performance measures and remaining work.
 Use this export for already reviewed multi-turn experiments. The existing
