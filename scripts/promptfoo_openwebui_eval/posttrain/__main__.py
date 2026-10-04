@@ -67,6 +67,7 @@ def parser() -> argparse.ArgumentParser:
     a.add_argument('--with-reasoning', action='store_true')
     a.add_argument('--execute', action='store_true')
     a = sub.add_parser('compare')
+    a.add_argument('--unseal-test', action='store_true')
     a.add_argument('--baseline', type=Path, required=True)
     a.add_argument('--candidate', type=Path, required=True)
     a.add_argument('--output', type=Path); a.add_argument('--execute', action='store_true')
@@ -134,7 +135,7 @@ def main() -> int:
                                 args.with_reasoning, args.execute)
     else:
         from .evaluation import compare
-        result = compare(args.baseline, args.candidate)
+        result = compare(args.baseline, args.candidate, unseal_test=args.unseal_test)
         if args.execute and args.output:
             require(not args.output.exists(), 'Comparison output already exists')
             write(args.output, result)
