@@ -700,3 +700,201 @@ def test_multiturn_metrics_missing_or_invalid_cache_is_unknown(details: Any) -> 
     result = c.metrics({'records': [{'response': {'usage': usage, 'choices': [{'message': {}}]}}]})
     assert result['total_tokens'] == 120
     assert result['cached_input_tokens'] is None
+
+
+@pytest.fixture
+def comparison_runs(tmp_path, monkeypatch):
+    """Two immutable synthetic runs; no provider or judge calls."""
+    monkeypatch.setenv('SA_PRICES_JSON',c.canonical({m:{'input':1,'output':5} for m in ('judge-A','judge-B')}))
+    monkeypatch.setenv('SA_CORRECTNESS_JUDGE','judge-A')
+    monkeypatch.setenv('SA_GROUNDING_JUDGE','judge-B')
+    paths=(tmp_path/'base',tmp_path/'candidate')
+    for p,passed in zip(paths,(False,True)):
+        evaluation_fixture(p,passed)
+        evaluation.score(p);evaluation.import_run(p)
+    return paths
+
+
+def update_comparison_capture(path, change):
+    cs=c.rows(path/'candidates.jsonl');cap=c.read(path/cs[0]['capture_path'])
+    change(cap);cs[0]['capture_hash']=c.digest(cap)
+    c.write(path/cs[0]['capture_path'],cap);c.write_rows(path/'candidates.jsonl',cs)
+    complete=c.read(path/'COMPLETE.json');complete['candidates_hash']=c.digest(cs);c.write(path/'COMPLETE.json',complete)
+    evaluation.import_run(path)
+
+
+def test_comparison_report_usage_cost_and_unknown_hidden_calls(comparison_runs):
+    a,b=comparison_runs
+    def change(cap):
+        cap['records'][0]['response']['usage'].update(prompt_tokens=90,
+            prompt_tokens_details={'cached_tokens':30},completion_tokens_details={'reasoning_tokens':3})
+        cap['records'].append(copy.deepcopy(cap['records'][0]))
+    for p in (a,b):update_comparison_capture(p,change)
+    report=evaluation.compare(a,b)
+    assert report['baseline']['rates']['pass_at_1']['count']==0
+    assert report['candidate']['rates']['pass_at_1']['count']==1
+    assert report['candidate']['rates']['retrieval_qrel_hit']['rate']==1
+    usage=report['candidate']['observed_provider_usage']
+    assert usage['prompt_tokens']==180 and usage['completion_tokens']==20 and usage['total_tokens']==200
+    assert usage['llm_calls']==2 and usage['cost_usd']==.02
+    assert usage['cached_input_tokens']==60 and usage['reasoning_tokens']==6
+    assert report['candidate']['hidden_tool_usage'] is None
+    assert report['candidate']['whole_episode_cost_usd'] is None
+    assert report['candidate']['failure_rates']['technical']['count']==0
+    assert report['pass_at_1_delta']=={'estimate':1.0,'ci95':None}
+    assert report['protocol']['scoring_hash']==c.read(a/'grades-receipt.json')['scoring_hash']
+    assert len(report['per_question'])==1
+
+
+def test_comparison_missing_usage_is_unknown_not_zero(comparison_runs):
+    a,b=comparison_runs
+    update_comparison_capture(b,lambda cap:cap['records'][0]['response'].update(usage={}))
+    report=evaluation.compare(a,b)
+    assert report['output_token_ratio'] is None
+    assert report['decision']=='STOP_UNKNOWN_USAGE'
+    assert report['candidate']['observed_provider_usage']['cost_usd'] is None
+    assert report['candidate']['observed_provider_usage']['total_tokens'] is None
+
+
+def test_comparison_sealed_test_requires_explicit_access(comparison_runs):
+    a,b=comparison_runs
+    for p in (a,b):
+        cases=c.rows(p/'cases.jsonl');cases[0]['split']='test';c.write_rows(p/'cases.jsonl',cases)
+        selection=c.read(p/'selection.json');selection['protocol']['split']='test'
+        selection['cases_hash']=c.digest(cases);selection['protocol_hash']=c.digest(selection['protocol']);c.write(p/'selection.json',selection)
+    with pytest.raises(c.StopRun,match='Test is sealed'):evaluation.compare(a,b)
+    assert evaluation.compare(a,b,unseal_test=True)['protocol']['split']=='test'
+
+
+def test_comparison_refuses_missing_scheduled_attempt(comparison_runs):
+    a,b=comparison_runs
+    cases=c.rows(b/'cases.jsonl')+[case('dev','q2','doc2')];c.write_rows(b/'cases.jsonl',cases)
+    selection=c.read(b/'selection.json');selection['cases_hash']=c.digest(cases);c.write(b/'selection.json',selection)
+    with pytest.raises(c.StopRun,match='All scheduled cases'):evaluation.compare(a,b)
+
+
+def test_comparison_reconciled_failures_count_in_denominator(comparison_runs):
+    a,b=comparison_runs
+    for p in (a,b):
+        cases=c.rows(p/'cases.jsonl')+[case('dev','q2','doc2'),case('dev','q3','doc2')]
+        c.write_rows(p/'cases.jsonl',cases)
+        selection=c.read(p/'selection.json');selection.update(cases_hash=c.digest(cases),case_ids=['q1','q2','q3']);c.write(p/'selection.json',selection)
+        failures=[{'case_id':'q2','status':'TECHNICAL_FAILURE','reason':'Transport timeout'},
+                  {'case_id':'q3','status':'BUDGET_INCOMPLETE','reason':'Completion limit'}]
+        c.write_rows(p/'failures.jsonl',failures)
+        complete=c.read(p/'COMPLETE.json');complete['failures_hash']=c.digest(failures);c.write(p/'COMPLETE.json',complete)
+    report=evaluation.compare(a,b)
+    assert report==evaluation.compare(a,b)  # fixed seed and deterministic serialization
+    assert report['candidate']['rates']['pass_at_1']['rate']==1/3
+    assert report['candidate']['failure_rates']['technical']['rate']==1/3
+    assert report['candidate']['failure_rates']['budget_incomplete']['rate']==1/3
+    assert report['candidate']['rates']['groundedness']['unknown_count']==2
+    assert report['uncertainty']['groups']==2  # paraphrases share a source group
+    assert report['pass_at_1_delta']['ci95']==[0.,1.]
+    assert report['candidate']['observed_provider_usage']['total_tokens'] is None
+    failures[0]['reason']='Changed';c.write_rows(b/'failures.jsonl',failures)
+    with pytest.raises(c.StopRun,match='Failure receipt'):evaluation.compare(a,b)
+
+
+def test_comparison_preserves_regression_and_budget_decision(comparison_runs):
+    a,b=comparison_runs
+    # Reversing the comparison remains a quality regression.
+    assert evaluation.compare(b,a)['regressions']==['q1']
+    assert evaluation.compare(b,a)['decision']=='STOP_REGRESSION_OR_BUDGET'
+    update_comparison_capture(b,lambda cap:cap['records'][0]['response']['usage'].update(completion_tokens=12))
+    assert evaluation.compare(a,b)['output_token_ratio']==1.2
+    assert evaluation.compare(a,b)['decision']=='STOP_REGRESSION_OR_BUDGET'
+
+
+@pytest.mark.parametrize('field,value',[('temperature',.7),('model_extra',{'reasoning_effort':'high'}),
+                                      ('rag_fingerprint','changed'),('deployment',{'revision':'changed'})])
+def test_comparison_protocol_drift(comparison_runs,field,value):
+    a,b=comparison_runs
+    selection=c.read(b/'selection.json');selection['protocol'][field]=value
+    selection['protocol_hash']=c.digest(selection['protocol']);c.write(b/'selection.json',selection)
+    with pytest.raises(c.StopRun,match='protocol differs'):evaluation.compare(a,b)
+
+
+def test_comparison_promptfoo_drift_even_after_reimport(comparison_runs):
+    a,b=comparison_runs
+    cfg=evaluation.yaml.safe_load((b/'promptfoo.yml').read_text());cfg['providers']=['changed']
+    (b/'promptfoo.yml').write_text(evaluation.yaml.safe_dump(cfg))
+    with pytest.raises(c.StopRun,match='Promptfoo configuration changed'):evaluation.compare(a,b)
+    evaluation.import_run(b)
+    with pytest.raises(c.StopRun,match='Frozen Promptfoo'):evaluation.compare(a,b)
+
+
+def test_comparison_reference_drift(comparison_runs):
+    a,b=comparison_runs
+    cases=c.rows(b/'cases.jsonl');cases[0]['reference_answer']='Different gold'
+    c.write_rows(b/'cases.jsonl',cases)
+    selection=c.read(b/'selection.json');selection['cases_hash']=c.digest(cases);c.write(b/'selection.json',selection)
+    with pytest.raises(c.StopRun,match='Different references'):evaluation.compare(a,b)
+
+
+def test_comparison_unknown_time_and_zero_cost(comparison_runs):
+    a,b=comparison_runs
+    def change(cap):
+        cap['duration_seconds']=None
+        cap['records'][0]['response']['usage']['cost']=0
+    update_comparison_capture(b,change)
+    report=evaluation.compare(a,b)
+    assert report['candidate_median_seconds'] is None
+    assert report['candidate']['observed_provider_usage']['seconds'] is None
+    assert report['candidate']['observed_provider_usage']['cost_usd']==0
+
+
+def test_comparison_hard_and_grounding_regressions(comparison_runs):
+    a,b=comparison_runs
+    payload=c.read(b/'promptfoo.json');row=payload['results'][0]
+    for part in row['gradingResult']['componentResults']:
+        if part['assertion']['metric'] in {'within_budget','groundedness'}:part.update({'pass':False,'score':0.})
+    row['success']=row['gradingResult']['pass']=False
+    c.write(b/'promptfoo.json',payload);evaluation.import_run(b)
+    # Baseline correctness failed, but its grounding and hard gates passed.
+    payload=c.read(a/'promptfoo.json')
+    for part in payload['results'][0]['gradingResult']['componentResults']:
+        if part['assertion']['metric']=='groundedness':part.update({'pass':True,'score':1.})
+    c.write(a/'promptfoo.json',payload);evaluation.import_run(a)
+    report=evaluation.compare(a,b)
+    assert report['hard_failures']==report['grounding_regressions']==['q1']
+    assert report['decision']=='STOP_REGRESSION_OR_BUDGET'
+    assert report['candidate']['failure_rates']['hard_gate']['rate']==1.
+
+
+def test_compare_cli_keeps_test_sealed():
+    from scripts.promptfoo_openwebui_eval.posttrain.__main__ import parser
+    args=parser().parse_args(['compare','--baseline','base','--candidate','candidate'])
+    assert args.unseal_test is False and args.execute is False
+
+
+def test_comparison_all_failed_run_keeps_scheduled_denominator(comparison_runs):
+    a,b=comparison_runs
+    c.write_rows(b/'candidates.jsonl',[])
+    failures=[{'case_id':'q1','status':'TECHNICAL_FAILURE','reason':'Judge unavailable'}]
+    c.write_rows(b/'failures.jsonl',failures)
+    c.write(b/'COMPLETE.json',{'count':0,'candidates_hash':c.digest([]),'failures_hash':c.digest(failures)})
+    c.write(b/'promptfoo.json',{'results':[]});evaluation.import_run(b)
+    report=evaluation.compare(a,b)
+    assert report['n']==1 and report['candidate']['rates']['pass_at_1']['rate']==0
+    assert report['candidate']['failure_rates']['technical']['rate']==1
+    assert report['candidate']['rates']['groundedness']['unknown_count']==1
+    assert report['candidate_median_seconds'] is None
+    assert report['decision']=='STOP_REGRESSION_OR_BUDGET'
+
+
+def test_sealed_test_refused_before_reading_reference_data(comparison_runs):
+    a,b=comparison_runs
+    selection=c.read(a/'selection.json');selection['protocol']['split']='test'
+    c.write(a/'selection.json',selection)
+    (a/'cases.jsonl').unlink()
+    with pytest.raises(c.StopRun,match='Test is sealed'):evaluation.compare(a,b)
+
+
+def test_legacy_training_import_does_not_imply_fixed_protocol(comparison_runs):
+    a,b=comparison_runs
+    (b/'promptfoo.yml').unlink()
+    receipt=evaluation.import_run(b)
+    assert receipt['promptfoo_config_hash'] is None
+    assert len(evaluation.validated_grades(b))==1
+    with pytest.raises(c.StopRun,match='frozen Promptfoo configuration receipt'):evaluation.compare(a,b)

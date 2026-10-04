@@ -122,9 +122,11 @@ evaluation samples.
   agentic KB retrieval. The markdown derivative is not official visual ViDoRe.
 - [ ] Check actual training tokenizer tokens, labels, masking and context length
   for the selected SFT variant in its external training consumer.
-- [ ] Build a fixed-protocol comparison report with pass@1, retrieval/grounding
-  gates, cumulative usage (including hidden tool LLM calls), cost, failure rates
-  and confidence intervals. Freeze evaluation configuration and keep test sealed.
+- [x] Build an offline fixed-protocol comparison report with pass@1, retrieval/grounding
+  gates, observed cumulative provider usage/cost, reconciled failure rates and
+  source-group confidence intervals. Configuration/receipts are frozen and test
+  comparison requires explicit unsealing. Hidden-call and whole-episode totals
+  stay unknown pending instrumentation; see [comparison contract](posttrain/README.md#fixed-protocol-comparison-report).
 - [ ] Instrument any tool-internal LLM calls before claiming complete episode costs
   for summarization tools. The top-level provider recorder cannot observe a tool
   that calls a different endpoint internally.

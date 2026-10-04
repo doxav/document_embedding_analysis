@@ -5,6 +5,7 @@ import fcntl
 import hashlib
 import math
 import os
+import random
 import statistics
 import subprocess
 from pathlib import Path
@@ -254,12 +255,18 @@ def score(run: Path,*,execute: bool=False,executable: str='promptfoo') -> Any:
     return import_run(run)
 
 
+def promptfoo_config_hash(run: Path) -> str | None:
+    """Legacy training imports may omit config; fixed-protocol comparison may not."""
+    path=run/'promptfoo.yml'
+    return digest(yaml.safe_load(path.read_text())) if path.exists() else None
+
+
 def import_run(run: Path) -> dict[str, Any]:
     """Import explicit Promptfoo verdicts and bind them to immutable receipts."""
     cands,_,_,_=loaded(run);grades=import_grades(read(run/'promptfoo.json'),{c['benchmark_id']:c for c in cands})
     write_rows(run/'grades.jsonl',grades)
     report={'count':len(grades),'passes':sum(g['pass'] for g in grades),'grades_hash':digest(grades),
-            'export_hash':digest(read(run/'promptfoo.json')),'judge_models':read(run/'scoring.json')['judge_models'],'scoring_hash':digest(read(run/'scoring.json'))}
+            'export_hash':digest(read(run/'promptfoo.json')),'judge_models':read(run/'scoring.json')['judge_models'],'scoring_hash':digest(read(run/'scoring.json')),'promptfoo_config_hash':promptfoo_config_hash(run)}
     write(run/'grades-receipt.json',report);return report
 
 
@@ -268,21 +275,59 @@ def validated_grades(run: Path) -> list[dict[str, Any]]:
     values=rows(run/'grades.jsonl');receipt=read(run/'grades-receipt.json')
     require(digest(values)==receipt['grades_hash'] and digest(read(run/'promptfoo.json'))==receipt['export_hash'],'Grades/export changed')
     require(receipt.get('scoring_hash')==digest(read(run/'scoring.json')),'Scoring configuration changed after import')
+    require(receipt.get('promptfoo_config_hash')==promptfoo_config_hash(run),
+            'Promptfoo configuration changed after import')
+    cands,_,_,_=loaded(run)
+    require(values==import_grades(read(run/'promptfoo.json'),{c['benchmark_id']:c for c in cands}),
+            'Grades disagree with original export')
     return values
 
 
-def compare(baseline: Any,candidate: Any) -> dict[str, Any]:
+def compare(baseline: Any,candidate: Any,*,unseal_test: bool=False) -> dict[str, Any]:
     """Compare paired held-out episodes under the same evaluation protocol."""
     def load(run: Path) -> Any:
         """Load and validate the pinned source artifacts before using them."""
+        selection=read(run/'selection.json');p=selection['protocol']
+        require(p.get('split')!='test' or unseal_test is True,'Test is sealed; explicit unseal_test required')
         cs,cases,caps,selection=loaded(run);p=selection['protocol']
         require(p['split'] in {'dev','test'} and p['repeats']==1,'Holdout pass@1 only')
-        grades={g['benchmark_id']:g for g in validated_grades(run)};out={}
+        require(p['split']!='test' or unseal_test is True,'Test is sealed; explicit unseal_test required')
+        failures=rows(run/'failures.jsonl') if (run/'failures.jsonl').exists() else []
+        complete=read(run/'COMPLETE.json')
+        require((not failures and 'failures_hash' not in complete) or complete.get('failures_hash')==digest(failures),
+                'Failure receipt changed or missing')
+        scheduled=[c['case_id'] for c in cs]+[f['case_id'] for f in failures]
+        require(len(cases)==len(scheduled) and set(scheduled)==cases.keys(),
+                'All scheduled cases required; selected successes are not pass@1')
+        if 'case_ids' in selection:
+            require(len(selection['case_ids'])==len(cases) and set(selection['case_ids'])==cases.keys(),
+                    'Scheduled case selection mismatch')
+        require(all(c['split']==p['split'] for c in cases.values()),'Case split differs from protocol')
+        values=validated_grades(run);grades={g['benchmark_id']:g for g in values};out={}
+        require(len(grades)==len(values)==len(cs) and grades.keys()=={c['benchmark_id'] for c in cs},
+                'Duplicate or missing candidates/grades')
         for c in cs:
             require(c['kind']=='episode' and c['case_id'] not in out,'No branch/best-of-N evaluation')
             g=grades[c['benchmark_id']];require(g['capture_hash']==c['capture_hash'] and g['answer_hash']==digest(c['candidate_answer']),'Grading does not match candidate')
-            usage=metrics(caps[c['benchmark_id']]);require(usage['usage_known'],'Unknown token usage: efficiency cannot be compared')
-            out[c['case_id']]={'grade':g,'usage':usage,'case':cases[c['case_id']]}
+            cap=caps[c['benchmark_id']];usage=metrics(cap)
+            costs=[(r['response'].get('usage') or {}).get('cost') for r in cap.get('records',[])]
+            usage['cost_usd']=sum(costs) if costs and all(type(v) in (int,float) and math.isfinite(v) and v>=0 for v in costs) else None
+            out[c['case_id']]={'grade':g,'usage':usage,'case':cases[c['case_id']],'status':'COMPLETED'}
+        for f in failures:
+            require(f['case_id'] not in out and f.get('status') in {'TECHNICAL_FAILURE','BUDGET_INCOMPLETE'}
+                    and isinstance(f.get('reason'),str) and f['reason'].strip(), 'Invalid scheduled failure')
+            out[f['case_id']]={'case':cases[f['case_id']],'status':f['status'],'usage':{},
+                              'failure_reason':f['reason'],
+                              'grade':{'pass':False,'hard_ok':False,'metrics':{k:{'pass':None,'score':None} for k in METRICS}}}
+        require(read(run/'grades-receipt.json').get('promptfoo_config_hash') is not None,
+                'Comparison requires a frozen Promptfoo configuration receipt; reimport the original export')
+        cfg=yaml.safe_load((run/'promptfoo.yml').read_text())
+        expected_assertions=[{'type':'python','metric':k,'value':'file://'+str(Path(__file__).with_name('promptfoo_assert.py').resolve()),
+                             'config':{'run':str(run.resolve()),'metric':k}} for k in sorted(METRICS)]
+        require(cfg=={'description':'Strategy A v3: deterministic retrieval and independent judges',
+                     'providers':['echo'],'prompts':['{{candidate_answer}}'],
+                     'tests':'file://'+str((run/'candidates.csv').resolve()),
+                     'defaultTest':{'assert':expected_assertions}},'Frozen Promptfoo configuration differs')
         return out,p,read(run/'grades-receipt.json')['scoring_hash']
     a,pa,ja=load(baseline);b,pb,jb=load(candidate)
     require(digest(pa)==digest(pb) and ja==jb,'RAG/reasoning/budget/judge protocol differs')
@@ -290,11 +335,75 @@ def compare(baseline: Any,candidate: Any) -> dict[str, Any]:
     require(all(digest(a[k]['case'])==digest(b[k]['case']) for k in a),'Different references/splits')
     gain=[k for k in a if not a[k]['grade']['pass'] and b[k]['grade']['pass']]
     lost=[k for k in a if a[k]['grade']['pass'] and not b[k]['grade']['pass']]
-    hard=[k for k in b if not b[k]['grade']['hard_ok']]
-    ground=[k for k in b if a[k]['grade']['metrics']['groundedness']['pass'] and not b[k]['grade']['metrics']['groundedness']['pass']]
-    ratio=sum(x['usage']['completion_tokens'] for x in b.values())/max(1,sum(x['usage']['completion_tokens'] for x in a.values()))
-    decision='STOP_REGRESSION_OR_BUDGET' if lost or hard or ground or ratio>1.1 else ('PROMISING_PILOT_REVIEW_REQUIRED' if gain else 'STOP_NO_OBSERVED_GAIN')
-    return {'decision':decision,'n':len(a),'gains':gain,'regressions':lost,'hard_failures':hard,'grounding_regressions':ground,
-            'output_token_ratio':ratio,'baseline_median_seconds':statistics.median(x['usage']['seconds'] for x in a.values()),
-            'candidate_median_seconds':statistics.median(x['usage']['seconds'] for x in b.values()),
+    hard=[k for k in b if b[k]['status']=='COMPLETED' and not b[k]['grade']['hard_ok']]
+    incidents=[k for k in b if b[k]['status']!='COMPLETED']
+    ground=[k for k in b if a[k]['grade']['metrics']['groundedness']['pass'] and b[k]['grade']['metrics']['groundedness']['pass'] is False]
+    def total(values: Any,field: str) -> int | float | None:
+        observed=[x['usage'].get(field) for x in values.values()]
+        return sum(observed) if all(type(v) in (int,float) and math.isfinite(v) and v>=0 for v in observed) else None
+    at=total(a,'completion_tokens');bt=total(b,'completion_tokens')
+    ratio=bt/at if at is not None and at>0 and bt is not None else (1.0 if at==bt==0 else None)
+    decision='STOP_REGRESSION_OR_BUDGET' if lost or hard or ground or incidents or (ratio is not None and ratio>1.1) else ('STOP_UNKNOWN_USAGE' if ratio is None else ('PROMISING_PILOT_REVIEW_REQUIRED' if gain else 'STOP_NO_OBSERVED_GAIN'))
+    report={'decision':decision,'n':len(a),'gains':gain,'regressions':lost,'hard_failures':hard,'technical_or_incomplete':incidents,'grounding_regressions':ground,
+            'output_token_ratio':ratio,'baseline_median_seconds':median_seconds(a),
+            'candidate_median_seconds':median_seconds(b),
             'warning':'Small pilot, not statistical proof; attest identical base/quantization/runtime except adapter before interpreting.'}
+
+    keys=sorted(a)
+    groups={}
+    for k in keys:groups.setdefault((a[k]['case']['dataset'],a[k]['case']['group_id']),[]).append(k)
+    def interval(values: dict[str, int]) -> list[float] | None:
+        # Resample source groups, keeping translations/paraphrases together.
+        if len(groups)<2:return None
+        rng=random.Random(0);blocks=list(groups.values());samples=[]
+        for _ in range(2000):
+            sample=[k for block in rng.choices(blocks,k=len(blocks)) for k in block]
+            samples.append(sum(values[k] for k in sample)/len(sample))
+        samples.sort()
+        return [samples[49],samples[1949]]
+    def rate(values: dict[str, int]) -> dict[str, Any]:
+        return {'count':sum(values.values()),'denominator':len(keys),'rate':sum(values.values())/len(keys),
+                'ci95':interval(values)}
+    def summary(values: Any) -> dict[str, Any]:
+        rates={'pass_at_1':rate({k:int(values[k]['grade']['pass']) for k in keys})}
+        for metric in sorted(METRICS):
+            measured={k:(None if metric in QUALITY and not values[k]['grade']['hard_ok']
+                         else values[k]['grade']['metrics'][metric]['pass']) for k in keys}
+            rates[metric]={**rate({k:int(measured[k] is True) for k in keys}),
+                           'unknown_count':sum(v is None for v in measured.values()),
+                           'definition':'measured passes / all scheduled cases; unmeasured gates remain unknown'}
+        failures={'overall':rate({k:int(not values[k]['grade']['pass']) for k in keys}),
+                  'hard_gate':rate({k:int(values[k]['status']=='COMPLETED' and not values[k]['grade']['hard_ok']) for k in keys}),
+                  'semantic':rate({k:int(values[k]['grade']['hard_ok'] and not values[k]['grade']['pass']) for k in keys}),
+                  'technical':rate({k:int(values[k]['status']=='TECHNICAL_FAILURE') for k in keys}),
+                  'budget_incomplete':rate({k:int(values[k]['status']=='BUDGET_INCOMPLETE') for k in keys})}
+        cumulative={field:total(values,field) for field in ('prompt_tokens','completion_tokens','total_tokens',
+                   'cached_input_tokens','reasoning_tokens','llm_calls','tool_calls','seconds','cost_usd')}
+        return {'rates':rates,'failure_rates':failures,'observed_provider_usage':cumulative,
+                'hidden_tool_usage':None,'hidden_tool_cost_usd':None,'whole_episode_usage':None,
+                'whole_episode_cost_usd':None,'median_seconds':median_seconds(values)}
+    report.update(schema_version=1,baseline=summary(a),candidate=summary(b),
+                  pass_at_1_delta={'estimate':(len(gain)-len(lost))/len(keys),
+                                  'ci95':interval({k:int(b[k]['grade']['pass'])-int(a[k]['grade']['pass']) for k in keys})},
+                  inputs={name:{'complete_hash':digest(read(path/'COMPLETE.json')),
+                                'selection_hash':digest(read(path/'selection.json')),
+                                'grades_receipt_hash':digest(read(path/'grades-receipt.json'))}
+                          for name,path in (('baseline',baseline),('candidate',candidate))},
+                  protocol={'evaluation_hash':digest(pa),'scoring_hash':ja,'cases_hash':digest([a[k]['case'] for k in keys]),
+                            'configuration':pa,'split':pa['split'],'repeats':1},
+                  uncertainty={'method':'paired source-group percentile bootstrap','confidence':.95,
+                               'resamples':2000,'seed':0,'groups':len(groups),
+                               'warning':'CI unavailable with fewer than two source groups; small or homogeneous pilots can have degenerate intervals.'},
+                  coverage={'scheduled_cases':len(keys),'baseline_completed_cases':sum(x['status']=='COMPLETED' for x in a.values()),
+                            'candidate_completed_cases':sum(x['status']=='COMPLETED' for x in b.values()),
+                            'usage_scope':'observed top-level provider calls only; hidden tool calls and indexing/storage uninstrumented'},
+                  per_question=[{'case_id':k,'group_id':a[k]['case']['group_id'],
+                                 'baseline':{'status':a[k]['status'],'failure_reason':a[k].get('failure_reason'),'grade':a[k]['grade'],'observed_provider_usage':a[k]['usage']},
+                                 'candidate':{'status':b[k]['status'],'failure_reason':b[k].get('failure_reason'),'grade':b[k]['grade'],'observed_provider_usage':b[k]['usage']}} for k in keys])
+    return report
+
+
+def median_seconds(values: Any) -> float | None:
+    """Missing or invalid timing is unknown, not an invented zero."""
+    seconds=[x['usage'].get('seconds') for x in values.values()]
+    return statistics.median(seconds) if seconds and all(type(v) in (int,float) and math.isfinite(v) and v>=0 for v in seconds) else None

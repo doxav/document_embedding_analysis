@@ -213,3 +213,56 @@ captures and compare SFT output hashes. Neither proves that an untested new live
 model/tool configuration works: complete a bounded live pilot before scaling it.
 The five original upstream file hashes are checked by `preflight`; review drift
 rather than bypassing it. No production code is patched in place.
+
+## Fixed-protocol comparison report
+
+Compare private, unselected dev runs offline (no provider/judge calls):
+
+```bash
+python -m scripts.promptfoo_openwebui_eval.posttrain compare \
+  --baseline "$EXPERIMENT_DIR/base-dev" --candidate "$EXPERIMENT_DIR/adapter-dev" \
+  --output "$EXPERIMENT_DIR/comparison.json" --execute
+```
+
+The JSON report retains the original gain/regression/budget decision and adds
+pass@1 counts/rates, every retrieval/grounding/hard gate, semantic/hard/technical
+and budget-incomplete failure rates, paired per-question outcomes, observed
+cumulative provider usage/cost, timings, and 95% intervals for rates and the paired
+pass@1 difference. A deterministic percentile bootstrap resamples source groups
+(dataset + group_id), keeping translations/paraphrases together (2,000 draws,
+seed 0). One source group yields `null` intervals. Small/homogeneous samples can
+produce degenerate intervals; these are pilot summaries, not proof of improvement.
+
+All scheduled cases must have exactly one completed episode or reconciled failure.
+Case/reference content, split, repeats, retrieval/reasoning/budget/deployment
+configuration, judge identity/rubric/limits/prices, export/grade/capture receipts,
+and frozen Promptfoo configuration are checked. Protocol and input receipt hashes
+are included for audit. Train, branches, best-of-N, missing cases, changed exports,
+and configuration drift are refused. Test comparison requires explicit
+`--unseal-test`; the default does not read its case/reference/capture files. Use dev
+for selection and freeze the protocol before explicitly opening test.
+
+`observed_provider_usage` sums all recorded top-level calls, including repeated
+inputs. Cache/reasoning counts are subsets. Missing counters/cost/timing remain
+`null`; a measured zero cost remains zero. Hidden tool calls, their cost and whole
+episode totals remain `null` because this recorder cannot observe other endpoints.
+No cost is inferred from tokens or price ceilings. Judge charges and storage/index
+costs are outside generation cost. Unknown output usage stops efficiency decisions.
+
+Interrupted collection/judge runs must be reconciled privately before reporting;
+a partial run is refused. The offline comparison accepts a `failures.jsonl`
+sidecar with one row per scheduled unsuccessful case:
+
+```json
+{"case_id":"q2","status":"TECHNICAL_FAILURE","reason":"Transport timeout"}
+```
+
+`BUDGET_INCOMPLETE` is the other allowed status. Bind the complete failure list
+with `COMPLETE.json.failures_hash = digest(failures)` using the canonical core
+hash function; keep completed candidates and their grading receipts unchanged.
+This is an explicit operator reconciliation contract, not automatic incident
+classification or retry authorization. Every case must occur exactly once across
+candidates and failures. Failed cases count in pass@1 and failure denominators;
+their unmeasured gates/scores and usage stay unknown, never semantic negatives.
+Gate rates mean measured passes divided by all scheduled cases and include an
+`unknown_count`. Reconciled candidate incidents stop the existing promotion gate.
